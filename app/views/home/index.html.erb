@@ -1,0 +1,11 @@
+<h1>Welcome to the Exercise App!</h1>
+<p>Please sign up or log in to continue.</p>
+<% if user_signed_in? %>
+  <p>
+    You are logged in as <%= current_user.email %>.
+    <%= link_to "Log out", destroy_user_session_path, data: { turbo_method: :delete, confirm: "Are you sure?" }, class: "btn btn-danger" %>
+  </p>
+<% else %>
+  <h2>Sign Up</h2>
+  <%= render 'devise/registrations/new' %>
+<% end %>
