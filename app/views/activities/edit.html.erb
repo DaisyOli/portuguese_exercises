@@ -1,0 +1,21 @@
+<h1>Edit Activity</h1>
+
+<div class="card shadow p-4">
+  <div class="card-body">
+    <%= form_with(model: @activity, local: true) do |f| %>
+      <!-- Campo de Título -->
+      <div class="mb-3">
+        <%= f.label :title, "Title" %>
+        <%= f.text_field :title, class: "form-control" %>
+      </div>
+
+      <!-- Campo de Descrição -->
+      <div class="mb-3">
+        <%= f.label :description, "Description" %>
+        <%= f.text_area :description, class: "form-control" %>
+      </div>
+
+      <!-- Campo de Tipo de Conteúdo -->
+      <div class="mb-3">
+        <%= f.label :content_type, "Content Type" %>
+        <%= f.select :content_type, [["Video", "video"], ["Texto", "

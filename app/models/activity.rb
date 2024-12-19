@@ -1,11 +1,17 @@
 class Activity < ApplicationRecord
   belongs_to :user
 
+  # Constantes
+  LEVELS = %w[A1 A2 B1 B2 C1 C2].freeze
+  CONTENT_TYPES = %w[video texto audio].freeze
+
+  # Validações
   validates :title, presence: true
   validates :description, presence: true
-  validates :content_type, inclusion: { in: %w[video texto audio], message: "must be 'video', 'texto' or 'audio'" }
+  validates :content_type, inclusion: { in: CONTENT_TYPES, message: "must be 'video', 'texto', or 'audio'" }
+  validates :level, inclusion: { in: LEVELS, message: "must be one of: #{LEVELS.join(', ')}" }
   validate :validate_content_url
-  
+
   private
 
   def validate_content_url

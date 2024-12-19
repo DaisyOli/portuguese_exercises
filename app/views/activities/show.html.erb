@@ -1,0 +1,20 @@
+<h1><%= @activity.title %></h1>
+
+<div class="card shadow mb-4">
+  <div class="card-body">
+    <h5 class="card-title">Description</h5>
+    <p class="card-text"><%= @activity.description %></p>
+
+    <h5 class="card-title">Content Type</h5>
+    <p class="card-text"><%= @activity.content_type.capitalize %></p>
+
+    <% if @activity.content_url.present? %>
+      <h5 class="card-title">Content</h5>
+      <p class="card-text">
+        <%= link_to "View Content", @activity.content_url, target: "_blank", class: "btn btn-info" %>
+      </p>
+    <% end %>
+  </div>
+</div>
+
+<%= link_to "Edit Activity", edit_activity_path(@activity), class: "btn btn
