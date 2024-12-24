@@ -1,0 +1,31 @@
+<div class="container mt-5">
+  <h1>Create a Quiz for Activity: <%= @activity.title %></h1>
+  <p><strong>Description:</strong> <%= @activity.description %></p>
+  <p><strong>Level:</strong> <%= @activity.level %></p>
+
+  <%= simple_form_for([@activity, @question]) do |f| %>
+    <!-- Campo para Enunciado da Questão -->
+    <div class="mb-3">
+      <%= f.input :content, label: "Question Statement", input_html: { class: "form-control", placeholder: "Enter the question statement" } %>
+    </div>
+
+    <!-- Campo para Opções de Resposta -->
+    <div class="mb-3">
+      <label>Answer Options (One Option per Line):</label>
+      <%= text_area_tag 'question[options]', nil, rows: 5, class: "form-control", placeholder: "Option 1\nOption 2\nOption 3\nOption 4" %>
+    </div>
+
+
+    <!-- Campo para Resposta Correta -->
+    <div class="mb-3">
+      <%= f.input :correct_answer, label: "Correct Answer", as: :text, input_html: { class: "form-control", placeholder: "Enter the correct answer" } %>
+    </div>
+
+    
+
+    <!-- Botão para Submeter o Quizz -->
+    <div class="d-grid mt-4">
+      <%= f.button :submit, "Create Quiz Question", class: "btn btn-primary" %>
+    </div>
+  <% end %>
+</div>

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_12_19_081215) do
+ActiveRecord::Schema[7.1].define(version: 2024_12_22_095355) do
   create_table "activities", force: :cascade do |t|
     t.string "title"
     t.text "description"
@@ -21,6 +21,17 @@ ActiveRecord::Schema[7.1].define(version: 2024_12_19_081215) do
     t.datetime "updated_at", null: false
     t.string "level"
     t.index ["user_id"], name: "index_activities_on_user_id"
+  end
+
+  create_table "questions", force: :cascade do |t|
+    t.string "content"
+    t.string "question_type"
+    t.integer "activity_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.json "options"
+    t.string "correct_answer"
+    t.index ["activity_id"], name: "index_questions_on_activity_id"
   end
 
   create_table "users", force: :cascade do |t|
@@ -37,4 +48,5 @@ ActiveRecord::Schema[7.1].define(version: 2024_12_19_081215) do
   end
 
   add_foreign_key "activities", "users"
+  add_foreign_key "questions", "activities"
 end

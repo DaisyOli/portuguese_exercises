@@ -1,0 +1,14 @@
+<%= simple_form_for [activity, question], remote: true do |qf| %>
+  <div class="mb-3">
+    <%= qf.input :content, label: "Question Content", input_html: { class: "form-control", placeholder: "Enter the question" } %>
+  </div>
+  <div class="mb-3">
+    <%= qf.input :options, label: "Options (comma-separated)", input_html: { class: "form-control", placeholder: "Option1, Option2, Option3, Option4" } %>
+  </div>
+  <div class="mb-3">
+    <%= qf.input :correct_answer, label: "Correct Answer", input_html: { class: "form-control", placeholder: "Enter the correct answer" } %>
+  </div>
+  <div class="d-grid">
+    <%= qf.submit "Add Question", class: "btn btn-success" %>
+  </div>
+<% end %>

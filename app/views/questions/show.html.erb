@@ -1,0 +1,17 @@
+<h1><%= @activity.title %></h1>
+<p><strong>Description:</strong> <%= @activity.description %></p>
+<p><strong>Level:</strong> <%= @activity.level %></p>
+
+<h3>Questions</h3>
+<ul id="questions" class="list-group">
+  <% @activity.questions.each do |question| %>
+    <%= render partial: "questions/question", locals: { question: question } %>
+  <% end %>
+</ul>
+
+<h3>Add a New Question</h3>
+<div id="question_form">
+  <%= render partial: "questions/form", locals: { question: Question.new, activity: @activity } %>
+</div>
+
+

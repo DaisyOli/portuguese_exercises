@@ -8,8 +8,8 @@
         <p>You are logged in as <strong><%= current_user.email %></strong>.</p>
 
         <!-- Botão de Log Out -->
-        <%= link_to "Log out", destroy_user_session_path, data: { turbo_method: :delete, confirm: "Are you sure?" }, class: "btn btn-danger mb-3" %>
-
+        <%= button_to "Log out", destroy_user_session_path, method: :delete, class: "btn btn-danger"%> 
+        
         <!-- Links para os Dashboards -->
         <% if current_user.role == "teacher" %>
           <%= link_to "Go to Teacher Dashboard", teacher_dashboard_path, class: "btn btn-primary mb-2" %>

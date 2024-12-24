@@ -1,0 +1,11 @@
+<li id="question_<%= question.id %>" class="list-group-item">
+  <strong>Question <%= question.id %>:</strong> <%= question.content %>
+  <% if question.options.present? %>
+    <ul>
+      <% question.options.each do |option| %>
+        <li><%= option %></li>
+      <% end %>
+    </ul>
+  <% end %>
+  <p><strong>Correct Answer:</strong> <%= question.correct_answer %></p>
+</li>

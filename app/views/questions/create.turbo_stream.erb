@@ -1,0 +1,7 @@
+<%= turbo_stream.append "questions" do %>
+  <%= render partial: "questions/question", locals: { question: @question } %>
+<% end %>
+
+<%= turbo_stream.replace "question_form" do %>
+  <%= render partial: "questions/form", locals: { question: Question.new, activity: @activity } %>
+<% end %>

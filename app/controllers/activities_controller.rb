@@ -1,12 +1,34 @@
 class ActivitiesController < ApplicationController
   before_action :authenticate_user!
-  before_action :set_activity, only: [:show, :edit, :update, :destroy]
+  before_action :set_activity, only: [:show, :edit, :update, :destroy, :resolve_quiz, :submit_quiz]
 
   def index
     @activities = Activity.all
   end
 
   def show
+    @activity = Activity.find(params[:id])
+    @questions = @activity.questions
+  end
+
+  def resolve_quiz
+    @questions = @activity.questions
+  end
+
+  def submit_quiz
+    @activity = Activity.find(params[:id])
+    answers = params[:answers] || {}
+  
+    @results = @activity.questions.map do |question|
+      {
+        question: question.content,
+        given_answer: answers[question.id.to_s],
+        correct_answer: question.correct_answer,
+        correct: answers[question.id.to_s] == question.correct_answer
+      }
+    end
+  
+    render :quiz_results
   end
 
   def new
@@ -16,12 +38,12 @@ class ActivitiesController < ApplicationController
   def create
     @activity = current_user.activities.new(activity_params)
     if @activity.save
-      redirect_to teacher_dashboard_path, notice: "Activity was successfully created"
+      redirect_to new_activity_question_path(@activity), notice: "Activity created! Now add questions."
     else
       render :new, status: :unprocessable_entity
     end
   end
-  
+
   def edit
   end
 
@@ -29,7 +51,7 @@ class ActivitiesController < ApplicationController
     if @activity.update(activity_params)
       redirect_to activity_path(@activity), notice: "Activity was successfully updated"
     else
-      render :edit
+      render :edit, status: :unprocessable_entity
     end
   end
 
@@ -40,12 +62,10 @@ class ActivitiesController < ApplicationController
   
   private
 
-  # Define o @activity para ações como show, edit, update e destroy
   def set_activity
-    @activity = current_user.activities.find(params[:id])
+    @activity = Activity.find(params[:id])
   end
 
-  # Define os parâmetros permitidos para criar ou atualizar atividades
   def activity_params
     params.require(:activity).permit(:title, :description, :content_type, :content_url, :level)
   end

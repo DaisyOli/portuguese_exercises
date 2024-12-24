@@ -1,0 +1,29 @@
+<div class="container mt-5">
+  <h1>Quiz Results: <%= @activity.title %></h1>
+  <p><strong>Description:</strong> <%= @activity.description %></p>
+  <p><strong>Level:</strong> <%= @activity.level %></p>
+
+  <div class="mt-4">
+    <h2>Your Results:</h2>
+    <ul class="list-group">
+      <% @results.each_with_index do |result, index| %>
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+          <div>
+            <strong>Question <%= index + 1 %>:</strong> <%= result[:question] %><br>
+            <em>Your Answer:</em> <%= result[:given_answer] || "No answer provided" %><br>
+            <em>Correct Answer:</em> <%= result[:correct_answer] %>
+          </div>
+          <% if result[:correct] %>
+            <span class="badge bg-success">Correct</span>
+          <% else %>
+            <span class="badge bg-danger">Incorrect</span>
+          <% end %>
+        </li>
+      <% end %>
+    </ul>
+  </div>
+
+  <div class="mt-4">
+    <%= link_to "Back to Activity", activity_path(@activity), class: "btn btn-secondary" %>
+  </div>
+</div>

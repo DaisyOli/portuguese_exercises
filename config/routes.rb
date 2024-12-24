@@ -7,11 +7,16 @@ Rails.application.routes.draw do
   get 'students/dashboard', to: 'students#dashboard', as: :student_dashboard
 
   # Rotas do Devise para autenticação
-  devise_for :users
+devise_for :users
 
   # Rotas para atividades
-  resources :activities
-
+  resources :activities do
+    member do
+      get :resolve_quiz
+      post :submit_quiz
+    end
+    resources :questions
+  end
   # Health check para monitoramento
   get "up" => "rails/health#show", as: :rails_health_check
 end

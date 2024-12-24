@@ -1,5 +1,6 @@
 class Activity < ApplicationRecord
   belongs_to :user
+  has_many :questions, dependent: :destroy
 
   # Constantes
   LEVELS = %w[A1 A2 B1 B2 C1 C2].freeze
