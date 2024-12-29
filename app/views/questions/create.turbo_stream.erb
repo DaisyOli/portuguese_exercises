@@ -1,7 +1,7 @@
-<%= turbo_stream.append "questions" do %>
-  <%= render partial: "questions/question", locals: { question: @question } %>
-<% end %>
+<%= turbo_stream.append "questions", partial: "questions/question", locals: { question: @question } %>
+<%= turbo_stream.replace "question_form", partial: "questions/form", locals: { question: Question.new, activity: @activity } %>
+<%= turbo_stream.replace "flash", partial: "layouts/flash", locals: { notice: "Question added successfully!" } %>
 
-<%= turbo_stream.replace "question_form" do %>
-  <%= render partial: "questions/form", locals: { question: Question.new, activity: @activity } %>
+<%= javascript_tag do %>
+  Turbo.visit("<%= activity_path(@activity) %>");
 <% end %>
