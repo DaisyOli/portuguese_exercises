@@ -14,6 +14,7 @@ devise_for :users
     member do
       get :resolve_quiz
       post :submit_quiz
+      get :quiz_results
     end
     resources :questions
   end

@@ -17,9 +17,14 @@
             <td><%= truncate(activity.description, length: 50) %></td>
             <td><%= activity.content_type.capitalize %></td>
             <td>
-              <%= link_to "View", activity_path(activity), class: "btn btn-info btn-sm" %>
+              <% if current_user.role == "student" %>
+                <%= link_to "View", resolve_quiz_activity_path(activity), class: "btn btn-info btn-sm" %>
+              <% else %>
+                <%= link_to "View", activity_path(activity), class: "btn btn-info btn-sm" %>
+              <% end %>
+              
               <% if current_user.role == "teacher" && activity.user == current_user %>
-                <%= link_to "Edit", edit_activity_path(activity), class: "btn btn-warning btn-sm" %>
+                <%# <%= link_to "Edit", edit_activity_path(activity), class: "btn btn-warning btn-sm" %>
                 <%= link_to "Delete", activity_path(activity), method: :delete, data: { confirm: "Are you sure?" }, class: "btn btn-danger btn-sm" %>
               <% end %>
             </td>
