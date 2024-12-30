@@ -1,43 +1,47 @@
-<div class="container mt-5">
-  <!-- Cabeçalho do Dashboard -->
-  <div class="text-center mb-4">
-    <h1>Welcome, Teacher!</h1>
-    <p>This is your dashboard.</p>
-    <%= link_to "Add New Activity", new_activity_path, class: "btn btn-primary btn-lg" %>
-  </div>
+<div class="container d-flex justify-content-center align-items-center" style="min-height: 100vh;">
+  <div class="card shadow-lg p-4 w-100" style="max-width: 1100px;">
+    <div class="card-body">
+      <!-- Cabeçalho do Dashboard -->
+      <div class="text-center mb-4">
+        <h1>Welcome, Teacher!</h1>
+        <p>This is your dashboard.</p>
+        <%= link_to "Add New Activity", new_activity_path, class: "btn btn-primary btn-lg" %>
+      </div>
 
-  <!-- Lista de Atividades -->
-  <div>
-    <h2>Your Activities</h2>
-    <% if current_user.activities.any? %>
-      <table class="table table-bordered mt-3">
-        <thead>
-          <tr>
-            <th>Title</th>
-            <th>Description</th>
-            <th>Level</th>
-            <th>Content Type</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          <% current_user.activities.each do |activity| %>
-            <tr>
-              <td><%= activity.title %></td>
-              <td><%= truncate(activity.description, length: 50) %></td>
-              <td><%= activity.level %></td>
-              <td><%= activity.content_type.capitalize %></td>
-              <td>
-                <%= link_to "Show", activity_path(activity), class: "btn btn-info btn-sm" %>
-                <%= link_to "Edit", edit_activity_path(activity), class: "btn btn-warning btn-sm" %>
-                <%= link_to "Delete", activity_path(activity), method: :delete, data: { confirm: "Are you sure?" }, class: "btn btn-danger btn-sm" %>
-              </td>
-            </tr>
-          <% end %>
-        </tbody>
-      </table>
-    <% else %>
-      <p class="text-muted">You have no activities yet. Start by adding one above!</p>
-    <% end %>
+      <!-- Lista de Atividades -->
+      <div>
+        <h2>Your Activities</h2>
+        <% if current_user.activities.any? %>
+          <table class="table table-hover mt-3">
+            <thead class="table-light">
+              <tr>
+                <th>Title</th>
+                <th>Description</th>
+                <th>Level</th>
+                <th>Content Type</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% current_user.activities.each do |activity| %>
+                <tr>
+                  <td><%= activity.title %></td>
+                  <td><%= truncate(activity.description, length: 50) %></td>
+                  <td><%= activity.level %></td>
+                  <td><%= activity.content_type.capitalize %></td>
+                  <td>
+                    <%= link_to "Show", activity_path(activity), class: "btn btn-info btn-sm" %>
+                    <%= link_to "Edit", edit_activity_path(activity), class: "btn btn-warning btn-sm" %>
+                    <%= link_to "Delete", activity_path(activity), method: :delete, data: { confirm: "Are you sure?" }, class: "btn btn-danger btn-sm" %>
+                  </td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        <% else %>
+          <p class="text-muted">You have no activities yet. Start by adding one above!</p>
+        <% end %>
+      </div>
+    </div>
   </div>
 </div>

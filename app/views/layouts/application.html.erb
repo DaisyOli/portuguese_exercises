@@ -12,16 +12,16 @@
 
   </head>
 
-  <body class="bg-light">
-    <div class="container my-5">
-      <div class="card shadow p-4">
+  <body>
        <turbo-frame id="flash">
-        <% flash.each do |key, value| %>
-          <div class="alert alert-<%= key %>"><%= value %></div>
+          <% flash.each do |key, value| %>
+            <div class="alert alert-<%= key %> text-center d-flex justify-content-center">
+              <%= value %>
+            </div>
           <% end %>
-          </turbo-frame>
-        <%= yield %>
-      </div>
-    </div>
+        </turbo-frame>
+  <%= yield %>
+      
+
   </body>
 </html>

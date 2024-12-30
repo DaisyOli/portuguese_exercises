@@ -1,33 +1,43 @@
-<div id="questions-list">
-  <% if @activity.questions.any? %>
-    <ol class="list-group">
-      <% @activity.questions.each_with_index do |question, index| %>
-        <li class="list-group-item">
-          <strong>Question <%= index + 1 %>:</strong> <%= question.content %>
-          <% if question.options.any? %>
-            <ul>
-              <% question.options.each do |option| %>
-                <li><%= option %></li>
-              <% end %>
-            </ul>
-          <% end %>
-        </li>
-      <% end %>
-    </ol>
-  <% else %>
-    <p class="text-muted">No questions have been added to this activity yet.</p>
-  <% end %>
-</div>
+<div class="container d-flex justify-content-center align-items-center" style="min-height: 100vh;">
+  <div class="card shadow-lg p-4 w-100" style="max-width: 900px;">
+    <div class="card-body">
+      <!-- Lista de Perguntas -->
+      <div id="questions-list" class="mb-4">
+        <% if @activity.questions.any? %>
+          <h3 class="mb-3 text-center">Questions</h3>
+          <ol class="list-group">
+            <% @activity.questions.each_with_index do |question, index| %>
+              <li class="list-group-item">
+                <strong>Question <%= index + 1 %>:</strong> <%= question.content %>
+                <% if question.options.any? %>
+                  <ul>
+                    <% question.options.each do |option| %>
+                      <li><%= option %></li>
+                    <% end %>
+                  </ul>
+                <% end %>
+              </li>
+            <% end %>
+          </ol>
+        <% else %>
+          <p class="text-muted text-center">No questions have been added to this activity yet.</p>
+        <% end %>
+      </div>
 
-<!-- Formulário para Adicionar Pergunta -->
-<div data-controller="question-form">
-  <div id="new-question-form" class="d-none mb-4" data-question-form-target="form">
-    <%= render partial: "questions/form", locals: { question: Question.new, activity: @activity } %>
+      <!-- Formulário para Adicionar Pergunta -->
+      <div data-controller="question-form">
+        <div id="new-question-form" class="d-none mb-4" data-question-form-target="form">
+          <%= render partial: "questions/form", locals: { question: Question.new, activity: @activity } %>
+        </div>
+        <div class="d-grid mb-4">
+          <button type="button" class="btn btn-primary" data-action="click->question-form#toggleForm">
+            Add a New Question
+          </button>
+        </div>
+        <div class="d-grid">
+          <%= link_to "Resolve Quiz", resolve_quiz_activity_path(@activity), class: "btn btn-success" %>
+        </div>
+      </div>
+    </div>
   </div>
-  <div class="d-grid mb-4">
-    <button type="button" class="btn btn-primary" data-action="click->question-form#toggleForm">
-      Add a New Question
-    </button>
-  </div>
-  <%= link_to "Resolve Quiz", resolve_quiz_activity_path(@activity), class: "btn btn-success" %>
 </div>

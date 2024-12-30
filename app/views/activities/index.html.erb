@@ -1,22 +1,26 @@
 <div class="container mt-5">
-  <h1>All Activities</h1>
+  <h1 class="text-center mb-4">All Activities</h1>
+  
   <% if @activities.any? %>
-    <table class="table table-bordered mt-3">
-      <thead>
-        <tr>
-          <th>Title</th>
-          <th>Description</th>
-          <th>Content Type</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        <% @activities.each do |activity| %>
-          <tr>
-            <td><%= activity.title %></td>
-            <td><%= truncate(activity.description, length: 50) %></td>
-            <td><%= activity.content_type.capitalize %></td>
-            <td>
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+      <% @activities.each do |activity| %>
+        <div class="col">
+          <div class="card h-100 shadow-sm">
+            <!-- Título -->
+            <div class="card-header bg-primary text-white">
+              <h5 class="card-title mb-0"><%= activity.title %></h5>
+            </div>
+
+            <!-- Corpo do Card -->
+            <div class="card-body">
+              <p class="card-text text-muted"><%= truncate(activity.description, length: 100) %></p>
+              <p class="card-text">
+                <strong>Content Type:</strong> <%= activity.content_type.capitalize %>
+              </p>
+            </div>
+
+            <!-- Botões de Ações -->
+            <div class="card-footer text-center">
               <% if current_user.role == "student" %>
                 <%= link_to "View", resolve_quiz_activity_path(activity), class: "btn btn-info btn-sm" %>
               <% else %>
@@ -24,15 +28,16 @@
               <% end %>
               
               <% if current_user.role == "teacher" && activity.user == current_user %>
-                <%# <%= link_to "Edit", edit_activity_path(activity), class: "btn btn-warning btn-sm" %>
-                <%= link_to "Delete", activity_path(activity), method: :delete, data: { confirm: "Are you sure?" }, class: "btn btn-danger btn-sm" %>
+                <%= link_to "Delete", activity_path(activity), method: :delete, data: { confirm: "Are you sure?" }, class: "btn btn-danger btn-sm mt-2" %>
               <% end %>
-            </td>
-          </tr>
-        <% end %>
-      </tbody>
-    </table>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
   <% else %>
-    <p class="text-muted">No activities available at the moment.</p>
+    <div class="alert alert-warning text-center mt-4">
+      <p class="mb-0">No activities available at the moment.</p>
+    </div>
   <% end %>
 </div>

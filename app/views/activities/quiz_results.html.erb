@@ -1,36 +1,38 @@
-<div class="container mt-5">
-  <h1>Quiz Results: <%= @activity.title %></h1>
-  <p><strong>Description:</strong> <%= @activity.description %></p>
-  <p><strong>Level:</strong> <%= @activity.level %></p>
+<div class="container d-flex justify-content-center align-items-center" style="min-height: 100vh;">
+  <div class="card shadow-lg p-4 w-100" style="max-width: 900px;">
+    <div class="card-body">
+      <h1 class="text-center mb-4">Quiz Results: <%= @activity.title %></h1>
+      <p><strong>Description:</strong> <%= @activity.description %></p>
+      <p><strong>Level:</strong> <%= @activity.level %></p>
 
-  <div class="mt-4">
-    <h2>Your Results:</h2>
-    <ul class="list-group">
-      <% @results.each_with_index do |result, index| %>
-        <li class="list-group-item d-flex justify-content-between align-items-center">
-          <div>
-            <strong>Question <%= index + 1 %>:</strong> <%= result["question"] %><br>
-            <em>Your Answer:</em> <%= result["given_answer"].presence || "No answer provided" %><br>
-            <em>Correct Answer:</em> <%= result["correct_answer"] %>
-          </div>
-          <% if result["correct"] %>
-            <span class="badge bg-success">Correct</span>
-          <% else %>
-            <span class="badge bg-danger">Incorrect</span>
+      <div class="mt-4">
+        <h2>Your Results:</h2>
+        <ul class="list-group">
+          <% @results.each_with_index do |result, index| %>
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+              <div>
+                <strong>Question <%= index + 1 %>:</strong> <%= result["question"] %><br>
+                <em>Your Answer:</em> <%= result["given_answer"].presence || "No answer provided" %><br>
+                <em>Correct Answer:</em> <%= result["correct_answer"] %>
+              </div>
+              <% if result["correct"] %>
+                <span class="badge bg-success">Correct</span>
+              <% else %>
+                <span class="badge bg-danger">Incorrect</span>
+              <% end %>
+            </li>
           <% end %>
-        </li>
-      <% end %>
-    </ul>
-  </div>
+        </ul>
+      </div>
 
-  <div class="mt-4">
-    <%= link_to "Back to Activity", activity_path(@activity), class: "btn btn-secondary" %>
-  </div>
-  <div class="mt-4">
-    <% if current_user.role == "teacher" %>
-      <%= link_to "Back to Dashboard", teacher_dashboard_path, class: "btn btn-secondary" %>
-    <% elsif current_user.role == "student" %>
-      <%= link_to "Back to Dashboard", student_dashboard_path, class: "btn btn-secondary" %>
-    <% end %>
+      <div class="mt-4">
+        <%= link_to "Back to Activity", activity_path(@activity), class: "btn btn-secondary w-100 mb-3" %>
+        <% if current_user.role == "teacher" %>
+          <%= link_to "Back to Dashboard", teacher_dashboard_path, class: "btn btn-secondary w-100" %>
+        <% elsif current_user.role == "student" %>
+          <%= link_to "Back to Dashboard", student_dashboard_path, class: "btn btn-secondary w-100" %>
+        <% end %>
+      </div>
+    </div>
   </div>
 </div>
