@@ -10,12 +10,11 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_12_22_095355) do
+ActiveRecord::Schema[7.1].define(version: 2025_01_02_165924) do
   create_table "activities", force: :cascade do |t|
     t.string "title"
     t.text "description"
     t.string "content_type"
-    t.string "content_url"
     t.integer "user_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -34,6 +33,16 @@ ActiveRecord::Schema[7.1].define(version: 2024_12_22_095355) do
     t.index ["activity_id"], name: "index_questions_on_activity_id"
   end
 
+  create_table "tasks", force: :cascade do |t|
+    t.string "description"
+    t.integer "activity_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.json "correct_answers", default: []
+    t.text "content"
+    t.index ["activity_id"], name: "index_tasks_on_activity_id"
+  end
+
   create_table "users", force: :cascade do |t|
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
@@ -49,4 +58,5 @@ ActiveRecord::Schema[7.1].define(version: 2024_12_22_095355) do
 
   add_foreign_key "activities", "users"
   add_foreign_key "questions", "activities"
+  add_foreign_key "tasks", "activities"
 end

@@ -1,17 +1,16 @@
 class ActivitiesController < ApplicationController
   before_action :authenticate_user!
-  before_action :set_activity, only: [:show, :edit, :update, :destroy, :resolve_quiz, :submit_quiz]
+  before_action :set_activity, only: [:show, :edit, :update, :destroy, :resolve_quiz, :submit_quiz, :quiz_results]
 
   def index
-    @activities = Activity.all
+    @activities = current_user.teacher? ? current_user.activities : Activity.all
   end
 
   def show
-    @activity = Activity.find(params[:id])
     @questions = @activity.questions
     if current_user.role == "student"
       redirect_to resolve_quiz_activity_path(@activity)
-    end 
+    end
   end
 
   def resolve_quiz
@@ -19,11 +18,9 @@ class ActivitiesController < ApplicationController
   end
 
   def submit_quiz
-    @activity = Activity.find(params[:id])
     answers = params[:answers] || {}
     Rails.logger.debug "Received answers: #{answers.inspect}"
-  
-    # Calcular os resultados do quiz
+
     @results = @activity.questions.map do |question|
       given_answer = answers[question.id.to_s]
       correct = given_answer&.strip == question.correct_answer.strip
@@ -34,32 +31,27 @@ class ActivitiesController < ApplicationController
         correct: correct
       }
     end
-  
+
     Rails.logger.debug "Results: #{@results.inspect}"
-  
-    # Armazenar resultados temporariamente na sessão
     session[:quiz_results] = @results
-  
-    # Redirecionar para a página de resultados
     redirect_to quiz_results_activity_path(@activity)
   end
-  
-  
+
   def quiz_results
-    @activity = Activity.find(params[:id])
-    @results = session.delete(:quiz_results) || [] # Certifique-se de que a sessão não está vazia
+    @results = session.delete(:quiz_results) || []
     Rails.logger.debug "Quiz Results: #{@results.inspect}"
   end
-  
-  
+
   def new
-    @activity = current_user.activities.new
+    @activity = Activity.new
   end
 
   def create
-    @activity = current_user.activities.new(activity_params)
+    @activity = Activity.new(activity_params)
+    @activity.teacher = current_user
+
     if @activity.save
-      redirect_to new_activity_question_path(@activity), notice: "Activity created! Now add questions."
+      redirect_to new_activity_question_path(@activity), notice: "Atividade criada! Agora adicione as questões."
     else
       render :new, status: :unprocessable_entity
     end
@@ -70,7 +62,7 @@ class ActivitiesController < ApplicationController
 
   def update
     if @activity.update(activity_params)
-      redirect_to activity_path(@activity), notice: "Activity was successfully updated"
+      redirect_to @activity, notice: 'Atividade atualizada com sucesso.'
     else
       render :edit, status: :unprocessable_entity
     end
@@ -78,9 +70,9 @@ class ActivitiesController < ApplicationController
 
   def destroy
     @activity.destroy
-    redirect_to activities_path, notice: "Activity was successfully deleted"
+    redirect_to activities_url, notice: 'Atividade excluída com sucesso.'
   end
-  
+
   private
 
   def set_activity
@@ -88,6 +80,6 @@ class ActivitiesController < ApplicationController
   end
 
   def activity_params
-    params.require(:activity).permit(:title, :description, :content_type, :content_url, :level)
+    params.require(:activity).permit(:title, :description, :level)
   end
 end

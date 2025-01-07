@@ -16,7 +16,7 @@
 
         <!-- Campo de Tipo de Conteúdo -->
         <div class="mb-3">
-          <%= f.input :content_type, as: :select, collection: [["Video", "video"], ["Texto", "texto"], ["Áudio", "audio"]],
+          <%= f.input :content_type, as: :select, collection: [["Quiz", "quiz"], ["Complete", "complete"]],
                       label: "Content Type", include_blank: "Select Type", input_html: { class: "form-select" } %>
         </div>
 
@@ -24,11 +24,6 @@
         <div class="mb-3">
           <%= f.input :level, as: :select, collection: Activity::LEVELS, 
                       label: "Level", include_blank: "Select Level", input_html: { class: "form-select" } %>
-        </div>
-
-        <!-- Campo de URL de Conteúdo -->
-        <div class="mb-3">
-          <%= f.input :content_url, label: "Content URL", input_html: { class: "form-control", placeholder: "Enter a valid URL" } %>
         </div>
 
         <!-- Botão de Criar -->

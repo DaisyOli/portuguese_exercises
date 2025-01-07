@@ -15,7 +15,7 @@ class QuestionsController < ApplicationController
   if @question.save
     respond_to do |format|
       format.html { redirect_to activity_path(@activity), notice: "Question added successfully!" }
-      # Eliminar o turbo_stream se deseja redirecionar completamente
+  
     end
   else
     respond_to do |format|
