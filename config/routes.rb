@@ -9,7 +9,7 @@ Rails.application.routes.draw do
   # Rotas do Devise para autenticação
   devise_for :users
 
-  # Rotas para atividades
+  # Rotas para atividades e questões
   resources :activities do
     member do
       get :resolve_quiz

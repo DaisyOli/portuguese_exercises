@@ -1,21 +1,39 @@
-<h1>Edit Activity</h1>
+<div class="container mt-5 d-flex justify-content-center">
+  <div class="card shadow-lg p-4" style="max-width: 800px; width: 100%;">
+    <div class="card-body">
+      <h1 class="text-center mb-4">Editar Atividade</h1>
 
-<div class="card shadow p-4">
-  <div class="card-body">
-    <%= form_with(model: @activity, local: true) do |f| %>
-      <!-- Campo de Título -->
-      <div class="mb-3">
-        <%= f.label :title, "Title" %>
-        <%= f.text_field :title, class: "form-control" %>
-      </div>
+      <%= simple_form_for(@activity) do |f| %>
+        <!-- Campo de Título -->
+        <div class="mb-3">
+          <%= f.input :title, 
+                      label: "Título", 
+                      input_html: { class: "form-control" },
+                      placeholder: "Digite o título da atividade" %>
+        </div>
 
-      <!-- Campo de Descrição -->
-      <div class="mb-3">
-        <%= f.label :description, "Description" %>
-        <%= f.text_area :description, class: "form-control" %>
-      </div>
+        <!-- Campo de Descrição -->
+        <div class="mb-3">
+          <%= f.input :description, 
+                      as: :text, 
+                      label: "Descrição", 
+                      input_html: { class: "form-control", rows: 4 },
+                      placeholder: "Descreva o objetivo desta atividade" %>
+        </div>
 
-      <!-- Campo de Tipo de Conteúdo -->
-      <div class="mb-3">
-        <%= f.label :content_type, "Content Type" %>
-        <%= f.select :content_type, [["Video", "video"], ["Texto", "
+        <!-- Campo de Nível -->
+        <div class="mb-3">
+          <%= f.input :level,
+                      label: "Nível",
+                      collection: Activity.levels.keys,
+                      input_html: { class: "form-select" } %>
+        </div>
+
+        <div class="d-grid gap-2">
+          <%= f.button :submit, "Atualizar Atividade", class: "btn btn-primary" %>
+          <%= link_to "Voltar", activity_path(@activity), class: "btn btn-secondary" %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

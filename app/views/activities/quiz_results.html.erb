@@ -1,37 +1,41 @@
 <div class="container d-flex justify-content-center align-items-center" style="min-height: 100vh;">
   <div class="card shadow-lg p-4 w-100" style="max-width: 900px;">
     <div class="card-body">
-      <h1 class="text-center mb-4">Quiz Results: <%= @activity.title %></h1>
-      <p><strong>Description:</strong> <%= @activity.description %></p>
-      <p><strong>Level:</strong> <%= @activity.level %></p>
-
-      <div class="mt-4">
-        <h2>Your Results:</h2>
-        <ul class="list-group">
-          <% @results.each_with_index do |result, index| %>
-            <li class="list-group-item d-flex justify-content-between align-items-center">
-              <div>
-                <strong>Question <%= index + 1 %>:</strong> <%= result["question"] %><br>
-                <em>Your Answer:</em> <%= result["given_answer"].presence || "No answer provided" %><br>
-                <em>Correct Answer:</em> <%= result["correct_answer"] %>
-              </div>
-              <% if result["correct"] %>
-                <span class="badge bg-success">Correct</span>
-              <% else %>
-                <span class="badge bg-danger">Incorrect</span>
-              <% end %>
-            </li>
-          <% end %>
-        </ul>
+      <h1 class="text-center mb-4">Resultados do Quiz</h1>
+      
+      <div class="alert alert-info mb-4">
+        <h4 class="alert-heading">Pontuação Final</h4>
+        <p class="mb-0">Você acertou <%= @quiz_results["total_correct"] %> de <%= @quiz_results["total_questions"] %> questões (<%= @quiz_results["score"] %>%)</p>
       </div>
 
-      <div class="mt-4">
-        <%= link_to "Back to Activity", activity_path(@activity), class: "btn btn-secondary w-100 mb-3" %>
-        <% if current_user.role == "teacher" %>
-          <%= link_to "Back to Dashboard", teacher_dashboard_path, class: "btn btn-secondary w-100" %>
-        <% elsif current_user.role == "student" %>
-          <%= link_to "Back to Dashboard", student_dashboard_path, class: "btn btn-secondary w-100" %>
-        <% end %>
+      <% @quiz_results["results"].each do |question_id, result| %>
+        <div class="card mb-4">
+          <div class="card-header <%= result["is_correct"] ? 'bg-success text-white' : 'bg-danger text-white' %>">
+            <h5 class="mb-0">Questão <%= question_id %></h5>
+          </div>
+          <div class="card-body">
+            <p class="card-text mb-3"><strong>Pergunta:</strong> <%= result["question_text"] %></p>
+            
+            <div class="mb-2">
+              <strong>Sua resposta:</strong>
+              <span class="<%= result["is_correct"] ? 'text-success' : 'text-danger' %>">
+                <%= result["given_answer"] %>
+              </span>
+            </div>
+            
+            <% unless result["is_correct"] %>
+              <div class="mt-2">
+                <strong>Resposta correta:</strong>
+                <span class="text-success"><%= result["correct_answer"] %></span>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+
+      <div class="d-grid gap-2">
+        <%= link_to "Tentar Novamente", resolve_quiz_activity_path(@activity), class: "btn btn-primary mb-2" %>
+        <%= link_to "Voltar para todas as atividades", activities_path, class: "btn btn-secondary" %>
       </div>
     </div>
   </div>

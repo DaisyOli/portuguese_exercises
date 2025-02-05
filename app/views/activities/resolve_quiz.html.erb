@@ -1,36 +1,40 @@
 <div class="container d-flex justify-content-center align-items-center" style="min-height: 100vh;">
   <div class="card shadow-lg p-4 w-100" style="max-width: 900px;">
     <div class="card-body">
-      <h1 class="text-center mb-4">Resolve Quiz: <%= @activity.title %></h1>
-      <p><strong>Description:</strong> <%= @activity.description %></p>
-      <p><strong>Level:</strong> <%= @activity.level %></p>
+      <h1 class="text-center mb-4">Resolver Quiz: <%= @activity.title %></h1>
+      <div class="mb-4">
+        <p><strong>Descrição:</strong> <%= @activity.description %></p>
+        <p><strong>Nível:</strong> <span class="badge bg-info"><%= @activity.level %></span></p>
+      </div>
       
-      <%= simple_form_for :answers, url: submit_quiz_activity_path(@activity), method: :post do |f| %>
-        <% @questions.each do |question| %>
-          <div class="mb-4">
-            <h3 class="mb-3"><%= question.content %></h3>
+      <%= form_with(url: submit_quiz_activity_path(@activity), method: :post, data: { turbo: false }) do |f| %>
+        <% @questions.each_with_index do |question, index| %>
+          <div class="card mb-4">
+            <div class="card-body">
+              <h5 class="card-title text-muted mb-3">Questão <%= index + 1 %></h5>
+              <p class="card-text mb-4 fs-4 fw-semibold"><%= question.content %></p>
 
-            <% question.options.each do |option| %>
-              <div class="form-check">
-                <%= radio_button_tag "answers[#{question.id}]", option, id: "option_#{question.id}_#{option}", class: "form-check-input" %>
-                <%= label_tag "option_#{question.id}_#{option}", option, class: "form-check-label" %>
-              </div>
-            <% end %>
+              <% if question.options.any? %>
+                <div class="options-list">
+                  <div class="ps-3">
+                    <% question.options.each do |option| %>
+                      <div class="form-check mb-3">
+                        <%= radio_button_tag "answers[#{question.id}]", option, false, class: 'form-check-input me-3', style: 'transform: scale(1.2);' %>
+                        <%= label_tag "answers_#{question.id}_#{option.parameterize}", option, class: 'form-check-label fs-6 fw-normal' %>
+                      </div>
+                    <% end %>
+                  </div>
+                </div>
+              <% end %>
+            </div>
           </div>
         <% end %>
 
-        <div class="d-grid mt-4">
-          <%= f.submit "Submit Quiz", class: "btn btn-primary" %>
+        <div class="d-grid gap-2">
+          <%= f.submit "Enviar Respostas", class: "btn btn-primary btn-lg mb-3", data: { disable_with: "Enviando..." } %>
+          <%= link_to "Voltar para todas as atividades", activities_path, class: "btn btn-secondary" %>
         </div>
       <% end %>
-      
-      <div class="mt-4">
-        <% if current_user.role == "teacher" %>
-          <%= link_to "Back to Dashboard", teacher_dashboard_path, class: "btn btn-secondary w-100" %>
-        <% elsif current_user.role == "student" %>
-          <%= link_to "Back to Dashboard", student_dashboard_path, class: "btn btn-secondary w-100" %>
-        <% end %>
-      </div>
     </div>
   </div>
 </div>

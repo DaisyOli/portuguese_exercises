@@ -3,13 +3,17 @@ class ActivitiesController < ApplicationController
   before_action :set_activity, only: [:show, :edit, :update, :destroy, :resolve_quiz, :submit_quiz, :quiz_results]
 
   def index
-    @activities = current_user.teacher? ? current_user.activities : Activity.all
+    @activities = Activity.all
   end
 
   def show
     @questions = @activity.questions
     if current_user.role == "student"
-      redirect_to resolve_quiz_activity_path(@activity)
+      if session[:quiz_results].present? && session[:quiz_results][:activity_id] == @activity.id
+        redirect_to quiz_results_activity_path(@activity)
+      else
+        redirect_to resolve_quiz_activity_path(@activity)
+      end
     end
   end
 
@@ -18,28 +22,66 @@ class ActivitiesController < ApplicationController
   end
 
   def submit_quiz
+    @activity = Activity.find(params[:id])
+    @questions = @activity.questions
+  
+    # Processa os parâmetros para extrair as respostas
     answers = params[:answers] || {}
-    Rails.logger.debug "Received answers: #{answers.inspect}"
-
-    @results = @activity.questions.map do |question|
+    
+    Rails.logger.info "Respostas processadas: #{answers.inspect}"
+    
+    results = {}
+    total_correct = 0
+    
+    @questions.each do |question|
       given_answer = answers[question.id.to_s]
-      correct = given_answer&.strip == question.correct_answer.strip
-      {
-        question: question.content,
-        given_answer: given_answer,
-        correct_answer: question.correct_answer,
-        correct: correct
+      correct_answer = question.correct_answer
+      
+      is_correct = given_answer.present? && given_answer.to_s.strip == correct_answer.to_s.strip
+      total_correct += 1 if is_correct
+      
+      results[question.id] = {
+        question_text: question.content,
+        given_answer: given_answer.presence || "Não respondida",
+        correct_answer: correct_answer,
+        is_correct: is_correct
       }
     end
-
-    Rails.logger.debug "Results: #{@results.inspect}"
-    session[:quiz_results] = @results
-    redirect_to quiz_results_activity_path(@activity)
+    
+    score = ((total_correct.to_f / @questions.count) * 100).round(2)
+    
+    @quiz_results = {
+      activity_id: @activity.id,
+      results: results,
+      score: score,
+      total_correct: total_correct,
+      total_questions: @questions.count
+    }
+    
+    # Salva os resultados na sessão
+    session[:quiz_results] = @quiz_results
+    
+    Rails.logger.info "Resultados salvos na sessão: #{session[:quiz_results].inspect}"
+    
+    respond_to do |format|
+      format.html { redirect_to quiz_results_activity_path(@activity) }
+      format.turbo_stream { redirect_to quiz_results_activity_path(@activity) }
+    end
+  rescue => e
+    Rails.logger.error "Erro ao processar quiz: #{e.message}"
+    redirect_to resolve_quiz_activity_path(@activity), alert: 'Erro ao processar o quiz.'
   end
 
   def quiz_results
-    @results = session.delete(:quiz_results) || []
-    Rails.logger.debug "Quiz Results: #{@results.inspect}"
+    @activity = Activity.find(params[:id])
+    @quiz_results = session[:quiz_results]
+    
+    if @quiz_results.nil?
+      redirect_to resolve_quiz_activity_path(@activity), alert: 'Por favor, responda o quiz primeiro.'
+      return
+    end
+    
+    render 'quiz_results'
   end
 
   def new
@@ -58,9 +100,17 @@ class ActivitiesController < ApplicationController
   end
 
   def edit
+    unless @activity.teacher == current_user
+      redirect_to activities_path, alert: 'Você não tem permissão para editar esta atividade.'
+    end
   end
 
   def update
+    if @activity.teacher != current_user
+      redirect_to activities_path, alert: 'Você não tem permissão para editar esta atividade.'
+      return
+    end
+
     if @activity.update(activity_params)
       redirect_to @activity, notice: 'Atividade atualizada com sucesso.'
     else

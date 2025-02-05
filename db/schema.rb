@@ -10,16 +10,16 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_01_02_165924) do
+ActiveRecord::Schema[7.1].define(version: 2025_02_05_202354) do
   create_table "activities", force: :cascade do |t|
     t.string "title"
     t.text "description"
     t.string "content_type"
-    t.integer "user_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "level"
-    t.index ["user_id"], name: "index_activities_on_user_id"
+    t.integer "teacher_id"
+    t.index ["teacher_id"], name: "index_activities_on_teacher_id"
   end
 
   create_table "questions", force: :cascade do |t|
@@ -56,7 +56,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_01_02_165924) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
-  add_foreign_key "activities", "users"
+  add_foreign_key "activities", "users", column: "teacher_id"
   add_foreign_key "questions", "activities"
   add_foreign_key "tasks", "activities"
 end

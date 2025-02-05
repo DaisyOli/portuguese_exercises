@@ -1,40 +1,45 @@
 <div class="container mt-5 d-flex justify-content-center">
   <div class="card shadow-lg p-4" style="max-width: 800px; width: 100%;">
     <div class="card-body">
-      <h1 class="text-center mb-4">New Activity</h1>
+      <h1 class="text-center mb-4">Nova Atividade</h1>
 
       <%= simple_form_for(@activity, html: { class: 'needs-validation' }) do |f| %>
         <!-- Campo de Título -->
         <div class="mb-3">
-          <%= f.input :title, label: "Title", input_html: { class: "form-control" } %>
+          <%= f.input :title, 
+                      label: "Título", 
+                      input_html: { class: "form-control" },
+                      placeholder: "Digite o título da atividade" %>
         </div>
 
         <!-- Campo de Descrição -->
         <div class="mb-3">
-          <%= f.input :description, as: :text, label: "Description", input_html: { class: "form-control" } %>
-        </div>
-
-        <!-- Campo de Tipo de Conteúdo -->
-        <div class="mb-3">
-          <%= f.input :content_type, as: :select, collection: [["Quiz", "quiz"], ["Complete", "complete"]],
-                      label: "Content Type", include_blank: "Select Type", input_html: { class: "form-select" } %>
+          <%= f.input :description, 
+                      as: :text, 
+                      label: "Descrição", 
+                      input_html: { class: "form-control", rows: 4 },
+                      placeholder: "Descreva o objetivo desta atividade" %>
         </div>
 
         <!-- Campo de Nível -->
         <div class="mb-3">
-          <%= f.input :level, as: :select, collection: Activity::LEVELS, 
-                      label: "Level", include_blank: "Select Level", input_html: { class: "form-select" } %>
+          <%= f.input :level, 
+                      as: :select, 
+                      collection: Activity.levels.keys.map { |k| [k.titleize, k] },
+                      label: "Nível", 
+                      include_blank: "Selecione o nível",
+                      input_html: { class: "form-select" } %>
         </div>
 
         <!-- Botão de Criar -->
         <div class="d-grid">
-          <%= f.button :submit, "Create Activity", class: "btn btn-primary" %>
+          <%= f.button :submit, "Criar Atividade", class: "btn btn-primary" %>
         </div>
       <% end %>
 
       <!-- Link para Voltar -->
       <div class="text-center mt-3">
-        <%= link_to "Back to Activities", activities_path, class: "btn btn-secondary" %>
+        <%= link_to "Voltar", activities_path, class: "btn btn-secondary" %>
       </div>
     </div>
   </div>
