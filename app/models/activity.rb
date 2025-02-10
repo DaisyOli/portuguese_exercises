@@ -7,8 +7,10 @@ class Activity < ApplicationRecord
   validates :level, presence: true
   
   enum level: {
-    iniciante: 0,
-    intermediario: 1,
-    avancado: 2
+    'A1': 0,
+    'A2': 1,
+    'B1': 2,
+    'B2': 3,
+    'C1': 4
   }
 end

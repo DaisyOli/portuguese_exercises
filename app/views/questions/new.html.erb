@@ -1,19 +1,19 @@
 <div class="container mt-5 d-flex justify-content-center">
   <div class="card shadow-lg p-4" style="max-width: 800px; width: 100%;">
     <div class="card-body">
-      <h1 class="text-center mb-4">Create a Quiz for Activity</h1>
-      <p><strong>Title:</strong> <%= @activity.title %></p>
-      <p><strong>Description:</strong> <%= @activity.description %></p>
-      <p><strong>Level:</strong> <%= @activity.level %></p>
+      <h1 class="text-center mb-4">Crie questões para a atividade</h1>
+      <p><strong>Titulo:</strong> <%= @activity.title %></p>
+      <p><strong>Descrição:</strong> <%= @activity.description %></p>
+      <p><strong>Nivel:</strong> <%= @activity.level %></p>
 
-      <h3 class="text-center mt-4">Add a New Question</h3>
+      <h3 class="text-center mt-4">Adicione uma nova questão</h3>
       <div id="question_form" class="mt-3">
         <%= render partial: "questions/form", locals: { question: Question.new, activity: @activity } %>
       </div>
 
       <!-- Botão para Voltar -->
       <div class="text-center mt-4">
-        <%= link_to "Back to Activity", activity_path(@activity), class: "btn btn-secondary" %>
+        <%= link_to "Volte para a atividade", activity_path(@activity), class: "btn btn-secondary" %>
       </div>
     </div>
   </div>

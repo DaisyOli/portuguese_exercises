@@ -25,7 +25,11 @@
         <div class="mb-3">
           <%= f.input :level,
                       label: "Nível",
-                      collection: Activity.levels.keys,
+                      collection: [['A1', 'A1'], 
+                                 ['A2', 'A2'], 
+                                 ['B1', 'B1'],
+                                 ['B2', 'B2'],
+                                 ['C1', 'C1']],
                       input_html: { class: "form-select" } %>
         </div>
 

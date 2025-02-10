@@ -9,7 +9,8 @@
           <%= f.input :title, 
                       label: "Título", 
                       input_html: { class: "form-control" },
-                      placeholder: "Digite o título da atividade" %>
+                      placeholder: "Digite o título da atividade",
+                      error: 'O título é obrigatório' %>
         </div>
 
         <!-- Campo de Descrição -->
@@ -18,17 +19,23 @@
                       as: :text, 
                       label: "Descrição", 
                       input_html: { class: "form-control", rows: 4 },
-                      placeholder: "Descreva o objetivo desta atividade" %>
+                      placeholder: "Descreva o objetivo desta atividade",
+                      error: 'A descrição é obrigatória' %>
         </div>
 
         <!-- Campo de Nível -->
         <div class="mb-3">
           <%= f.input :level, 
                       as: :select, 
-                      collection: Activity.levels.keys.map { |k| [k.titleize, k] },
+                      collection: [['A1', 'A1'], 
+                                 ['A2', 'A2'], 
+                                 ['B1', 'B1'],
+                                 ['B2', 'B2'],
+                                 ['C1', 'C1']],
                       label: "Nível", 
                       include_blank: "Selecione o nível",
-                      input_html: { class: "form-select" } %>
+                      input_html: { class: "form-select" },
+                      error: 'O nível é obrigatório' %>
         </div>
 
         <!-- Botão de Criar -->
