@@ -57,6 +57,11 @@
           </div>
         <% end %>
       </div>
+
+      <!-- Botão de Logout -->
+      <div class="text-center mt-4">
+        <%= button_to "Sair", destroy_user_session_path, method: :delete, class: "btn btn-danger", data: { turbo: false } %>
+      </div>
     </div>
   </div>
 </div>

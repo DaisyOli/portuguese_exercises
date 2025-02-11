@@ -3,23 +3,23 @@
     <div class="card-body">
       <!-- Cabeçalho do Dashboard -->
       <div class="text-center mb-4">
-        <h1>Welcome, Teacher!</h1>
-        <p>This is your dashboard.</p>
-        <%= link_to "Add New Activity", new_activity_path, class: "btn btn-primary btn-lg" %>
+        <h1>Bem-vindo, professor!</h1>
+        <p>Este é o seu dashboard.</p>
+        <%= link_to "Adicionar Nova Atividade", new_activity_path, class: "btn btn-primary btn-lg" %>
       </div>
 
       <!-- Lista de Atividades -->
       <div>
-        <h2>Your Activities</h2>
+        <h2>Suas Atividades</h2>
         <% if current_user.activities.any? %>
           <table class="table table-hover mt-3">
             <thead class="table-light">
               <tr>
-                <th>Title</th>
-                <th>Description</th>
-                <th>Level</th>
-                <th>Content Type</th>
-                <th>Actions</th>
+                <th>Título</th>
+                <th>Descrição</th>
+                <th>Nível</th>
+                <th>Tipo de Conteúdo</th>
+                <th>Ações</th>
               </tr>
             </thead>
             <tbody>
@@ -30,16 +30,16 @@
                   <td><%= activity.level %></td>
                   <td><%= activity.content_type.capitalize %></td>
                   <td>
-                    <%= link_to "Show", activity_path(activity), class: "btn btn-info btn-sm" %>
-                    <%= link_to "Edit", edit_activity_path(activity), class: "btn btn-warning btn-sm" %>
-                    <%= link_to "Delete", activity_path(activity), method: :delete, data: { confirm: "Are you sure?" }, class: "btn btn-danger btn-sm" %>
+                    <%= link_to "Ver", activity_path(activity), class: "btn btn-info btn-sm" %>
+                    <%= link_to "Editar", edit_activity_path(activity), class: "btn btn-warning btn-sm" %>
+                    <%= link_to "Excluir", activity_path(activity), method: :delete, data: { confirm: "Tem certeza que deseja excluir esta atividade?" }, class: "btn btn-danger btn-sm" %>
                   </td>
                 </tr>
               <% end %>
             </tbody>
           </table>
         <% else %>
-          <p class="text-muted">You have no activities yet. Start by adding one above!</p>
+          <p class="text-muted">Você ainda não tem atividades. Comece adicionando uma acima!</p>
         <% end %>
       </div>
     

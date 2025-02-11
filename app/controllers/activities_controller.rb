@@ -4,6 +4,7 @@ class ActivitiesController < ApplicationController
 
   def index
     @activities = Activity.all
+    Rails.logger.info "Sessão quiz_results: #{session[:quiz_results].inspect}"
   end
 
   def show
@@ -24,7 +25,7 @@ class ActivitiesController < ApplicationController
   def submit_quiz
     @activity = Activity.find(params[:id])
     @questions = @activity.questions
-  
+    
     # Processa os parâmetros para extrair as respostas
     answers = params[:answers] || {}
     
@@ -50,6 +51,11 @@ class ActivitiesController < ApplicationController
     
     score = ((total_correct.to_f / @questions.count) * 100).round(2)
     
+    # Salva os resultados na sessão como um array
+    completed_quizzes = session[:completed_quizzes] || []
+    completed_quizzes << @activity.id
+    session[:completed_quizzes] = completed_quizzes.uniq
+    
     @quiz_results = {
       activity_id: @activity.id,
       results: results,
@@ -58,10 +64,10 @@ class ActivitiesController < ApplicationController
       total_questions: @questions.count
     }
     
-    # Salva os resultados na sessão
     session[:quiz_results] = @quiz_results
     
     Rails.logger.info "Resultados salvos na sessão: #{session[:quiz_results].inspect}"
+    Rails.logger.info "Quizzes completados: #{session[:completed_quizzes].inspect}"
     
     respond_to do |format|
       format.html { redirect_to quiz_results_activity_path(@activity) }

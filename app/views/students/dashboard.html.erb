@@ -1,7 +1,46 @@
-<div class="container vh-100 d-flex justify-content-center align-items-center">
-  <div class="text-center card shadow p-4">
-    <h1>Welcome, Student!</h1>
-    <p>This is your dashboard.</p>
-    <%= link_to "Explore All Activities", activities_path, class: "btn btn-primary btn-lg mt-3" %>
+<div class="container d-flex justify-content-center align-items-center" style="min-height: 100vh;">
+  <div class="card shadow-lg p-4 w-100" style="max-width: 1100px;">
+    <div class="card-body">
+      <!-- Cabeçalho do Dashboard -->
+      <div class="text-center mb-4">
+        <h1>Bem-vindo, Aluno!</h1>
+        <p>Este é seu painel de controle.</p>
+      </div>
+
+      <!-- Lista de Atividades -->
+      <div>
+        <h2>Atividades Disponíveis</h2>
+        <% if Activity.any? %>
+          <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4 mt-3">
+            <% Activity.all.each do |activity| %>
+              <div class="col">
+                <div class="card h-100 shadow-sm">
+                  <div class="card-body">
+                    <h5 class="card-title"><%= activity.title %></h5>
+                    <p class="card-text"><%= truncate(activity.description, length: 100) %></p>
+                    <div class="d-flex justify-content-between align-items-center">
+                      <span class="badge <%= activity.level_color_class %>"><%= activity.level %></span>
+                      <small class="text-muted"><%= activity.questions.count %> questões</small>
+                    </div>
+                  </div>
+                  <div class="card-footer bg-transparent">
+                    <%= link_to "Resolver Quiz", resolve_quiz_activity_path(activity), class: "btn btn-primary w-100" %>
+                  </div>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        <% else %>
+          <div class="alert alert-info">
+            <p class="mb-0">Não há atividades disponíveis no momento.</p>
+          </div>
+        <% end %>
+      </div>
+
+      <!-- Botão de Logout -->
+      <div class="text-center mt-4">
+        <%= button_to "Sair", destroy_user_session_path, method: :delete, class: "btn btn-danger", data: { turbo: false } %>
+      </div>
+    </div>
   </div>
 </div>

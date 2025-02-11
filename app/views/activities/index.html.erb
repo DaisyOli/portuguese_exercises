@@ -11,12 +11,17 @@
       <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
         <% @activities.each do |activity| %>
           <div class="col">
-            <div class="card h-100 shadow-sm">
+            <div class="card h-100 shadow-sm position-relative">
+              <% if !current_user.teacher? && session[:completed_quizzes]&.include?(activity.id) %>
+                <div class="position-absolute top-0 end-0 m-2">
+                  <span style="font-size: 1.5rem; color: green;">✓</span>
+                </div>
+              <% end %>
               <div class="card-body">
                 <h5 class="card-title"><%= activity.title %></h5>
                 <p class="card-text"><%= truncate(activity.description, length: 100) %></p>
                 <div class="d-flex justify-content-between align-items-center">
-                  <span class="badge bg-info"><%= activity.level %></span>
+                  <span class="badge <%= activity.level_color_class %>"><%= activity.level %></span>
                   <small class="text-muted"><%= activity.questions.count %> questões</small>
                 </div>
               </div>
