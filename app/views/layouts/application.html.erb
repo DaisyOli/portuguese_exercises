@@ -1,7 +1,7 @@
 <!DOCTYPE html>
-<html>
+<html lang="<%= I18n.locale %>">
   <head>
-    <title>Exercise App</title>
+    <title><%= t('app_name') %></title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
@@ -11,13 +11,66 @@
   </head>
 
   <body>
-    <turbo-frame id="flash">
-      <% flash.each do |key, value| %>
-        <div class="alert alert-<%= key %> text-center d-flex justify-content-center">
-          <%= value %>
+    <% if current_user %>
+      <!-- Barra de navegação fixa no topo -->
+      <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
+        <div class="container-fluid">
+          <a class="navbar-brand" href="#"><%= t('app_name') %></a>
+          
+          <!-- Botão de toggle para mobile -->
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          
+          <!-- Conteúdo da navbar -->
+          <div class="collapse navbar-collapse" id="navbarContent">
+            <ul class="navbar-nav ms-auto">
+              <li class="nav-item dropdown">
+                <button class="btn btn-light dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                  <%= current_user.language_name %>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end">
+                  <% User::LANGUAGES.each do |lang| %>
+                    <li>
+                      <%= form_with(url: update_language_path, method: :patch, data: { turbo: false }) do |f| %>
+                        <%= f.hidden_field :language, value: lang %>
+                        <button type="submit" class="dropdown-item <%= 'active' if current_user.language == lang %>">
+                          <%= current_user.language_name_for(lang) %>
+                        </button>
+                      <% end %>
+                    </li>
+                  <% end %>
+                </ul>
+              </li>
+            </ul>
+          </div>
         </div>
-      <% end %>
-    </turbo-frame>
-    <%= yield %>
+      </nav>
+
+      <!-- Espaçamento para compensar a navbar fixa -->
+      <div style="margin-top: 70px;">
+        <div class="container">
+          <% flash.each do |name, msg| %>
+            <div class="alert alert-<%= name == 'notice' ? 'success' : 'danger' %> alert-dismissible fade show">
+              <%= msg %>
+              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+          <% end %>
+        </div>
+        
+        <%= yield %>
+      </div>
+    <% else %>
+      <div class="container mt-3">
+        <% flash.each do |name, msg| %>
+          <div class="alert alert-<%= name == 'notice' ? 'success' : 'danger' %> alert-dismissible fade show">
+            <%= msg %>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+        <% end %>
+      </div>
+      
+      <%= yield %>
+    <% end %>
   </body>
 </html>

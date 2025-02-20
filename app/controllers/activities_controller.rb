@@ -43,7 +43,7 @@ class ActivitiesController < ApplicationController
       
       results[question.id] = {
         question_text: question.content,
-        given_answer: given_answer.presence || "Não respondida",
+        given_answer: given_answer.presence || t('quiz.not_answered'),
         correct_answer: correct_answer,
         is_correct: is_correct
       }
@@ -70,12 +70,12 @@ class ActivitiesController < ApplicationController
     Rails.logger.info "Quizzes completados: #{session[:completed_quizzes].inspect}"
     
     respond_to do |format|
-      format.html { redirect_to quiz_results_activity_path(@activity) }
-      format.turbo_stream { redirect_to quiz_results_activity_path(@activity) }
+      format.html { redirect_to quiz_results_activity_path(@activity), notice: t('messages.quiz_submitted') }
+      format.turbo_stream { redirect_to quiz_results_activity_path(@activity), notice: t('messages.quiz_submitted') }
     end
   rescue => e
     Rails.logger.error "Erro ao processar quiz: #{e.message}"
-    redirect_to resolve_quiz_activity_path(@activity), alert: 'Erro ao processar o quiz.'
+    redirect_to resolve_quiz_activity_path(@activity), alert: t('messages.quiz_error')
   end
 
   def quiz_results
@@ -83,7 +83,7 @@ class ActivitiesController < ApplicationController
     @quiz_results = session[:quiz_results]
     
     if @quiz_results.nil?
-      redirect_to resolve_quiz_activity_path(@activity), alert: 'Por favor, responda o quiz primeiro.'
+      redirect_to resolve_quiz_activity_path(@activity), alert: t('messages.answer_quiz_first')
       return
     end
     
@@ -99,7 +99,7 @@ class ActivitiesController < ApplicationController
     @activity.teacher = current_user
 
     if @activity.save
-      redirect_to new_activity_question_path(@activity), notice: "Atividade criada! Agora adicione as questões."
+      redirect_to new_activity_question_path(@activity), notice: t('messages.activity_created')
     else
       render :new, status: :unprocessable_entity
     end
@@ -107,18 +107,18 @@ class ActivitiesController < ApplicationController
 
   def edit
     unless @activity.teacher == current_user
-      redirect_to activities_path, alert: 'Você não tem permissão para editar esta atividade.'
+      redirect_to activities_path, alert: t('messages.permission_denied')
     end
   end
 
   def update
     if @activity.teacher != current_user
-      redirect_to activities_path, alert: 'Você não tem permissão para editar esta atividade.'
+      redirect_to activities_path, alert: t('messages.permission_denied')
       return
     end
 
     if @activity.update(activity_params)
-      redirect_to @activity, notice: 'Atividade atualizada com sucesso.'
+      redirect_to @activity, notice: t('messages.activity_updated')
     else
       render :edit, status: :unprocessable_entity
     end
@@ -126,7 +126,7 @@ class ActivitiesController < ApplicationController
 
   def destroy
     @activity.destroy
-    redirect_to activities_url, notice: 'Atividade excluída com sucesso.'
+    redirect_to activities_url, notice: t('messages.activity_deleted')
   end
 
   private

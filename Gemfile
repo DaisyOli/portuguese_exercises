@@ -8,6 +8,8 @@ gem 'devise'
 gem 'simple_form'
 gem 'bootstrap'
 gem 'sassc-rails', '~> 2.1'
+gem 'rails-i18n', '~> 7.0.0'
+gem 'http_accept_language'
 
 gem 'jquery-rails'
 

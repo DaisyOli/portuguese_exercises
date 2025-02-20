@@ -130,6 +130,7 @@ GEM
     ffi (1.17.0-x86_64-linux-musl)
     globalid (1.2.1)
       activesupport (>= 6.1)
+    http_accept_language (2.1.1)
     i18n (1.14.6)
       concurrent-ruby (~> 1.0)
     importmap-rails (2.0.3)
@@ -223,6 +224,9 @@ GEM
     rails-html-sanitizer (1.6.2)
       loofah (~> 2.21)
       nokogiri (>= 1.15.7, != 1.16.7, != 1.16.6, != 1.16.5, != 1.16.4, != 1.16.3, != 1.16.2, != 1.16.1, != 1.16.0.rc1, != 1.16.0)
+    rails-i18n (7.0.10)
+      i18n (>= 0.7, < 2)
+      railties (>= 6.0.0, < 8)
     railties (7.1.5.1)
       actionpack (= 7.1.5.1)
       activesupport (= 7.1.5.1)
@@ -315,6 +319,7 @@ DEPENDENCIES
   capybara
   debug
   devise
+  http_accept_language
   importmap-rails
   jbuilder
   jquery-rails
@@ -322,6 +327,7 @@ DEPENDENCIES
   pg
   puma (>= 5.0)
   rails (~> 7.1.5)
+  rails-i18n (~> 7.0.0)
   sassc-rails (~> 2.1)
   selenium-webdriver
   simple_form

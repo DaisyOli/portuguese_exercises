@@ -3,13 +3,13 @@
     <div class="card-body">
       <!-- Cabeçalho do Dashboard -->
       <div class="text-center mb-4">
-        <h1>Bem-vindo, Aluno!</h1>
-        <p>Este é seu painel de controle.</p>
+        <h1><%= t('student_dashboard.welcome') %></h1>
+        <p><%= t('student_dashboard.control_panel') %></p>
       </div>
 
       <!-- Lista de Atividades -->
       <div>
-        <h2>Atividades Disponíveis</h2>
+        <h2><%= t('student_dashboard.available_activities') %></h2>
         <% if Activity.any? %>
           <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4 mt-3">
             <% Activity.all.each do |activity| %>
@@ -20,11 +20,11 @@
                     <p class="card-text"><%= truncate(activity.description, length: 100) %></p>
                     <div class="d-flex justify-content-between align-items-center">
                       <span class="badge <%= activity.level_color_class %>"><%= activity.level %></span>
-                      <small class="text-muted"><%= activity.questions.count %> questões</small>
+                      <small class="text-muted"><%= activity.questions.count %> <%= t('activities.question_count') %></small>
                     </div>
                   </div>
                   <div class="card-footer bg-transparent">
-                    <%= link_to "Resolver Quiz", resolve_quiz_activity_path(activity), class: "btn btn-primary w-100" %>
+                    <%= link_to t('activities.solve_quiz'), resolve_quiz_activity_path(activity), class: "btn btn-primary w-100" %>
                   </div>
                 </div>
               </div>
@@ -32,14 +32,14 @@
           </div>
         <% else %>
           <div class="alert alert-info">
-            <p class="mb-0">Não há atividades disponíveis no momento.</p>
+            <p class="mb-0"><%= t('student_dashboard.no_activities') %></p>
           </div>
         <% end %>
       </div>
 
       <!-- Botão de Logout -->
       <div class="text-center mt-4">
-        <%= button_to "Sair", destroy_user_session_path, method: :delete, class: "btn btn-danger", data: { turbo: false } %>
+        <%= button_to t('auth.sign_out'), destroy_user_session_path, method: :delete, class: "btn btn-danger", data: { turbo: false } %>
       </div>
     </div>
   </div>

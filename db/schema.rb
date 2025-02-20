@@ -10,7 +10,10 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_02_11_215043) do
+ActiveRecord::Schema[7.1].define(version: 2025_02_12_183500) do
+  # These are extensions that must be enabled in order to support this database
+  enable_extension "plpgsql"
+
   create_table "activities", force: :cascade do |t|
     t.string "title"
     t.text "description"
@@ -18,29 +21,19 @@ ActiveRecord::Schema[7.1].define(version: 2025_02_11_215043) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "level"
-    t.integer "teacher_id"
+    t.bigint "teacher_id"
     t.index ["teacher_id"], name: "index_activities_on_teacher_id"
   end
 
   create_table "questions", force: :cascade do |t|
     t.string "content"
     t.string "question_type"
-    t.integer "activity_id", null: false
+    t.bigint "activity_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.json "options"
     t.string "correct_answer"
     t.index ["activity_id"], name: "index_questions_on_activity_id"
-  end
-
-  create_table "tasks", force: :cascade do |t|
-    t.string "description"
-    t.integer "activity_id", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.json "correct_answers", default: []
-    t.text "content"
-    t.index ["activity_id"], name: "index_tasks_on_activity_id"
   end
 
   create_table "users", force: :cascade do |t|
@@ -51,17 +44,18 @@ ActiveRecord::Schema[7.1].define(version: 2025_02_11_215043) do
     t.datetime "remember_created_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.string "role"
+    t.string "role", default: "student"
     t.string "confirmation_token"
     t.datetime "confirmed_at"
     t.datetime "confirmation_sent_at"
     t.string "unconfirmed_email"
+    t.string "language", default: "en"
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
     t.index ["email"], name: "index_users_on_email", unique: true
+    t.index ["language"], name: "index_users_on_language"
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
   add_foreign_key "activities", "users", column: "teacher_id"
   add_foreign_key "questions", "activities"
-  add_foreign_key "tasks", "activities"
 end

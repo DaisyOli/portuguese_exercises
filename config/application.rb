@@ -23,5 +23,14 @@ module ExerciseApp
     #
     # config.time_zone = "Central Time (US & Canada)"
     # config.eager_load_paths << Rails.root.join("extras")
+    
+    # Configuração de internacionalização
+    config.i18n.load_path += Dir[Rails.root.join('config', 'locales', '**', '*.{rb,yml}')]
+    config.i18n.available_locales = [:en, :pt, :fr]
+    config.i18n.default_locale = :en
+    config.i18n.fallbacks = true
+    
+    # Configuração de fuso horário
+    config.time_zone = 'Brasilia'
   end
 end

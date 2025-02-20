@@ -1,0 +1,134 @@
+fr:
+  hello: "Bonjour"
+  app_name: "Exercise App"
+  welcome: "Bienvenue sur Exercise App"
+  
+  # Teacher Dashboard
+  teacher_dashboard:
+    welcome: "Bienvenue, Professeur !"
+    control_panel: "Voici votre tableau de bord."
+    add_activity: "Ajouter une Nouvelle Activité"
+    your_activities: "Vos Activités"
+    no_activities: "Vous n'avez pas encore d'activités. Commencez par en créer une avec le bouton ci-dessus !"
+
+  # Student Dashboard
+  student_dashboard:
+    welcome: "Bienvenue, Étudiant !"
+    control_panel: "Voici votre tableau de bord."
+    available_activities: "Activités Disponibles"
+    no_activities: "Il n'y a pas d'activités disponibles pour le moment."
+
+  # Navigation
+  navigation:
+    home: "Accueil"
+    dashboard: "Tableau de Bord"
+    activities: "Activités"
+    profile: "Profil"
+    sign_out: "Déconnexion"
+    language: "Langue"
+    
+  # Activities
+  activities:
+    title: "Activités"
+    new: "Nouvelle Activité"
+    edit: "Modifier l'Activité"
+    level: "Niveau"
+    description: "Description"
+    questions: "Questions"
+    total_questions: "Total des Questions"
+    actions: "Actions"
+    title_placeholder: "Entrez le titre de l'activité"
+    description_placeholder: "Décrivez l'objectif de cette activité"
+    select_level: "Sélectionnez le niveau"
+    title_required: "Le titre est obligatoire"
+    description_required: "La description est obligatoire"
+    level_required: "Le niveau est obligatoire"
+    no_questions: "Aucune question n'a encore été ajoutée à cette activité."
+    add_question: "Ajouter une Nouvelle Question"
+    view: "Voir"
+    edit_btn: "Modifier"
+    delete: "Supprimer"
+    confirm_delete: "Êtes-vous sûr de vouloir supprimer cette activité ?"
+    solve_quiz: "Résoudre le Quiz"
+    back_to_dashboard: "Retour au Tableau de Bord"
+    back_to_activities: "Retour aux Activités"
+    question_count: "questions"
+    start_quiz: "Commencer le Quiz"
+    submit_quiz: "Soumettre les Réponses"
+    results: "Résultats"
+    correct_answers: "Réponses Correctes"
+    score: "Score"
+    
+  # Questions
+  questions:
+    title: "Question"
+    content: "Contenu de la Question"
+    content_placeholder: "Saisissez la question"
+    content_required: "Le contenu de la question est obligatoire"
+    options: "Options (séparées par des virgules)"
+    options_placeholder: "Option1, Option2, Option3, Option4"
+    options_required: "Au moins deux options sont nécessaires"
+    correct_answer: "Réponse Correcte"
+    correct_answer_placeholder: "Saisissez la réponse correcte (doit correspondre à l'une des options)"
+    correct_answer_required: "La réponse correcte est obligatoire"
+    add: "Ajouter une Question"
+
+  # Quiz
+  quiz:
+    title: "Résoudre le Quiz :"
+    submit: "Soumettre les Réponses"
+    submitting: "Envoi en cours..."
+    results: "Résultats du Quiz"
+    final_score: "Score Final"
+    correct_answers: "Vous avez obtenu %{correct} sur %{total} questions (%{score}%)"
+    your_answer: "Votre réponse"
+    correct_answer: "Réponse correcte"
+    try_again: "Réessayer"
+    not_answered: "Sans réponse"
+
+  # Forms
+  forms:
+    save: "Enregistrer"
+    cancel: "Annuler"
+    edit: "Modifier"
+    delete: "Supprimer"
+    confirm: "Êtes-vous sûr ?"
+    title: "Titre"
+    description: "Description"
+    level: "Niveau"
+    create_activity: "Créer l'Activité"
+    update_activity: "Mettre à Jour l'Activité"
+    
+  # Messages
+  messages:
+    activity_created: "L'activité a été créée avec succès. Ajoutez maintenant des questions."
+    activity_updated: "L'activité a été mise à jour avec succès."
+    activity_deleted: "L'activité a été supprimée avec succès."
+    quiz_submitted: "Le quiz a été soumis avec succès."
+    quiz_error: "Erreur lors du traitement du quiz."
+    language_updated: "La langue a été changée avec succès !"
+    language_update_failed: "Impossible de changer la langue."
+    answer_quiz_first: "Veuillez d'abord répondre au quiz."
+    permission_denied: "Vous n'avez pas la permission de modifier cette activité."
+    
+  # Devise
+  devise:
+    sessions:
+      new:
+        sign_in: "Se Connecter"
+        email: "Email"
+        password: "Mot de passe"
+        remember_me: "Se souvenir de moi"
+    registrations:
+      new:
+        sign_up: "S'inscrire"
+        email: "Email"
+        password: "Mot de passe"
+        password_confirmation: "Confirmation du mot de passe"
+        minimum_password: "(%{min} caractères minimum)"
+        teacher: "Professeur"
+        student: "Étudiant"
+
+  # Auth
+  auth:
+    sign_out: "Déconnexion" 

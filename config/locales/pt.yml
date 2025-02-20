@@ -1,0 +1,133 @@
+pt:
+  hello: "Olá"
+  app_name: "Exercise App"
+  welcome: "Bem-vindo ao Exercise App"
+  
+  # Teacher Dashboard
+  teacher_dashboard:
+    welcome: "Bem-vindo, Professor!"
+    control_panel: "Este é seu painel de controle."
+    add_activity: "Adicionar Nova Atividade"
+    your_activities: "Suas Atividades"
+    no_activities: "Você ainda não tem atividades. Comece criando uma usando o botão acima!"
+
+  # Student Dashboard
+  student_dashboard:
+    welcome: "Bem-vindo, Aluno!"
+    control_panel: "Este é seu painel de controle."
+    available_activities: "Atividades Disponíveis"
+    no_activities: "Não há atividades disponíveis no momento."
+
+  # Menus e navegação
+  navigation:
+    home: "Início"
+    dashboard: "Painel"
+    activities: "Atividades"
+    profile: "Perfil"
+    sign_out: "Sair"
+    language: "Idioma"
+    
+  # Atividades
+  activities:
+    title: "Atividades"
+    new: "Nova Atividade"
+    edit: "Editar Atividade"
+    level: "Nível"
+    description: "Descrição"
+    questions: "Questões"
+    actions: "Ações"
+    title_placeholder: "Digite o título da atividade"
+    description_placeholder: "Descreva o objetivo desta atividade"
+    select_level: "Selecione o nível"
+    title_required: "O título é obrigatório"
+    description_required: "A descrição é obrigatória"
+    level_required: "O nível é obrigatório"
+    no_questions: "Nenhuma questão foi adicionada a esta atividade ainda."
+    add_question: "Adicionar Nova Questão"
+    view: "Ver"
+    edit_btn: "Editar"
+    delete: "Excluir"
+    confirm_delete: "Tem certeza que deseja excluir esta atividade?"
+    solve_quiz: "Resolver Quiz"
+    back_to_dashboard: "Voltar ao Painel"
+    back_to_activities: "Voltar para Atividades"
+    question_count: "questões"
+    start_quiz: "Iniciar Quiz"
+    submit_quiz: "Enviar Respostas"
+    results: "Resultados"
+    correct_answers: "Respostas Corretas"
+    total_questions: "Total de Questões"
+    score: "Pontuação"
+    
+  # Questions
+  questions:
+    title: "Questão"
+    content: "Conteúdo da Questão"
+    content_placeholder: "Digite a pergunta"
+    content_required: "O conteúdo da questão é obrigatório"
+    options: "Opções (separadas por vírgula)"
+    options_placeholder: "Opção1, Opção2, Opção3, Opção4"
+    options_required: "Pelo menos duas opções são necessárias"
+    correct_answer: "Resposta Correta"
+    correct_answer_placeholder: "Digite a resposta correta (deve ser igual a uma das opções)"
+    correct_answer_required: "A resposta correta é obrigatória"
+    add: "Adicionar Questão"
+
+  # Quiz
+  quiz:
+    title: "Resolver Quiz:"
+    submit: "Enviar Respostas"
+    results: "Resultados do Quiz"
+    final_score: "Pontuação Final"
+    correct_answers: "Você acertou %{correct} de %{total} questões (%{score}%)"
+    your_answer: "Sua resposta"
+    correct_answer: "Resposta correta"
+    try_again: "Tentar Novamente"
+    not_answered: "Não respondida"
+
+  # Formulários
+  forms:
+    save: "Salvar"
+    cancel: "Cancelar"
+    edit: "Editar"
+    delete: "Excluir"
+    confirm: "Tem certeza?"
+    title: "Título"
+    description: "Descrição"
+    level: "Nível"
+    create_activity: "Criar Atividade"
+    update_activity: "Atualizar Atividade"
+    
+  # Mensagens
+  messages:
+    activity_created: "Atividade criada com sucesso! Agora adicione as questões."
+    activity_updated: "Atividade atualizada com sucesso."
+    activity_deleted: "Atividade excluída com sucesso."
+    quiz_submitted: "Quiz enviado com sucesso."
+    quiz_error: "Erro ao processar o quiz."
+    language_updated: "Idioma alterado com sucesso!"
+    language_update_failed: "Não foi possível alterar o idioma."
+    answer_quiz_first: "Por favor, responda o quiz primeiro."
+    permission_denied: "Você não tem permissão para editar esta atividade."
+    
+  # Devise
+  devise:
+    sessions:
+      new:
+        sign_in: "Entrar"
+        email: "Email"
+        password: "Senha"
+        remember_me: "Lembrar-me"
+    registrations:
+      new:
+        sign_up: "Cadastrar"
+        email: "Email"
+        password: "Senha"
+        password_confirmation: "Confirmação de senha"
+        minimum_password: "(%{min} caracteres no mínimo)"
+        teacher: "Professor"
+        student: "Aluno"
+
+  # Auth
+  auth:
+    sign_out: "Sair" 

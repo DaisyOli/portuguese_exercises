@@ -1,26 +1,26 @@
 <div class="container mt-5 d-flex justify-content-center">
   <div class="card shadow-lg p-4" style="max-width: 800px; width: 100%;">
     <div class="card-body">
-      <h1 class="text-center mb-4">Nova Atividade</h1>
+      <h1 class="text-center mb-4"><%= t('activities.new') %></h1>
 
       <%= simple_form_for(@activity, html: { class: 'needs-validation' }) do |f| %>
         <!-- Campo de Título -->
         <div class="mb-3">
           <%= f.input :title, 
-                      label: "Título", 
+                      label: t('forms.title'), 
                       input_html: { class: "form-control" },
-                      placeholder: "Digite o título da atividade",
-                      error: 'O título é obrigatório' %>
+                      placeholder: t('activities.title_placeholder'),
+                      error: t('activities.title_required') %>
         </div>
 
         <!-- Campo de Descrição -->
         <div class="mb-3">
           <%= f.input :description, 
                       as: :text, 
-                      label: "Descrição", 
+                      label: t('forms.description'), 
                       input_html: { class: "form-control", rows: 4 },
-                      placeholder: "Descreva o objetivo desta atividade",
-                      error: 'A descrição é obrigatória' %>
+                      placeholder: t('activities.description_placeholder'),
+                      error: t('activities.description_required') %>
         </div>
 
         <!-- Campo de Nível -->
@@ -32,21 +32,21 @@
                                  ['B1', 'B1'],
                                  ['B2', 'B2'],
                                  ['C1', 'C1']],
-                      label: "Nível", 
-                      include_blank: "Selecione o nível",
+                      label: t('forms.level'), 
+                      include_blank: t('activities.select_level'),
                       input_html: { class: "form-select" },
-                      error: 'O nível é obrigatório' %>
+                      error: t('activities.level_required') %>
         </div>
 
         <!-- Botão de Criar -->
         <div class="d-grid">
-          <%= f.button :submit, "Criar Atividade", class: "btn btn-primary" %>
+          <%= f.button :submit, t('forms.create_activity'), class: "btn btn-primary" %>
         </div>
       <% end %>
 
       <!-- Link para Voltar -->
       <div class="text-center mt-3">
-        <%= link_to "Voltar", activities_path, class: "btn btn-secondary" %>
+        <%= link_to t('activities.back_to_activities'), activities_path, class: "btn btn-secondary" %>
       </div>
     </div>
   </div>

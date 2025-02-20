@@ -1,67 +1,97 @@
-<div class="container d-flex justify-content-center align-items-center" style="min-height: 100vh;">
-  <div class="card shadow-lg p-4 w-100" style="max-width: 1100px;">
+<div class="container py-4">
+  <div class="card shadow-lg">
     <div class="card-body">
       <!-- Cabeçalho do Dashboard -->
       <div class="text-center mb-4">
-        <h1>Bem-vindo, Professor!</h1>
-        <p>Este é seu painel de controle.</p>
-        <%= link_to "Adicionar Nova Atividade", new_activity_path, class: "btn btn-primary btn-lg" %>
+        <h1 class="h2"><%= t('teacher_dashboard.welcome') %></h1>
+        <p class="text-muted"><%= t('teacher_dashboard.control_panel') %></p>
+        <%= link_to t('teacher_dashboard.add_activity'), new_activity_path, class: "btn btn-primary btn-lg" %>
       </div>
 
       <!-- Lista de Atividades -->
       <div>
-        <h2>Suas Atividades</h2>
+        <h2 class="h4 mb-3"><%= t('teacher_dashboard.your_activities') %></h2>
         <% if Activity.where(teacher: current_user).any? %>
-          <table class="table table-hover mt-3">
-            <thead class="table-light">
-              <tr>
-                <th>Título</th>
-                <th>Descrição</th>
-                <th>Nível</th>
-                <th>Questões</th>
-                <th>Ações</th>
-              </tr>
-            </thead>
-            <tbody>
-              <% Activity.where(teacher: current_user).each do |activity| %>
+          <div class="table-responsive">
+            <table class="table table-hover align-middle">
+              <thead class="table-light">
                 <tr>
-                  <td><%= activity.title %></td>
-                  <td><%= truncate(activity.description, length: 50) %></td>
-                  <td><%= activity.level %></td>
-                  <td><%= activity.questions.count %></td>
-                  <td>
-                    <div class="btn-group">
-                      <%= link_to activity_path(activity), class: "btn btn-info btn-sm" do %>
-                        <i class="fas fa-eye"></i> Ver
-                      <% end %>
-                      <%= link_to edit_activity_path(activity), class: "btn btn-warning btn-sm" do %>
-                        <i class="fas fa-edit"></i> Editar
-                      <% end %>
-                      <%= link_to activity_path(activity), 
-                          data: { 
-                            turbo_method: :delete,
-                            turbo_confirm: "Tem certeza que deseja excluir esta atividade?" 
-                          }, 
-                          class: "btn btn-danger btn-sm" do %>
-                        <i class="fas fa-trash"></i> Excluir
-                      <% end %>
-                    </div>
-                  </td>
+                  <th><%= t('forms.title') %></th>
+                  <th class="d-none d-md-table-cell"><%= t('forms.description') %></th>
+                  <th class="text-center"><%= t('forms.level') %></th>
+                  <th class="text-center"><%= t('activities.questions') %></th>
+                  <th class="text-center"><%= t('activities.actions') %></th>
                 </tr>
-              <% end %>
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                <% Activity.where(teacher: current_user).each do |activity| %>
+                  <tr>
+                    <td><%= activity.title %></td>
+                    <td class="d-none d-md-table-cell"><%= truncate(activity.description, length: 50) %></td>
+                    <td class="text-center">
+                      <span class="badge <%= activity.level_color_class %>"><%= activity.level %></span>
+                    </td>
+                    <td class="text-center"><%= activity.questions.count %></td>
+                    <td>
+                      <div class="d-flex justify-content-center gap-2">
+                        <%= link_to activity_path(activity), 
+                            class: "btn btn-info rounded-3 px-4", 
+                            style: "min-width: 120px;" do %>
+                          <%= t('activities.view') %>
+                        <% end %>
+
+                        <%= link_to edit_activity_path(activity), 
+                            class: "btn btn-warning rounded-3 px-4",
+                            style: "min-width: 120px;" do %>
+                          <%= t('activities.edit_btn') %>
+                        <% end %>
+
+                        <%= link_to activity_path(activity), 
+                            data: { 
+                              turbo_method: :delete,
+                              turbo_confirm: t('activities.confirm_delete')
+                            }, 
+                            class: "btn btn-danger rounded-3 px-4",
+                            style: "min-width: 120px;" do %>
+                          <%= t('activities.delete') %>
+                        <% end %>
+                      </div>
+                    </td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          </div>
         <% else %>
           <div class="alert alert-info">
-            <p class="mb-0">Você ainda não tem atividades. Comece criando uma usando o botão acima!</p>
+            <p class="mb-0"><%= t('teacher_dashboard.no_activities') %></p>
           </div>
         <% end %>
       </div>
 
       <!-- Botão de Logout -->
       <div class="text-center mt-4">
-        <%= button_to "Sair", destroy_user_session_path, method: :delete, class: "btn btn-danger", data: { turbo: false } %>
+        <%= button_to t('auth.sign_out'), 
+            destroy_user_session_path, 
+            method: :delete, 
+            class: "btn btn-danger", 
+            data: { turbo: false } %>
       </div>
     </div>
   </div>
 </div>
+
+<style>
+  /* Estilos para os botões de ação */
+  @media (max-width: 767px) {
+    .d-flex.justify-content-center {
+      flex-direction: column;
+      align-items: stretch;
+    }
+    
+    .btn {
+      margin-bottom: 0.5rem;
+      width: 100%;
+    }
+  }
+</style>

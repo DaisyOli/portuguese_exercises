@@ -1,31 +1,31 @@
 <div class="container d-flex justify-content-center align-items-center" style="min-height: 100vh;">
   <div class="card shadow-lg p-4 w-100" style="max-width: 900px;">
     <div class="card-body">
-      <h1 class="text-center mb-4">Resultados do Quiz</h1>
+      <h1 class="text-center mb-4"><%= t('quiz.results') %></h1>
       
       <div class="alert alert-info mb-4">
-        <h4 class="alert-heading">Pontuação Final</h4>
-        <p class="mb-0">Você acertou <%= @quiz_results["total_correct"] %> de <%= @quiz_results["total_questions"] %> questões (<%= @quiz_results["score"] %>%)</p>
+        <h4 class="alert-heading"><%= t('quiz.final_score') %></h4>
+        <p class="mb-0"><%= t('quiz.correct_answers', correct: @quiz_results["total_correct"], total: @quiz_results["total_questions"], score: @quiz_results["score"]) %></p>
       </div>
 
       <% @quiz_results["results"].each do |question_id, result| %>
         <div class="card mb-4">
           <div class="card-header <%= result["is_correct"] ? 'bg-success text-white' : 'bg-danger text-white' %>">
-            <h5 class="mb-0">Questão</h5>
+            <h5 class="mb-0"><%= t('questions.title') %></h5>
           </div>
           <div class="card-body">
-            <p class="card-text mb-3"><strong>Pergunta:</strong> <%= result["question_text"] %></p>
+            <p class="card-text mb-3"><strong><%= t('questions.content') %>:</strong> <%= result["question_text"] %></p>
             
             <div class="mb-2">
-              <strong>Sua resposta:</strong>
+              <strong><%= t('quiz.your_answer') %>:</strong>
               <span class="<%= result["is_correct"] ? 'text-success' : 'text-danger' %>">
-                <%= result["given_answer"] %>
+                <%= result["given_answer"] == "Não respondida" ? t('quiz.not_answered') : result["given_answer"] %>
               </span>
             </div>
             
             <% unless result["is_correct"] %>
               <div class="mt-2">
-                <strong>Resposta correta:</strong>
+                <strong><%= t('quiz.correct_answer') %>:</strong>
                 <span class="text-success"><%= result["correct_answer"] %></span>
               </div>
             <% end %>
@@ -34,11 +34,11 @@
       <% end %>
 
       <div class="d-grid gap-2">
-        <%= link_to "Tentar Novamente", resolve_quiz_activity_path(@activity), class: "btn btn-primary" %>
+        <%= link_to t('quiz.try_again'), resolve_quiz_activity_path(@activity), class: "btn btn-primary" %>
         <% if current_user.teacher? %>
-          <%= link_to "Voltar para o Dashboard", teacher_dashboard_path, class: "btn btn-secondary" %>
+          <%= link_to t('activities.back_to_dashboard'), teacher_dashboard_path, class: "btn btn-secondary" %>
         <% else %>
-          <%= link_to "Voltar para todas as atividades", activities_path, class: "btn btn-secondary" %>
+          <%= link_to t('activities.back_to_activities'), activities_path, class: "btn btn-secondary" %>
         <% end %>
       </div>
     </div>

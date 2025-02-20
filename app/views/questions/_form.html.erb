@@ -1,24 +1,27 @@
 <%= simple_form_for [activity, question], html: { data: { turbo: false } } do |qf| %>
   <div class="mb-3">
     <%= qf.input :content, 
-                 label: "Conteúdo da Questão", 
+                 label: t('questions.content'), 
                  input_html: { class: "form-control" },
-                 placeholder: "Digite a pergunta" %>
+                 placeholder: t('questions.content_placeholder'),
+                 error: t('questions.content_required') %>
   </div>
   <div class="mb-3">
     <%= qf.input :options, 
-                 label: "Opções (separadas por vírgula)", 
+                 label: t('questions.options'), 
                  input_html: { class: "form-control" },
-                 placeholder: "Opção1, Opção2, Opção3, Opção4" %>
+                 placeholder: t('questions.options_placeholder'),
+                 error: t('questions.options_required') %>
   </div>
   <div class="mb-3">
     <%= qf.input :correct_answer, 
-                 label: "Resposta Correta", 
+                 label: t('questions.correct_answer'), 
                  input_html: { class: "form-control" },
-                 placeholder: "Digite a resposta correta (deve ser igual a uma das opções)" %>
+                 placeholder: t('questions.correct_answer_placeholder'),
+                 error: t('questions.correct_answer_required') %>
   </div>
   <div class="d-grid">
-    <%= qf.submit "Adicionar Questão", class: "btn btn-success" %>
+    <%= qf.submit t('questions.add'), class: "btn btn-success" %>
   </div>
 <% end %>
 

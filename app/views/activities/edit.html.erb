@@ -1,41 +1,44 @@
 <div class="container mt-5 d-flex justify-content-center">
   <div class="card shadow-lg p-4" style="max-width: 800px; width: 100%;">
     <div class="card-body">
-      <h1 class="text-center mb-4">Editar Atividade</h1>
+      <h1 class="text-center mb-4"><%= t('activities.edit') %></h1>
 
       <%= simple_form_for(@activity) do |f| %>
         <!-- Campo de Título -->
         <div class="mb-3">
           <%= f.input :title, 
-                      label: "Título", 
+                      label: t('forms.title'), 
                       input_html: { class: "form-control" },
-                      placeholder: "Digite o título da atividade" %>
+                      placeholder: t('activities.title_placeholder'),
+                      error: t('activities.title_required') %>
         </div>
 
         <!-- Campo de Descrição -->
         <div class="mb-3">
           <%= f.input :description, 
                       as: :text, 
-                      label: "Descrição", 
+                      label: t('forms.description'), 
                       input_html: { class: "form-control", rows: 4 },
-                      placeholder: "Descreva o objetivo desta atividade" %>
+                      placeholder: t('activities.description_placeholder'),
+                      error: t('activities.description_required') %>
         </div>
 
         <!-- Campo de Nível -->
         <div class="mb-3">
           <%= f.input :level,
-                      label: "Nível",
+                      label: t('forms.level'),
                       collection: [['A1', 'A1'], 
                                  ['A2', 'A2'], 
                                  ['B1', 'B1'],
                                  ['B2', 'B2'],
                                  ['C1', 'C1']],
-                      input_html: { class: "form-select" } %>
+                      input_html: { class: "form-select" },
+                      error: t('activities.level_required') %>
         </div>
 
         <div class="d-grid gap-2">
-          <%= f.button :submit, "Atualizar Atividade", class: "btn btn-primary" %>
-          <%= link_to "Voltar", activity_path(@activity), class: "btn btn-secondary" %>
+          <%= f.button :submit, t('forms.update_activity'), class: "btn btn-primary" %>
+          <%= link_to t('activities.back_to_activities'), activity_path(@activity), class: "btn btn-secondary" %>
         </div>
       <% end %>
     </div>
