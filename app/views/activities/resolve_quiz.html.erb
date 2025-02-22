@@ -9,18 +9,18 @@
       
       <%= form_with(url: submit_quiz_activity_path(@activity), method: :post, data: { turbo: false }) do |f| %>
         <% @questions.each_with_index do |question, index| %>
-          <div class="card mb-4">
-            <div class="card-body">
-              <h5 class="card-title text-muted mb-3"><%= t('questions.title') %> <%= index + 1 %></h5>
-              <p class="card-text mb-4 fs-4 fw-semibold"><%= question.content %></p>
+          <div class="card mb-3">
+            <div class="card-body py-3">
+              <h6 class="card-subtitle text-muted mb-2"><%= t('questions.title') %> <%= index + 1 %></h6>
+              <p class="card-text mb-3 fs-5"><%= question.content %></p>
 
               <% if question.options.any? %>
                 <div class="options-list">
-                  <div class="ps-3">
+                  <div class="ps-2">
                     <% question.options.each do |option| %>
-                      <div class="form-check mb-3">
-                        <%= radio_button_tag "answers[#{question.id}]", option, false, class: 'form-check-input me-3', style: 'transform: scale(1.2);' %>
-                        <%= label_tag "answers_#{question.id}_#{option.parameterize}", option, class: 'form-check-label fs-6 fw-normal' %>
+                      <div class="form-check mb-2">
+                        <%= radio_button_tag "answers[#{question.id}]", option, false, class: 'form-check-input' %>
+                        <%= label_tag "answers_#{question.id}_#{option.parameterize}", option, class: 'form-check-label' %>
                       </div>
                     <% end %>
                   </div>

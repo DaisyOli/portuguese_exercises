@@ -3,6 +3,15 @@ pt:
   app_name: "Exercise App"
   welcome: "Bem-vindo ao Exercise App"
   
+  # Home page
+  home:
+    welcome_message: "Bem-vindo ao Exercise App!"
+    login_prompt: "Por favor, faça login ou cadastre-se para continuar."
+    logged_in_as: "Você está logado como"
+    go_to_teacher_dashboard: "Ir para o Painel do Professor"
+    go_to_student_dashboard: "Ir para o Painel do Aluno"
+    sign_up_title: "Cadastrar-se"
+
   # Teacher Dashboard
   teacher_dashboard:
     welcome: "Bem-vindo, Professor!"
