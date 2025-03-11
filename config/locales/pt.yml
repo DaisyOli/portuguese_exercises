@@ -3,6 +3,16 @@ pt:
   app_name: "Exercise App"
   welcome: "Bem-vindo ao Exercise App"
   
+  # Common - Botões e textos comuns
+  common:
+    save: "Salvar"
+    edit: "Editar"
+    delete: "Excluir"
+    back: "Voltar"
+    cancel: "Cancelar"
+    confirm: "Confirmar"
+    actions: "Ações"
+    
   # Home page
   home:
     welcome_message: "Bem-vindo ao Exercise App!"
@@ -70,17 +80,33 @@ pt:
     
   # Questions
   questions:
-    title: "Questão"
-    content: "Conteúdo da Questão"
-    content_placeholder: "Digite a pergunta"
-    content_required: "O conteúdo da questão é obrigatório"
-    options: "Opções (separadas por vírgula)"
-    options_placeholder: "Opção1, Opção2, Opção3, Opção4"
-    options_required: "Pelo menos duas opções são necessárias"
+    title: "Questões"
+    new: "Nova Questão"
+    edit: "Editar Questão"
+    content: "Conteúdo"
     correct_answer: "Resposta Correta"
-    correct_answer_placeholder: "Digite a resposta correta (deve ser igual a uma das opções)"
+    options: "Opções"
+    confirm_delete: "Tem certeza que deseja excluir esta questão?"
+    add_options: "Adicionar Opções"
+    options_placeholder: "Digite as opções separadas por vírgula"
+    options_help: "Separe as opções usando vírgulas"
+    content_required: "O conteúdo da questão é obrigatório"
     correct_answer_required: "A resposta correta é obrigatória"
-    add: "Adicionar Questão"
+    options_required: "As opções são obrigatórias"
+    at_least_one_option: "Adicione pelo menos uma opção"
+    invalid_options: "Formato de opções inválido"
+    question_number: "Questão %{number}"
+    no_questions: "Nenhuma questão adicionada"
+    add_first_question: "Adicionar Primeira Questão"
+    edit_question: "Editar Questão"
+    delete_question: "Excluir Questão"
+    question_saved: "Questão salva com sucesso!"
+    question_updated: "Questão atualizada com sucesso!"
+    question_deleted: "Questão excluída com sucesso!"
+    error_saving: "Erro ao salvar a questão"
+    error_updating: "Erro ao atualizar a questão"
+    error_deleting: "Erro ao excluir a questão"
+    permission_denied: "Você não tem permissão para modificar esta questão"
 
   # Quiz
   quiz:
@@ -118,6 +144,9 @@ pt:
     language_update_failed: "Não foi possível alterar o idioma."
     answer_quiz_first: "Por favor, responda o quiz primeiro."
     permission_denied: "Você não tem permissão para editar esta atividade."
+    question_created: "Questão criada com sucesso!"
+    question_updated: "Questão atualizada com sucesso!"
+    question_deleted: "Questão excluída com sucesso!"
     
   # Devise
   devise:
@@ -136,7 +165,30 @@ pt:
         minimum_password: "(%{min} caracteres no mínimo)"
         teacher: "Professor"
         student: "Aluno"
+    confirmations:
+      confirmed: "Seu endereço de email foi confirmado com sucesso."
+      send_instructions: "Você receberá um email com instruções para confirmar seu endereço de email em alguns minutos."
+      send_paranoid_instructions: "Se seu endereço de email existir em nossa base de dados, você receberá um email com instruções para confirmá-lo em alguns minutos."
+    failure:
+      unconfirmed: "Antes de continuar, confirme o seu endereço de email."
+    mailer:
+      confirmation_instructions:
+        subject: "Instruções de confirmação"
+        welcome: "Bem-vindo %{email}!"
+        confirm_text: "Você pode confirmar sua conta através do link abaixo:"
+        confirm_link: "Confirmar minha conta"
+        ignore_text: "Se você não solicitou uma conta, você pode ignorar este email."
+    invitations:
+      send_instructions: "Um convite foi enviado para %{email}."
+      invitation_token_invalid: "O token de convite não é válido!"
+      updated: "Sua senha foi definida com sucesso. Você está logado."
+      no_invitations_remaining: "Não há convites restantes"
 
   # Auth
   auth:
-    sign_out: "Sair" 
+    sign_out: "Sair"
+
+  # Users
+  users:
+    invite: "Convidar Novo Usuário"
+    invited: "Convite enviado com sucesso" 

@@ -1,0 +1,15 @@
+<div style="max-width: 600px; margin: 0 auto; padding: 20px; font-family: Arial, sans-serif;">
+  <h2>Bem-vindo <%= @resource.email %>!</h2>
+
+  <p>Você pode confirmar sua conta através do link abaixo:</p>
+
+  <div style="text-align: center; margin: 30px 0;">
+    <%= link_to "Confirmar minha conta",
+                confirmation_url(@resource, confirmation_token: @token),
+                style: "display: inline-block; padding: 12px 24px; background-color: #007bff; color: white; text-decoration: none; border-radius: 4px;" %>
+  </div>
+
+  <p style="color: #666; font-size: 14px;">
+    Se você não solicitou uma conta, você pode ignorar este email.
+  </p>
+</div> 

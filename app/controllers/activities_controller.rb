@@ -1,6 +1,7 @@
 class ActivitiesController < ApplicationController
   before_action :authenticate_user!
   before_action :set_activity, only: [:show, :edit, :update, :destroy, :resolve_quiz, :submit_quiz, :quiz_results]
+  before_action :check_teacher_permission, only: [:edit, :update, :destroy]
 
   def index
     @activities = Activity.all
@@ -106,17 +107,10 @@ class ActivitiesController < ApplicationController
   end
 
   def edit
-    unless @activity.teacher == current_user
-      redirect_to activities_path, alert: t('messages.permission_denied')
-    end
+    # Removido o check de permissão daqui pois agora está no before_action
   end
 
   def update
-    if @activity.teacher != current_user
-      redirect_to activities_path, alert: t('messages.permission_denied')
-      return
-    end
-
     if @activity.update(activity_params)
       redirect_to @activity, notice: t('messages.activity_updated')
     else
@@ -137,5 +131,11 @@ class ActivitiesController < ApplicationController
 
   def activity_params
     params.require(:activity).permit(:title, :description, :level)
+  end
+
+  def check_teacher_permission
+    unless current_user.role == "teacher" && @activity.teacher == current_user
+      redirect_to activities_path, alert: t('messages.permission_denied')
+    end
   end
 end

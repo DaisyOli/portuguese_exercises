@@ -10,7 +10,9 @@ Rails.application.routes.draw do
   patch 'update_language', to: 'languages#update', as: :update_language
   
   # Rotas do Devise para autenticação
-  devise_for :users
+  devise_for :users, controllers: {
+    invitations: 'invitations'
+  }
 
   # Rotas para atividades e questões
   resources :activities do
@@ -25,4 +27,8 @@ Rails.application.routes.draw do
 
   # Health check para monitoramento
   get "up" => "rails/health#show", as: :rails_health_check
+
+  if Rails.env.development?
+    mount LetterOpenerWeb::Engine, at: "/letter_opener"
+  end
 end

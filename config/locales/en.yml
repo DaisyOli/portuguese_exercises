@@ -150,3 +150,10 @@ en:
         password: "Password"
         password_confirmation: "Password confirmation"
         minimum_password: "(%{min} characters minimum)"
+    mailer:
+      confirmation_instructions:
+        subject: "Confirmation instructions"
+        welcome: "Welcome %{email}!"
+        confirm_text: "You can confirm your account through the link below:"
+        confirm_link: "Confirm my account"
+        ignore_text: "If you didn't request an account, you can ignore this email."

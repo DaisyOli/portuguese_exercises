@@ -1,0 +1,37 @@
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <div class="card">
+        <div class="card-header">
+          <h2 class="mb-0"><%= t('questions.edit') %></h2>
+        </div>
+        <div class="card-body">
+          <%= form_with(model: [@activity, @question], local: true) do |f| %>
+            <div class="mb-3">
+              <%= f.label :content, t('questions.content'), class: "form-label" %>
+              <%= f.text_area :content, class: "form-control", rows: 3 %>
+            </div>
+
+            <div class="mb-3">
+              <%= f.label :options, t('questions.options'), class: "form-label" %>
+              <%= f.text_area :options, value: @question.options&.join(", "), class: "form-control", rows: 2, placeholder: t('questions.options_placeholder') %>
+              <small class="form-text text-muted"><%= t('questions.options_help') %></small>
+            </div>
+
+            <div class="mb-3">
+              <%= f.label :correct_answer, t('questions.correct_answer'), class: "form-label" %>
+              <%= f.text_field :correct_answer, class: "form-control" %>
+            </div>
+
+            <div class="d-flex justify-content-between">
+              <%= link_to t('common.back'), activity_path(@activity), class: "btn btn-secondary" %>
+              <%= button_tag type: 'submit', class: 'btn btn-primary' do %>
+                <%= t('common.save') %>
+              <% end %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div> 
