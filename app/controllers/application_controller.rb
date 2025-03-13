@@ -1,7 +1,7 @@
 class ApplicationController < ActionController::Base
   before_action :authenticate_user!
   before_action :configure_permitted_parameters, if: :devise_controller?
-  before_action :set_locale
+  before_action :set_locale, if: :user_signed_in?
   around_action :switch_locale
 
   def after_sign_in_path_for(resource)
