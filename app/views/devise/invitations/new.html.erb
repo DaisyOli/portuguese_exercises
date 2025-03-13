@@ -1,0 +1,48 @@
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <div class="card shadow-lg border-0 rounded-3">
+        <div class="card-body p-5">
+          <h2 class="text-center mb-4"><%= t("devise.invitations.new.header") %></h2>
+          
+          <%= form_for(resource, as: resource_name, url: invitation_path(resource_name), html: { method: :post }) do |f| %>
+            <% if resource.errors.any? %>
+              <div class="alert alert-danger alert-dismissible fade show">
+                <h4 class="alert-heading"><%= t("devise.invitations.new.errors", count: resource.errors.count) %></h4>
+                <ul class="mb-0">
+                  <% resource.errors.full_messages.each do |msg| %>
+                    <li><%= msg %></li>
+                  <% end %>
+                </ul>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+              </div>
+            <% end %>
+
+            <div class="form-floating mb-4">
+              <%= f.email_field :email, class: "form-control", placeholder: "nome@exemplo.com" %>
+              <%= f.label :email, t("devise.invitations.new.email") %>
+            </div>
+
+            <div class="form-group mb-4">
+              <%= f.label :role, t("devise.invitations.new.role"), class: "form-label" %>
+              <%= f.select :role, 
+                  [['Student', 'student'], ['Teacher', 'teacher']], 
+                  { selected: 'student' }, 
+                  { class: "form-select" } 
+              %>
+            </div>
+
+            <div class="d-grid gap-2">
+              <%= f.submit t("devise.invitations.new.submit_button"), class: "btn btn-primary btn-lg" %>
+              <%= link_to t("common.back"), :back, class: "btn btn-outline-secondary" %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<% content_for :page_title do %>
+  <%= t("devise.invitations.new.header") %>
+<% end %> 

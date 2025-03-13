@@ -1,0 +1,15 @@
+pt:
+  devise:
+    invitations:
+      send_instructions: 'Um convite foi enviado para %{email}.'
+      invitation_token_invalid: 'O token de convite não é válido!'
+      updated: 'Sua senha foi definida com sucesso. Você está logado.'
+      updated_not_active: 'Sua senha foi definida com sucesso.'
+      no_invitations_remaining: "Não há convites restantes"
+      invitation_removed: 'Seu convite foi removido.'
+      new:
+        header: "Enviar Convite"
+        submit_button: "Enviar Convite"
+        email: "Email do Convidado"
+        role: "Tipo de Usuário"
+        errors: "Erro ao processar o convite" 
