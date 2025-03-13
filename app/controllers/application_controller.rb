@@ -33,10 +33,14 @@ class ApplicationController < ActionController::Base
   end
 
   def extract_locale
-    locale = if user_signed_in? && current_user
+    # Evita acessar current_user durante o processo de autenticação
+    # para evitar o erro de invitation_token
+    locale = if params[:locale].present?
+               params[:locale]
+             elsif user_signed_in? && current_user && !devise_controller?
                current_user.language
              else
-               params[:locale] || http_accept_language.compatible_language_from(I18n.available_locales)
+               http_accept_language.compatible_language_from(I18n.available_locales) || I18n.default_locale
              end
     
     locale.presence || I18n.default_locale
