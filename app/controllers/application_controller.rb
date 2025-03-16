@@ -2,7 +2,8 @@ class ApplicationController < ActionController::Base
   before_action :authenticate_user!
   before_action :configure_permitted_parameters, if: :devise_controller?
   before_action :set_locale, if: :user_signed_in?
-  around_action :switch_locale, unless: -> { devise_controller? && action_name == 'create' }
+  skip_before_action :set_locale, if: :should_skip_locale
+  around_action :switch_locale, unless: :should_skip_locale
 
   def after_sign_in_path_for(resource)
     case resource.role
@@ -23,13 +24,13 @@ class ApplicationController < ActionController::Base
   end
 
   private
+  
+  def should_skip_locale
+    devise_controller? && (action_name == 'create' || action_name == 'new')
+  end
 
   def set_locale
-    I18n.locale = if user_signed_in? && current_user.present?
-                    current_user.language.to_sym
-                  else
-                    params[:locale] || I18n.default_locale
-                  end
+    I18n.locale = current_user.language.to_sym if user_signed_in? && current_user.present?
   end
 
   def extract_locale
