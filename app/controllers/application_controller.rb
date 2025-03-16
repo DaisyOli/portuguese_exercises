@@ -2,8 +2,7 @@ class ApplicationController < ActionController::Base
   before_action :authenticate_user!
   before_action :configure_permitted_parameters, if: :devise_controller?
   before_action :set_locale, if: :user_signed_in?
-  skip_before_action :set_locale, if: :should_skip_locale
-  around_action :switch_locale, unless: :should_skip_locale
+  around_action :switch_locale
 
   def after_sign_in_path_for(resource)
     case resource.role
@@ -24,25 +23,23 @@ class ApplicationController < ActionController::Base
   end
 
   private
-  
-  def should_skip_locale
-    devise_controller? && (action_name == 'create' || action_name == 'new')
-  end
 
   def set_locale
-    I18n.locale = current_user.language.to_sym if user_signed_in? && current_user.present?
+    I18n.locale = if user_signed_in? && current_user
+                    current_user.language.to_sym
+                  else
+                    params[:locale] || I18n.default_locale
+                  end
   end
 
   def extract_locale
-    # Evita completamente acessar current_user durante processos de autenticação
-    return params[:locale] || I18n.default_locale if devise_controller?
-    
-    locale = if params[:locale].present?
-               params[:locale]
-             elsif user_signed_in? && current_user.present?
+    locale = if user_signed_in? && current_user
                current_user.language
+             elsif params[:locale].present?
+               # Garantindo que o locale seja um símbolo válido da lista de locales disponíveis
+               params[:locale].to_s.split(':').first if I18n.available_locales.map(&:to_s).include?(params[:locale].to_s.split(':').first)
              else
-               I18n.default_locale
+               http_accept_language.compatible_language_from(I18n.available_locales)
              end
     
     locale.presence || I18n.default_locale
@@ -50,11 +47,15 @@ class ApplicationController < ActionController::Base
 
   def switch_locale(&action)
     locale = extract_locale
+    # Garantindo que o locale seja um símbolo válido
+    locale = I18n.default_locale unless I18n.available_locales.include?(locale.to_sym)
     I18n.with_locale(locale, &action)
   end
 
   def default_url_options
-    { locale: I18n.locale }
+    # Garantindo que o locale seja um simbolo válido
+    locale = I18n.locale.to_sym
+    { locale: I18n.available_locales.include?(locale) ? locale : I18n.default_locale }
   end
 end
 

@@ -36,10 +36,6 @@ class User < ApplicationRecord
     end
   end
 
-  def can_invite?
-    teacher?
-  end
-
   private
 
   def set_default_language

@@ -33,19 +33,11 @@
                     </div>
                     <% if @activity.teacher == current_user %>
                       <div class="btn-group">
-                        <%= link_to edit_activity_question_path(@activity, question), 
-                            class: "btn btn-outline-warning btn-sm", 
-                            title: t('common.edit') do %>
-                          <i class="fa-solid fa-pen-to-square"></i>
-                        <% end %>
-                        
-                        <%= button_to activity_question_path(@activity, question), 
+                        <%= link_to t('common.edit'), edit_activity_question_path(@activity, question), class: "btn btn-warning btn-sm" %>
+                        <%= button_to t('common.delete'), activity_question_path(@activity, question), 
                             method: :delete, 
-                            class: "btn btn-outline-danger btn-sm", 
-                            title: t('common.delete'),
-                            data: { confirm: t('questions.confirm_delete') } do %>
-                          <i class="fa-solid fa-trash"></i>
-                        <% end %>
+                            class: "btn btn-danger btn-sm",
+                            data: { confirm: t('questions.confirm_delete') } %>
                       </div>
                     <% end %>
                   </div>

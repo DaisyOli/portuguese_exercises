@@ -5,29 +5,29 @@ fr:
   
   # Home page
   home:
-    welcome_message: "Bienvenue sur Exercise App!"
+    welcome_message: "Bienvenue sur Exercise App !"
     login_prompt: "Veuillez vous connecter ou vous inscrire pour continuer."
     logged_in_as: "Vous êtes connecté en tant que"
-    go_to_teacher_dashboard: "Aller au Tableau de Bord des Professeurs"
-    go_to_student_dashboard: "Aller au Tableau de Bord des Étudiants"
+    go_to_teacher_dashboard: "Aller au Tableau de Bord Professeur"
+    go_to_student_dashboard: "Aller au Tableau de Bord Étudiant"
     sign_up_title: "S'inscrire"
 
   # Teacher Dashboard
   teacher_dashboard:
-    welcome: "Bienvenue, Professeur!"
-    control_panel: "Ceci est votre tableau de bord."
+    welcome: "Bienvenue, Professeur !"
+    control_panel: "Voici votre tableau de bord."
     add_activity: "Ajouter une Nouvelle Activité"
     your_activities: "Vos Activités"
-    no_activities: "Vous n'avez pas encore d'activités. Commencez par en créer une en utilisant le bouton ci-dessus!"
+    no_activities: "Vous n'avez pas encore d'activités. Commencez par en créer une avec le bouton ci-dessus !"
 
   # Student Dashboard
   student_dashboard:
-    welcome: "Bienvenue, Étudiant!"
-    control_panel: "Ceci est votre tableau de bord."
+    welcome: "Bienvenue, Étudiant !"
+    control_panel: "Voici votre tableau de bord."
     available_activities: "Activités Disponibles"
-    no_activities: "Aucune activité disponible pour le moment."
+    no_activities: "Il n'y a pas d'activités disponibles pour le moment."
 
-  # Menus et navigation
+  # Navigation
   navigation:
     home: "Accueil"
     dashboard: "Tableau de Bord"
@@ -36,7 +36,7 @@ fr:
     sign_out: "Déconnexion"
     language: "Langue"
     
-  # Activités
+  # Activities
   activities:
     title: "Activités"
     new: "Nouvelle Activité"
@@ -44,19 +44,20 @@ fr:
     level: "Niveau"
     description: "Description"
     questions: "Questions"
+    total_questions: "Total des Questions"
     actions: "Actions"
     title_placeholder: "Entrez le titre de l'activité"
     description_placeholder: "Décrivez l'objectif de cette activité"
     select_level: "Sélectionnez le niveau"
-    title_required: "Le titre est requis"
-    description_required: "La description est requise"
-    level_required: "Le niveau est requis"
+    title_required: "Le titre est obligatoire"
+    description_required: "La description est obligatoire"
+    level_required: "Le niveau est obligatoire"
     no_questions: "Aucune question n'a encore été ajoutée à cette activité."
     add_question: "Ajouter une Nouvelle Question"
     view: "Voir"
     edit_btn: "Modifier"
     delete: "Supprimer"
-    confirm_delete: "Êtes-vous sûr de vouloir supprimer cette activité?"
+    confirm_delete: "Êtes-vous sûr de vouloir supprimer cette activité ?"
     solve_quiz: "Résoudre le Quiz"
     back_to_dashboard: "Retour au Tableau de Bord"
     back_to_activities: "Retour aux Activités"
@@ -65,58 +66,42 @@ fr:
     submit_quiz: "Soumettre les Réponses"
     results: "Résultats"
     correct_answers: "Réponses Correctes"
-    total_questions: "Total des Questions"
     score: "Score"
     
   # Questions
   questions:
-    title: "Questions"
-    new: "Nouvelle Question"
-    edit: "Modifier la Question"
-    content: "Contenu"
+    title: "Question"
+    content: "Contenu de la Question"
+    content_placeholder: "Saisissez la question"
+    content_required: "Le contenu de la question est obligatoire"
+    options: "Options (séparées par des virgules)"
+    options_placeholder: "Option1, Option2, Option3, Option4"
+    options_required: "Au moins deux options sont nécessaires"
     correct_answer: "Réponse Correcte"
-    options: "Options"
-    confirm_delete: "Êtes-vous sûr de vouloir supprimer cette question?"
-    add_options: "Ajouter des Options"
-    options_placeholder: "Entrez les options séparées par des virgules"
-    options_help: "Séparez les options avec des virgules"
-    content_required: "Le contenu de la question est requis"
-    correct_answer_required: "La réponse correcte est requise"
-    options_required: "Les options sont requises"
-    at_least_one_option: "Ajoutez au moins une option"
-    invalid_options: "Format d'options invalide"
-    question_number: "Question %{number}"
-    no_questions: "Aucune question ajoutée"
-    add_first_question: "Ajouter la Première Question"
-    edit_question: "Modifier la Question"
-    delete_question: "Supprimer la Question"
-    question_saved: "Question enregistrée avec succès!"
-    question_updated: "Question mise à jour avec succès!"
-    question_deleted: "Question supprimée avec succès!"
-    error_saving: "Erreur lors de l'enregistrement de la question"
-    error_updating: "Erreur lors de la mise à jour de la question"
-    error_deleting: "Erreur lors de la suppression de la question"
-    permission_denied: "Vous n'avez pas la permission de modifier cette question"
+    correct_answer_placeholder: "Saisissez la réponse correcte (doit correspondre à l'une des options)"
+    correct_answer_required: "La réponse correcte est obligatoire"
+    add: "Ajouter une Question"
 
   # Quiz
   quiz:
-    title: "Résoudre le Quiz:"
+    title: "Résoudre le Quiz :"
     submit: "Soumettre les Réponses"
+    submitting: "Envoi en cours..."
     results: "Résultats du Quiz"
     final_score: "Score Final"
-    correct_answers: "Vous avez répondu correctement à %{correct} questions sur %{total} (%{score}%)"
+    correct_answers: "Vous avez obtenu %{correct} sur %{total} questions (%{score}%)"
     your_answer: "Votre réponse"
     correct_answer: "Réponse correcte"
     try_again: "Réessayer"
-    not_answered: "Non répondue"
+    not_answered: "Sans réponse"
 
-  # Formulaires
+  # Forms
   forms:
     save: "Enregistrer"
     cancel: "Annuler"
     edit: "Modifier"
     delete: "Supprimer"
-    confirm: "Êtes-vous sûr?"
+    confirm: "Êtes-vous sûr ?"
     title: "Titre"
     description: "Description"
     level: "Niveau"
@@ -130,19 +115,16 @@ fr:
     activity_deleted: "L'activité a été supprimée avec succès."
     quiz_submitted: "Le quiz a été soumis avec succès."
     quiz_error: "Erreur lors du traitement du quiz."
-    language_updated: "La langue a été mise à jour avec succès!"
-    language_update_failed: "Impossible de mettre à jour la langue."
-    answer_quiz_first: "Veuillez répondre au quiz d'abord."
+    language_updated: "La langue a été changée avec succès !"
+    language_update_failed: "Impossible de changer la langue."
+    answer_quiz_first: "Veuillez d'abord répondre au quiz."
     permission_denied: "Vous n'avez pas la permission de modifier cette activité."
-    question_created: "Question créée avec succès!"
-    question_updated: "Question mise à jour avec succès!"
-    question_deleted: "Question supprimée avec succès!"
     
   # Devise
   devise:
     sessions:
       new:
-        sign_in: "Se connecter"
+        sign_in: "Se Connecter"
         email: "Email"
         password: "Mot de passe"
         remember_me: "Se souvenir de moi"
@@ -155,35 +137,7 @@ fr:
         minimum_password: "(%{min} caractères minimum)"
         teacher: "Professeur"
         student: "Étudiant"
-    confirmations:
-      confirmed: "Votre adresse email a été confirmée avec succès."
-      send_instructions: "Vous recevrez un email avec les instructions pour confirmer votre adresse email dans quelques minutes."
-      send_paranoid_instructions: "Si votre adresse email existe dans notre base de données, vous recevrez un email avec les instructions pour la confirmer dans quelques minutes."
-    failure:
-      unconfirmed: "Veuillez confirmer votre adresse email avant de continuer."
-    mailer:
-      confirmation_instructions:
-        subject: "Instructions de confirmation"
-        welcome: "Bienvenue %{email}!"
-        confirm_text: "Vous pouvez confirmer votre compte en cliquant sur le lien ci-dessous:"
-        confirm_link: "Confirmer mon compte"
-        ignore_text: "Si vous n'avez pas demandé de compte, vous pouvez ignorer cet email."
 
   # Auth
   auth:
-    sign_out: "Se déconnecter"
-
-  # Common
-  common:
-    save: "Enregistrer"
-    edit: "Modifier"
-    delete: "Supprimer"
-    back: "Retour"
-    cancel: "Annuler"
-    confirm: "Confirmer"
-    actions: "Actions"
-
-  # Users
-  users:
-    invite: "Inviter un Nouvel Utilisateur"
-    invited: "Invitation envoyée avec succès" 
+    sign_out: "Déconnexion" 

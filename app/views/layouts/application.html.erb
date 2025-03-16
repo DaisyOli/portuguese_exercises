@@ -59,6 +59,10 @@
           <% end %>
         </div>
         
+        <% if current_user&.teacher? %>
+          <%= link_to t('users.invite'), new_user_invitation_path, class: "btn btn-primary" %>
+        <% end %>
+        
         <%= yield %>
       </div>
     <% else %>

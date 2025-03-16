@@ -5,9 +5,9 @@
       <div class="text-center mb-4">
         <h1 class="h2"><%= t('teacher_dashboard.welcome') %></h1>
         <p class="text-muted"><%= t('teacher_dashboard.control_panel') %></p>
-        <div class="d-flex flex-column align-items-center gap-2">
-          <%= link_to t('teacher_dashboard.add_activity'), new_activity_path, class: "btn btn-primary", style: "width: 200px;" %>
-          <%= link_to t('users.invite'), new_user_invitation_path, class: "btn btn-success", style: "width: 200px;" %>
+        <div class="d-flex justify-content-center gap-3">
+          <%= link_to t('teacher_dashboard.add_activity'), new_activity_path, class: "btn btn-primary", style: "min-width: 200px;" %>
+          <%= link_to t('users.invite'), new_user_invitation_path, class: "btn btn-success", style: "min-width: 200px;" %>
         </div>
       </div>
 
@@ -73,16 +73,15 @@
       </div>
 
       <!-- Botão de Logout -->
-      
-      <div class="text-center mt-4">
-        <%= link_to t('activities.back_to_activities'), activities_path, class: "btn btn-secondary" %>
-      </div>
       <div class="text-center mt-4">
         <%= button_to t('auth.sign_out'), 
             destroy_user_session_path, 
             method: :delete, 
             class: "btn btn-danger", 
             data: { turbo: false } %>
+      </div>
+      <div class="text-center mt-4">
+        <%= link_to t('activities.back_to_activities'), activities_path, class: "btn btn-secondary" %>
       </div>
     </div>
   </div>

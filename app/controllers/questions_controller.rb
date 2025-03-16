@@ -10,7 +10,11 @@ class QuestionsController < ApplicationController
 
   def create
     @question = @activity.questions.build(question_params)
-    process_options
+
+    # Processa as opções da string separada por vírgulas para um array
+    if params[:question][:options].present?
+      @question.options = params[:question][:options].split(",").map(&:strip)
+    end
 
     if @question.save
       redirect_to activity_path(@activity), notice: t('messages.question_created')
@@ -24,12 +28,7 @@ class QuestionsController < ApplicationController
 
   def update
     if @question.update(question_params)
-      process_options
-      if @question.save
-        redirect_to activity_path(@activity), notice: t('messages.question_updated')
-      else
-        render :edit, status: :unprocessable_entity
-      end
+      redirect_to activity_path(@activity), notice: t('messages.question_updated')
     else
       render :edit, status: :unprocessable_entity
     end
@@ -51,13 +50,7 @@ class QuestionsController < ApplicationController
   end
 
   def question_params
-    params.require(:question).permit(:content, :correct_answer, :options)
-  end
-
-  def process_options
-    if params[:question][:options].present?
-      @question.options = params[:question][:options].split(",").map(&:strip)
-    end
+    params.require(:question).permit(:content, :correct_answer)
   end
 
   def check_teacher_permission
