@@ -55,4 +55,9 @@
       <% end %>
     </div>
   </div>
+  <div class="d-grid mt-4">
+        <% if current_user.teacher? %>
+          <%= link_to t('activities.back_to_dashboard'), teacher_dashboard_path, class: "btn btn-secondary" %>
+        <% end %>
+      </div>
 </div>
