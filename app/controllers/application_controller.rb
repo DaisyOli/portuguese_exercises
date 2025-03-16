@@ -2,7 +2,7 @@ class ApplicationController < ActionController::Base
   before_action :authenticate_user!
   before_action :configure_permitted_parameters, if: :devise_controller?
   before_action :set_locale, if: :user_signed_in?
-  around_action :switch_locale
+  around_action :switch_locale, unless: -> { devise_controller? && action_name == 'create' }
 
   def after_sign_in_path_for(resource)
     case resource.role
@@ -25,7 +25,7 @@ class ApplicationController < ActionController::Base
   private
 
   def set_locale
-    I18n.locale = if user_signed_in? && current_user
+    I18n.locale = if user_signed_in? && current_user.present?
                     current_user.language.to_sym
                   else
                     params[:locale] || I18n.default_locale
@@ -33,14 +33,15 @@ class ApplicationController < ActionController::Base
   end
 
   def extract_locale
-    # Evita acessar current_user durante o processo de autenticação
-    # para evitar o erro de invitation_token
+    # Evita completamente acessar current_user durante processos de autenticação
+    return params[:locale] || I18n.default_locale if devise_controller?
+    
     locale = if params[:locale].present?
                params[:locale]
-             elsif user_signed_in? && current_user && !devise_controller?
+             elsif user_signed_in? && current_user.present?
                current_user.language
              else
-               http_accept_language.compatible_language_from(I18n.available_locales) || I18n.default_locale
+               I18n.default_locale
              end
     
     locale.presence || I18n.default_locale
