@@ -1,0 +1,23 @@
+pt:
+  devise:
+    invitations:
+      send_instructions: 'Um email de convite foi enviado para %{email}.'
+      invitation_token_invalid: 'O token de convite fornecido não é válido!'
+      updated: 'Sua senha foi definida com sucesso. Você está agora conectado.'
+      updated_not_active: 'Sua senha foi definida com sucesso.'
+      no_invitations_remaining: "Não há convites restantes"
+      invitation_removed: 'Seu convite foi removido.'
+      new:
+        header: 'Enviar Convite'
+        submit_button: 'Enviar um convite'
+      edit:
+        header: 'Defina sua senha'
+        submit_button: 'Definir minha senha'
+    mailer:
+      invitation_instructions:
+        subject: 'Bem-vindo ao PracticePT - Seu Convite'
+        hello: 'Olá %{email}'
+        someone_invited_you: 'Você foi convidado para participar do PracticePT, uma plataforma para atividades educacionais e questionários. Você pode aceitar este convite através do link abaixo.'
+        accept: 'Aceitar convite'
+        accept_until: 'Este convite será válido até %{due_date}.'
+        ignore: "Se você não quiser aceitar o convite, por favor ignore este email. Sua conta não será criada até que você acesse o link acima e defina sua senha." 
