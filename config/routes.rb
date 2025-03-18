@@ -11,7 +11,7 @@ Rails.application.routes.draw do
   
   # Rotas do Devise para autenticação
   devise_for :users, controllers: {
-    invitations: 'invitations'
+    invitations: 'invitations_controller'
   }
 
   # Rotas para atividades e questões
