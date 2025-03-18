@@ -3,7 +3,13 @@ class ActivitiesController < ApplicationController
   before_action :set_activity, only: [:show, :edit, :update, :destroy, :resolve_quiz, :submit_quiz, :quiz_results]
 
   def index
-    @activities = Activity.all
+    if params[:level].present?
+      @activities = Activity.where(level: params[:level])
+      @current_level = params[:level]
+    else
+      @activities = Activity.all
+      @activities_by_level = Activity.all.group_by(&:level)
+    end
     Rails.logger.info "Sessão quiz_results: #{session[:quiz_results].inspect}"
   end
 

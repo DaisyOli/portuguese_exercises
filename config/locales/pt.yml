@@ -67,7 +67,7 @@ pt:
     edit_btn: "Editar"
     delete: "Excluir"
     confirm_delete: "Tem certeza que deseja excluir esta atividade?"
-    solve_quiz: "Resolver Quiz"
+    solve_quiz: "Resolver"
     back_to_dashboard: "Voltar ao Painel"
     back_to_activities: "Voltar para Atividades"
     question_count: "questões"
@@ -77,6 +77,14 @@ pt:
     correct_answers: "Respostas Corretas"
     total_questions: "Total de Questões"
     score: "Pontuação"
+    level_activities: "Atividades"
+    back_to_all: "Voltar para todos os níveis"
+    view_level: "Ver Atividades"
+    level_count:
+      zero: "Nenhuma atividade disponível"
+      one: "1 atividade disponível"
+      other: "%{count} atividades disponíveis"
+    no_activities_for_level: "Não há atividades disponíveis para o nível %{level}."
     
   # Questions
   questions:
