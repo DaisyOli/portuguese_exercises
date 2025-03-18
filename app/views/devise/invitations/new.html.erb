@@ -1,16 +1,31 @@
-<h2><%= t "devise.invitations.new.header" %></h2>
+<div class="container d-flex justify-content-center align-items-center vh-100">
+  <div class="card shadow-lg p-4" style="width: 100%; max-width: 400px;">
+    <div class="card-body">
+      <h2 class="card-title text-center mb-4"><%= t "devise.invitations.new.header" %></h2>
 
-<%= form_for(resource, as: resource_name, url: invitation_path(resource_name), html: { method: :post }) do |f| %>
-  <%= render "devise/shared/error_messages", resource: resource %>
+      <%= form_for(resource, as: resource_name, url: invitation_path(resource_name), html: { method: :post, class: 'needs-validation' }) do |f| %>
+        <%= render "devise/shared/error_messages", resource: resource %>
 
-  <% resource.class.invite_key_fields.each do |field| -%>
-    <div class="field">
-      <%= f.label field %><br />
-      <%= f.text_field field %>
+        <% resource.class.invite_key_fields.each do |field| -%>
+          <div class="mb-3">
+            <%= f.label field, class: "form-label" %><br />
+            <%= f.text_field field, class: "form-control", placeholder: "Enter #{field}" %>
+          </div>
+        <% end -%>
+
+        <div class="mb-3">
+          <%= f.label :role, class: "form-label" %>
+          <%= f.select :role, [['Professor', 'teacher'], ['Estudante', 'student']], { include_blank: true }, { class: "form-select" } %>
+        </div>
+
+        <div class="d-grid">
+          <%= f.submit t("devise.invitations.new.submit_button"), class: "btn btn-primary btn-block" %>
+        </div>
+      <% end %>
+
+      <div class="mt-3 text-center">
+        <%= link_to t('common.back'), :back, class: "text-decoration-none" %>
+      </div>
     </div>
-  <% end -%>
-
-  <div class="actions">
-    <%= f.submit t("devise.invitations.new.submit_button") %>
   </div>
-<% end %>
+</div>
