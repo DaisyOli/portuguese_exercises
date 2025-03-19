@@ -1,6 +1,6 @@
 class ActivitiesController < ApplicationController
   before_action :authenticate_user!
-  before_action :set_activity, only: [:show, :edit, :update, :destroy, :resolve_quiz, :submit_quiz, :quiz_results]
+  before_action :set_activity, only: [:show, :edit, :update, :destroy, :resolve_quiz, :submit_quiz, :quiz_results, :clear_statement, :clear_media, :clear_explanation]
 
   def index
     if params[:level].present?
@@ -128,6 +128,36 @@ class ActivitiesController < ApplicationController
     else
       render :edit, status: :unprocessable_entity
     end
+  end
+
+  def clear_statement
+    if @activity.teacher != current_user
+      redirect_to activities_path, alert: t('messages.permission_denied')
+      return
+    end
+
+    @activity.update(statement: nil)
+    redirect_to @activity, notice: t('messages.statement_deleted')
+  end
+
+  def clear_media
+    if @activity.teacher != current_user
+      redirect_to activities_path, alert: t('messages.permission_denied')
+      return
+    end
+
+    @activity.update(media_url: nil)
+    redirect_to @activity, notice: t('messages.media_deleted')
+  end
+
+  def clear_explanation
+    if @activity.teacher != current_user
+      redirect_to activities_path, alert: t('messages.permission_denied')
+      return
+    end
+
+    @activity.update(explanation_text: nil)
+    redirect_to @activity, notice: t('messages.explanation_deleted')
   end
 
   def destroy

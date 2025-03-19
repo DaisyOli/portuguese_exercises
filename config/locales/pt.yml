@@ -94,6 +94,9 @@ pt:
     explanation_text_label: "Texto explicativo"
     explanation_text_placeholder: "Adicione um texto explicativo para esta atividade"
     save_text: "Salvar texto"
+    confirm_delete_statement: "Tem certeza que deseja excluir o enunciado?"
+    confirm_delete_media: "Tem certeza que deseja excluir a mídia?"
+    confirm_delete_explanation: "Tem certeza que deseja excluir o texto explicativo?"
     level_count:
       zero: "Nenhuma atividade disponível"
       one: "1 atividade disponível"
@@ -169,6 +172,9 @@ pt:
     question_created: "Questão criada com sucesso!"
     question_updated: "Questão atualizada com sucesso!"
     question_deleted: "Questão excluída com sucesso!"
+    statement_deleted: "Enunciado excluído com sucesso."
+    media_deleted: "Mídia excluída com sucesso."
+    explanation_deleted: "Texto explicativo excluído com sucesso."
     
   # Devise
   devise:

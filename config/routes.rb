@@ -20,6 +20,9 @@ Rails.application.routes.draw do
       get :resolve_quiz
       post :submit_quiz
       get :quiz_results
+      patch :clear_statement
+      patch :clear_media
+      patch :clear_explanation
     end
 
     resources :questions

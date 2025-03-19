@@ -27,6 +27,11 @@ class QuestionsController < ApplicationController
   end
 
   def update
+    # Processar as opções da string separada por vírgulas para um array
+    if params[:question][:options].present?
+      @question.options = params[:question][:options].split(",").map(&:strip)
+    end
+
     if @question.update(question_params)
       redirect_to activity_path(@activity), notice: t('messages.question_updated')
     else

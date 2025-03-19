@@ -22,12 +22,14 @@
           <% if @activity.media_url.include?('youtube.com') || @activity.media_url.include?('youtu.be') %>
             <% youtube_id = @activity.media_url.match(/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/) %>
             <% if youtube_id && youtube_id[1] %>
-              <div class="ratio ratio-16x9 mb-3">
-                <iframe 
-                  src="https://www.youtube.com/embed/<%= youtube_id[1] %>" 
-                  allowfullscreen
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture">
-                </iframe>
+              <div style="max-width: 560px; margin: 0 auto;">
+                <div class="ratio ratio-16x9 mb-3">
+                  <iframe 
+                    src="https://www.youtube.com/embed/<%= youtube_id[1] %>" 
+                    allowfullscreen
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture">
+                  </iframe>
+                </div>
               </div>
             <% end %>
           <% else %>
