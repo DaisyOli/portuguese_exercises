@@ -81,6 +81,19 @@ pt:
     level_activities: "Atividades"
     back_to_all: "Voltar para todos os níveis"
     view_level: "Ver Atividades"
+    add_statement: "Adicione o enunciado"
+    statement_label: "Enunciado da atividade"
+    statement_placeholder: "Digite o enunciado da atividade"
+    save_statement: "Salvar enunciado"
+    add_media: "Adicione uma imagem ou vídeo"
+    media_url_label: "URL da imagem ou vídeo"
+    media_url_placeholder: "Cole o link do YouTube ou URL da imagem"
+    media_url_help: "Cole o link completo do YouTube ou a URL da imagem."
+    save_media: "Salvar mídia"
+    add_text: "Adicione um texto"
+    explanation_text_label: "Texto explicativo"
+    explanation_text_placeholder: "Adicione um texto explicativo para esta atividade"
+    save_text: "Salvar texto"
     level_count:
       zero: "Nenhuma atividade disponível"
       one: "1 atividade disponível"
@@ -89,7 +102,7 @@ pt:
     
   # Questions
   questions:
-    title: "Questões"
+    title: "Questão"
     new: "Nova Questão"
     edit: "Editar Questão"
     content: "Conteúdo"

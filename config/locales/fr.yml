@@ -68,6 +68,25 @@ fr:
     results: "Résultats"
     correct_answers: "Réponses Correctes"
     score: "Score"
+    # Novas funcionalidades
+    add_statement: "Ajouter l'énoncé"
+    statement_label: "Énoncé de l'activité"
+    statement_placeholder: "Saisissez l'énoncé de l'activité"
+    save_statement: "Enregistrer l'énoncé"
+    add_media: "Ajouter une image ou une vidéo"
+    media_url_label: "URL de l'image ou de la vidéo"
+    media_url_placeholder: "Collez le lien YouTube ou l'URL de l'image"
+    media_url_help: "Collez le lien complet YouTube ou l'URL de l'image."
+    save_media: "Enregistrer le média"
+    add_text: "Ajouter un texte"
+    explanation_text_label: "Texte explicatif"
+    explanation_text_placeholder: "Ajoutez un texte explicatif pour cette activité"
+    save_text: "Enregistrer le texte"
+    level_count:
+      zero: "Aucune activité disponible"
+      one: "1 activité disponible"
+      other: "%{count} activités disponibles"
+    no_activities_for_level: "Il n'y a pas d'activités disponibles pour le niveau %{level}."
     
   # Questions
   questions:

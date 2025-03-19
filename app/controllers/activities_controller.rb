@@ -105,7 +105,7 @@ class ActivitiesController < ApplicationController
     @activity.teacher = current_user
 
     if @activity.save
-      redirect_to new_activity_question_path(@activity), notice: t('messages.activity_created')
+      redirect_to activity_path(@activity), notice: t('messages.activity_created')
     else
       render :new, status: :unprocessable_entity
     end
@@ -142,6 +142,6 @@ class ActivitiesController < ApplicationController
   end
 
   def activity_params
-    params.require(:activity).permit(:title, :description, :level)
+    params.require(:activity).permit(:title, :description, :level, :media_url, :explanation_text, :statement)
   end
 end
