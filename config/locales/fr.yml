@@ -1,11 +1,11 @@
 fr:
   hello: "Bonjour"
-  app_name: "Exercise App"
-  welcome: "Bienvenue sur Exercise App"
+  app_name: "Practice PT"
+  welcome: "Bienvenue sur Practice PT"
   
   # Home page
   home:
-    welcome_message: "Bienvenue sur Exercise App !"
+    welcome_message: "Bienvenue sur Practice PT !"
     login_prompt: "Veuillez vous connecter ou vous inscrire pour continuer."
     logged_in_as: "Vous êtes connecté en tant que"
     go_to_teacher_dashboard: "Aller au Tableau de Bord Professeur"
@@ -61,6 +61,7 @@ fr:
     solve_quiz: "Résoudre le Quiz"
     back_to_dashboard: "Retour au Tableau de Bord"
     back_to_activities: "Retour aux Activités"
+    go_to_activities: "Aller aux Activités"
     question_count: "questions"
     start_quiz: "Commencer le Quiz"
     submit_quiz: "Soumettre les Réponses"

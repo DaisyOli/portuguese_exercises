@@ -29,12 +29,12 @@
 
 en:
   hello: "Hello"
-  app_name: "Exercise App"
-  welcome: "Welcome to Exercise App"
+  app_name: "Practice PT"
+  welcome: "Welcome to Practice PT"
   
   # Home page
   home:
-    welcome_message: "Welcome to the Exercise App!"
+    welcome_message: "Welcome to the Practice PT!"
     login_prompt: "Please sign up or log in to continue."
     logged_in_as: "You are logged in as"
     go_to_teacher_dashboard: "Go to Teacher Dashboard"
@@ -88,6 +88,7 @@ en:
     solve_quiz: "Solve Quiz"
     back_to_dashboard: "Back to Dashboard"
     back_to_activities: "Back to Activities"
+    go_to_activities: "Go to Activities"
     question_count: "questions"
     
   questions:

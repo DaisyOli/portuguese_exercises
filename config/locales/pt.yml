@@ -1,7 +1,7 @@
 pt:
   hello: "Olá"
-  app_name: "Exercise App"
-  welcome: "Bem-vindo ao Exercise App"
+  app_name: "Practice PT"
+  welcome: "Bem-vindo ao Practice PT"
   
   # Common - Botões e textos comuns
   common:
@@ -15,7 +15,7 @@ pt:
     
   # Home page
   home:
-    welcome_message: "Bem-vindo ao Exercise App!"
+    welcome_message: "Bem-vindo ao Practice PT!"
     login_prompt: "Por favor, faça login ou cadastre-se para continuar."
     logged_in_as: "Você está logado como"
     go_to_teacher_dashboard: "Ir para o Painel do Professor"
@@ -70,6 +70,7 @@ pt:
     solve_quiz: "Resolver"
     back_to_dashboard: "Voltar ao Painel"
     back_to_activities: "Voltar para Atividades"
+    go_to_activities: "Ir para as Atividades"
     question_count: "questões"
     start_quiz: "Iniciar Quiz"
     submit_quiz: "Enviar Respostas"
