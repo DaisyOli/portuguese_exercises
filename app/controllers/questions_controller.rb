@@ -10,15 +10,18 @@ class QuestionsController < ApplicationController
 
   def create
     @question = @activity.questions.build(question_params)
-
-    # Processa as opções da string separada por vírgulas para um array
-    if params[:question][:options].present?
-      @question.options = params[:question][:options].split(",").map(&:strip)
-    end
+    
+    Rails.logger.debug "Parâmetros recebidos: #{params.inspect}"
+    Rails.logger.debug "Parâmetros permitidos: #{question_params.inspect}"
+    Rails.logger.debug "Questão construída: #{@question.inspect}"
+    Rails.logger.debug "Opções: #{@question.options.inspect}"
+    Rails.logger.debug "Options text: #{@question.options_text.inspect}"
+    Rails.logger.debug "Sentences content: #{@question.sentences_content.inspect}"
 
     if @question.save
       redirect_to activity_path(@activity), notice: t('messages.question_created')
     else
+      Rails.logger.debug "Erros de validação: #{@question.errors.full_messages}"
       render :new, status: :unprocessable_entity
     end
   end
@@ -27,11 +30,6 @@ class QuestionsController < ApplicationController
   end
 
   def update
-    # Processar as opções da string separada por vírgulas para um array
-    if params[:question][:options].present?
-      @question.options = params[:question][:options].split(",").map(&:strip)
-    end
-
     if @question.update(question_params)
       redirect_to activity_path(@activity), notice: t('messages.question_updated')
     else
@@ -55,7 +53,9 @@ class QuestionsController < ApplicationController
   end
 
   def question_params
-    params.require(:question).permit(:content, :correct_answer)
+    permitted = params.require(:question).permit(:content, :correct_answer, :question_type, :points, :options_text, :sentences_content, options: [])
+    Rails.logger.debug "Parâmetros permitidos em question_params: #{permitted.inspect}"
+    permitted
   end
 
   def check_teacher_permission

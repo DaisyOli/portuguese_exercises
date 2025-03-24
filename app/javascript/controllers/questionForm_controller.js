@@ -1,54 +1,59 @@
-// app/javascript/controllers/question_form_controller.js
+// app/javascript/controllers/questionForm_controller.js
 import { Controller } from "@hotwired/stimulus";
 
 export default class extends Controller {
   static targets = [
     "questionType",
-    "contentField",
     "multipleChoiceFields",
     "fillInBlankHelp",
     "orderSentencesHelp",
-    "orderSentencesFields"
+    "orderSentencesFields",
+    "correctAnswerField",
+    "contentField"
   ];
 
+  initialize() {
+    console.log("QuestionFormController initialized");
+    this.toggleFields();
+  }
+
   connect() {
-    console.log("QuestionFormController connected!");
-    console.log("Targets available:", this.targets);
-    console.log("Question type target exists?", this.hasQuestionTypeTarget);
-    if (this.hasQuestionTypeTarget) {
-      console.log("Current question type:", this.questionTypeTarget.value);
-      this.toggleFields();
-    }
+    console.log("QuestionFormController connected");
+    this.toggleFields();
   }
 
   toggleFields() {
     console.log("toggleFields called");
-    const questionType = this.questionTypeTarget.value;
-    console.log("Current question type:", questionType);
+    const selectedType = this.questionTypeTarget.value;
+    console.log("Selected type:", selectedType);
 
-    // Esconde todos os campos primeiro
+    // Primeiro esconde todos os campos
     this.hideAllFields();
 
-    // O campo de conteúdo é sempre visível
-    this.contentFieldTarget.style.display = 'block';
-
-    // Mostra os campos relevantes baseado no tipo de questão
-    switch (questionType) {
+    // Depois mostra os campos específicos do tipo selecionado
+    switch (selectedType) {
       case 'multiple_choice':
+        this.contentFieldTarget.style.display = 'block';
         this.multipleChoiceFieldsTarget.style.display = 'block';
+        this.correctAnswerFieldTarget.style.display = 'block';
         break;
       case 'fill_in_blank':
+        this.contentFieldTarget.style.display = 'block';
         this.fillInBlankHelpTarget.style.display = 'block';
+        this.correctAnswerFieldTarget.style.display = 'block';
         break;
       case 'order_sentences':
+        this.contentFieldTarget.style.display = 'none'; // Esconde o campo de conteúdo
         this.orderSentencesHelpTarget.style.display = 'block';
         this.orderSentencesFieldsTarget.style.display = 'block';
+        this.correctAnswerFieldTarget.style.display = 'none';
         break;
     }
   }
 
   hideAllFields() {
     // Esconde todos os campos especiais
+    this.contentFieldTarget.style.display = 'none';
     this.multipleChoiceFieldsTarget.style.display = 'none';
     this.fillInBlankHelpTarget.style.display = 'none';
     this.orderSentencesHelpTarget.style.display = 'none';

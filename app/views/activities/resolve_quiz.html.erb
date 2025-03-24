@@ -54,9 +54,15 @@
           <div class="card mb-3">
             <div class="card-body py-3">
               <h6 class="card-subtitle text-muted mb-2"><%= t('questions.title') %> <%= index + 1 %></h6>
-              <p class="card-text mb-3 fs-5"><%= question.content %></p>
+              <p class="card-text mb-3 fs-5">
+                <% if question.fill_in_blank? %>
+                  <%= question.content.gsub('_____', text_field_tag("answers[#{question.id}]", nil, class: 'form-control d-inline-block', style: 'width: 150px;')).html_safe %>
+                <% else %>
+                  <%= question.content %>
+                <% end %>
+              </p>
 
-              <% if question.options.any? %>
+              <% if question.multiple_choice? && question.options.any? %>
                 <div class="options-list">
                   <div class="ps-2">
                     <% question.options.each do |option| %>
@@ -66,6 +72,28 @@
                       </div>
                     <% end %>
                   </div>
+                </div>
+              <% elsif question.order_sentences? && question.options.any? %>
+                <div class="order-sentences-container">
+                  <p class="mb-2"><%= t('questions.order_sentences_instruction', default: 'Arraste as frases para colocá-las na ordem correta:') %></p>
+                  
+                  <%= hidden_field_tag "answers[#{question.id}]", '', class: 'order-sentences-answer', id: "order_sentences_answer_#{question.id}" %>
+                  
+                  <ul class="list-group sortable-list" id="sortable_<%= question.id %>" data-controller="sortable" data-question-id="<%= question.id %>">
+                    <% question.options.each_with_index do |sentence, i| %>
+                      <li class="list-group-item sortable-item" data-value="<%= sentence %>">
+                        <div class="d-flex align-items-center">
+                          <div class="drag-handle me-2">
+                            <i class="fas fa-grip-lines text-secondary"></i>
+                          </div>
+                          <div class="flex-grow-1"><%= sentence %></div>
+                          <div class="ms-2">
+                            <i class="fas fa-arrows-alt text-secondary"></i>
+                          </div>
+                        </div>
+                      </li>
+                    <% end %>
+                  </ul>
                 </div>
               <% end %>
             </div>
@@ -80,3 +108,86 @@
     </div>
   </div>
 </div>
+
+<!-- Adicionando o Sortable.js para drag and drop -->
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Função para atualizar o campo de resposta com a ordem atual dos itens
+    function updateAnswerField(sortableList) {
+      const questionId = sortableList.dataset.questionId;
+      const answerField = document.getElementById(`order_sentences_answer_${questionId}`);
+      const items = sortableList.querySelectorAll('.sortable-item');
+      const values = Array.from(items).map(item => item.dataset.value);
+      answerField.value = values.join('|');
+    }
+
+    // Inicialização do Sortable para todos os containers de ordenação
+    document.querySelectorAll('.sortable-list').forEach(function(element) {
+      new Sortable(element, {
+        animation: 150,
+        draggable: '.sortable-item',
+        handle: '.sortable-item',
+        ghostClass: 'sortable-ghost',
+        chosenClass: 'sortable-chosen',
+        dragClass: 'sortable-drag',
+        forceFallback: true,
+        fallbackClass: 'sortable-fallback',
+        onEnd: function(evt) {
+          updateAnswerField(evt.to);
+        }
+      });
+      
+      // Inicializa o campo de resposta com a ordem inicial
+      updateAnswerField(element);
+    });
+  });
+</script>
+
+<style>
+  .sortable-ghost {
+    opacity: 0.5;
+    background-color: #f8f9fa;
+  }
+  
+  .sortable-chosen {
+    background-color: #e9ecef;
+  }
+  
+  .sortable-drag {
+    cursor: grabbing !important;
+  }
+  
+  .sortable-fallback {
+    opacity: 0.8;
+    background-color: #fff;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+  
+  .sortable-item {
+    transition: background-color 0.2s;
+    cursor: grab;
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+  }
+  
+  .sortable-item:hover {
+    background-color: #f8f9fa;
+  }
+  
+  .sortable-item:active {
+    cursor: grabbing;
+  }
+  
+  .drag-handle {
+    cursor: grab;
+  }
+  
+  .list-group-item {
+    margin-bottom: 4px;
+    border-radius: 4px !important;
+  }
+</style>

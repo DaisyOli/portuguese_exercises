@@ -26,8 +26,8 @@ module ExerciseApp
     
     # Configuração de internacionalização
     config.i18n.load_path += Dir[Rails.root.join('config', 'locales', '**', '*.{rb,yml}')]
-    config.i18n.available_locales = [:en, :pt, :fr]
-    config.i18n.default_locale = :en
+    config.i18n.available_locales = [:en, :pt, :'pt-BR', :fr]
+    config.i18n.default_locale = :'pt-BR'
     config.i18n.fallbacks = true
     
     # Configuração de fuso horário

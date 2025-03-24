@@ -5,10 +5,11 @@ class User < ApplicationRecord
          :recoverable, :rememberable, :validatable
   
   has_many :activities, dependent: :destroy
+  has_many :quiz_attempts, dependent: :destroy
   
   ROLES = %w[teacher student].freeze
   LANGUAGES = %w[en pt fr].freeze
-  DEFAULT_LANGUAGE = 'en'.freeze
+  DEFAULT_LANGUAGE = 'pt'.freeze
 
   validates :role, presence: true, inclusion: { in: ROLES }
   validates :language, presence: true, inclusion: { in: LANGUAGES }

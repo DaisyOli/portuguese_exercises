@@ -10,14 +10,43 @@ class ActivitiesController < ApplicationController
       @activities = Activity.all
       @activities_by_level = Activity.all.group_by(&:level)
     end
-    Rails.logger.info "Sessão quiz_results: #{session[:quiz_results].inspect}"
+    
+    # Carregar as melhores tentativas para cada atividade se o usuário for um aluno
+    if current_user.student?
+      activity_ids = @activities.pluck(:id)
+      @best_attempts = {}
+      
+      # Obter a melhor tentativa para cada atividade
+      QuizAttempt.where(user_id: current_user.id, activity_id: activity_ids)
+                .group(:activity_id)
+                .select('activity_id, MAX(score) as max_score')
+                .each do |attempt|
+        # Armazenar a melhor pontuação para cada atividade
+        @best_attempts[attempt.activity_id] = attempt.max_score
+      end
+      
+      # Obter as tentativas mais recentes para cada atividade
+      @recent_attempts = {}
+      QuizAttempt.where(user_id: current_user.id, activity_id: activity_ids)
+                .group(:activity_id)
+                .select('activity_id, MAX(completed_at) as last_attempt')
+                .each do |attempt|
+        # Usar a data da tentativa mais recente para cada atividade
+        @recent_attempts[attempt.activity_id] = attempt.last_attempt
+      end
+    end
+    
+    Rails.logger.info "Melhores tentativas: #{@best_attempts.inspect}" if @best_attempts
   end
 
   def show
     @questions = @activity.questions
     if current_user.role == "student"
-      if session[:quiz_results].present? && session[:quiz_results][:activity_id] == @activity.id
-        redirect_to quiz_results_activity_path(@activity)
+      # Verificar se o aluno já tentou esta atividade
+      @last_attempt = current_user.quiz_attempts.where(activity_id: @activity.id).order(completed_at: :desc).first
+      
+      if @last_attempt.present?
+        redirect_to quiz_results_activity_path(@activity, attempt_id: @last_attempt.id)
       else
         redirect_to resolve_quiz_activity_path(@activity)
       end
@@ -44,11 +73,24 @@ class ActivitiesController < ApplicationController
       given_answer = answers[question.id.to_s]
       correct_answer = question.correct_answer
       
-      is_correct = given_answer.present? && given_answer.to_s.strip == correct_answer.to_s.strip
+      is_correct = false
+      
+      # Processa diferentes tipos de questões
+      case question.question_type
+      when 'multiple_choice'
+        is_correct = given_answer.present? && given_answer.to_s.strip == correct_answer.to_s.strip
+      when 'fill_in_blank'
+        is_correct = given_answer.present? && given_answer.to_s.strip == correct_answer.to_s.strip
+      when 'order_sentences'
+        # Para questões de ordenação, compara a ordem dada com a ordem correta
+        is_correct = given_answer.present? && given_answer.to_s == correct_answer.to_s
+      end
+      
       total_correct += 1 if is_correct
       
       results[question.id] = {
         question_text: question.content,
+        question_type: question.question_type,
         given_answer: given_answer.presence || t('quiz.not_answered'),
         correct_answer: correct_answer,
         is_correct: is_correct
@@ -57,23 +99,36 @@ class ActivitiesController < ApplicationController
     
     score = ((total_correct.to_f / @questions.count) * 100).round(2)
     
-    # Salva os resultados na sessão como um array
-    completed_quizzes = session[:completed_quizzes] || []
-    completed_quizzes << @activity.id
-    session[:completed_quizzes] = completed_quizzes.uniq
+    # Salva a tentativa no banco de dados
+    @quiz_attempt = current_user.quiz_attempts.new(
+      activity: @activity,
+      score: score,
+      total_questions: @questions.count,
+      correct_answers: total_correct,
+      answers_data: results,
+      completed_at: Time.current
+    )
     
+    # Calcula XP ganho
+    @quiz_attempt.xp_earned = @quiz_attempt.calculate_xp
+    
+    if @quiz_attempt.save
+      Rails.logger.info "Quiz attempt saved: #{@quiz_attempt.inspect}"
+    else
+      Rails.logger.error "Failed to save quiz attempt: #{@quiz_attempt.errors.full_messages.join(", ")}"
+    end
+    
+    # Mantenha a sessão temporária para compatibilidade com o código existente
     @quiz_results = {
       activity_id: @activity.id,
       results: results,
       score: score,
       total_correct: total_correct,
-      total_questions: @questions.count
+      total_questions: @questions.count,
+      attempt_id: @quiz_attempt.id
     }
     
     session[:quiz_results] = @quiz_results
-    
-    Rails.logger.info "Resultados salvos na sessão: #{session[:quiz_results].inspect}"
-    Rails.logger.info "Quizzes completados: #{session[:completed_quizzes].inspect}"
     
     respond_to do |format|
       format.html { redirect_to quiz_results_activity_path(@activity), notice: t('messages.quiz_submitted') }
@@ -86,12 +141,53 @@ class ActivitiesController < ApplicationController
 
   def quiz_results
     @activity = Activity.find(params[:id])
-    @quiz_results = session[:quiz_results]
+    
+    # Tenta obter do banco de dados, depois da sessão como fallback
+    if params[:attempt_id].present?
+      @quiz_attempt = QuizAttempt.find_by(id: params[:attempt_id])
+      if @quiz_attempt
+        @quiz_results = {
+          activity_id: @activity.id,
+          results: @quiz_attempt.answers_data,
+          score: @quiz_attempt.score,
+          total_correct: @quiz_attempt.correct_answers,
+          total_questions: @quiz_attempt.total_questions,
+          attempt_id: @quiz_attempt.id,
+          xp_earned: @quiz_attempt.xp_earned,
+          completed_at: @quiz_attempt.completed_at
+        }
+      end
+    elsif session[:quiz_results].present? && session[:quiz_results]["activity_id"] == @activity.id
+      @quiz_results = session[:quiz_results]
+      
+      if @quiz_results["attempt_id"].present?
+        @quiz_attempt = QuizAttempt.find_by(id: @quiz_results["attempt_id"])
+      end
+    else
+      # Tenta encontrar a tentativa mais recente
+      @quiz_attempt = current_user.quiz_attempts.where(activity_id: @activity.id).order(completed_at: :desc).first
+      
+      if @quiz_attempt
+        @quiz_results = {
+          activity_id: @activity.id,
+          results: @quiz_attempt.answers_data,
+          score: @quiz_attempt.score,
+          total_correct: @quiz_attempt.correct_answers,
+          total_questions: @quiz_attempt.total_questions,
+          attempt_id: @quiz_attempt.id,
+          xp_earned: @quiz_attempt.xp_earned,
+          completed_at: @quiz_attempt.completed_at
+        }
+      end
+    end
     
     if @quiz_results.nil?
       redirect_to resolve_quiz_activity_path(@activity), alert: t('messages.answer_quiz_first')
       return
     end
+    
+    # Obter todas as tentativas para exibir o histórico
+    @all_attempts = current_user.quiz_attempts.where(activity_id: @activity.id).order(completed_at: :desc)
     
     render 'quiz_results'
   end

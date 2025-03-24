@@ -84,7 +84,9 @@
               </div>
             <% end %>
           <% else %>
-            <img src="<%= @activity.media_url %>" alt="Imagem da atividade" class="img-fluid mb-3">
+            <div style="max-width: 560px; margin: 0 auto;">
+              <img src="<%= @activity.media_url %>" alt="Imagem da atividade" class="img-fluid mb-3">
+            </div>
           <% end %>
         </div>
         
@@ -94,8 +96,8 @@
               <%= form_with(model: @activity, local: true, data: { turbo: false }) do |f| %>
                 <div class="mb-3">
                   <%= f.label :media_url, t('activities.media_url_label'), class: "form-label" %>
-                  <%= f.text_field :media_url, class: "form-control" %>
-                  <div class="form-text"><%= t('activities.media_url_help') %></div>
+                  <%= f.text_field :media_url, class: "form-control", 
+                      placeholder: t('activities.media_url_placeholder') %>
                 </div>
                 <div class="d-grid">
                   <%= f.submit t('common.save'), class: "btn btn-primary" %>
@@ -156,58 +158,148 @@
           <% if @activity.questions.any? %>
             <div class="list-group">
               <% @activity.questions.each_with_index do |question, index| %>
-                <div class="list-group-item">
-                  <div class="d-flex justify-content-between align-items-start">
-                    <div>
-                      <h5 class="mb-1"><%= t('questions.title') %> <%= index + 1 %></h5>
-                      <p class="mb-1"><%= question.content %></p>
-                      <% if question.options.any? %>
-                        <small class="text-muted"><%= t('questions.options') %>:</small>
-                        <ul class="mb-1">
-                          <% question.options.each do |option| %>
-                            <li><%= option %></li>
-                          <% end %>
-                        </ul>
+                <div class="card mb-4">
+                  <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0"><%= t('questions.question_number', number: index + 1) %> <span class="badge bg-info"><%= t("questions.types.#{question.question_type}") %></span></h5>
+                  </div>
+                  <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start">
+                      <div>
+                        <% if question.fill_in_blank? %>
+                          <p class="mb-3 fs-5"><%= question.content.gsub('_____', '<span class="text-decoration-underline" style="width: 100px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>').html_safe %></p>
+                        <% elsif question.order_sentences? %>
+                          <p class="mb-3"><strong><%= t('questions.content') %>:</strong></p>
+                          <div class="mb-3">
+                            <% question.correct_answer.split("|").each do |sentence| %>
+                              <p class="mb-2"><%= sentence %></p>
+                            <% end %>
+                          </div>
+                          <p class="mb-3"><strong><%= t('questions.options') %>:</strong></p>
+                          <ul class="list-group mb-3">
+                            <% question.options.each do |sentence| %>
+                              <li class="list-group-item"><%= sentence %></li>
+                            <% end %>
+                          </ul>
+                        <% else %>
+                          <p class="mb-3 fs-5"><%= question.content %></p>
+                        <% end %>
+                        
+                        <% if question.multiple_choice? && question.options.any? %>
+                          <ul class="list-group mb-3">
+                            <% question.options.each do |option| %>
+                              <li class="list-group-item <%= question.correct_answer == option ? 'list-group-item-success' : '' %>">
+                                <%= option %>
+                              </li>
+                            <% end %>
+                          </ul>
+                        <% end %>
                         <small class="text-success"><%= t('questions.correct_answer') %>: <%= question.correct_answer %></small>
+                      </div>
+                      <% if @activity.teacher == current_user %>
+                        <div class="btn-group">
+                          <button type="button" class="btn btn-warning btn-sm" data-bs-toggle="collapse" data-bs-target="#edit-question-form-<%= question.id %>">
+                            <i class="bi bi-pencil"></i>
+                          </button>
+                          <%= button_to activity_question_path(@activity, question), 
+                              method: :delete, 
+                              class: "btn btn-danger btn-sm",
+                              data: { confirm: t('questions.confirm_delete') } do %>
+                            <i class="bi bi-trash"></i>
+                          <% end %>
+                        </div>
                       <% end %>
                     </div>
-                    <% if @activity.teacher == current_user %>
-                      <div class="btn-group">
-                        <button type="button" class="btn btn-warning btn-sm" data-bs-toggle="collapse" data-bs-target="#edit-question-form-<%= question.id %>">
-                          <i class="bi bi-pencil"></i>
-                        </button>
-                        <%= button_to activity_question_path(@activity, question), 
-                            method: :delete, 
-                            class: "btn btn-danger btn-sm",
-                            data: { confirm: t('questions.confirm_delete') } do %>
-                          <i class="bi bi-trash"></i>
-                        <% end %>
-                      </div>
-                    <% end %>
                   </div>
                 </div>
                 
                 <% if @activity.teacher == current_user %>
                   <div class="collapse mt-3" id="edit-question-form-<%= question.id %>">
                     <div class="card card-body">
-                      <%= form_with(model: [@activity, question], local: true, url: activity_question_path(@activity, question), method: :patch, data: { turbo: false }) do |f| %>
-                        <div class="mb-3">
-                          <%= f.label :content, t('questions.content'), class: "form-label" %>
-                          <%= f.text_area :content, class: "form-control", rows: 3 %>
-                        </div>
-                        <div class="mb-3">
-                          <%= f.label :options, t('questions.options'), class: "form-label" %>
-                          <%= f.text_field :options, class: "form-control", value: question.options.join(", ") %>
-                          <div class="form-text"><%= t('questions.options_help') %></div>
-                        </div>
-                        <div class="mb-3">
-                          <%= f.label :correct_answer, t('questions.correct_answer'), class: "form-label" %>
-                          <%= f.text_field :correct_answer, class: "form-control" %>
-                        </div>
-                        <div class="d-grid">
-                          <%= f.submit t('common.save'), class: "btn btn-primary" %>
-                        </div>
-                      <% end %>
+                      <div data-controller="question-form">
+                        <%= form_with model: [question.activity, question], html: { data: { action: "turbo:submit-end->question-form#toggleFields" } } do |form| %>
+                          <div class="row mb-3">
+                            <div class="col-md-12">
+                              <%= form.label :question_type, t('questions.form.question_type') %>
+                              <%= form.select :question_type, 
+                                  Question::QUESTION_TYPES.map { |type| [t("questions.types.#{type}"), type] }, 
+                                  { selected: question.question_type || 'multiple_choice' }, 
+                                  { 
+                                    class: "form-control", 
+                                    data: { 
+                                      question_form_target: "questionType",
+                                      action: "change->question-form#toggleFields"
+                                    }
+                                  } 
+                              %>
+                            </div>
+                          </div>
+                      
+                          <div class="row mb-3">
+                            <div class="col-md-12">
+                              <%= form.label :content, t('questions.form.question_content') %>
+                              <%= form.text_area :content, class: "form-control", rows: 3 %>
+                            </div>
+                          </div>
+
+                          <div class="row mb-3 fill-in-blank-help" data-question-form-target="fillInBlankHelp" style="display: <%= question.fill_in_blank? ? 'block' : 'none' %>;">
+                            <div class="col-md-12">
+                              <div class="alert alert-info">
+                                <%= t('questions.form.fill_in_blank_help_html') %>
+                              </div>
+                            </div>
+                          </div>
+                      
+                          <div class="row mb-3 order-sentences-help" data-question-form-target="orderSentencesHelp" style="display: <%= question.order_sentences? ? 'block' : 'none' %>;">
+                            <div class="col-md-12">
+                              <div class="alert alert-info">
+                                <%= t('questions.form.order_sentences_help_html') %>
+                              </div>
+                            </div>
+                          </div>
+                      
+                          <div class="row mb-3 multiple-choice-fields" data-question-form-target="multipleChoiceFields" style="display: <%= question.multiple_choice? ? 'block' : 'none' %>;">
+                            <div class="col-md-12">
+                              <%= form.label :options, t('questions.form.options') %>
+                              <%= form.text_area :options_text, value: question.options&.join(','), class: "form-control", rows: 3 %>
+                              <small class="form-text text-muted"><%= t('questions.form.options_help') %></small>
+                            </div>
+                          </div>
+                      
+                          <div class="row mb-3 order-sentences-fields" data-question-form-target="orderSentencesFields" style="display: <%= question.order_sentences? ? 'block' : 'none' %>;">
+                            <div class="col-md-12">
+                              <%= form.label :content, t('questions.form.sentences') %>
+                              <%= form.text_area :content, class: "form-control", rows: 5 %>
+                              <small class="form-text text-muted"><%= t('questions.form.order_sentences_input_help') %></small>
+                            </div>
+                          </div>
+                      
+                          <div class="row mb-3">
+                            <div class="col-md-12">
+                              <%= form.label :correct_answer, t('questions.form.correct_answer') %>
+                              <%= form.text_field :correct_answer, class: "form-control" %>
+                            </div>
+                          </div>
+
+                          <div class="row mb-3">
+                            <div class="col-md-12">
+                              <%= form.label :points, t('questions.form.points') %>
+                              <%= form.number_field :points, class: "form-control", min: 1, value: question.points || 10 %>
+                            </div>
+                          </div>
+
+                          <div class="row">
+                            <div class="col-md-12">
+                              <%= form.submit t('common.save'), class: "btn btn-primary" %>
+                              <% if question.persisted? %>
+                                <%= link_to t('common.delete'), 
+                                          activity_question_path(@activity, question), 
+                                          data: { turbo_method: :delete, turbo_confirm: t('common.confirm_delete') },
+                                          class: "btn btn-outline-danger ms-2" %>
+                              <% end %>
+                            </div>
+                          </div>
+                        <% end %>
+                      </div>
                     </div>
                   </div>
                 <% end %>
@@ -220,98 +312,105 @@
           <% end %>
         </div>
 
-        <!-- Botões de Ação do Professor -->
-        <div class="d-grid gap-2">
-          <!-- Botão para adicionar enunciado -->
-          <button type="button" class="btn btn-success" data-bs-toggle="collapse" data-bs-target="#new-statement-form">
-            <%= t('activities.add_statement') %>
-          </button>
-          
-          <div class="collapse" id="new-statement-form">
-            <div class="card card-body mt-3 mb-3">
-              <%= form_with(model: @activity, local: true, data: { turbo: false }) do |f| %>
-                <div class="mb-3">
-                  <%= f.label :statement, t('activities.statement_label'), class: "form-label" %>
-                  <%= f.text_area :statement, class: "form-control", rows: 5,
-                      placeholder: t('activities.statement_placeholder') %>
-                </div>
-                <div class="d-grid">
-                  <%= f.submit t('activities.save_statement'), class: "btn btn-primary" %>
-                </div>
-              <% end %>
-            </div>
+        <!-- Seção de Adicionar Conteúdo em cima ocupando toda a largura -->
+        <div class="card border-primary p-3 mb-4">
+          <h5 class="card-title text-center mb-3"><%= t('activities.add_content') || "Adicionar conteúdo" %></h5>
+          <div class="d-grid gap-2">
+            <button type="button" class="btn btn-success toggle-form" data-target="#new-statement-form">
+              <%= t('activities.add_statement') %>
+            </button>
+            
+            <button type="button" class="btn btn-primary toggle-form" data-target="#new-media-form">
+              <%= t('activities.add_media') %>
+            </button>
+            
+            <button type="button" class="btn btn-info text-white toggle-form" data-target="#new-text-form">
+              <%= t('activities.add_text') %>
+            </button>
+            
+            <button type="button" class="btn btn-warning toggle-form" data-target="#new-question-form">
+              <%= t('activities.add_question') %>
+            </button>
           </div>
+        </div>
+        
+        <!-- Formulários de adição de conteúdo (colapsados) -->
+        <div class="collapse" id="new-statement-form">
+          <div class="card card-body mt-3 mb-3">
+            <%= form_with(model: @activity, local: true, data: { turbo: false }) do |f| %>
+              <div class="mb-3">
+                <%= f.label :statement, t('activities.statement_label'), class: "form-label" %>
+                <%= f.text_area :statement, class: "form-control", rows: 5,
+                    placeholder: t('activities.statement_placeholder') %>
+              </div>
+              <div class="d-grid">
+                <%= f.submit t('activities.save_statement'), class: "btn btn-primary" %>
+              </div>
+            <% end %>
+          </div>
+        </div>
+        
+        <div class="collapse" id="new-media-form">
+          <div class="card card-body mt-3 mb-3">
+            <%= form_with(model: @activity, local: true, data: { turbo: false }) do |f| %>
+              <div class="mb-3">
+                <%= f.label :media_url, t('activities.media_url_label'), class: "form-label" %>
+                <%= f.text_field :media_url, class: "form-control", 
+                    placeholder: t('activities.media_url_placeholder') %>
+              </div>
+              <div class="d-grid">
+                <%= f.submit t('activities.save_media'), class: "btn btn-primary" %>
+              </div>
+            <% end %>
+          </div>
+        </div>
+        
+        <div class="collapse" id="new-text-form">
+          <div class="card card-body mt-3 mb-3">
+            <%= form_with(model: @activity, local: true, data: { turbo: false }) do |f| %>
+              <div class="mb-3">
+                <%= f.text_area :explanation_text, class: "form-control", rows: 5,
+                    placeholder: t('activities.explanation_text_placeholder') %>
+              </div>
+              <div class="d-grid">
+                <%= f.submit t('activities.save_text'), class: "btn btn-primary" %>
+              </div>
+            <% end %>
+          </div>
+        </div>
+        
+        <div class="collapse" id="new-question-form">
+          <div class="card card-body mt-3 mb-3">
+            <%= render partial: "questions/form", locals: { question: @activity.questions.build, activity: @activity } %>
+          </div>
+        </div>
 
-          <!-- Botão para adicionar mídia -->
-          <button type="button" class="btn btn-primary" data-bs-toggle="collapse" data-bs-target="#new-media-form">
-            <%= t('activities.add_media') %>
-          </button>
-          
-          <div class="collapse" id="new-media-form">
-            <div class="card card-body mt-3 mb-3">
-              <%= form_with(model: @activity, local: true, data: { turbo: false }) do |f| %>
-                <div class="mb-3">
-                  <%= f.label :media_url, t('activities.media_url_label'), class: "form-label" %>
-                  <%= f.text_field :media_url, class: "form-control", 
-                      placeholder: t('activities.media_url_placeholder') %>
-                  <div class="form-text"><%= t('activities.media_url_help') %></div>
-                </div>
-                <div class="d-grid">
-                  <%= f.submit t('activities.save_media'), class: "btn btn-primary" %>
-                </div>
-              <% end %>
-            </div>
-          </div>
-          
-          <!-- Botão para adicionar texto explicativo -->
-          <button type="button" class="btn btn-info" data-bs-toggle="collapse" data-bs-target="#new-text-form">
-            <%= t('activities.add_text') %>
-          </button>
-          
-          <div class="collapse" id="new-text-form">
-            <div class="card card-body mt-3 mb-3">
-              <%= form_with(model: @activity, local: true, data: { turbo: false }) do |f| %>
-                <div class="mb-3">
-                  <%= f.label :explanation_text, t('activities.explanation_text_label'), class: "form-label" %>
-                  <%= f.text_area :explanation_text, class: "form-control", rows: 5,
-                      placeholder: t('activities.explanation_text_placeholder') %>
-                </div>
-                <div class="d-grid">
-                  <%= f.submit t('activities.save_text'), class: "btn btn-primary" %>
-                </div>
-              <% end %>
-            </div>
-          </div>
-
-          <button type="button" class="btn btn-warning" data-bs-toggle="collapse" data-bs-target="#new-question-form">
-            <%= t('activities.add_question') %>
-          </button>
-          
-          <div class="collapse" id="new-question-form">
-            <div class="card card-body mt-3 mb-3">
-              <%= render partial: "questions/form", locals: { question: @activity.questions.build, activity: @activity } %>
-            </div>
-          </div>
-
-          <div class="btn-group w-100">
-            <%= link_to t('activities.edit_btn'), edit_activity_path(@activity), class: "btn btn-warning" %>
-            <%= link_to t('activities.delete'), 
+        <!-- Outras Ações no final da página -->
+        <div class="card border-secondary p-3 mt-5 mb-4">
+          <h5 class="card-title text-center mb-3"><%= t('activities.other_actions') || "Outras ações" %></h5>
+          <div class="d-grid gap-2">
+            <%= link_to t('activities.edit_description_btn'), edit_activity_path(@activity), class: "btn btn-outline-warning rounded-3" %>
+            <%= link_to t('activities.delete_activity_btn'), 
                 activity_path(@activity), 
-                class: "btn btn-danger",
+                class: "btn btn-outline-danger rounded-3",
                 data: {
                   turbo_method: :delete,
                   turbo_confirm: t('activities.confirm_delete')
                 } %>
           </div>
-          
-          <%= link_to t('activities.solve_quiz'), resolve_quiz_activity_path(@activity), class: "btn btn-success mt-2" %>
         </div>
+
       <% else %>
         <!-- Visualização do Aluno -->
         <div class="d-grid gap-2">
-          <%= link_to t('activities.solve_quiz'), resolve_quiz_activity_path(@activity), class: "btn btn-success" %>
+          <%= link_to t('activities.solve_quiz'), resolve_quiz_activity_path(@activity), class: "btn btn-success rounded-3" %>
         </div>
       <% end %>
+
+      <!-- Botão Resolver no final da página -->
+      <div class="d-grid mt-5 mb-3">
+        <%= link_to t('activities.solve_quiz'), resolve_quiz_activity_path(@activity), class: "btn btn-success btn-lg rounded-3 shadow" %>
+      </div>
 
       <!-- Botão Voltar -->
       <div class="d-grid mt-4">
@@ -324,3 +423,40 @@
     </div>
   </div>
 </div>
+
+<style>
+  .hover-shadow:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+    transition: all 0.3s ease;
+  }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const toggleButtons = document.querySelectorAll('.toggle-form');
+    
+    toggleButtons.forEach(button => {
+      button.addEventListener('click', function() {
+        const targetId = this.getAttribute('data-target');
+        const targetForm = document.querySelector(targetId);
+        
+        // Se o formulário clicado está fechado
+        if (!targetForm.classList.contains('show')) {
+          // Fecha todos os outros formulários primeiro
+          document.querySelectorAll('.collapse.show').forEach(openForm => {
+            if (openForm !== targetForm) {
+              openForm.classList.remove('show');
+            }
+          });
+          
+          // Abre o formulário clicado
+          targetForm.classList.add('show');
+        } else {
+          // Se o formulário clicado está aberto, fecha ele
+          targetForm.classList.remove('show');
+        }
+      });
+    });
+  });
+</script>

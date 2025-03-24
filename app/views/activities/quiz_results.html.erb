@@ -1,4 +1,4 @@
-<div class="container d-flex justify-content-center align-items-center" style="min-height: 100vh;">
+<div class="container d-flex justify-content-center align-items-center py-5">
   <div class="card shadow-lg p-4 w-100" style="max-width: 900px;">
     <div class="card-body">
       <h1 class="text-center mb-4"><%= t('quiz.results') %></h1>
@@ -7,6 +7,19 @@
         <h4 class="alert-heading"><%= t('quiz.final_score') %></h4>
         <p class="mb-0"><%= t('quiz.correct_answers', correct: @quiz_results["total_correct"], total: @quiz_results["total_questions"], score: @quiz_results["score"]) %></p>
       </div>
+      
+      <% if @quiz_attempt && @quiz_attempt.xp_earned > 0 %>
+        <div class="alert alert-success mb-4 text-center">
+          <h4 class="alert-heading"><i class="fas fa-trophy"></i> <%= t('quiz.xp_earned') %></h4>
+          <p class="display-4 mb-0">+<%= @quiz_attempt.xp_earned %> XP</p>
+          <% if @quiz_attempt.completed_recently? %>
+            <div class="mt-2 badge bg-warning text-dark"><i class="fas fa-clock"></i> <%= t('quiz.completed_recently') %></div>
+          <% end %>
+          <% if @quiz_attempt.first_success? %>
+            <div class="mt-2 badge bg-info"><i class="fas fa-award"></i> <%= t('quiz.first_success') %></div>
+          <% end %>
+        </div>
+      <% end %>
 
       <% @quiz_results["results"].each do |question_id, result| %>
         <div class="card mb-4">
@@ -15,20 +28,85 @@
           </div>
           <div class="card-body">
             <p class="card-text mb-3"><strong><%= t('questions.content') %>:</strong> <%= result["question_text"] %></p>
+            <p class="card-text mb-3"><strong><%= t('questions.type') %>:</strong> <%= t("questions.types.#{result["question_type"]}") %></p>
             
             <div class="mb-2">
               <strong><%= t('quiz.your_answer') %>:</strong>
               <span class="<%= result["is_correct"] ? 'text-success' : 'text-danger' %>">
-                <%= result["given_answer"] == "Não respondida" ? t('quiz.not_answered') : result["given_answer"] %>
+                <% if result["question_type"] == "order_sentences" %>
+                  <% if result["given_answer"] == t('quiz.not_answered') %>
+                    <%= result["given_answer"] %>
+                  <% else %>
+                    <ol class="mt-2">
+                      <% result["given_answer"].split("|").each do |sentence| %>
+                        <li class="mb-1"><%= sentence %></li>
+                      <% end %>
+                    </ol>
+                  <% end %>
+                <% else %>
+                  <%= result["given_answer"] == "Não respondida" ? t('quiz.not_answered') : result["given_answer"] %>
+                <% end %>
               </span>
             </div>
             
             <% unless result["is_correct"] %>
               <div class="mt-2">
                 <strong><%= t('quiz.correct_answer') %>:</strong>
-                <span class="text-success"><%= result["correct_answer"] %></span>
+                <% if result["question_type"] == "order_sentences" %>
+                  <ol class="mt-2 text-success">
+                    <% result["correct_answer"].split("|").each do |sentence| %>
+                      <li class="mb-1"><%= sentence %></li>
+                    <% end %>
+                  </ol>
+                <% else %>
+                  <span class="text-success"><%= result["correct_answer"] %></span>
+                <% end %>
               </div>
             <% end %>
+          </div>
+        </div>
+      <% end %>
+      
+      <% if @all_attempts && @all_attempts.count > 1 %>
+        <div class="card mb-4">
+          <div class="card-header bg-primary text-white">
+            <h5 class="mb-0"><%= t('quiz.attempt_history') %></h5>
+          </div>
+          <div class="card-body">
+            <div class="table-responsive">
+              <table class="table table-striped">
+                <thead>
+                  <tr>
+                    <th><%= t('quiz.attempt_number') %></th>
+                    <th><%= t('quiz.date') %></th>
+                    <th><%= t('quiz.score') %></th>
+                    <th><%= t('quiz.xp') %></th>
+                    <th><%= t('common.actions') %></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% @all_attempts.each_with_index do |attempt, index| %>
+                    <tr class="<%= attempt.id == @quiz_attempt&.id ? 'table-primary' : '' %>">
+                      <td><%= @all_attempts.count - index %></td>
+                      <td><%= l(attempt.completed_at, format: :short) if attempt.completed_at %></td>
+                      <td>
+                        <% if attempt.score >= 90 %>
+                          <span class="badge bg-success"><%= number_to_percentage(attempt.score, precision: 0) %></span>
+                        <% elsif attempt.score >= 70 %>
+                          <span class="badge bg-info"><%= number_to_percentage(attempt.score, precision: 0) %></span>
+                        <% else %>
+                          <span class="badge bg-warning text-dark"><%= number_to_percentage(attempt.score, precision: 0) %></span>
+                        <% end %>
+                      </td>
+                      <td><span class="badge bg-primary">+<%= attempt.xp_earned %> XP</span></td>
+                      <td>
+                        <%= link_to t('quiz.view_results'), quiz_results_activity_path(@activity, attempt_id: attempt.id), class: "btn btn-sm btn-outline-primary" %>
+                      </td>
+                    </tr>
+                  <% end %>
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       <% end %>

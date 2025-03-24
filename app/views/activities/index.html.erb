@@ -24,9 +24,22 @@
           <% @activities.each do |activity| %>
             <div class="col">
               <div class="card h-100 shadow-sm position-relative">
-                <% if !current_user.teacher? && session[:completed_quizzes]&.include?(activity.id) %>
+                <% if current_user.student? && @best_attempts && @best_attempts[activity.id].present? %>
                   <div class="position-absolute top-0 end-0 m-2">
-                    <span style="font-size: 1.5rem; color: green;">✓</span>
+                    <% score = @best_attempts[activity.id] %>
+                    <% if score >= 90 %>
+                      <span class="badge bg-success" style="font-size: 0.8rem;">
+                        <i class="fas fa-trophy"></i> <%= number_to_percentage(score, precision: 0) %>
+                      </span>
+                    <% elsif score >= 70 %>
+                      <span class="badge bg-info" style="font-size: 0.8rem;">
+                        <i class="fas fa-check-circle"></i> <%= number_to_percentage(score, precision: 0) %>
+                      </span>
+                    <% else %>
+                      <span class="badge bg-warning" style="font-size: 0.8rem;">
+                        <i class="fas fa-star"></i> <%= number_to_percentage(score, precision: 0) %>
+                      </span>
+                    <% end %>
                   </div>
                 <% end %>
                 <div class="card-body">

@@ -1,27 +1,100 @@
-<%= simple_form_for [activity, question], html: { data: { turbo: false } } do |qf| %>
-  <div class="mb-3">
-    <%= qf.input :content, 
-                 label: t('questions.content'), 
-                 input_html: { class: "form-control" },
-                 placeholder: t('questions.content_placeholder'),
-                 error: t('questions.content_required') %>
+<%= form_with model: [activity, question], html: { 
+    data: { 
+      controller: "questionForm"
+    } 
+  } do |form| %>
+  <div class="row mb-3">
+    <div class="col-md-12">
+      <%= form.label :question_type, t('questions.form.question_type') %>
+      <%= form.select :question_type, 
+          Question::QUESTION_TYPES.map { |type| [t("questions.types.#{type}"), type] }, 
+          { selected: question.question_type || 'multiple_choice' }, 
+          { 
+            class: "form-control question-type-select", 
+            data: { 
+              "questionForm-target": "questionType",
+              action: "change->questionForm#toggleFields"
+            }
+          } 
+      %>
+    </div>
   </div>
-  <div class="mb-3">
-    <%= qf.input :options, 
-                 label: t('questions.options'), 
-                 input_html: { class: "form-control" },
-                 placeholder: t('questions.options_placeholder'),
-                 error: t('questions.options_required') %>
+  
+  <div class="row mb-3" data-questionForm-target="contentField">
+    <div class="col-md-12">
+      <%= form.label :content, t('questions.form.question_content') %>
+      <%= form.text_area :content, 
+          class: "form-control", 
+          rows: 3,
+          placeholder: t('questions.form.question_content_placeholder') %>
+    </div>
   </div>
-  <div class="mb-3">
-    <%= qf.input :correct_answer, 
-                 label: t('questions.correct_answer'), 
-                 input_html: { class: "form-control" },
-                 placeholder: t('questions.correct_answer_placeholder'),
-                 error: t('questions.correct_answer_required') %>
+
+  <div class="row mb-3 fill-in-blank-help" data-questionForm-target="fillInBlankHelp" style="display: none;">
+    <div class="col-md-12">
+      <div class="alert alert-info">
+        <%= t('questions.form.fill_in_blank_help_html') %>
+      </div>
+    </div>
   </div>
-  <div class="d-grid">
-    <%= qf.submit t('questions.add'), class: "btn btn-success" %>
+  
+  <div class="row mb-3 order-sentences-help" data-questionForm-target="orderSentencesHelp" style="display: none;">
+    <div class="col-md-12">
+      <div class="alert alert-info">
+        <%= t('questions.form.order_sentences_help_html') %>
+      </div>
+    </div>
+  </div>
+  
+  <div class="row mb-3 multiple-choice-fields" data-questionForm-target="multipleChoiceFields">
+    <div class="col-md-12">
+      <%= form.label :options_text, t('questions.form.options') %>
+      <%= form.text_area :options_text, 
+          value: question.options&.join(','), 
+          class: "form-control", 
+          rows: 3,
+          placeholder: t('questions.form.options_placeholder') %>
+      <small class="form-text text-muted"><%= t('questions.form.options_help') %></small>
+    </div>
+  </div>
+  
+  <div class="row mb-3 order-sentences-fields" data-questionForm-target="orderSentencesFields" style="display: none;">
+    <div class="col-md-12">
+      <%= form.label :sentences_content, t('questions.form.sentences') %>
+      <%= form.text_area :sentences_content, 
+          class: "form-control", 
+          rows: 5,
+          placeholder: t('questions.form.sentences_placeholder'),
+          value: question.order_sentences? ? question.content : nil %>
+      <small class="form-text text-muted"><%= t('questions.form.order_sentences_input_help') %></small>
+    </div>
+  </div>
+  
+  <div class="row mb-3" data-questionForm-target="correctAnswerField">
+    <div class="col-md-12">
+      <%= form.label :correct_answer, t('questions.form.correct_answer') %>
+      <%= form.text_field :correct_answer, 
+          class: "form-control",
+          placeholder: t('questions.form.correct_answer_placeholder') %>
+    </div>
+  </div>
+
+  <div class="row mb-3">
+    <div class="col-md-12">
+      <%= form.label :points, t('questions.form.points') %>
+      <%= form.number_field :points, class: "form-control", value: question.points || 10 %>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-12">
+      <%= form.submit t('common.save'), class: "btn btn-primary" %>
+      <% if question.persisted? %>
+        <%= link_to t('common.delete'), activity_question_path(activity, question), 
+            data: { turbo_method: :delete, turbo_confirm: t('common.confirm_delete') },
+            class: "btn btn-outline-danger ms-2" %>
+      <% end %>
+    </div>
   </div>
 <% end %>
 

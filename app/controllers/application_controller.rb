@@ -30,6 +30,8 @@ class ApplicationController < ActionController::Base
                   else
                     params[:locale] || I18n.default_locale
                   end
+    Rails.logger.info "Locale set to: #{I18n.locale}"
+    Rails.logger.info "Available locales: #{I18n.available_locales.inspect}"
   end
 
   def extract_locale
