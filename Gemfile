@@ -80,3 +80,9 @@ group :test do
   gem "capybara"
   gem "selenium-webdriver"
 end
+
+# Gems para o Heroku
+group :production do
+  # Dependência recomendada pelo Heroku
+  gem 'rails_12factor'
+end

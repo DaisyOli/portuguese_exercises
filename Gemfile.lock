@@ -243,6 +243,11 @@ GEM
     rails-i18n (7.0.10)
       i18n (>= 0.7, < 2)
       railties (>= 6.0.0, < 8)
+    rails_12factor (0.0.3)
+      rails_serve_static_assets
+      rails_stdout_logging
+    rails_serve_static_assets (0.0.5)
+    rails_stdout_logging (0.0.5)
     railties (7.1.5.1)
       actionpack (= 7.1.5.1)
       activesupport (= 7.1.5.1)
@@ -347,6 +352,7 @@ DEPENDENCIES
   puma (>= 5.0)
   rails (~> 7.1.5)
   rails-i18n (~> 7.0.0)
+  rails_12factor
   sassc-rails (~> 2.1)
   selenium-webdriver
   simple_form
