@@ -8,62 +8,65 @@ export default class extends Controller {
     "multipleChoiceFields",
     "fillInBlankHelp",
     "orderSentencesHelp",
-    "orderSentencesFields"
+    "orderSentencesFields",
+    "correctAnswerField"
   ];
 
   connect() {
-    console.log("QuestionFormController connected!");
-    console.log("Targets available:", this.targets);
-    console.log("Question type target exists?", this.hasQuestionTypeTarget);
-    if (this.hasQuestionTypeTarget) {
-      console.log("Current question type:", this.questionTypeTarget.value);
-      this.toggleFields();
-    }
+    console.log("QuestionFormController conectado");
+    this.updateFields();
   }
 
-  toggleFields() {
-    console.log("toggleFields called");
-    const questionType = this.questionTypeTarget.value;
-    console.log("Current question type:", questionType);
-
-    // Esconde todos os campos primeiro
+  updateFields() {
+    if (!this.hasQuestionTypeTarget) return;
+    const type = this.questionTypeTarget.value;
+    console.log("Atualizando campos para tipo:", type);
+    
+    // Esconder todos os campos específicos
     this.hideAllFields();
-
-    // O campo de conteúdo é sempre visível
-    this.contentFieldTarget.style.display = 'block';
-
-    // Mostra os campos relevantes baseado no tipo de questão
-    switch (questionType) {
+    
+    // Mostrar campos baseados no tipo selecionado
+    switch (type) {
       case 'multiple_choice':
-        this.multipleChoiceFieldsTarget.style.display = 'block';
+        if (this.hasMultipleChoiceFieldsTarget) {
+          console.log("Mostrando campos de múltipla escolha");
+          this.multipleChoiceFieldsTarget.style.display = 'block';
+        }
         break;
+        
       case 'fill_in_blank':
-        this.fillInBlankHelpTarget.style.display = 'block';
+        if (this.hasFillInBlankHelpTarget) {
+          console.log("Mostrando ajuda para lacunas");
+          this.fillInBlankHelpTarget.style.display = 'block';
+        }
         break;
+        
       case 'order_sentences':
-        this.orderSentencesHelpTarget.style.display = 'block';
-        this.orderSentencesFieldsTarget.style.display = 'block';
+        if (this.hasOrderSentencesHelpTarget) {
+          console.log("Mostrando ajuda para ordenar frases");
+          this.orderSentencesHelpTarget.style.display = 'block';
+        }
+        if (this.hasOrderSentencesFieldsTarget) {
+          console.log("Mostrando campos para ordenar frases");
+          this.orderSentencesFieldsTarget.style.display = 'block';
+        }
+        if (this.hasCorrectAnswerFieldTarget) {
+          console.log("Escondendo campo de resposta correta para ordenar frases");
+          this.correctAnswerFieldTarget.style.display = 'none';
+        }
         break;
     }
   }
-
+  
   hideAllFields() {
-    // Esconde todos os campos especiais
-    this.multipleChoiceFieldsTarget.style.display = 'none';
-    this.fillInBlankHelpTarget.style.display = 'none';
-    this.orderSentencesHelpTarget.style.display = 'none';
-    this.orderSentencesFieldsTarget.style.display = 'none';
-
-    // Limpa os campos quando são escondidos
-    if (this.multipleChoiceFieldsTarget.style.display === 'none') {
-      const optionsTextarea = this.multipleChoiceFieldsTarget.querySelector('textarea');
-      if (optionsTextarea) optionsTextarea.value = '';
-    }
-
-    if (this.orderSentencesFieldsTarget.style.display === 'none') {
-      const contentTextarea = this.orderSentencesFieldsTarget.querySelector('textarea');
-      if (contentTextarea) contentTextarea.value = '';
-    }
+    console.log("Escondendo todos os campos específicos");
+    if (this.hasMultipleChoiceFieldsTarget) this.multipleChoiceFieldsTarget.style.display = 'none';
+    if (this.hasFillInBlankHelpTarget) this.fillInBlankHelpTarget.style.display = 'none';
+    if (this.hasOrderSentencesHelpTarget) this.orderSentencesHelpTarget.style.display = 'none';
+    if (this.hasOrderSentencesFieldsTarget) this.orderSentencesFieldsTarget.style.display = 'none';
+    
+    // Mostrar campo de resposta correta por padrão
+    if (this.hasCorrectAnswerFieldTarget) this.correctAnswerFieldTarget.style.display = 'block';
   }
 
   toggleForm(event) {

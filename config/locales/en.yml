@@ -146,7 +146,10 @@ en:
     form:
       question_type: "Question Type"
       question_content: "Question Content"
-      question_content_placeholder: "Ex: I _____ chocolate (Use exactly 5 underscores to create the blank)"
+      question_content_placeholder: "Enter the question content"
+      fill_in_blank_placeholder: "Ex: I _____ chocolate (Use exactly 5 underscores to create the blank)"
+      multiple_choice_placeholder: "Enter a multiple choice question"
+      content_placeholder: "Enter the question content"
       options: "Options (comma separated)"
       options_help: "Enter options separated by comma"
       options_placeholder: "Ex: Brasilia, Rio de Janeiro, Sao Paulo, Salvador"

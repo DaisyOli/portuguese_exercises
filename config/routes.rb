@@ -3,11 +3,11 @@ Rails.application.routes.draw do
   root to: 'home#index'
 
   # Rotas para dashboards
-  get 'teachers/dashboard', to: 'teachers#dashboard', as: :teacher_dashboard
-  get 'students/dashboard', to: 'students#dashboard', as: :student_dashboard
+  get 'student_dashboard', to: 'students#dashboard'
+  get 'teacher_dashboard', to: 'teachers#dashboard'
   
   # Rota para atualização de idioma
-  patch 'update_language', to: 'languages#update', as: :update_language
+  patch 'update_language', to: 'languages#update'
   
   # Rotas do Devise para autenticação
   devise_for :users, controllers: {

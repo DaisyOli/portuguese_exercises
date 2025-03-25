@@ -135,7 +135,10 @@ fr:
     form:
       question_type: "Type de Question"
       question_content: "Énoncé de la Question"
-      question_content_placeholder: "Ex: Je _____ le chocolat (Utilisez exactement 5 tirets bas pour créer l'espace)"
+      question_content_placeholder: "Saisissez l'énoncé de la question"
+      fill_in_blank_placeholder: "Ex: Je _____ le chocolat (Utilisez exactement 5 tirets bas pour créer l'espace)"
+      multiple_choice_placeholder: "Saisissez une question à choix multiple"
+      content_placeholder: "Saisissez l'énoncé de la question"
       options: "Options (séparées par des virgules)"
       options_help: "Saisissez les options séparées par des virgules"
       options_placeholder: "Ex: Brasília, Rio de Janeiro, São Paulo, Salvador"

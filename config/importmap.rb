@@ -10,3 +10,6 @@ pin "@popperjs/core", to: "@popperjs--core.js" # @2.11.8
 pin "@rails/ujs", to: "@rails--ujs.js" # @7.1.3
 
 pin "@popperjs/core", to: "https://ga.jspm.io/npm:@popperjs/core@2.11.8/dist/umd/popper.js"
+pin "jquery", to: "https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"
+pin "jquery_ujs", to: "https://cdn.jsdelivr.net/npm/jquery-ujs@1.2.3/src/rails.min.js"
+pin "sortablejs", to: "https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"

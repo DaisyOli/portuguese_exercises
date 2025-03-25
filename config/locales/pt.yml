@@ -147,7 +147,10 @@ pt:
     form:
       question_type: "Tipo de Questão"
       question_content: "Enunciado da Questão"
-      question_content_placeholder: "Ex: Eu _____ chocolate (Use exatamente 5 underscores para criar a lacuna)"
+      question_content_placeholder: "Digite o enunciado da questão"
+      fill_in_blank_placeholder: "Ex: Eu _____ chocolate (Use exatamente 5 underscores para criar a lacuna)"
+      multiple_choice_placeholder: "Digite uma pergunta de múltipla escolha"
+      content_placeholder: "Digite o enunciado da questão"
       options: "Opções (separadas por vírgula)"
       options_help: "Digite as opções separadas por vírgula"
       options_placeholder: "Ex: Brasília, Rio de Janeiro, São Paulo, Salvador"

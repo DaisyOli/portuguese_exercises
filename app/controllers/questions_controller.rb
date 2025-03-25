@@ -19,7 +19,7 @@ class QuestionsController < ApplicationController
     Rails.logger.debug "Sentences content: #{@question.sentences_content.inspect}"
 
     if @question.save
-      redirect_to activity_path(@activity), notice: t('messages.question_created')
+      redirect_to activity_path(@activity, ultimo_id: @question.id), notice: t('messages.question_created')
     else
       Rails.logger.debug "Erros de validação: #{@question.errors.full_messages}"
       render :new, status: :unprocessable_entity
@@ -31,7 +31,7 @@ class QuestionsController < ApplicationController
 
   def update
     if @question.update(question_params)
-      redirect_to activity_path(@activity), notice: t('messages.question_updated')
+      redirect_to activity_path(@activity, ultimo_id: @question.id), notice: t('messages.question_updated')
     else
       render :edit, status: :unprocessable_entity
     end
@@ -39,7 +39,7 @@ class QuestionsController < ApplicationController
 
   def destroy
     @question.destroy
-    redirect_to activity_path(@activity), notice: t('messages.question_deleted')
+    redirect_to activity_path(@activity, ultima_acao: 'questao_excluida'), notice: t('messages.question_deleted')
   end
 
   private

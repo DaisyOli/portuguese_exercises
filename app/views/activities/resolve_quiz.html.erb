@@ -75,20 +75,20 @@
                 </div>
               <% elsif question.order_sentences? && question.options.any? %>
                 <div class="order-sentences-container">
-                  <p class="mb-2"><%= t('questions.order_sentences_instruction', default: 'Arraste as frases para colocá-las na ordem correta:') %></p>
+                  <p class="mb-3 text-muted"><i class="fas fa-info-circle me-2"></i><%= t('questions.order_sentences_instruction', default: 'Arraste as frases para colocá-las na ordem correta:') %></p>
                   
                   <%= hidden_field_tag "answers[#{question.id}]", '', class: 'order-sentences-answer', id: "order_sentences_answer_#{question.id}" %>
                   
-                  <ul class="list-group sortable-list" id="sortable_<%= question.id %>" data-controller="sortable" data-question-id="<%= question.id %>">
+                  <ul class="list-group sortable-list" id="sortable_<%= question.id %>" data-question-id="<%= question.id %>">
                     <% question.options.each_with_index do |sentence, i| %>
-                      <li class="list-group-item sortable-item" data-value="<%= sentence %>">
+                      <li class="list-group-item sortable-item border-0 shadow-sm mb-2" data-value="<%= sentence %>">
                         <div class="d-flex align-items-center">
-                          <div class="drag-handle me-2">
-                            <i class="fas fa-grip-lines text-secondary"></i>
+                          <div class="drag-handle me-3 px-2">
+                            <i class="fas fa-grip-vertical text-primary"></i>
                           </div>
                           <div class="flex-grow-1"><%= sentence %></div>
-                          <div class="ms-2">
-                            <i class="fas fa-arrows-alt text-secondary"></i>
+                          <div class="ms-2 text-muted">
+                            <i class="fas fa-arrows-alt-v"></i>
                           </div>
                         </div>
                       </li>
@@ -113,81 +113,137 @@
 <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
 
 <script>
-  document.addEventListener('DOMContentLoaded', function() {
+  // Função para inicializar o Sortable
+  function initSortable() {
+    console.log('Inicializando Sortable para as listas de ordenação');
+    
     // Função para atualizar o campo de resposta com a ordem atual dos itens
     function updateAnswerField(sortableList) {
+      if (!sortableList) return;
+      
       const questionId = sortableList.dataset.questionId;
+      if (!questionId) {
+        console.error('ID da questão não encontrado no elemento sortable');
+        return;
+      }
+      
       const answerField = document.getElementById(`order_sentences_answer_${questionId}`);
+      if (!answerField) {
+        console.error(`Campo de resposta não encontrado para a questão ${questionId}`);
+        return;
+      }
+      
       const items = sortableList.querySelectorAll('.sortable-item');
-      const values = Array.from(items).map(item => item.dataset.value);
+      const values = Array.from(items).map(item => item.dataset.value || '');
       answerField.value = values.join('|');
+      console.log(`Valor atualizado para questão ${questionId}:`, answerField.value);
     }
+
+    // Destroi instâncias existentes do Sortable para evitar duplicações
+    document.querySelectorAll('.sortable-list').forEach(function(element) {
+      if (element.sortableInstance) {
+        element.sortableInstance.destroy();
+      }
+    });
 
     // Inicialização do Sortable para todos os containers de ordenação
     document.querySelectorAll('.sortable-list').forEach(function(element) {
-      new Sortable(element, {
-        animation: 150,
-        draggable: '.sortable-item',
-        handle: '.sortable-item',
-        ghostClass: 'sortable-ghost',
-        chosenClass: 'sortable-chosen',
-        dragClass: 'sortable-drag',
-        forceFallback: true,
-        fallbackClass: 'sortable-fallback',
-        onEnd: function(evt) {
-          updateAnswerField(evt.to);
-        }
-      });
-      
-      // Inicializa o campo de resposta com a ordem inicial
-      updateAnswerField(element);
+      try {
+        console.log('Inicializando Sortable para elemento:', element.id);
+        const sortable = new Sortable(element, {
+          animation: 150,
+          handle: '.drag-handle',
+          ghostClass: 'sortable-ghost',
+          chosenClass: 'sortable-chosen',
+          dragClass: 'sortable-drag',
+          onEnd: function(evt) {
+            updateAnswerField(evt.to);
+          }
+        });
+        
+        // Armazena a instância do Sortable no elemento para possível limpeza futura
+        element.sortableInstance = sortable;
+        
+        // Inicializa o campo de resposta com a ordem inicial
+        updateAnswerField(element);
+      } catch (error) {
+        console.error('Erro ao inicializar Sortable:', error);
+      }
     });
-  });
+  }
+  
+  // Registra o inicializador para vários eventos para garantir que funcione
+  // com ou sem Turbo, e também após recarregar a página
+  document.addEventListener('DOMContentLoaded', initSortable);
+  document.addEventListener('turbo:load', initSortable);
+  document.addEventListener('turbo:render', initSortable);
+  document.addEventListener('turbo:frame-load', initSortable);
+  
+  // Inicializa imediatamente se o DOM já estiver carregado
+  if (document.readyState === 'complete' || document.readyState === 'interactive') {
+    setTimeout(initSortable, 100);
+  }
 </script>
 
 <style>
   .sortable-ghost {
-    opacity: 0.5;
-    background-color: #f8f9fa;
+    opacity: 0.6;
+    background-color: #e9ecef !important;
+    border: 2px dashed #6c757d !important;
   }
   
   .sortable-chosen {
-    background-color: #e9ecef;
+    background-color: #fff !important;
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+    transform: scale(1.02);
+    z-index: 1000;
   }
   
   .sortable-drag {
     cursor: grabbing !important;
-  }
-  
-  .sortable-fallback {
-    opacity: 0.8;
-    background-color: #fff;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    background-color: #fff !important;
+    box-shadow: 0 1rem 3rem rgba(0, 0, 0, 0.175) !important;
   }
   
   .sortable-item {
-    transition: background-color 0.2s;
-    cursor: grab;
-    user-select: none;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
+    transition: all 0.2s ease-in-out;
+    background-color: #fff;
+    border-radius: 8px !important;
+    padding: 0.8rem 0.5rem;
   }
   
   .sortable-item:hover {
     background-color: #f8f9fa;
-  }
-  
-  .sortable-item:active {
-    cursor: grabbing;
+    transform: translateY(-2px);
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075) !important;
   }
   
   .drag-handle {
+    border-radius: 4px;
+    transition: all 0.2s;
     cursor: grab;
   }
   
+  .drag-handle:hover {
+    background-color: #e9ecef;
+  }
+  
+  .drag-handle:active {
+    cursor: grabbing;
+    background-color: #dee2e6;
+  }
+  
   .list-group-item {
-    margin-bottom: 4px;
-    border-radius: 4px !important;
+    margin-bottom: 0.5rem;
+    border-radius: 8px !important;
+  }
+
+  .order-sentences-container {
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
+  .order-sentences-container .list-group {
+    margin-top: 1rem;
   }
 </style>

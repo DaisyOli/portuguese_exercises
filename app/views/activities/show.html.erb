@@ -9,7 +9,7 @@
         <p><strong><%= t('activities.total_questions') %>:</strong> <%= @activity.questions.count %></p>
         
         <% if @activity.statement.present? %>
-          <div class="card bg-light mb-3">
+          <div id="statement" class="card bg-light mb-3">
             <div class="card-body">
               <div class="d-flex justify-content-between align-items-start">
                 <div>
@@ -35,7 +35,7 @@
           <% if current_user.teacher? && @activity.teacher == current_user %>
             <div class="collapse" id="edit-statement-form">
               <div class="card card-body mt-3 mb-3">
-                <%= form_with(model: @activity, local: true, data: { turbo: false }) do |f| %>
+                <%= form_with(model: @activity, local: true) do |f| %>
                   <div class="mb-3">
                     <%= f.label :statement, t('activities.statement_label'), class: "form-label" %>
                     <%= f.text_area :statement, class: "form-control", rows: 5 %>
@@ -52,7 +52,7 @@
 
       <!-- Exibição da mídia -->
       <% if @activity.media_url.present? %>
-        <div class="mb-4">
+        <div id="media" class="mb-4">
           <div class="d-flex justify-content-between align-items-start mb-2">
             <h5 class="mb-0"></h5>
             <% if current_user.teacher? && @activity.teacher == current_user %>
@@ -93,7 +93,7 @@
         <% if current_user.teacher? && @activity.teacher == current_user %>
           <div class="collapse" id="edit-media-form">
             <div class="card card-body mt-3 mb-3">
-              <%= form_with(model: @activity, local: true, data: { turbo: false }) do |f| %>
+              <%= form_with(model: @activity, local: true) do |f| %>
                 <div class="mb-3">
                   <%= f.label :media_url, t('activities.media_url_label'), class: "form-label" %>
                   <%= f.text_field :media_url, class: "form-control", 
@@ -110,7 +110,7 @@
 
       <!-- Exibição do texto explicativo -->
       <% if @activity.explanation_text.present? %>
-        <div class="mb-4">
+        <div id="explanation" class="mb-4">
           <div class="card">
             <div class="card-body">
               <div class="d-flex justify-content-between align-items-start">
@@ -138,7 +138,7 @@
         <% if current_user.teacher? && @activity.teacher == current_user %>
           <div class="collapse" id="edit-explanation-form">
             <div class="card card-body mt-3 mb-3">
-              <%= form_with(model: @activity, local: true, data: { turbo: false }) do |f| %>
+              <%= form_with(model: @activity, local: true) do |f| %>
                 <div class="mb-3">
                   <%= f.label :explanation_text, t('activities.explanation_text_label'), class: "form-label" %>
                   <%= f.text_area :explanation_text, class: "form-control", rows: 5 %>
@@ -158,7 +158,7 @@
           <% if @activity.questions.any? %>
             <div class="list-group">
               <% @activity.questions.each_with_index do |question, index| %>
-                <div class="card mb-4">
+                <div id="question-<%= question.id %>" class="card mb-4">
                   <div class="card-header d-flex justify-content-between align-items-center">
                     <h5 class="mb-0"><%= t('questions.question_number', number: index + 1) %> <span class="badge bg-info"><%= t("questions.types.#{question.question_type}") %></span></h5>
                   </div>
@@ -313,31 +313,51 @@
         </div>
 
         <!-- Seção de Adicionar Conteúdo em cima ocupando toda a largura -->
-        <div class="card border-primary p-3 mb-4">
-          <h5 class="card-title text-center mb-3"><%= t('activities.add_content') || "Adicionar conteúdo" %></h5>
+        <div id="add-content-section" class="card border-primary p-3 mb-4" data-controller="content-form">
+          <h5 class="card-title text-center mb-3"><%= t('activities.add_content') %></h5>
           <div class="d-grid gap-2">
-            <button type="button" class="btn btn-success toggle-form" data-target="#new-statement-form">
+            <button type="button" class="btn btn-success" 
+                    data-action="content-form#toggle"
+                    data-bs-toggle="collapse"
+                    data-target="#new-statement-form"
+                    aria-expanded="false"
+                    aria-controls="new-statement-form">
               <%= t('activities.add_statement') %>
             </button>
             
-            <button type="button" class="btn btn-primary toggle-form" data-target="#new-media-form">
+            <button type="button" class="btn btn-primary" 
+                    data-action="content-form#toggle"
+                    data-bs-toggle="collapse"
+                    data-target="#new-media-form"
+                    aria-expanded="false"
+                    aria-controls="new-media-form">
               <%= t('activities.add_media') %>
             </button>
             
-            <button type="button" class="btn btn-info text-white toggle-form" data-target="#new-text-form">
+            <button type="button" class="btn btn-info text-white" 
+                    data-action="content-form#toggle"
+                    data-bs-toggle="collapse"
+                    data-target="#new-text-form"
+                    aria-expanded="false"
+                    aria-controls="new-text-form">
               <%= t('activities.add_text') %>
             </button>
             
-            <button type="button" class="btn btn-warning toggle-form" data-target="#new-question-form">
+            <button type="button" class="btn btn-warning" 
+                    data-action="content-form#toggle"
+                    data-bs-toggle="collapse"
+                    data-target="#new-question-form"
+                    aria-expanded="false"
+                    aria-controls="new-question-form">
               <%= t('activities.add_question') %>
             </button>
           </div>
         </div>
         
         <!-- Formulários de adição de conteúdo (colapsados) -->
-        <div class="collapse" id="new-statement-form">
+        <div class="collapse" id="new-statement-form" data-content-form-target="form">
           <div class="card card-body mt-3 mb-3">
-            <%= form_with(model: @activity, local: true, data: { turbo: false }) do |f| %>
+            <%= form_with(model: @activity, local: true) do |f| %>
               <div class="mb-3">
                 <%= f.label :statement, t('activities.statement_label'), class: "form-label" %>
                 <%= f.text_area :statement, class: "form-control", rows: 5,
@@ -350,9 +370,9 @@
           </div>
         </div>
         
-        <div class="collapse" id="new-media-form">
+        <div class="collapse" id="new-media-form" data-content-form-target="form">
           <div class="card card-body mt-3 mb-3">
-            <%= form_with(model: @activity, local: true, data: { turbo: false }) do |f| %>
+            <%= form_with(model: @activity, local: true) do |f| %>
               <div class="mb-3">
                 <%= f.label :media_url, t('activities.media_url_label'), class: "form-label" %>
                 <%= f.text_field :media_url, class: "form-control", 
@@ -365,9 +385,9 @@
           </div>
         </div>
         
-        <div class="collapse" id="new-text-form">
+        <div class="collapse" id="new-text-form" data-content-form-target="form">
           <div class="card card-body mt-3 mb-3">
-            <%= form_with(model: @activity, local: true, data: { turbo: false }) do |f| %>
+            <%= form_with(model: @activity, local: true) do |f| %>
               <div class="mb-3">
                 <%= f.text_area :explanation_text, class: "form-control", rows: 5,
                     placeholder: t('activities.explanation_text_placeholder') %>
@@ -379,7 +399,7 @@
           </div>
         </div>
         
-        <div class="collapse" id="new-question-form">
+        <div class="collapse" id="new-question-form" data-content-form-target="form">
           <div class="card card-body mt-3 mb-3">
             <%= render partial: "questions/form", locals: { question: @activity.questions.build, activity: @activity } %>
           </div>
@@ -424,6 +444,53 @@
   </div>
 </div>
 
+<script>
+  // Script unificado para rolar a página para o elemento recém-adicionado/atualizado
+  function scrollToElement() {
+    let targetId = null;
+    let elemento = null;
+    
+    // Verificar se há um ID de questão
+    <% if params[:ultimo_id].present? %>
+      targetId = 'question-<%= params[:ultimo_id] %>';
+      elemento = document.getElementById(targetId);
+      console.log('Procurando questão com ID:', targetId);
+    <% end %>
+    
+    // Verificar se há um tipo de conteúdo
+    <% if params[:ultimo_conteudo].present? %>
+      targetId = '<%= params[:ultimo_conteudo] %>';
+      elemento = document.getElementById(targetId);
+      console.log('Procurando conteúdo com ID:', targetId);
+    <% end %>
+    
+    // Se encontrou o elemento, rola até ele
+    if (elemento) {
+      console.log('Elemento encontrado, rolando até ele');
+      
+      // Rolagem para o elemento (sem animação para garantir que funcione)
+      window.scrollTo(0, elemento.offsetTop - 100);
+      
+      // Destaque visual
+      elemento.style.backgroundColor = 'rgba(255, 243, 205, 0.7)';
+      elemento.style.boxShadow = '0 0 20px rgba(255, 193, 7, 0.7)';
+      
+      // Remove o destaque após 3 segundos
+      setTimeout(function() {
+        elemento.style.transition = 'all 1s ease';
+        elemento.style.backgroundColor = '';
+        elemento.style.boxShadow = '';
+      }, 3000);
+    }
+  }
+  
+  // Executar imediatamente
+  scrollToElement();
+  
+  // E também após um pequeno atraso para garantir que o DOM está carregado
+  setTimeout(scrollToElement, 500);
+</script>
+
 <style>
   .hover-shadow:hover {
     transform: translateY(-5px);
@@ -431,32 +498,3 @@
     transition: all 0.3s ease;
   }
 </style>
-
-<script>
-  document.addEventListener('DOMContentLoaded', function() {
-    const toggleButtons = document.querySelectorAll('.toggle-form');
-    
-    toggleButtons.forEach(button => {
-      button.addEventListener('click', function() {
-        const targetId = this.getAttribute('data-target');
-        const targetForm = document.querySelector(targetId);
-        
-        // Se o formulário clicado está fechado
-        if (!targetForm.classList.contains('show')) {
-          // Fecha todos os outros formulários primeiro
-          document.querySelectorAll('.collapse.show').forEach(openForm => {
-            if (openForm !== targetForm) {
-              openForm.classList.remove('show');
-            }
-          });
-          
-          // Abre o formulário clicado
-          targetForm.classList.add('show');
-        } else {
-          // Se o formulário clicado está aberto, fecha ele
-          targetForm.classList.remove('show');
-        }
-      });
-    });
-  });
-</script>
