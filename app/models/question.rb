@@ -10,7 +10,6 @@ class Question < ApplicationRecord
   validates :content, presence: true, unless: :order_sentences?
   validates :correct_answer, presence: true
   validates :question_type, presence: true, inclusion: { in: QUESTION_TYPES }
-  validates :points, numericality: { only_integer: true, greater_than: 0 }, allow_nil: true
   
   # Validações específicas para cada tipo de questão
   validates :options, presence: true, if: :multiple_choice?
@@ -18,7 +17,6 @@ class Question < ApplicationRecord
   validate :content_has_blank, if: :fill_in_blank?
   
   before_validation :ensure_options_is_array
-  before_validation :set_default_points
   before_validation :process_options_text
   before_validation :process_order_sentences, if: :order_sentences?
   
@@ -52,10 +50,6 @@ class Question < ApplicationRecord
   def ensure_options_is_array
     self.options ||= []
     self.options = options.reject(&:blank?) if options.is_a?(Array)
-  end
-  
-  def set_default_points
-    self.points ||= 10
   end
 
   def process_options_text
