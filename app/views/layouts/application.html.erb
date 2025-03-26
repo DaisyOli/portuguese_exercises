@@ -1,144 +1,115 @@
 <!DOCTYPE html>
 <html lang="<%= I18n.locale %>">
   <head>
-    <title>ExerciseApp</title>
+    <title><%= t('app_name') %></title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
 
-    <!-- Bootstrap e outras bibliotecas direto de CDN -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
-    
-    <!-- JavaScript direto de CDNs para garantir -->
-    <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
     
     <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
     
-    <script>
-      console.log("Layout carregado - debug de JS");
+    <style>
+      /* Estilos para o botão de idioma */
+      .navbar-toggler .fa-globe {
+        color: #17a2b8;
+      }
       
-      document.addEventListener("DOMContentLoaded", function() {
-        console.log("DOM carregado, inicializando componentes Bootstrap manualmente");
+      /* Destaque para o botão de idioma em dispositivos móveis */
+      @media (max-width: 991.98px) {
+        .nav-item.dropdown .btn {
+          width: 100%;
+          margin-top: 10px;
+          padding: 10px;
+          font-size: 1.1rem;
+        }
         
-        // Inicializar dropdowns
-        var dropdownElements = document.querySelectorAll('.dropdown-toggle');
-        dropdownElements.forEach(function(element) {
-          new bootstrap.Dropdown(element);
-        });
+        .navbar-toggler {
+          border-color: #17a2b8;
+        }
         
-        // Formulários de idioma sem Turbo
-        document.querySelectorAll('form[action="/update_language"]').forEach(function(form) {
-          form.setAttribute('data-turbo', 'false');
-        });
-      });
-    </script>
+        .navbar-toggler:focus {
+          box-shadow: 0 0 0 0.25rem rgba(23, 162, 184, 0.25);
+        }
+      }
+    </style>
   </head>
-
+  
   <body>
     <% if current_user %>
-      <!-- Barra de navegação -->
+      <!-- Barra de navegação fixa no topo -->
       <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
         <div class="container-fluid">
-          <span class="navbar-brand">ExerciseApp</span>
-          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
+          <a class="navbar-brand" href="#"><%= t('app_name') %></a>
+          
+          <!-- Botão de toggle para mobile -->
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
+            <i class="fas fa-globe fa-lg"></i>
           </button>
-          <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav me-auto">
-              <li class="nav-item">
-                <%= link_to t('menu.activities'), activities_path, class: "nav-link" %>
-              </li>
-              <% if current_user.teacher? %>
-                <li class="nav-item">
-                  <%= link_to t('menu.questions'), questions_path, class: "nav-link" %>
-                </li>
-              <% end %>
-            </ul>
-            
-            <div class="dropdown me-3">
-              <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="languageDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                <% case I18n.locale.to_s %>
-                <% when 'pt-BR' %>
-                  <i class="bi bi-globe"></i> 🇧🇷
-                <% when 'en' %>
-                  <i class="bi bi-globe"></i> 🇺🇸
-                <% when 'es' %>
-                  <i class="bi bi-globe"></i> 🇪🇸
-                <% when 'fr' %>
-                  <i class="bi bi-globe"></i> 🇫🇷
-                <% else %>
-                  <i class="bi bi-globe"></i> <%= I18n.locale %>
-                <% end %>
-              </button>
-              <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="languageDropdown">
-                <% User::LANGUAGES.each do |language_code, language_name| %>
-                  <li>
-                    <%= form_tag update_language_path, method: :patch, data: { turbo: false }, class: "language-form" do %>
-                      <%= hidden_field_tag :language, language_code %>
-                      <button type="submit" class="dropdown-item">
-                        <% case language_code %>
-                        <% when 'pt-BR' %>
-                          🇧🇷 <%= language_name %>
-                        <% when 'en' %>
-                          🇺🇸 <%= language_name %>
-                        <% when 'es' %>
-                          🇪🇸 <%= language_name %>
-                        <% when 'fr' %>
-                          🇫🇷 <%= language_name %>
-                        <% else %>
-                          <%= language_name %>
-                        <% end %>
-                      </button>
-                    <% end %>
-                  </li>
-                <% end %>
-              </ul>
-            </div>
-            
-            <ul class="navbar-nav">
-              <li class="nav-item">
-                <%= link_to t('menu.logout'), destroy_user_session_path, data: { turbo_method: :delete }, class: "nav-link" %>
+          
+          <!-- Conteúdo da navbar -->
+          <div class="collapse navbar-collapse" id="navbarContent">
+            <ul class="navbar-nav ms-auto">
+              <li class="nav-item dropdown">
+                <button class="btn btn-outline-info dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                  <i class="fas fa-globe me-1"></i> <%= current_user.language_name %>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end">
+                  <% User::LANGUAGES.each do |lang| %>
+                    <li>
+                      <%= form_with(url: update_language_path, method: :patch, data: { turbo: false }) do |f| %>
+                        <%= f.hidden_field :language, value: lang %>
+                        <button type="submit" class="dropdown-item <%= 'active' if current_user.language == lang %>">
+                          <% if lang == 'pt' %>
+                            <i class="fas fa-flag me-1 text-success"></i>
+                          <% elsif lang == 'fr' %>
+                            <i class="fas fa-flag me-1 text-primary"></i>
+                          <% else %>
+                            <i class="fas fa-flag me-1 text-danger"></i>
+                          <% end %>
+                          <%= current_user.language_name_for(lang) %>
+                        </button>
+                      <% end %>
+                    </li>
+                  <% end %>
+                </ul>
               </li>
             </ul>
           </div>
         </div>
       </nav>
-      
-      <!-- Conteúdo principal com margem para a barra de navegação -->
-      <div class="container mt-5 pt-3">
-        <% if flash.any? %>
-          <div class="mt-3">
-            <% flash.each do |key, message| %>
-              <div class="alert alert-<%= key == 'notice' ? 'success' : 'danger' %> alert-dismissible fade show">
-                <%= message %>
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-              </div>
-            <% end %>
-          </div>
-        <% end %>
+
+      <!-- Espaçamento para compensar a navbar fixa -->
+      <div style="margin-top: 70px;">
+        <div class="container">
+          <% flash.each do |name, msg| %>
+            <div class="alert alert-<%= name == 'notice' ? 'success' : 'danger' %> alert-dismissible fade show">
+              <%= msg %>
+              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+          <% end %>
+        </div>
         
         <%= yield %>
       </div>
     <% else %>
-      <!-- Container sem a barra de navegação para usuários não logados -->
-      <div class="container mt-4">
-        <% if flash.any? %>
-          <div class="mt-3">
-            <% flash.each do |key, message| %>
-              <div class="alert alert-<%= key == 'notice' ? 'success' : 'danger' %> alert-dismissible fade show">
-                <%= message %>
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-              </div>
-            <% end %>
+      <div class="container mt-3">
+        <% flash.each do |name, msg| %>
+          <div class="alert alert-<%= name == 'notice' ? 'success' : 'danger' %> alert-dismissible fade show">
+            <%= msg %>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
           </div>
         <% end %>
-        
-        <%= yield %>
       </div>
+      
+      <%= yield %>
     <% end %>
   </body>
 </html>

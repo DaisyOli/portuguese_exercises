@@ -440,10 +440,10 @@
           <%= link_to t('activities.back_to_dashboard'), student_dashboard_path, class: "btn btn-secondary" %>
         <% end %>
       </div>
-    </div>
-  </div>
-</div>
-
+                              </div>
+                            </div>
+                          </div>
+                      
 <script>
   // Script unificado para rolar a página para o elemento recém-adicionado/atualizado
   function scrollToElement() {
@@ -489,38 +489,6 @@
   
   // E também após um pequeno atraso para garantir que o DOM está carregado
   setTimeout(scrollToElement, 500);
-</script>
-
-<script>
-  document.addEventListener("DOMContentLoaded", function() {
-    console.log("Inicializando collapses e botões na página da atividade");
-    
-    // Inicializar todos os botões de conteúdo
-    document.querySelectorAll('[data-bs-toggle="collapse"]').forEach(function(button) {
-      button.addEventListener('click', function(event) {
-        event.preventDefault();
-        var targetId = button.getAttribute('data-bs-target');
-        var targetForm = document.querySelector(targetId);
-        
-        if (targetForm) {
-          // Fechar todos os outros formulários primeiro
-          document.querySelectorAll('.collapse.show').forEach(function(form) {
-            if (form !== targetForm) {
-              bootstrap.Collapse.getInstance(form)?.hide();
-            }
-          });
-          
-          // Abrir o formulário clicado
-          var collapse = bootstrap.Collapse.getInstance(targetForm);
-          if (collapse) {
-            collapse.toggle();
-          } else {
-            new bootstrap.Collapse(targetForm).toggle();
-          }
-        }
-      });
-    });
-  });
 </script>
 
 <style>
