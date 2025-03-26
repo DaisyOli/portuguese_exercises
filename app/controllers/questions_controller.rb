@@ -53,7 +53,7 @@ class QuestionsController < ApplicationController
   end
 
   def question_params
-    permitted = params.require(:question).permit(:content, :correct_answer, :question_type, :points, :options_text, :sentences_content, options: [])
+    permitted = params.require(:question).permit(:content, :correct_answer, :question_type, :options_text, :sentences_content, options: [])
     Rails.logger.debug "Parâmetros permitidos em question_params: #{permitted.inspect}"
     permitted
   end

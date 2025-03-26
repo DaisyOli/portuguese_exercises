@@ -280,13 +280,6 @@
                             </div>
                           </div>
 
-                          <div class="row mb-3">
-                            <div class="col-md-12">
-                              <%= form.label :points, t('questions.form.points') %>
-                              <%= form.number_field :points, class: "form-control", min: 1, value: question.points || 10 %>
-                            </div>
-                          </div>
-
                           <div class="row">
                             <div class="col-md-12">
                               <%= form.submit t('common.save'), class: "btn btn-primary" %>
