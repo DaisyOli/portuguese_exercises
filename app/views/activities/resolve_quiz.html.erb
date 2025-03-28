@@ -77,9 +77,13 @@
                 <div class="order-sentences-container">
                   <p class="mb-3 text-muted"><i class="fas fa-info-circle me-2"></i><%= t('questions.order_sentences_instruction', default: 'Arraste as frases para colocá-las na ordem correta:') %></p>
                   
-                  <%= hidden_field_tag "answers[#{question.id}]", '', class: 'order-sentences-answer', id: "order_sentences_answer_#{question.id}" %>
+                  <%= hidden_field_tag "answers[#{question.id}]", '', 
+                                       class: 'order-sentences-answer', 
+                                       id: "order_sentences_answer_#{question.id}" %>
                   
-                  <ul class="list-group sortable-list" id="sortable_<%= question.id %>" data-question-id="<%= question.id %>">
+                  <ul class="list-group sortable-list" 
+                      id="sortable_<%= question.id %>"
+                      data-question-id="<%= question.id %>">
                     <% question.options.each_with_index do |sentence, i| %>
                       <li class="list-group-item sortable-item border-0 shadow-sm mb-2" data-value="<%= sentence %>">
                         <div class="d-flex align-items-center">
@@ -109,80 +113,60 @@
   </div>
 </div>
 
-<!-- Adicionando o Sortable.js para drag and drop -->
+<!-- Carregando o Sortable.js diretamente -->
 <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
 
+<!-- Inicialização direta do Sortable sem depender do Stimulus -->
 <script>
-  // Função para inicializar o Sortable
-  function initSortable() {
-    console.log('Inicializando Sortable para as listas de ordenação');
+  document.addEventListener('DOMContentLoaded', function() {
+    console.log("Inicializando todos os Sortable lists");
     
-    // Função para atualizar o campo de resposta com a ordem atual dos itens
-    function updateAnswerField(sortableList) {
-      if (!sortableList) return;
+    // Inicializar todas as listas de ordenação
+    document.querySelectorAll('.sortable-list').forEach(function(el) {
+      // Obter os IDs
+      const questionId = el.dataset.questionId;
+      const inputId = `order_sentences_answer_${questionId}`;
+      const input = document.getElementById(inputId);
       
-      const questionId = sortableList.dataset.questionId;
-      if (!questionId) {
-        console.error('ID da questão não encontrado no elemento sortable');
+      if (!input) {
+        console.error(`Campo de input não encontrado: ${inputId} para a questão ${questionId}`);
         return;
       }
       
-      const answerField = document.getElementById(`order_sentences_answer_${questionId}`);
-      if (!answerField) {
-        console.error(`Campo de resposta não encontrado para a questão ${questionId}`);
-        return;
-      }
+      console.log(`Inicializando Sortable para questão ${questionId}`);
       
-      const items = sortableList.querySelectorAll('.sortable-item');
-      const values = Array.from(items).map(item => item.dataset.value || '');
-      answerField.value = values.join('|');
-      console.log(`Valor atualizado para questão ${questionId}:`, answerField.value);
-    }
-
-    // Destroi instâncias existentes do Sortable para evitar duplicações
-    document.querySelectorAll('.sortable-list').forEach(function(element) {
-      if (element.sortableInstance) {
-        element.sortableInstance.destroy();
-      }
-    });
-
-    // Inicialização do Sortable para todos os containers de ordenação
-    document.querySelectorAll('.sortable-list').forEach(function(element) {
+      // Inicializar o Sortable
       try {
-        console.log('Inicializando Sortable para elemento:', element.id);
-        const sortable = new Sortable(element, {
+        const sortable = Sortable.create(el, {
           animation: 150,
           handle: '.drag-handle',
           ghostClass: 'sortable-ghost',
           chosenClass: 'sortable-chosen',
           dragClass: 'sortable-drag',
-          onEnd: function(evt) {
-            updateAnswerField(evt.to);
+          onEnd: function() {
+            // Atualiza o campo de resposta
+            updateOrderInput(el, input);
           }
         });
         
-        // Armazena a instância do Sortable no elemento para possível limpeza futura
-        element.sortableInstance = sortable;
+        // Inicializa o valor do campo de resposta
+        updateOrderInput(el, input);
         
-        // Inicializa o campo de resposta com a ordem inicial
-        updateAnswerField(element);
+        // Marca como inicializado para rastreamento
+        el.classList.add('sortable-initialized');
       } catch (error) {
-        console.error('Erro ao inicializar Sortable:', error);
+        console.error(`Erro ao inicializar Sortable para questão ${questionId}:`, error);
       }
     });
-  }
-  
-  // Registra o inicializador para vários eventos para garantir que funcione
-  // com ou sem Turbo, e também após recarregar a página
-  document.addEventListener('DOMContentLoaded', initSortable);
-  document.addEventListener('turbo:load', initSortable);
-  document.addEventListener('turbo:render', initSortable);
-  document.addEventListener('turbo:frame-load', initSortable);
-  
-  // Inicializa imediatamente se o DOM já estiver carregado
-  if (document.readyState === 'complete' || document.readyState === 'interactive') {
-    setTimeout(initSortable, 100);
-  }
+    
+    // Função auxiliar para atualizar o campo de input
+    function updateOrderInput(listElement, inputElement) {
+      const items = listElement.querySelectorAll('.sortable-item');
+      const values = Array.from(items).map(item => item.dataset.value || '');
+      inputElement.value = values.join('|');
+      console.log(`Valor atualizado para input ${inputElement.id}:`, inputElement.value);
+    }
+  });
 </script>
 
 <style>

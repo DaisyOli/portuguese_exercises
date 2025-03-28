@@ -8,7 +8,6 @@ import "jquery"
 import "jquery_ujs"
 import "controllers"
 import "@popperjs/core"
-import "sortablejs"
 
 // Desabilita o Turbo para formulários específicos
 document.addEventListener("turbo:load", () => {
@@ -18,3 +17,8 @@ document.addEventListener("turbo:load", () => {
   });
   console.log("Application initialized")
 })
+
+// Adiciona um listener para depuração
+document.addEventListener("turbo:before-visit", () => {
+  console.log("Navegando com Turbo - fazendo cleanup");
+});

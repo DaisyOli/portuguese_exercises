@@ -1,0 +1,93 @@
+[33mcommit f064f7ca66df0261601dc4e19df171c1469dba9f[m
+Author: daisy oliani <daisy.oliani@gmail.com>
+Date:   Mon Mar 24 17:40:16 2025 +0100
+
+    toggle, forms fill the blank and multiple choices
+
+[1mdiff --git a/app/models/question.rb b/app/models/question.rb[m
+[1mindex 8be0848..afbe553 100644[m
+[1m--- a/app/models/question.rb[m
+[1m+++ b/app/models/question.rb[m
+[36m@@ -1,12 +1,39 @@[m
+ class Question < ApplicationRecord[m
+   belongs_to :activity[m
+[31m-[m
+[31m-  validates :content, presence: true[m
+[32m+[m[41m  [m
+[32m+[m[32m  # Atributos virtuais[m
+[32m+[m[32m  attr_accessor :options_text, :sentences_content[m
+[32m+[m[41m  [m
+[32m+[m[32m  # Define os tipos de questões disponíveis[m
+[32m+[m[32m  QUESTION_TYPES = ['multiple_choice', 'fill_in_blank', 'order_sentences'][m
+[32m+[m[41m  [m
+[32m+[m[32m  validates :content, presence: true, unless: :order_sentences?[m
+   validates :correct_answer, presence: true[m
+[31m-  validates :options, presence: true[m
+[31m-  validate :correct_answer_in_options[m
+[32m+[m[32m  validates :question_type, presence: true, inclusion: { in: QUESTION_TYPES }[m
+[32m+[m[32m  validates :points, numericality: { only_integer: true, greater_than: 0 }, allow_nil: true[m
+[32m+[m[41m  [m
+[32m+[m[32m  # Validações específicas para cada tipo de questão[m
+[32m+[m[32m  validates :options, presence: true, if: :multiple_choice?[m
+[32m+[m[32m  validate :correct_answer_in_options, if: :multiple_choice?[m
+[32m+[m[32m  validate :content_has_blank, if: :fill_in_blank?[m
+   [m
+   before_validation :ensure_options_is_array[m
+[32m+[m[32m  before_validation :set_default_points[m
+[32m+[m[32m  before_validation :process_options_text[m
+[32m+[m[32m  before_validation :process_order_sentences, if: :order_sentences?[m
+[32m+[m[41m  [m
+[32m+[m[32m  # Métodos auxiliares para verificar o tipo de questão[m
+[32m+[m[32m  def multiple_choice?[m
+[32m+[m[32m    question_type == 'multiple_choice'[m
+[32m+[m[32m  end[m
+[32m+[m[41m  [m
+[32m+[m[32m  def fill_in_blank?[m
+[32m+[m[32m    question_type == 'fill_in_blank'[m
+[32m+[m[32m  end[m
+[32m+[m[41m  [m
+[32m+[m[32m  def order_sentences?[m
+[32m+[m[32m    question_type == 'order_sentences'[m
+[32m+[m[32m  end[m
+ [m
+   private[m
+ [m
+[36m@@ -16,9 +43,38 @@[m [mclass Question < ApplicationRecord[m
+     end[m
+   end[m
+ [m
+[32m+[m[32m  def content_has_blank[m
+[32m+[m[32m    unless content&.include?('_____')[m
+[32m+[m[32m      errors.add(:content, "deve conter pelo menos um espaço em branco (_____)")[m
+[32m+[m[32m    end[m
+[32m+[m[32m  end[m
+[32m+[m
+   def ensure_options_is_array[m
+     self.options ||= [][m
+     self.options = options.reject(&:blank?) if options.is_a?(Array)[m
+   end[m
+[32m+[m[41m  [m
+[32m+[m[32m  def set_default_points[m
+[32m+[m[32m    self.points ||= 10[m
+[32m+[m[32m  end[m
+[32m+[m
+[32m+[m[32m  def process_options_text[m
+[32m+[m[32m    if options_text.present? && multiple_choice?[m
+[32m+[m[32m      self.options = options_text.split(",").map(&:strip)[m
+[32m+[m[32m    end[m
+[32m+[m[32m  end[m
+[32m+[m
+[32m+[m[32m  def process_order_sentences[m
+[32m+[m[32m    if order_sentences?[m
+[32m+[m[32m      if sentences_content.present?[m
+[32m+[m[32m        sentences = sentences_content.split("\n").map(&:strip).reject(&:blank?)[m
+[32m+[m[32m        self.content = "" # Define o content como vazio para questões de ordenar frases[m
+[32m+[m[32m        self.options = sentences.shuffle[m
+[32m+[m[32m        self.correct_answer = sentences.join("|")[m
+[32m+[m[32m      else[m
+[32m+[m[32m        errors.add(:sentences_content, "não pode ficar em branco")[m
+[32m+[m[32m      end[m
+[32m+[m[32m    end[m
+[32m+[m[32m  end[m
+ end[m
+ [m

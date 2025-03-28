@@ -101,7 +101,7 @@ Rails.application.configure do
   config.action_mailer.smtp_settings = {
     address: 'smtp.gmail.com',
     port: 587,
-    domain: 'practicept.site',
+    domain: 'practice-fr.site',
     user_name: ENV['GMAIL_USERNAME'],
     password: ENV['GMAIL_PASSWORD'],
     authentication: :plain,
@@ -115,9 +115,9 @@ Rails.application.configure do
     reply_to: ENV['GMAIL_USERNAME'],
     'X-MC-AutoText' => 'true',
     'X-Priority' => '3',
-    'X-Mailer' => 'PracticePT Mailer'
+    'X-Mailer' => 'PracticeFR Mailer'
   }
   
   # Host para os links nos emails
-  config.action_mailer.default_url_options = { host: 'practicept.site', protocol: 'https' }
+  config.action_mailer.default_url_options = { host: 'practice-fr.site', protocol: 'https' }
 end
