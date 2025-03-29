@@ -73,17 +73,21 @@
                     <% end %>
                   </div>
                 </div>
-              <% elsif question.order_sentences? && question.options.any? %>
-                <div class="order-sentences-container">
+              <% end %>
+
+              <% if question.order_sentences? && question.options.any? %>
+                <div class="order-sentences-container" data-controller="sortable">
                   <p class="mb-3 text-muted"><i class="fas fa-info-circle me-2"></i><%= t('questions.order_sentences_instruction', default: 'Arraste as frases para colocá-las na ordem correta:') %></p>
                   
                   <%= hidden_field_tag "answers[#{question.id}]", '', 
                                        class: 'order-sentences-answer', 
-                                       id: "order_sentences_answer_#{question.id}" %>
+                                       id: "order_sentences_answer_#{question.id}",
+                                       data: { sortable_target: "input" } %>
                   
                   <ul class="list-group sortable-list" 
                       id="sortable_<%= question.id %>"
-                      data-question-id="<%= question.id %>">
+                      data-question-id="<%= question.id %>"
+                      data-sortable-target="list">
                     <% question.options.each_with_index do |sentence, i| %>
                       <li class="list-group-item sortable-item border-0 shadow-sm mb-2" data-value="<%= sentence %>">
                         <div class="d-flex align-items-center">
