@@ -1,5 +1,5 @@
 class ApplicationController < ActionController::Base
-  before_action :authenticate_user!
+  before_action :authenticate_user!, unless: :skip_auth?
   before_action :configure_permitted_parameters, if: :devise_controller?
   before_action :set_locale, if: :user_signed_in?
   around_action :switch_locale
@@ -53,6 +53,11 @@ class ApplicationController < ActionController::Base
 
   def default_url_options
     { locale: I18n.locale }
+  end
+
+  def skip_auth?
+    devise_controller? && ['invitations'].include?(controller_name) && 
+    ['edit', 'update'].include?(action_name)
   end
 end
 
