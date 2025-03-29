@@ -52,7 +52,7 @@
     <p><%= t("devise.mailer.invitation_instructions.someone_invited_you") %></p>
     
     <p style="text-align: center;">
-      <a href="<%= accept_invitation_url(@resource, invitation_token: @token, host: @resource.invitation_sent_at ? 'practicept.site' : 'localhost:3000') %>" class="button">
+      <a href="<%= accept_invitation_url(@resource, invitation_token: @token, host: 'practicept.site') %>" class="button">
         <%= t("devise.mailer.invitation_instructions.accept") %>
       </a>
     </p>

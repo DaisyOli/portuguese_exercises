@@ -6,6 +6,7 @@ import "@rails/ujs"
 import "bootstrap"
 import "jquery"
 import "jquery_ujs"
+import "sortablejs"
 import "controllers"
 import "@popperjs/core"
 

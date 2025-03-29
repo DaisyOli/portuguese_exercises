@@ -1,4 +1,6 @@
 import { Controller } from "@hotwired/stimulus"
+// Importando Sortable como um módulo global, não como um export padrão
+import "sortablejs"
 
 export default class extends Controller {
   static targets = ["list", "input"]
@@ -17,7 +19,8 @@ export default class extends Controller {
       // Marca o elemento como inicializado para evitar duplicação
       this.listTarget.classList.add('sortable-initialized')
       
-      if (typeof Sortable === 'undefined') {
+      // Usa a versão global do Sortable
+      if (typeof window.Sortable === 'undefined') {
         console.error('Sortable não está definido. Verifique se a biblioteca foi carregada corretamente.')
         return
       }
@@ -25,7 +28,7 @@ export default class extends Controller {
       console.log(`Inicializando Sortable em ${this.listTarget.id} com input ${this.inputTarget.id}`)
       
       // Inicializa o Sortable na lista
-      this.sortable = Sortable.create(this.listTarget, {
+      this.sortable = window.Sortable.create(this.listTarget, {
         animation: 150,
         handle: '.drag-handle',
         ghostClass: 'sortable-ghost',

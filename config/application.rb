@@ -6,7 +6,7 @@ require "rails/all"
 # you've limited to :test, :development, or :production.
 Bundler.require(*Rails.groups)
 
-module PracticeFr
+module PracticePt
   class Application < Rails::Application
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 7.1
@@ -27,10 +27,10 @@ module PracticeFr
     # Configuração de internacionalização
     config.i18n.load_path += Dir[Rails.root.join('config', 'locales', '**', '*.{rb,yml}')]
     config.i18n.available_locales = [:en, :pt, :'pt-BR', :fr]
-    config.i18n.default_locale = :fr
+    config.i18n.default_locale = :pt
     config.i18n.fallbacks = true
     
     # Configuração de fuso horário
-    config.time_zone = 'Paris'
+    config.time_zone = 'Brasilia'
   end
 end

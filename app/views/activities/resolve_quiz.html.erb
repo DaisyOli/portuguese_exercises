@@ -117,61 +117,31 @@
   </div>
 </div>
 
-<!-- Carregando o Sortable.js diretamente -->
-<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
-
-<!-- Inicialização direta do Sortable sem depender do Stimulus -->
+<!-- Carregando o Sortable.js localmente para garantir disponibilidade -->
 <script>
-  document.addEventListener('DOMContentLoaded', function() {
-    console.log("Inicializando todos os Sortable lists");
+document.addEventListener('DOMContentLoaded', function() {
+  // Verifica se o Sortable já está carregado
+  if (typeof window.Sortable === 'undefined') {
+    console.warn("Sortable não encontrado na janela global. Carregando via CDN...");
     
-    // Inicializar todas as listas de ordenação
-    document.querySelectorAll('.sortable-list').forEach(function(el) {
-      // Obter os IDs
-      const questionId = el.dataset.questionId;
-      const inputId = `order_sentences_answer_${questionId}`;
-      const input = document.getElementById(inputId);
-      
-      if (!input) {
-        console.error(`Campo de input não encontrado: ${inputId} para a questão ${questionId}`);
-        return;
-      }
-      
-      console.log(`Inicializando Sortable para questão ${questionId}`);
-      
-      // Inicializar o Sortable
-      try {
-        const sortable = Sortable.create(el, {
-          animation: 150,
-          handle: '.drag-handle',
-          ghostClass: 'sortable-ghost',
-          chosenClass: 'sortable-chosen',
-          dragClass: 'sortable-drag',
-          onEnd: function() {
-            // Atualiza o campo de resposta
-            updateOrderInput(el, input);
-          }
-        });
-        
-        // Inicializa o valor do campo de resposta
-        updateOrderInput(el, input);
-        
-        // Marca como inicializado para rastreamento
-        el.classList.add('sortable-initialized');
-      } catch (error) {
-        console.error(`Erro ao inicializar Sortable para questão ${questionId}:`, error);
-      }
-    });
+    // Cria um script tag para carregar o Sortable
+    const script = document.createElement('script');
+    script.src = 'https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js';
+    script.onload = function() {
+      console.log("Sortable carregado com sucesso via CDN");
+    };
+    script.onerror = function() {
+      console.error("Erro ao carregar Sortable via CDN");
+    };
     
-    // Função auxiliar para atualizar o campo de input
-    function updateOrderInput(listElement, inputElement) {
-      const items = listElement.querySelectorAll('.sortable-item');
-      const values = Array.from(items).map(item => item.dataset.value || '');
-      inputElement.value = values.join('|');
-      console.log(`Valor atualizado para input ${inputElement.id}:`, inputElement.value);
-    }
-  });
+    document.head.appendChild(script);
+  } else {
+    console.log("Sortable já está carregado globalmente");
+  }
+});
 </script>
+
+<!-- Inicialização será feita apenas pelo Stimulus controller -->
 
 <style>
   .sortable-ghost {

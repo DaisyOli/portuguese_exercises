@@ -246,7 +246,10 @@ pt:
         confirm_text: "Você pode confirmar sua conta através do link abaixo:"
         confirm_link: "Confirmar minha conta"
         ignore_text: "Se você não solicitou uma conta, você pode ignorar este email."
-
+    # errors:
+    #   messages:
+    #     not_saved: "Não foi possível salvar"
+        
   # Auth
   auth:
     sign_out: "Sair" 
