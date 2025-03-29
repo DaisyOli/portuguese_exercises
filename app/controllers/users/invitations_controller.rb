@@ -9,7 +9,7 @@ class Users::InvitationsController < Devise::InvitationsController
       # e definição de senha
       set_minimum_password_length
       resource.invitation_token = params[:invitation_token]
-      Rails.logger.info("Editing invitation with token present")
+      Rails.logger.info("Editing invitation with token present: #{params[:invitation_token]}")
       
       # Verifica se o token é válido
       self.resource = resource_class.find_by_invitation_token(params[:invitation_token], true)
@@ -24,7 +24,10 @@ class Users::InvitationsController < Devise::InvitationsController
     rescue => e
       Rails.logger.error("Error in invitation edit: #{e.message}")
       Rails.logger.error(e.backtrace.join("\n"))
-      render plain: "Erro ao processar o convite. Por favor, entre em contato com o administrador.", status: 500
+      respond_to do |format|
+        format.html { render plain: "Erro ao processar o convite. Por favor, entre em contato com o administrador. Erro: #{e.message}", status: 500 }
+        format.json { render json: {error: e.message}, status: 500 }
+      end
     end
   end
 
@@ -32,11 +35,22 @@ class Users::InvitationsController < Devise::InvitationsController
   def update
     begin
       Rails.logger.info("Updating invitation with parameters: #{params.inspect}")
+      
+      # Verifica se o token foi fornecido
+      if params[:user].blank? || params[:user][:invitation_token].blank?
+        Rails.logger.error("No invitation token provided in params")
+        render plain: "Token de convite não fornecido ou inválido", status: 422
+        return
+      end
+      
       super
     rescue => e
       Rails.logger.error("Error in invitation update: #{e.message}")
       Rails.logger.error(e.backtrace.join("\n"))
-      render plain: "Erro ao aceitar o convite. Por favor, entre em contato com o administrador.", status: 500
+      respond_to do |format|
+        format.html { render plain: "Erro ao aceitar o convite. Por favor, entre em contato com o administrador. Erro: #{e.message}", status: 500 }
+        format.json { render json: {error: e.message}, status: 500 }
+      end
     end
   end
 

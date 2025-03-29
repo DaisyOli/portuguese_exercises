@@ -35,6 +35,20 @@ fr:
     profile: "Profil"
     sign_out: "Déconnexion"
     language: "Langue"
+  
+  # Users
+  users:
+    name: "Nom"
+    email: "Email"
+    role: "Rôle"
+    teacher: "Professeur"
+    student: "Étudiant"
+    invite: "Inviter un Utilisateur"
+    language: "Langue"
+    language_option:
+      pt: "Portugais"
+      en: "Anglais"
+      fr: "Français"
     
   # Activities
   activities:

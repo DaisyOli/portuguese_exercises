@@ -11,7 +11,9 @@ Rails.application.routes.draw do
   
   # Define rotas para convites que não requerem autenticação
   devise_scope :user do
-    get '/users/invitation/accept', to: 'users/invitations#edit'
+    get '/users/invitation/new', to: 'users/invitations#new', as: 'new_user_invitation'
+    post '/users/invitation', to: 'users/invitations#create', as: 'user_invitation'
+    get '/users/invitation/accept', to: 'users/invitations#edit', as: 'accept_user_invitation'
     put '/users/invitation', to: 'users/invitations#update'
   end
 

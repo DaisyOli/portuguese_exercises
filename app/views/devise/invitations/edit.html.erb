@@ -1,27 +1,26 @@
 <div class="container d-flex justify-content-center align-items-center vh-100">
-  <div class="card shadow-lg p-4" style="width: 100%; max-width: 400px;">
+  <div class="card shadow-lg p-4" style="width: 100%; max-width: 500px;">
     <div class="card-body">
-      <h2 class="card-title text-center mb-4"><%= t "devise.invitations.edit.header" %></h2>
+      <h2 class="card-title text-center mb-4"><%= t("devise.invitations.edit.header") %></h2>
 
       <%= form_for(resource, as: resource_name, url: invitation_path(resource_name), html: { method: :put, class: 'needs-validation' }) do |f| %>
         <%= render "devise/shared/error_messages", resource: resource %>
-        <%= f.hidden_field :invitation_token, readonly: true %>
-        <%= f.hidden_field :language, value: I18n.locale %>
-
-        <div class="mb-3">
-          <%= f.label :name, class: "form-label" %><br />
-          <%= f.text_field :name, class: "form-control", placeholder: "Enter your name" %>
-        </div>
+        <%= f.hidden_field :invitation_token, value: resource.invitation_token %>
 
         <% if f.object.class.require_password_on_accepting %>
           <div class="mb-3">
             <%= f.label :password, class: "form-label" %><br />
-            <%= f.password_field :password, class: "form-control", placeholder: "Enter your password" %>
+            <%= f.password_field :password, class: "form-control", required: true %>
+            <% if @minimum_password_length %>
+              <div class="form-text text-muted">
+                <%= t("devise.registrations.new.minimum_password", min: @minimum_password_length) %>
+              </div>
+            <% end %>
           </div>
 
           <div class="mb-3">
             <%= f.label :password_confirmation, class: "form-label" %><br />
-            <%= f.password_field :password_confirmation, class: "form-control", placeholder: "Confirm your password" %>
+            <%= f.password_field :password_confirmation, class: "form-control", required: true %>
           </div>
         <% end %>
 

@@ -226,3 +226,17 @@ en:
         confirm_text: "You can confirm your account through the link below:"
         confirm_link: "Confirm my account"
         ignore_text: "If you didn't request an account, you can ignore this email."
+
+  # Users
+  users:
+    name: "Name"
+    email: "Email"
+    role: "Role"
+    teacher: "Teacher"
+    student: "Student"
+    invite: "Invite User"
+    language: "Language"
+    language_option:
+      pt: "Portuguese"
+      en: "English"
+      fr: "French"

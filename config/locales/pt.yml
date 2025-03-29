@@ -252,4 +252,18 @@ pt:
         
   # Auth
   auth:
-    sign_out: "Sair" 
+    sign_out: "Sair"
+
+  # Usuários
+  users:
+    name: "Nome"
+    email: "Email"
+    role: "Função"
+    teacher: "Professor"
+    student: "Aluno"
+    invite: "Convidar Usuário"
+    language: "Idioma"
+    language_option:
+      pt: "Português"
+      en: "Inglês"
+      fr: "Francês" 
