@@ -9,10 +9,16 @@ Rails.application.routes.draw do
   # Rota para atualização de idioma
   patch 'update_language', to: 'languages#update'
   
+  # Define rotas para convites que não requerem autenticação
+  devise_scope :user do
+    get '/users/invitation/accept', to: 'users/invitations#edit'
+    put '/users/invitation', to: 'users/invitations#update'
+  end
+
   # Rotas do Devise para autenticação
   devise_for :users, controllers: {
     invitations: 'users/invitations'
-  }
+  }, skip: [:invitations]  # Pula as rotas de convite já definidas acima
 
   # Rotas para atividades e questões
   resources :activities do
