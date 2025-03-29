@@ -101,21 +101,24 @@ Rails.application.configure do
   config.action_mailer.smtp_settings = {
     address: 'smtp.gmail.com',
     port: 587,
-    domain: 'practicept.site',
+    domain: 'exerciseapp.com.br',
     user_name: ENV['GMAIL_USERNAME'],
     password: ENV['GMAIL_PASSWORD'],
     authentication: :plain,
     enable_starttls_auto: true,
-    openssl_verify_mode: 'none'
+    open_timeout: 5,
+    read_timeout: 5
   }
   
   # Adiciona cabeçalhos para evitar spam
   config.action_mailer.default_options = {
-    from: 'brasileirante@gmail.com',
-    reply_to: 'brasileirante@gmail.com',
+    from: 'Exercise App <no-reply@exerciseapp.com.br>',
+    reply_to: 'suporte@exerciseapp.com.br',
     'X-MC-AutoText' => 'true',
     'X-Priority' => '3',
-    'X-Mailer' => 'PracticePT Mailer'
+    'X-Mailer' => 'Exercise App Mailer',
+    'Importance' => 'Normal',
+    'Precedence' => 'Bulk'
   }
   
   # Host para os links nos emails
