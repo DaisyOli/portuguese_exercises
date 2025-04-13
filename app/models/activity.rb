@@ -1,12 +1,13 @@
 class Activity < ApplicationRecord
   belongs_to :teacher, class_name: 'User'
   has_many :questions, dependent: :destroy
-  # Removida a associação com quiz_attempts que não existe mais
-  # has_many :quiz_attempts, dependent: :destroy
+  has_many :quiz_attempts, dependent: :destroy
 
   validates :title, presence: true
   validates :description, presence: true
   validates :level, presence: true
+  
+  after_commit :clear_cache
   
   enum level: {
     A1: 'A1',
@@ -31,5 +32,13 @@ class Activity < ApplicationRecord
     else
       'bg-secondary'   # Cinza (caso padrão)
     end
+  end
+  
+  private
+  
+  def clear_cache
+    Rails.cache.delete_matched("activities*")
+    Rails.cache.delete_matched("activity_questions/#{id}*")
+    Rails.cache.delete_matched("activities_by_level*")
   end
 end

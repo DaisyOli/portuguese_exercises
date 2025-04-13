@@ -3,109 +3,122 @@
     <div class="card-body">
       <h1 class="text-center mb-4"><%= t('quiz.title') %> <%= @activity.title %></h1>
       
-      <div class="mb-4">
-        <p><strong><%= t('activities.description') %>:</strong> <%= @activity.description %></p>
-        <p><strong><%= t('activities.level') %>:</strong> <span class="badge bg-info"><%= @activity.level %></span></p>
+      <% cache [@activity, "header", I18n.locale] do %>
+        <div class="mb-4">
+          <p><strong><%= t('activities.description') %>:</strong> <%= @activity.description %></p>
+          <p><strong><%= t('activities.level') %>:</strong> <span class="badge bg-info"><%= @activity.level %></span></p>
+          
+          <% if @activity.statement.present? %>
+            <div class="card bg-light mb-3">
+              <div class="card-body">
+                <%= simple_format(@activity.statement) %>
+              </div>
+            </div>
+          <% end %>
+        </div>
         
-        <% if @activity.statement.present? %>
-          <div class="card bg-light mb-3">
-            <div class="card-body">
-              <%= simple_format(@activity.statement) %>
+        <!-- Exibição da mídia -->
+        <% if @activity.media_url.present? %>
+          <div class="mb-4">
+            <% if @activity.media_url.include?('youtube.com') || @activity.media_url.include?('youtu.be') %>
+              <% youtube_id = @activity.media_url.match(/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/) %>
+              <% if youtube_id && youtube_id[1] %>
+                <div style="max-width: 560px; margin: 0 auto;">
+                  <div class="ratio ratio-16x9 mb-3">
+                    <iframe 
+                      src="https://www.youtube.com/embed/<%= youtube_id[1] %>" 
+                      allowfullscreen
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture">
+                    </iframe>
+                  </div>
+                </div>
+              <% end %>
+            <% else %>
+              <img src="<%= @activity.media_url %>" alt="Imagem da atividade" class="img-fluid mb-3">
+            <% end %>
+          </div>
+        <% end %>
+
+        <!-- Exibição do texto explicativo -->
+        <% if @activity.explanation_text.present? %>
+          <div class="mb-4">
+            <div class="card">
+              <div class="card-body">
+                <%= simple_format(@activity.explanation_text) %>
+              </div>
             </div>
           </div>
         <% end %>
-      </div>
-      
-      <!-- Exibição da mídia -->
-      <% if @activity.media_url.present? %>
-        <div class="mb-4">
-          <% if @activity.media_url.include?('youtube.com') || @activity.media_url.include?('youtu.be') %>
-            <% youtube_id = @activity.media_url.match(/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/) %>
-            <% if youtube_id && youtube_id[1] %>
-              <div style="max-width: 560px; margin: 0 auto;">
-                <div class="ratio ratio-16x9 mb-3">
-                  <iframe 
-                    src="https://www.youtube.com/embed/<%= youtube_id[1] %>" 
-                    allowfullscreen
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture">
-                  </iframe>
-                </div>
-              </div>
-            <% end %>
-          <% else %>
-            <img src="<%= @activity.media_url %>" alt="Imagem da atividade" class="img-fluid mb-3">
-          <% end %>
-        </div>
-      <% end %>
-
-      <!-- Exibição do texto explicativo -->
-      <% if @activity.explanation_text.present? %>
-        <div class="mb-4">
-          <div class="card">
-            <div class="card-body">
-              <%= simple_format(@activity.explanation_text) %>
-            </div>
-          </div>
-        </div>
       <% end %>
       
       <%= form_with(url: submit_quiz_activity_path(@activity), method: :post, data: { turbo: false }) do |f| %>
         <% @questions.each_with_index do |question, index| %>
-          <div class="card mb-3">
-            <div class="card-body py-3">
-              <h6 class="card-subtitle text-muted mb-2"><%= t('questions.title') %> <%= index + 1 %></h6>
-              <p class="card-text mb-3 fs-5">
-                <% if question.fill_in_blank? %>
-                  <%= question.content.gsub('_____', text_field_tag("answers[#{question.id}]", nil, class: 'form-control d-inline-block', style: 'width: 150px;')).html_safe %>
-                <% else %>
-                  <%= question.content %>
-                <% end %>
-              </p>
+          <% cache [question, index, I18n.locale] do %>
+            <div class="card mb-3">
+              <div class="card-body py-3">
+                <h6 class="card-subtitle text-muted mb-2"><%= t('questions.title') %> <%= index + 1 %></h6>
+                <p class="card-text mb-3 fs-5">
+                  <% if question.fill_in_blank? %>
+                    <%= question.content.gsub('_____', text_field_tag("answers[#{question.id}]", nil, class: 'form-control d-inline-block', style: 'width: 150px;')).html_safe %>
+                  <% else %>
+                    <%= question.content %>
+                  <% end %>
+                </p>
 
-              <% if question.multiple_choice? && question.options.any? %>
-                <div class="options-list">
-                  <div class="ps-2">
-                    <% question.options.each do |option| %>
-                      <div class="form-check mb-2">
-                        <%= radio_button_tag "answers[#{question.id}]", option, false, class: 'form-check-input' %>
-                        <%= label_tag "answers_#{question.id}_#{option.parameterize}", option, class: 'form-check-label' %>
-                      </div>
-                    <% end %>
-                  </div>
-                </div>
-              <% end %>
-
-              <% if question.order_sentences? && question.options.any? %>
-                <div class="order-sentences-container" data-controller="sortable">
-                  <p class="mb-3 text-muted"><i class="fas fa-info-circle me-2"></i><%= t('questions.order_sentences_instruction', default: 'Arraste as frases para colocá-las na ordem correta:') %></p>
-                  
-                  <%= hidden_field_tag "answers[#{question.id}]", '', 
-                                       class: 'order-sentences-answer', 
-                                       id: "order_sentences_answer_#{question.id}",
-                                       data: { sortable_target: "input" } %>
-                  
-                  <ul class="list-group sortable-list" 
-                      id="sortable_<%= question.id %>"
-                      data-question-id="<%= question.id %>"
-                      data-sortable-target="list">
-                    <% question.options.each_with_index do |sentence, i| %>
-                      <li class="list-group-item sortable-item border-0 shadow-sm mb-2" data-value="<%= sentence %>">
-                        <div class="d-flex align-items-center">
-                          <div class="drag-handle me-3 px-2">
-                            <i class="fas fa-grip-vertical text-primary"></i>
-                          </div>
-                          <div class="flex-grow-1"><%= sentence %></div>
-                          <div class="ms-2 text-muted">
-                            <i class="fas fa-arrows-alt-v"></i>
-                          </div>
+                <% if question.multiple_choice? && question.options.any? %>
+                  <div class="options-list">
+                    <div class="ps-2">
+                      <% question.options.each do |option| %>
+                        <div class="form-check mb-2">
+                          <%= radio_button_tag "answers[#{question.id}]", option, false, class: 'form-check-input' %>
+                          <%= label_tag "answers_#{question.id}_#{option.parameterize}", option, class: 'form-check-label' %>
                         </div>
-                      </li>
-                    <% end %>
-                  </ul>
-                </div>
-              <% end %>
+                      <% end %>
+                    </div>
+                  </div>
+                <% end %>
+
+                <% if question.order_sentences? && question.options.any? %>
+                  <div class="order-sentences-container" data-controller="sortable">
+                    <p class="mb-3 text-muted"><i class="fas fa-info-circle me-2"></i><%= t('questions.order_sentences_instruction', default: 'Arraste as frases para colocá-las na ordem correta:') %></p>
+                    
+                    <%= hidden_field_tag "answers[#{question.id}]", '', 
+                                         class: 'order-sentences-answer', 
+                                         id: "order_sentences_answer_#{question.id}",
+                                         data: { sortable_target: "input" } %>
+                    
+                    <ul class="list-group sortable-list" 
+                        id="sortable_<%= question.id %>"
+                        data-question-id="<%= question.id %>"
+                        data-sortable-target="list">
+                      <% question.options.shuffle.each_with_index do |sentence, i| %>
+                        <li class="list-group-item sortable-item border-0 shadow-sm mb-2" data-value="<%= sentence %>">
+                          <div class="d-flex align-items-center">
+                            <div class="drag-handle me-3 px-2">
+                              <i class="fas fa-grip-vertical text-primary"></i>
+                            </div>
+                            <div class="flex-grow-1"><%= sentence %></div>
+                            <div class="ms-2 text-muted">
+                              <i class="fas fa-arrows-alt-v"></i>
+                            </div>
+                          </div>
+                        </li>
+                      <% end %>
+                    </ul>
+                    
+                    <!-- Botão auxiliar para solucionar problemas de inicialização -->
+                    <button type="button" 
+                            class="btn btn-sm btn-outline-secondary mt-2 reinit-sortable-btn"
+                            style="display: none;"
+                            data-sortable-id="<%= question.id %>"
+                            onclick="reinitSortable(this)">
+                      Reiniciar ordenação
+                    </button>
+                  </div>
+                <% end %>
+              </div>
             </div>
-          </div>
+          <% end %>
         <% end %>
 
         <div class="d-grid gap-2">
@@ -117,32 +130,31 @@
   </div>
 </div>
 
-<!-- Carregando o Sortable.js localmente para garantir disponibilidade -->
+<!-- Carregando o Sortable.js no cabeçalho da página para garantir disponibilidade -->
 <script>
+// Este script é mantido apenas para verificar a inicialização do Sortable
 document.addEventListener('DOMContentLoaded', function() {
-  // Verifica se o Sortable já está carregado
-  if (typeof window.Sortable === 'undefined') {
-    console.warn("Sortable não encontrado na janela global. Carregando via CDN...");
+  // Adicionar observador para verificar se elementos sortable estão funcionando corretamente
+  setTimeout(function() {
+    const sortableLists = document.querySelectorAll('[data-controller="sortable"] .sortable-list');
     
-    // Cria um script tag para carregar o Sortable
-    const script = document.createElement('script');
-    script.src = 'https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js';
-    script.onload = function() {
-      console.log("Sortable carregado com sucesso via CDN");
-    };
-    script.onerror = function() {
-      console.error("Erro ao carregar Sortable via CDN");
-    };
-    
-    document.head.appendChild(script);
-  } else {
-    console.log("Sortable já está carregado globalmente");
-  }
+    if (sortableLists.length > 0) {
+      console.log(`Encontrados ${sortableLists.length} elementos de lista ordenável`);
+      
+      // Verificar se os controllers estão inicializados
+      sortableLists.forEach(list => {
+        if (!list.classList.contains('sortable-initialized')) {
+          console.warn(`Lista ${list.id} não inicializada, mostrando botão de reinicialização`);
+          const btn = list.closest('.order-sentences-container').querySelector('.reinit-sortable-btn');
+          if (btn) btn.style.display = 'block';
+        }
+      });
+    }
+  }, 1000);
 });
 </script>
 
-<!-- Inicialização será feita apenas pelo Stimulus controller -->
-
+<!-- Estilo para os elementos sortable -->
 <style>
   .sortable-ghost {
     opacity: 0.6;
@@ -205,3 +217,69 @@ document.addEventListener('DOMContentLoaded', function() {
     margin-top: 1rem;
   }
 </style>
+
+<!-- Função global para reinicializar um Sortable específico -->
+<script>
+  function reinitSortable(button) {
+    // Desabilita o botão para evitar múltiplos cliques
+    button.disabled = true;
+    
+    const sortableId = button.dataset.sortableId;
+    const listElement = document.getElementById(`sortable_${sortableId}`);
+    
+    if (!listElement) {
+      console.error(`Lista sortable_${sortableId} não encontrada`);
+      return;
+    }
+    
+    console.log("Verificando disponibilidade do Sortable:", typeof Sortable);
+    
+    // Força reinicialização do controller Stimulus
+    const container = listElement.closest('[data-controller="sortable"]');
+    if (container) {
+      // Remove a instância atual (se existir)
+      if (typeof Sortable !== 'undefined') {
+        try {
+          const sortableInstance = Sortable.get(listElement);
+          if (sortableInstance) {
+            sortableInstance.destroy();
+          }
+        } catch (e) {
+          console.error("Erro ao destruir instância existente:", e);
+        }
+      } else {
+        console.error("Sortable não está disponível como objeto global");
+      }
+      
+      // Reiniciar controller
+      container.dataset.sortableInitialized = 'false';
+      
+      // Cria um novo evento e dispara
+      const event = new CustomEvent('stimulus:connect', { bubbles: true });
+      container.dispatchEvent(event);
+      
+      console.log(`Tentativa de reinicialização para sortable_${sortableId}`);
+      
+      // Oculta o botão após alguns segundos se a inicialização for bem-sucedida
+      setTimeout(() => {
+        if (listElement.classList.contains('sortable-initialized')) {
+          button.style.display = 'none';
+          console.log(`Reinicialização bem-sucedida para sortable_${sortableId}`);
+        } else {
+          button.disabled = false;
+          console.error(`Falha na reinicialização para sortable_${sortableId}`);
+          // Tenta uma última abordagem - recarregar o módulo diretamente
+          if (typeof Sortable === 'undefined') {
+            console.log("Tentando importar Sortable novamente via import dinâmico");
+            import("/vendor/sortable.min.js").then(module => {
+              window.Sortable = module.default;
+              container.dispatchEvent(event);
+            }).catch(err => {
+              console.error("Falha ao importar dinamicamente:", err);
+            });
+          }
+        }
+      }, 500);
+    }
+  }
+</script>

@@ -1,0 +1,15 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  user: one
+  activity: one
+  score: 1.5
+  results: 
+  submitted_at: 2025-04-13 19:56:26
+
+two:
+  user: two
+  activity: two
+  score: 1.5
+  results: 
+  submitted_at: 2025-04-13 19:56:26

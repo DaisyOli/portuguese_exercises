@@ -184,6 +184,9 @@ pt:
     score: "Pontuação"
     xp: "XP"
     view_results: "Ver resultados"
+    clear_history: "Limpar histórico"
+    confirm_clear_history: "Limpar histórico de tentativas"
+    clear_history_warning: "Tem certeza que deseja limpar todo o histórico de tentativas para esta atividade? Esta ação não pode ser desfeita."
 
   # Formulários
   forms:
@@ -205,6 +208,9 @@ pt:
     activity_deleted: "Atividade excluída com sucesso."
     quiz_submitted: "Quiz enviado com sucesso."
     quiz_error: "Erro ao processar o quiz."
+    quiz_timeout: "O processamento do quiz demorou muito tempo. Tente novamente."
+    no_questions: "Esta atividade não possui questões."
+    activity_not_found: "Atividade não encontrada."
     language_updated: "Idioma alterado com sucesso!"
     language_update_failed: "Não foi possível alterar o idioma."
     answer_quiz_first: "Por favor, responda o quiz primeiro."
@@ -215,6 +221,7 @@ pt:
     statement_deleted: "Enunciado excluído com sucesso."
     media_deleted: "Mídia excluída com sucesso."
     explanation_deleted: "Texto explicativo excluído com sucesso."
+    attempt_history_cleared: "Histórico de tentativas limpo com sucesso."
     
   # Devise
   devise:

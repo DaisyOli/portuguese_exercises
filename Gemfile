@@ -57,6 +57,10 @@ gem "bootsnap", require: false
 # Adiciona ostruct para compatibilidade futura
 gem 'ostruct'
 
+# Gems para assets
+gem 'sass-rails'
+gem 'terser'  # JavaScript compressor
+
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
   gem "debug", platforms: %i[ mri windows ]
@@ -85,4 +89,10 @@ end
 group :production do
   # Dependência recomendada pelo Heroku
   gem 'rails_12factor'
+  
+  # Gems para cache
+  gem 'dalli' # Cliente para Memcached
+  gem 'connection_pool' # Pooling de conexões
+  gem 'kgio'  # Gem para aumentar a performance do Dalli
+  gem 'rack-cache' # Cache HTTP para requisições
 end

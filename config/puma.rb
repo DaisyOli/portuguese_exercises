@@ -7,26 +7,40 @@
 # Any libraries that use thread pools should be configured to match
 # the maximum value specified for Puma. Default is set to 5 threads for minimum
 # and maximum; this matches the default thread size of Active Record.
-max_threads_count = ENV.fetch("RAILS_MAX_THREADS") { 5 }
+max_threads_count = ENV.fetch("RAILS_MAX_THREADS") { 8 }
 min_threads_count = ENV.fetch("RAILS_MIN_THREADS") { max_threads_count }
 threads min_threads_count, max_threads_count
 
 rails_env = ENV.fetch("RAILS_ENV") { "development" }
 
 if rails_env == "production"
-  # If you are running more than 1 thread per process, the workers count
-  # should be equal to the number of processors (CPU cores) in production.
-  #
-  # It defaults to 1 because it's impossible to reliably detect how many
-  # CPU cores are available. Make sure to set the `WEB_CONCURRENCY` environment
-  # variable to match the number of processors.
-  worker_count = Integer(ENV.fetch("WEB_CONCURRENCY") { 1 })
-  if worker_count > 1
-    workers worker_count
-  else
-    preload_app!
+  # Melhoria na configuração de workers para produção
+  # Na maioria dos dyno do Heroku, 2-3 workers é uma boa configuração
+  worker_count = Integer(ENV.fetch("WEB_CONCURRENCY") { 2 })
+  
+  workers worker_count
+  
+  # Preload app para melhor desempenho com múltiplos workers
+  preload_app!
+  
+  # Adiciona configuração para timeout de worker para evitar processos zumbis
+  worker_timeout 60
+  
+  # Configurações de baixa latência
+  fast_exit!
+  
+  # Adiciona recomendação para variável de ambiente
+  unless ENV["RAILS_MAX_THREADS"]
+    puts "AVISO: A variável RAILS_MAX_THREADS não está definida. Usando valor padrão de #{max_threads_count}."
+    puts "Recomendamos configurar RAILS_MAX_THREADS=8 e WEB_CONCURRENCY=2 em seu Heroku."
+  end
+  
+  # Adiciona configuração para manter o aplicativo aquecido
+  before_fork do
+    puts "Puma inicializando com #{worker_count} workers e #{max_threads_count} threads por worker"
   end
 end
+
 # Specifies the `worker_timeout` threshold that Puma will use to wait before
 # terminating a worker in development environments.
 worker_timeout 3600 if ENV.fetch("RAILS_ENV", "development") == "development"

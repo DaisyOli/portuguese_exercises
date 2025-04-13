@@ -5,8 +5,7 @@ class User < ApplicationRecord
          :recoverable, :rememberable, :validatable
   
   has_many :activities, dependent: :destroy
-  # Removida a associação com quiz_attempts que não existe mais
-  # has_many :quiz_attempts, dependent: :destroy
+  has_many :quiz_attempts, dependent: :destroy
   
   ROLES = %w[teacher student].freeze
   LANGUAGES = %w[en pt fr].freeze

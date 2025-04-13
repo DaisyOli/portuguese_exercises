@@ -6,7 +6,11 @@ import "@rails/ujs"
 import "bootstrap"
 import "jquery"
 import "jquery_ujs"
-import "sortablejs"
+
+// Importar Sortable.js de forma otimizada e garantir que seja global
+import Sortable from "./vendor/sortable.min.js"
+window.Sortable = Sortable; // Expor como variável global
+
 import "controllers"
 import "@popperjs/core"
 

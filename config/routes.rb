@@ -23,6 +23,7 @@ Rails.application.routes.draw do
       patch :clear_statement
       patch :clear_media
       patch :clear_explanation
+      delete :clear_attempt_history
     end
 
     resources :questions

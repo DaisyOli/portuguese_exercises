@@ -20,6 +20,9 @@ class Question < ApplicationRecord
   before_validation :process_options_text
   before_validation :process_order_sentences, if: :order_sentences?
   
+  # Callback para limpar o cache
+  after_commit :clear_cache
+  
   # Métodos auxiliares para verificar o tipo de questão
   def multiple_choice?
     question_type == 'multiple_choice'
@@ -34,6 +37,10 @@ class Question < ApplicationRecord
   end
 
   private
+  
+  def clear_cache
+    Rails.cache.delete_matched("activity_questions/#{activity_id}*")
+  end
 
   def correct_answer_in_options
     if correct_answer.present? && options.is_a?(Array) && !options.include?(correct_answer)

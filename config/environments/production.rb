@@ -21,13 +21,21 @@ Rails.application.configure do
   # config.require_master_key = true
 
   # Disable serving static files from `public/`, relying on NGINX/Apache to do so instead.
-  # config.public_file_server.enabled = false
+  config.public_file_server.enabled = true
+  config.public_file_server.headers = {
+    'Cache-Control' => "public, max-age=#{1.year.to_i}, s-maxage=#{30.days.to_i}"
+  }
 
   # Compress CSS using a preprocessor.
   # config.assets.css_compressor = :sass
 
-  # Do not fall back to assets pipeline if a precompiled asset is missed.
-  config.assets.compile = true  # Temporariamente ativado para diagnóstico
+  # Melhorar compressão de CSS e JavaScript
+  config.assets.css_compressor = :sass
+  config.assets.js_compressor = :terser
+  
+  # Desativar a compilação de assets em tempo real para melhorar desempenho
+  # e usar precompiled assets
+  config.assets.compile = false
 
   # Enable serving of images, stylesheets, and JavaScripts from an asset server.
   # config.asset_host = "http://assets.example.com"
@@ -66,6 +74,28 @@ Rails.application.configure do
 
   # Use a different cache store in production.
   # config.cache_store = :mem_cache_store
+
+  # Configuração de cache otimizada para Heroku com fallback para memory_store
+  if ENV["MEMCACHIER_SERVERS"]
+    config.cache_store = :mem_cache_store,
+                        ENV["MEMCACHIER_SERVERS"].split(","),
+                        {
+                          username: ENV["MEMCACHIER_USERNAME"],
+                          password: ENV["MEMCACHIER_PASSWORD"],
+                          failover: true,
+                          socket_timeout: 1.5,
+                          socket_failure_delay: 0.2,
+                          down_retry_delay: 60,
+                          pool_size: ENV.fetch("RAILS_MAX_THREADS") { 5 }
+                        }
+    config.action_controller.perform_caching = true
+    config.public_file_server.headers = {
+      'Cache-Control' => "public, max-age=#{2.days.to_i}"
+    }
+  else
+    config.cache_store = :memory_store, { size: 64.megabytes }
+    config.action_controller.perform_caching = true
+  end
 
   # Use a real queuing backend for Active Job (and separate queues per environment).
   # config.active_job.queue_adapter = :resque
