@@ -27,7 +27,7 @@ if rails_env == "production"
   worker_timeout 60
   
   # Configurações de baixa latência
-  fast_exit!
+  # fast_exit!  # Removendo esta linha que está causando o erro
   
   # Adiciona recomendação para variável de ambiente
   unless ENV["RAILS_MAX_THREADS"]
