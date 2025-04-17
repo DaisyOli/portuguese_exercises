@@ -51,67 +51,48 @@ class ActivitiesController < ApplicationController
   end
 
   def submit_quiz
-    # Adiciona um timeout para evitar que o Heroku mate o processo
-    Timeout.timeout(25) do  # 25 segundos é um valor seguro abaixo do limite de 30s do Heroku
-      begin
-        @activity = Activity.find(params[:id])
-        @questions = @activity.questions
+    begin
+      @activity = Activity.find(params[:id])
+      @questions = @activity.questions
+      
+      # Processa os parâmetros para extrair as respostas
+      answers = params[:answers] || {}
+      
+      Rails.logger.info "Iniciando processamento de respostas para atividade #{@activity.id}"
+      
+      # Verifica se há perguntas antes de processar
+      if @questions.empty?
+        redirect_to resolve_quiz_activity_path(@activity), alert: t('messages.no_questions')
+        return
+      end
+      
+      # Processamento otimizado: Pré-carrega todas as questões de uma vez
+      question_ids = @questions.pluck(:id)
+      results = {}
+      total_correct = 0
+      
+      # Processamento em batch para evitar memory bloat
+      question_ids.each_slice(10) do |batch_ids|
+        # Carregar apenas os campos necessários para as questões no batch atual
+        batch_questions = Question.where(id: batch_ids).select(:id, :content, :question_type, :correct_answer)
         
-        # Processa os parâmetros para extrair as respostas
-        answers = params[:answers] || {}
-        
-        Rails.logger.info "Iniciando processamento de respostas para atividade #{@activity.id}"
-        
-        results = {}
-        total_correct = 0
-        
-        # Verifica se há perguntas antes de processar
-        if @questions.empty?
-          redirect_to resolve_quiz_activity_path(@activity), alert: t('messages.no_questions')
-          return
-        end
-        
-        # Otimização: Processar questões em lotes menores para evitar bloqueio longo
-        @questions.find_each(batch_size: 5) do |question|
-          Rails.logger.debug "Processando questão #{question.id} (tipo: #{question.question_type})"
-          
-          given_answer = answers[question.id.to_s]
+        # Processar cada questão no batch
+        batch_questions.each do |question|
+          # Otimização: transformar em string apenas uma vez
+          question_id_str = question.id.to_s
+          given_answer = answers[question_id_str]
           correct_answer = question.correct_answer
           
+          # Inicializar resultado padrão
           is_correct = false
           
-          # Processa diferentes tipos de questões
-          begin
-            case question.question_type
-            when 'multiple_choice'
-              is_correct = given_answer.present? && given_answer.to_s.strip == correct_answer.to_s.strip
-            when 'fill_in_blank'
-              is_correct = given_answer.present? && given_answer.to_s.strip == correct_answer.to_s.strip
-            when 'order_sentences'
-              # Tratamento especial para questões de ordenação
-              if given_answer.present?
-                # Verifica se a resposta está no formato esperado (valores separados por |)
-                if given_answer.to_s.include?('|')
-                  is_correct = given_answer.to_s == correct_answer.to_s
-                else
-                  # Fallback para o caso do Sortable.js não funcionar corretamente
-                  # Verifica apenas se os elementos estão presentes, mesmo que fora de ordem
-                  # Assim o aluno não é penalizado por problemas técnicos
-                  Rails.logger.warn "Formato de resposta inesperado para questão de ordenação: #{given_answer}"
-                  
-                  # Verifica se todas as frases esperadas estão presentes na resposta
-                  expected_sentences = correct_answer.to_s.split('|')
-                  is_correct = expected_sentences.all? { |sentence| given_answer.to_s.include?(sentence) }
-                end
-              end
-            end
-          rescue => e
-            Rails.logger.error "Erro ao processar questão #{question.id}: #{e.message}"
-            # Continua processando outras questões mesmo com erro em uma
-          end
+          # Otimização: extrair método para processamento específico
+          is_correct = process_answer(question.question_type, given_answer, correct_answer)
           
+          # Incrementar contador se correto
           total_correct += 1 if is_correct
           
+          # Armazenar resultados
           results[question.id] = {
             question_text: question.content,
             question_type: question.question_type,
@@ -120,47 +101,88 @@ class ActivitiesController < ApplicationController
             is_correct: is_correct
           }
         end
-        
-        Rails.logger.info "Respostas processadas com sucesso: #{total_correct} de #{@questions.count} corretas"
-        
-        # Cálculo do score
-        score = @questions.count.positive? ? ((total_correct.to_f / @questions.count) * 100).round(2) : 0
-        
-        # Preparar o hash de resultados 
-        quiz_results_data = {
-          activity_id: @activity.id,
-          results: results,
-          score: score,
-          total_correct: total_correct,
-          total_questions: @questions.count
-        }
-        
-        # Armazenar na sessão para compatibilidade com código existente
-        session[:quiz_results] = quiz_results_data
-        
-        # Salvar no banco de dados para persistência
-        @quiz_attempt = current_user.quiz_attempts.create!(
-          activity: @activity,
-          score: score,
-          results: quiz_results_data,
-          submitted_at: Time.current
+      end
+      
+      Rails.logger.info "Respostas processadas com sucesso: #{total_correct} de #{@questions.count} corretas"
+      
+      # Cálculo do score
+      score = @questions.count.positive? ? ((total_correct.to_f / @questions.count) * 100).round(2) : 0
+      
+      # Preparar o hash de resultados
+      quiz_results_data = {
+        activity_id: @activity.id,
+        results: results,
+        score: score,
+        submitted_at: Time.current
+      }
+      
+      # Criar ou atualizar a tentativa
+      if current_user
+        @quiz_attempt = QuizAttempt.find_or_initialize_by(
+          user_id: current_user.id, 
+          activity_id: @activity.id
         )
         
-        respond_to do |format|
-          format.html { redirect_to quiz_results_activity_path(@activity), notice: t('messages.quiz_submitted') }
-          format.turbo_stream { redirect_to quiz_results_activity_path(@activity), notice: t('messages.quiz_submitted') }
+        @quiz_attempt.score = score
+        @quiz_attempt.results = results
+        @quiz_attempt.submitted_at = Time.current
+        
+        # Salvar resultados no banco de dados
+        if @quiz_attempt.save
+          Rails.logger.info "Tentativa de quiz salva com sucesso para usuário #{current_user.id}"
+          redirect_to quiz_results_activity_path(@activity), 
+                     notice: t('quiz.success', score: score)
+        else
+          Rails.logger.error "Erro ao salvar tentativa: #{@quiz_attempt.errors.full_messages.join(', ')}"
+          flash[:alert] = t('quiz.error')
+          redirect_to resolve_quiz_activity_path(@activity)
         end
-      rescue ActiveRecord::RecordNotFound => e
-        Rails.logger.error "Erro de registro não encontrado: #{e.message}"
-        redirect_to activities_path, alert: t('messages.activity_not_found')
-      rescue => e
-        Rails.logger.error "Erro ao processar quiz: #{e.class} - #{e.message}\n#{e.backtrace.join("\n")}"
-        redirect_to resolve_quiz_activity_path(@activity), alert: t('messages.quiz_error')
+      else
+        # Para usuários não autenticados, usar a sessão
+        session[:quiz_results] = quiz_results_data
+        redirect_to quiz_results_activity_path(@activity), notice: t('quiz.success', score: score)
       end
+    rescue StandardError => e
+      # Log detalhado do erro para diagnóstico
+      Rails.logger.error "Erro ao processar quiz: #{e.class.name} - #{e.message}"
+      Rails.logger.error e.backtrace.join("\n")
+      
+      # Resposta amigável ao usuário
+      flash[:alert] = t('quiz.error_with_details', error: e.message)
+      redirect_to resolve_quiz_activity_path(@activity)
     end
-  rescue Timeout::Error => e
-    Rails.logger.error "Timeout ao processar quiz: #{e.message}"
-    redirect_to resolve_quiz_activity_path(@activity || params[:id]), alert: t('messages.quiz_timeout')
+  end
+  
+  # Método auxiliar para processar respostas de diferentes tipos
+  def process_answer(question_type, given_answer, correct_answer)
+    case question_type
+    when 'multiple_choice', 'fill_in_blank'
+      # Para escolha múltipla e preenchimento de lacunas, a resposta deve corresponder exatamente
+      given_answer.present? && given_answer.to_s.strip == correct_answer.to_s.strip
+    when 'order_sentences'
+      process_order_sentences_answer(given_answer, correct_answer)
+    else
+      false
+    end
+  rescue => e
+    Rails.logger.error "Erro ao processar resposta: #{e.message}"
+    false
+  end
+  
+  # Método específico para processar respostas de ordenação
+  def process_order_sentences_answer(given_answer, correct_answer)
+    return false unless given_answer.present?
+    
+    # Verificação principal: formato correto e ordenação correta
+    if given_answer.to_s.include?('|')
+      return given_answer.to_s == correct_answer.to_s
+    end
+    
+    # Fallback para o caso do Sortable.js não funcionar corretamente
+    # Verifica apenas se os elementos estão presentes
+    Rails.logger.warn "Formato de resposta inesperado para questão de ordenação: #{given_answer}"
+    expected_sentences = correct_answer.to_s.split('|')
+    expected_sentences.all? { |sentence| given_answer.to_s.include?(sentence) }
   end
 
   def quiz_results
@@ -285,6 +307,37 @@ class ActivitiesController < ApplicationController
   def destroy
     @activity.destroy
     redirect_to activities_url, notice: t('messages.activity_deleted')
+  end
+
+  # Método para exibir os resultados após submissão do quiz
+  def result_quiz
+    @activity = Activity.find(params[:id])
+    
+    # Tenta encontrar a tentativa pelo ID ou pegar a última do usuário atual
+    if params[:attempt_id].present?
+      @quiz_attempt = QuizAttempt.find_by(id: params[:attempt_id])
+    elsif current_user
+      @quiz_attempt = current_user.quiz_attempts.where(activity_id: @activity.id).order(created_at: :desc).first
+    end
+    
+    # Fallback para resultados da sessão se não houver tentativa salva
+    if @quiz_attempt
+      # Para tentativas salvas, redirecionar para a página de resultados existente
+      redirect_to quiz_results_activity_path(@activity)
+      return
+    elsif session[:quiz_results]
+      if session[:quiz_results][:activity_id].to_i == @activity.id.to_i
+        # Se temos resultados na sessão, redirecionar para a página de resultados
+        redirect_to quiz_results_activity_path(@activity)
+        return
+      else
+        redirect_to resolve_quiz_activity_path(@activity), alert: t('quiz.no_results')
+        return
+      end
+    else
+      redirect_to resolve_quiz_activity_path(@activity), alert: t('quiz.no_results')
+      return
+    end
   end
 
   private
