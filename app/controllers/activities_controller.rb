@@ -62,7 +62,7 @@ class ActivitiesController < ApplicationController
       
       # Verifica se há perguntas antes de processar
       if @questions.empty?
-        redirect_to resolve_quiz_activity_path(@activity), alert: t('messages.no_questions')
+        redirect_to resolve_quiz_activity_path(@activity, locale: I18n.locale), alert: t('messages.no_questions')
         return
       end
       
@@ -94,11 +94,11 @@ class ActivitiesController < ApplicationController
           
           # Armazenar resultados
           results[question.id] = {
-            question_text: question.content,
-            question_type: question.question_type,
-            given_answer: given_answer.presence || t('quiz.not_answered'),
-            correct_answer: correct_answer,
-            is_correct: is_correct
+            "question_text" => question.content,
+            "question_type" => question.question_type,
+            "given_answer" => given_answer.presence || t('quiz.not_answered'),
+            "correct_answer" => correct_answer,
+            "is_correct" => is_correct
           }
         end
       end
@@ -108,13 +108,19 @@ class ActivitiesController < ApplicationController
       # Cálculo do score
       score = @questions.count.positive? ? ((total_correct.to_f / @questions.count) * 100).round(2) : 0
       
-      # Preparar o hash de resultados
+      # Preparar o hash de resultados no formato exato que a view espera
       quiz_results_data = {
-        activity_id: @activity.id,
-        results: results,
-        score: score,
-        submitted_at: Time.current
+        "activity_id" => @activity.id,
+        "results" => results,
+        "score" => score,
+        "total_correct" => total_correct,
+        "total_questions" => @questions.count,
+        "submitted_at" => Time.current
       }
+      
+      # DEBUG: Salvar os resultados na sessão para todos os casos
+      session[:quiz_results] = quiz_results_data
+      Rails.logger.info "DEBUG: Salvando resultados na sessão: activity_id=#{quiz_results_data['activity_id']}, score=#{quiz_results_data['score']}"
       
       # Criar ou atualizar a tentativa
       if current_user
@@ -124,7 +130,7 @@ class ActivitiesController < ApplicationController
         )
         
         @quiz_attempt.score = score
-        @quiz_attempt.results = results
+        @quiz_attempt.results = quiz_results_data # Usar o hash completo para garantir consistência
         @quiz_attempt.submitted_at = Time.current
         
         # Salvar resultados no banco de dados
@@ -138,8 +144,7 @@ class ActivitiesController < ApplicationController
           redirect_to resolve_quiz_activity_path(@activity, locale: I18n.locale)
         end
       else
-        # Para usuários não autenticados, usar a sessão
-        session[:quiz_results] = quiz_results_data
+        # Para usuários não autenticados, apenas redirecionar
         redirect_to quiz_results_activity_path(@activity, locale: I18n.locale), notice: t('quiz.success', score: score)
       end
     rescue StandardError => e
@@ -188,21 +193,42 @@ class ActivitiesController < ApplicationController
   def quiz_results
     @activity = Activity.find(params[:id])
     
+    # Debug: Verificar se há dados na sessão
+    if session[:quiz_results].present?
+      Rails.logger.info "DEBUG: Dados na sessão: #{session[:quiz_results].inspect}"
+    else
+      Rails.logger.info "DEBUG: Nenhum dado encontrado na sessão para quiz_results"
+    end
+    
     # Primeiramente, tentar obter da sessão (para compatibilidade)
     if session[:quiz_results].present? && session[:quiz_results]["activity_id"].to_s == @activity.id.to_s
+      Rails.logger.info "DEBUG: Usando resultados da sessão"
       @quiz_results = session[:quiz_results]
-      @score = session[:quiz_results]["score"]
-      @submitted_at = session[:quiz_results]["submitted_at"]
     else
+      Rails.logger.info "DEBUG: Tentando obter resultados do banco de dados"
       # Se não estiver na sessão, procurar no banco de dados
       @quiz_attempt = current_user.quiz_attempts.where(activity_id: @activity.id).order(created_at: :desc).first
       
       if @quiz_attempt
-        # Formatar os resultados no mesmo formato esperado pela view
+        Rails.logger.info "DEBUG: Encontrada tentativa para o usuário #{current_user.id}, score: #{@quiz_attempt.score}"
+        # Usar os resultados do banco de dados
         @quiz_results = @quiz_attempt.results
-        @score = @quiz_attempt.score
-        @submitted_at = @quiz_attempt.submitted_at
+        
+        # Garantir que os dados têm o formato correto
+        unless @quiz_results.key?("total_questions")
+          # Se os dados estiverem em formato antigo, converter para novo formato
+          Rails.logger.info "DEBUG: Convertendo formato antigo de resultados para novo formato"
+          @quiz_results = {
+            "activity_id" => @activity.id,
+            "results" => @quiz_results,
+            "score" => @quiz_attempt.score,
+            "total_correct" => @quiz_results.values.count { |r| r["is_correct"] },
+            "total_questions" => @quiz_results.size,
+            "submitted_at" => @quiz_attempt.submitted_at
+          }
+        end
       else
+        Rails.logger.info "DEBUG: Nenhuma tentativa encontrada para o usuário #{current_user.id}"
         # Se não encontrar nem na sessão nem no banco de dados, redirecionar para resolver o quiz
         redirect_to resolve_quiz_activity_path(@activity, locale: I18n.locale), alert: t('messages.answer_quiz_first')
         return
