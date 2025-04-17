@@ -130,17 +130,17 @@ class ActivitiesController < ApplicationController
         # Salvar resultados no banco de dados
         if @quiz_attempt.save
           Rails.logger.info "Tentativa de quiz salva com sucesso para usuário #{current_user.id}"
-          redirect_to quiz_results_activity_path(@activity), 
+          redirect_to quiz_results_activity_path(@activity, locale: I18n.locale), 
                      notice: t('quiz.success', score: score)
         else
           Rails.logger.error "Erro ao salvar tentativa: #{@quiz_attempt.errors.full_messages.join(', ')}"
           flash[:alert] = t('quiz.error')
-          redirect_to resolve_quiz_activity_path(@activity)
+          redirect_to resolve_quiz_activity_path(@activity, locale: I18n.locale)
         end
       else
         # Para usuários não autenticados, usar a sessão
         session[:quiz_results] = quiz_results_data
-        redirect_to quiz_results_activity_path(@activity), notice: t('quiz.success', score: score)
+        redirect_to quiz_results_activity_path(@activity, locale: I18n.locale), notice: t('quiz.success', score: score)
       end
     rescue StandardError => e
       # Log detalhado do erro para diagnóstico
@@ -149,7 +149,7 @@ class ActivitiesController < ApplicationController
       
       # Resposta amigável ao usuário
       flash[:alert] = t('quiz.error_with_details', error: e.message)
-      redirect_to resolve_quiz_activity_path(@activity)
+      redirect_to resolve_quiz_activity_path(@activity, locale: I18n.locale)
     end
   end
   
@@ -189,8 +189,10 @@ class ActivitiesController < ApplicationController
     @activity = Activity.find(params[:id])
     
     # Primeiramente, tentar obter da sessão (para compatibilidade)
-    if session[:quiz_results].present? && session[:quiz_results]["activity_id"] == @activity.id
+    if session[:quiz_results].present? && session[:quiz_results]["activity_id"].to_s == @activity.id.to_s
       @quiz_results = session[:quiz_results]
+      @score = session[:quiz_results]["score"]
+      @submitted_at = session[:quiz_results]["submitted_at"]
     else
       # Se não estiver na sessão, procurar no banco de dados
       @quiz_attempt = current_user.quiz_attempts.where(activity_id: @activity.id).order(created_at: :desc).first
@@ -198,12 +200,17 @@ class ActivitiesController < ApplicationController
       if @quiz_attempt
         # Formatar os resultados no mesmo formato esperado pela view
         @quiz_results = @quiz_attempt.results
+        @score = @quiz_attempt.score
+        @submitted_at = @quiz_attempt.submitted_at
       else
         # Se não encontrar nem na sessão nem no banco de dados, redirecionar para resolver o quiz
-        redirect_to resolve_quiz_activity_path(@activity), alert: t('messages.answer_quiz_first')
+        redirect_to resolve_quiz_activity_path(@activity, locale: I18n.locale), alert: t('messages.answer_quiz_first')
         return
       end
     end
+    
+    # Carregar as questões para correspondência com os resultados
+    @questions = @activity.questions.index_by(&:id)
     
     render 'quiz_results'
   end
@@ -323,19 +330,19 @@ class ActivitiesController < ApplicationController
     # Fallback para resultados da sessão se não houver tentativa salva
     if @quiz_attempt
       # Para tentativas salvas, redirecionar para a página de resultados existente
-      redirect_to quiz_results_activity_path(@activity)
+      redirect_to quiz_results_activity_path(@activity, locale: I18n.locale)
       return
     elsif session[:quiz_results]
       if session[:quiz_results][:activity_id].to_i == @activity.id.to_i
         # Se temos resultados na sessão, redirecionar para a página de resultados
-        redirect_to quiz_results_activity_path(@activity)
+        redirect_to quiz_results_activity_path(@activity, locale: I18n.locale)
         return
       else
-        redirect_to resolve_quiz_activity_path(@activity), alert: t('quiz.no_results')
+        redirect_to resolve_quiz_activity_path(@activity, locale: I18n.locale), alert: t('quiz.no_results')
         return
       end
     else
-      redirect_to resolve_quiz_activity_path(@activity), alert: t('quiz.no_results')
+      redirect_to resolve_quiz_activity_path(@activity, locale: I18n.locale), alert: t('quiz.no_results')
       return
     end
   end
