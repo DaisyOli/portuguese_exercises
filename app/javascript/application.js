@@ -7,8 +7,8 @@ import "bootstrap"
 import "jquery"
 import "jquery_ujs"
 
-// Importar Sortable.js de forma otimizada e garantir que seja global
-import Sortable from "./vendor/sortable.min.js"
+// Importar Sortable.js usando a referência do importmap
+import Sortable from "sortable"
 window.Sortable = Sortable; // Expor como variável global
 
 import "controllers"

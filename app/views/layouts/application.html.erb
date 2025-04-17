@@ -19,6 +19,9 @@
     <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
     
+    <!-- Fallback de CDN para Sortable.js caso o asset pipeline falhe -->
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js" integrity="sha256-ipiloS6+TC3cfmwdR0sY4cI+oGVZ9bVbZUHhYcQBFIY=" crossorigin="anonymous"></script>
+    
     <style>
       /* Estilos para o botão de idioma */
       .navbar-toggler .fa-globe {
