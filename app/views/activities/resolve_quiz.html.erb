@@ -283,3 +283,95 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   }
 </script>
+
+<!-- Script para garantir a inicialização do Sortable -->
+<script>
+  // Função para inicializar manualmente o Sortable em todas as listas
+  function initAllSortables() {
+    console.log("Tentando inicializar todas as listas Sortable manualmente");
+    
+    // Se o Sortable não estiver disponível, tente recarregar o script
+    if (typeof Sortable !== 'function') {
+      console.error("Sortable não está disponível para inicialização manual!");
+      
+      // Carregar novamente do CDN
+      var script = document.createElement('script');
+      script.src = "https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js";
+      script.onload = function() {
+        console.log("Sortable recarregado, tentando inicializar novamente");
+        window.Sortable = Sortable;
+        setTimeout(initAllSortables, 100);
+      };
+      document.head.appendChild(script);
+      return;
+    }
+    
+    // Encontrar todas as listas ordenáveis
+    var sortableLists = document.querySelectorAll('.sortable-list');
+    
+    console.log(`Encontradas ${sortableLists.length} listas para inicializar manualmente`);
+    
+    // Inicializar cada lista
+    sortableLists.forEach(function(list) {
+      try {
+        // Verificar se já foi inicializada
+        var instance = Sortable.get(list);
+        if (instance) {
+          console.log(`Lista ${list.id} já está inicializada, ignorando`);
+          return;
+        }
+        
+        // Inicializar nova instância
+        var sortable = Sortable.create(list, {
+          animation: 150,
+          handle: '.drag-handle',
+          ghostClass: 'sortable-ghost',
+          onEnd: function(evt) {
+            // Atualizar o campo de input após reordenação
+            var items = evt.to.querySelectorAll('.sortable-item');
+            var values = [];
+            
+            items.forEach(function(item) {
+              var value = item.dataset.value;
+              if (value) values.push(value);
+            });
+            
+            // Encontrar o input correspondente
+            var questionId = evt.to.dataset.questionId;
+            var input = document.getElementById('order_sentences_answer_' + questionId);
+            if (input && values.length > 0) {
+              input.value = values.join('|');
+              console.log("Input atualizado manualmente:", input.value);
+            }
+          }
+        });
+        
+        // Marcar como inicializada
+        list.classList.add('sortable-initialized');
+        
+        // Esconder botão de reinicialização se existir
+        var btn = list.closest('.order-sentences-container').querySelector('.reinit-sortable-btn');
+        if (btn) btn.style.display = 'none';
+        
+        console.log(`Lista ${list.id} inicializada manualmente com sucesso`);
+      } catch (e) {
+        console.error(`Erro ao inicializar manualmente lista ${list.id}:`, e);
+      }
+    });
+  }
+  
+  // Registrar para inicializar quando o DOM estiver pronto
+  document.addEventListener('DOMContentLoaded', function() {
+    // Esperar um tempo para garantir que outros scripts tenham chance de inicializar
+    setTimeout(initAllSortables, 500);
+  });
+  
+  // Registrar também para quando a página for carregada via Turbo
+  document.addEventListener('turbo:load', function() {
+    // Esperar um tempo para garantir que outros scripts tenham chance de inicializar
+    setTimeout(initAllSortables, 500);
+  });
+  
+  // Inicializar agora também, para o caso de o evento já ter ocorrido
+  setTimeout(initAllSortables, 1000);
+</script>

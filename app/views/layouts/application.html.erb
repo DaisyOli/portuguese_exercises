@@ -13,16 +13,19 @@
     <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
     
-    <!-- Sortable.js via CDN - garantir que esteja disponível globalmente -->
+    <!-- Sortable.js como fallback global -->
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
     <script>
-      // Verificar e garantir que Sortable está disponível globalmente
-      if (typeof Sortable === 'undefined') {
-        console.error('Sortable não está disponível! Tentando carregar de backup...');
+      // Verificar se o Sortable foi carregado corretamente
+      if (typeof Sortable !== 'function') {
+        console.error('Sortable não está disponível como uma função global!');
+        // Tentar carregar novamente do CDN
+        document.write('<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"><\/script>');
         document.write('<script src="/js/sortable.min.js"><\/script>');
       } else {
         console.log('Sortable carregado com sucesso!');
-        window.Sortable = Sortable; // Garantir que está no objeto window
+        // Garantir que esteja no objeto global window
+        window.Sortable = Sortable;
       }
     </script>
     
