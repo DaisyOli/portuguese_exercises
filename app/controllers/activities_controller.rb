@@ -89,9 +89,13 @@ class ActivitiesController < ApplicationController
         # Incrementar contador
         total_correct += 1 if is_correct
         
-        # Armazenar apenas o mínimo necessário
+        # Armazenar informações completas sobre a questão
         results[question_id] = {
-          "is_correct" => is_correct
+          "is_correct" => is_correct,
+          "question_text" => question.content,
+          "question_type" => question.question_type,
+          "given_answer" => given_answer.present? ? given_answer.to_s.strip : t('quiz.not_answered'),
+          "correct_answer" => question.correct_answer
         }
       end
       
@@ -315,6 +319,26 @@ class ActivitiesController < ApplicationController
       
       # Carregar as questões para correspondência com os resultados
       @questions = @activity.questions.index_by(&:id)
+      
+      # Garantir que cada resultado tenha todos os dados necessários
+      @quiz_results["results"].each do |question_id, result|
+        # Complementar dados ausentes se necessário
+        question = @questions[question_id.to_i]
+        
+        if question.present?
+          # Garantir que temos texto da questão
+          result["question_text"] = question.content unless result["question_text"].present?
+          
+          # Garantir que temos o tipo da questão
+          result["question_type"] = question.question_type unless result["question_type"].present?
+          
+          # Garantir que temos a resposta correta
+          result["correct_answer"] = question.correct_answer unless result["correct_answer"].present?
+        end
+        
+        # Garantir que temos a resposta dada
+        result["given_answer"] = t('quiz.not_answered') unless result["given_answer"].present?
+      end
       
       # Adicionar variável javascript com os resultados para debug
       @debug_results_json = @quiz_results.to_json
