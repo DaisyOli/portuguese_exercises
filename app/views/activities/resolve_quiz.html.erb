@@ -294,15 +294,34 @@ document.addEventListener('DOMContentLoaded', function() {
     if (typeof Sortable !== 'function') {
       console.error("Sortable não está disponível para inicialização manual!");
       
-      // Carregar novamente do CDN
-      var script = document.createElement('script');
-      script.src = "https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js";
-      script.onload = function() {
-        console.log("Sortable recarregado, tentando inicializar novamente");
-        window.Sortable = Sortable;
-        setTimeout(initAllSortables, 100);
-      };
-      document.head.appendChild(script);
+      // Carregar novamente de múltiplos CDNs para garantir disponibilidade
+      var cdns = [
+        "https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js",
+        "https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js",
+        "/js/sortable.min.js"  // Fallback local
+      ];
+      
+      function loadScript(index) {
+        if (index >= cdns.length) {
+          console.error("Falha ao carregar Sortable.js de todos os CDNs");
+          return;
+        }
+        
+        var script = document.createElement('script');
+        script.src = cdns[index];
+        script.onload = function() {
+          console.log("Sortable carregado com sucesso de: " + cdns[index]);
+          window.Sortable = Sortable;
+          setTimeout(initAllSortables, 100);
+        };
+        script.onerror = function() {
+          console.error("Falha ao carregar de: " + cdns[index]);
+          loadScript(index + 1);
+        };
+        document.head.appendChild(script);
+      }
+      
+      loadScript(0);
       return;
     }
     
@@ -374,4 +393,39 @@ document.addEventListener('DOMContentLoaded', function() {
   
   // Inicializar agora também, para o caso de o evento já ter ocorrido
   setTimeout(initAllSortables, 1000);
+</script>
+
+<!-- Adicionar um fallback direto para o caso da lib não carregar -->
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    setTimeout(function() {
+      // Se ainda não tiver o Sortable disponível após 2 segundos, adicione tratamento para questões de ordem
+      if (typeof Sortable !== 'function') {
+        console.warn("Sortable ainda não disponível após 2s, adicionando tratamento manual para formulário");
+        
+        // Adicionar evento ao formulário para lidar com questões de ordem sem o Sortable
+        var form = document.querySelector('form');
+        if (form) {
+          form.addEventListener('submit', function(e) {
+            var orderSentencesContainers = document.querySelectorAll('.order-sentences-container');
+            orderSentencesContainers.forEach(function(container) {
+              var hiddenInput = container.querySelector('.order-sentences-answer');
+              var listItems = container.querySelectorAll('.sortable-item');
+              
+              if (hiddenInput && listItems.length > 0 && !hiddenInput.value) {
+                console.log("Preenchendo manualmente campo de ordenação");
+                var values = [];
+                listItems.forEach(function(item) {
+                  values.push(item.dataset.value);
+                });
+                hiddenInput.value = values.join('|');
+              }
+            });
+            // Continuar com o envio do formulário
+            return true;
+          });
+        }
+      }
+    }, 2000);
+  });
 </script>

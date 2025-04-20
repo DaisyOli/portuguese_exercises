@@ -31,11 +31,11 @@ Rails.application.configure do
 
   # Melhorar compressão de CSS e JavaScript
   config.assets.css_compressor = :sass
-  config.assets.js_compressor = :terser
+  # Desativar o compressor de JS temporariamente para diagnosticar problemas
+  # config.assets.js_compressor = :terser
   
-  # Desativar a compilação de assets em tempo real para melhorar desempenho
-  # e usar precompiled assets
-  config.assets.compile = false
+  # Permitir a compilação de assets em tempo real para diagnóstico
+  config.assets.compile = true
 
   # Enable serving of images, stylesheets, and JavaScripts from an asset server.
   # config.asset_host = "http://assets.example.com"

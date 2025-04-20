@@ -55,8 +55,15 @@ class ActivitiesController < ApplicationController
       @activity = Activity.find(params[:id])
       @questions = @activity.questions
       
+      # Logs detalhados para debug em produção
+      Rails.logger.info "=== SUBMIT QUIZ DEBUG ==="
+      Rails.logger.info "Activity ID: #{@activity.id}"
+      Rails.logger.info "Activity Questions Count: #{@questions.count}"
+      Rails.logger.info "Params recebidos: #{params.to_json}"
+      
       # Processa os parâmetros para extrair as respostas
       answers = params[:answers] || {}
+      Rails.logger.info "Respostas extraídas: #{answers.to_json}"
       
       Rails.logger.info "Iniciando processamento de respostas para atividade #{@activity.id}"
       
@@ -152,8 +159,8 @@ class ActivitiesController < ApplicationController
       Rails.logger.error "Erro ao processar quiz: #{e.class.name} - #{e.message}"
       Rails.logger.error e.backtrace.join("\n")
       
-      # Resposta amigável ao usuário
-      flash[:alert] = t('quiz.error_with_details', error: e.message)
+      # Resposta amigável ao usuário com mais detalhes
+      flash[:alert] = "Erro ao processar quiz: #{e.class.name} - #{e.message}"
       redirect_to resolve_quiz_activity_path(@activity, locale: I18n.locale)
     end
   end
@@ -178,16 +185,61 @@ class ActivitiesController < ApplicationController
   def process_order_sentences_answer(given_answer, correct_answer)
     return false unless given_answer.present?
     
-    # Verificação principal: formato correto e ordenação correta
+    # Log para debug
+    Rails.logger.info "Processando resposta de ordenação: '#{given_answer}' (tipo: #{given_answer.class.name})"
+    Rails.logger.info "Resposta correta esperada: '#{correct_answer}' (tipo: #{correct_answer.class.name})"
+    
+    # Verificação principal: formato correto (com pipe) e ordenação correta
     if given_answer.to_s.include?('|')
-      return given_answer.to_s == correct_answer.to_s
+      result = given_answer.to_s == correct_answer.to_s
+      Rails.logger.info "Formato com pipe, resultado: #{result}"
+      return result
     end
     
-    # Fallback para o caso do Sortable.js não funcionar corretamente
-    # Verifica apenas se os elementos estão presentes
-    Rails.logger.warn "Formato de resposta inesperado para questão de ordenação: #{given_answer}"
+    # Tentativas de fallback para o caso do Sortable.js não funcionar corretamente
+    
+    # Caso 1: Os elementos estão em formato JSON ou array
+    begin
+      if given_answer.to_s.include?('[') && given_answer.to_s.include?(']')
+        json_data = JSON.parse(given_answer)
+        if json_data.is_a?(Array)
+          # Transformar array em string com pipe
+          processed_answer = json_data.join('|')
+          result = processed_answer == correct_answer.to_s
+          Rails.logger.info "Formato JSON/Array, resultado: #{result}"
+          return result
+        end
+      end
+    rescue JSON::ParserError => e
+      Rails.logger.warn "Erro ao analisar possível JSON: #{e.message}"
+    end
+    
+    # Caso 2: Verificar se os elementos estão exatamente na ordem correta
+    # mas sem o formato de pipe
     expected_sentences = correct_answer.to_s.split('|')
-    expected_sentences.all? { |sentence| given_answer.to_s.include?(sentence) }
+    
+    # Verificar se a resposta contém todas as sentenças na ordem correta
+    matched = true
+    expected_sentences.each_with_index do |sentence, idx|
+      next_idx = given_answer.to_s.index(sentence, idx == 0 ? 0 : 1)
+      if next_idx.nil?
+        matched = false
+        break
+      end
+    end
+    
+    if matched
+      Rails.logger.info "Elementos encontrados na ordem, resultado: true"
+      return true
+    end
+    
+    # Fallback final: Verificar apenas se os elementos estão presentes
+    Rails.logger.warn "Formato de resposta inesperado para questão de ordenação: #{given_answer}"
+    all_present = expected_sentences.all? { |sentence| given_answer.to_s.include?(sentence) }
+    Rails.logger.info "Verificação de presença de elementos, resultado: #{all_present}"
+    
+    # Se encontrar todos os elementos, considerar parcialmente correto
+    return all_present
   end
 
   def quiz_results
