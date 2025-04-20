@@ -4,14 +4,19 @@ import "@hotwired/stimulus"
 import "@hotwired/stimulus-loading"
 import "@rails/ujs"
 import "bootstrap"
-import "jquery"
+import * as jQuery from "jquery"
 import "jquery_ujs"
+
+// Define jQuery globalmente
+window.jQuery = jQuery;
+window.$ = jQuery;
 
 // Não importamos o Sortable aqui pois já está sendo carregado via script tag no head
 // O Sortable já está disponível como window.Sortable
 
 import "controllers"
 import "@popperjs/core"
+import "./quiz_results"
 
 // Desabilita o Turbo para formulários específicos
 document.addEventListener("turbo:load", () => {
@@ -21,6 +26,7 @@ document.addEventListener("turbo:load", () => {
   });
   
   console.log("Application initialized");
+  console.log("jQuery disponível:", typeof jQuery !== 'undefined');
 })
 
 // Adiciona um listener para depuração

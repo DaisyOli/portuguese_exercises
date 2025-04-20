@@ -14,3 +14,4 @@ pin "jquery", to: "https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"
 pin "jquery_ujs", to: "https://cdn.jsdelivr.net/npm/jquery-ujs@1.2.3/src/rails.min.js"
 pin "sortable", to: "vendor/sortable.min.js", preload: true
 pin_all_from "app/javascript/vendor", under: "vendor"
+pin_all_from "app/javascript", under: "app"
