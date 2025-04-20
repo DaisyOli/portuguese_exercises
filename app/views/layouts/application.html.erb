@@ -19,7 +19,12 @@
     <%= yield :head %>
     
     <!-- Adicionar jQuery manualmente primeiro -->
-    <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" 
+            integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" 
+            crossorigin="anonymous"></script>
+    
+    <!-- Fallback para jQuery caso o primeiro método falhe -->
+    <script nomodule defer src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
     
     <!-- Importmap após jQuery -->
     <%= javascript_importmap_tags %>
@@ -51,13 +56,26 @@
     
     <!-- Código para resolver automaticamente problemas de inicialização -->
     <script>
-      // Garantir que o jQuery esteja disponível globalmente
-      if (typeof jQuery === 'undefined') {
-        console.error('jQuery não foi carregado!');
-      } else {
-        console.log('jQuery carregado com sucesso!');
-        window.$ = window.jQuery = jQuery;
-      }
+      document.addEventListener('DOMContentLoaded', function() {
+        // Garantir que o jQuery esteja disponível globalmente
+        if (typeof jQuery === 'undefined') {
+          console.error('jQuery não foi carregado!');
+          
+          // Tenta carregar o jQuery de forma síncrona
+          var jqScript = document.createElement('script');
+          jqScript.src = "https://code.jquery.com/jquery-3.7.1.min.js";
+          jqScript.integrity = "sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=";
+          jqScript.crossOrigin = "anonymous";
+          jqScript.onload = function() {
+            console.log('jQuery carregado manualmente com sucesso');
+            window.$ = window.jQuery = jQuery;
+          };
+          document.head.appendChild(jqScript);
+        } else {
+          console.log('jQuery carregado com sucesso!');
+          window.$ = window.jQuery = jQuery;
+        }
+      });
     </script>
   </head>
   

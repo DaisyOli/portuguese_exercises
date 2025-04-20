@@ -4,12 +4,34 @@ import "@hotwired/stimulus"
 import "@hotwired/stimulus-loading"
 import "@rails/ujs"
 import "bootstrap"
-import * as jQuery from "jquery"
-import "jquery_ujs"
 
-// Define jQuery globalmente
-window.jQuery = jQuery;
-window.$ = jQuery;
+// Garante que o jQuery está carregado
+document.addEventListener('DOMContentLoaded', function() {
+  // Verifica se o jQuery já está disponível (carregado via script tag)
+  if (typeof window.jQuery === 'undefined') {
+    console.error('jQuery não foi carregado pela tag script. Tentando carregar via importmap...');
+    
+    // Tenta carregar o jQuery via importmap
+    import("jquery").then(module => {
+      window.jQuery = window.$ = module.default || module;
+      console.log('jQuery carregado via importmap');
+      
+      // Carrega jquery_ujs depois do jQuery
+      import("jquery_ujs").then(() => {
+        console.log('jquery_ujs carregado via importmap');
+      });
+    }).catch(error => {
+      console.error('Falha ao carregar jQuery via importmap:', error);
+    });
+  } else {
+    console.log('jQuery já está disponível via tag script');
+    
+    // Carrega jquery_ujs depois do jQuery
+    import("jquery_ujs").then(() => {
+      console.log('jquery_ujs carregado via importmap');
+    });
+  }
+});
 
 // Não importamos o Sortable aqui pois já está sendo carregado via script tag no head
 // O Sortable já está disponível como window.Sortable

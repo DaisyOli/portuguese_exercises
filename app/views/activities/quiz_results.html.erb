@@ -3,6 +3,17 @@
     <div class="card-body">
       <h1 class="text-center mb-4"><%= t('quiz.results') %></h1>
       
+      <!-- Script inline para garantir exibição dos resultados mesmo sem jQuery -->
+      <script>
+        console.log('Página de resultados do quiz carregada diretamente');
+        // Verifica se temos os resultados
+        <% if @quiz_results && @quiz_results["results"] %>
+          console.log('Resultados disponíveis: <%= @quiz_results["total_correct"] %> de <%= @quiz_results["total_questions"] %>');
+        <% else %>
+          console.error('Resultados não disponíveis ou formato incorreto');
+        <% end %>
+      </script>
+      
       <div class="alert alert-info mb-4">
         <h4 class="alert-heading"><%= t('quiz.final_score') %></h4>
         <p class="mb-0"><%= t('quiz.correct_answers', correct: @quiz_results["total_correct"], total: @quiz_results["total_questions"], score: @quiz_results["score"]) %></p>
@@ -65,3 +76,56 @@
     </div>
   </div>
 </div>
+
+<script>
+  // Garantir que o jQuery esteja disponível nesta página
+  document.addEventListener('DOMContentLoaded', function() {
+    if (typeof jQuery === 'undefined') {
+      console.error('jQuery não foi carregado na página de resultados!');
+      
+      // Tenta carregar o jQuery diretamente
+      var script = document.createElement('script');
+      script.src = "https://code.jquery.com/jquery-3.7.1.min.js";
+      script.onload = function() {
+        console.log('jQuery carregado com sucesso na página de resultados!');
+        window.$ = window.jQuery = jQuery;
+        
+        // Inicializar a página após o carregamento do jQuery
+        inicializarPagina();
+      };
+      document.head.appendChild(script);
+    } else {
+      console.log('jQuery já está disponível na página de resultados!');
+      
+      // Inicializar a página já que o jQuery está disponível
+      inicializarPagina();
+    }
+    
+    function inicializarPagina() {
+      // Carregar os resultados do debug se disponíveis
+      <% if @debug_results_json.present? %>
+        console.log('Carregando resultados do debug');
+        try {
+          var resultsData = <%= raw @debug_results_json %>;
+          console.log('Dados de resultados carregados:', resultsData);
+          
+          if (resultsData && resultsData.results) {
+            console.log('Número de resultados:', Object.keys(resultsData.results).length);
+          }
+        } catch (e) {
+          console.error('Erro ao carregar resultados do debug:', e);
+        }
+      <% end %>
+      
+      // Inicializar elementos que dependem do jQuery
+      try {
+        jQuery('.card').each(function() {
+          // Apenas para verificar se o jQuery está funcionando
+          console.log('Processando card de resultado com jQuery');
+        });
+      } catch (e) {
+        console.error('Erro ao processar cards:', e);
+      }
+    }
+  });
+</script>
