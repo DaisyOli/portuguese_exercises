@@ -1,4 +1,10 @@
-<div class="container d-flex justify-content-center align-items-center" style="min-height: 100vh;">
+<div class="container d-flex justify-content-center align-items-center flex-column" style="min-height: 100vh;">
+  <% if params[:use_alternative] == "true" %>
+  <div class="alert alert-info w-100 text-center" role="alert" style="max-width: 900px; margin-bottom: 20px;">
+    <strong>MODO DE TESTE:</strong> Usando implementação alternativa com select boxes
+    <a href="<%= resolve_quiz_activity_path(@activity, locale: params[:locale]) %>" class="btn btn-sm btn-outline-primary ms-3">Voltar para versão padrão</a>
+  </div>
+  <% end %>
   <div class="card shadow-lg p-4 w-100" style="max-width: 900px;">
     <div class="card-body">
       <h1 class="text-center mb-4"><%= t('quiz.title') %> <%= @activity.title %></h1>
@@ -79,41 +85,30 @@
                 <% end %>
 
                 <% if question.order_sentences? && question.options.any? %>
-                  <div class="order-sentences-container" data-controller="sortable">
-                    <p class="mb-3 text-muted"><i class="fas fa-info-circle me-2"></i><%= t('questions.order_sentences_instruction', default: 'Arraste as frases para colocá-las na ordem correta:') %></p>
+                  <div class="order-sentences-container mb-4">
+                    <p class="mb-3 text-muted"><i class="fas fa-info-circle me-2"></i><%= t('questions.order_sentences_instruction', default: 'Selecione a ordem correta das frases:') %></p>
                     
-                    <%= hidden_field_tag "answers[#{question.id}]", '', 
-                                         class: 'order-sentences-answer', 
-                                         id: "order_sentences_answer_#{question.id}",
-                                         data: { sortable_target: "input" } %>
+                    <%= hidden_field_tag "answers[#{question.id}]", '', class: 'order-sentences-answer', id: "order_sentences_answer_#{question.id}" %>
                     
-                    <ul class="list-group sortable-list" 
-                        id="sortable_<%= question.id %>"
-                        data-question-id="<%= question.id %>"
-                        data-sortable-target="list">
-                      <% question.options.shuffle.each_with_index do |sentence, i| %>
-                        <li class="list-group-item sortable-item border-0 shadow-sm mb-2" data-value="<%= sentence %>">
+                    <div class="list-group">
+                      <% question.options.each_with_index do |sentence, i| %>
+                        <div class="list-group-item border-0 shadow-sm mb-2 bg-white">
                           <div class="d-flex align-items-center">
-                            <div class="drag-handle me-3 px-2">
-                              <i class="fas fa-grip-vertical text-primary"></i>
+                            <div class="me-3">
+                              <select class="form-select order-select" 
+                                      data-sentence="<%= sentence %>" 
+                                      data-question-id="<%= question.id %>"
+                                      style="width: 70px;">
+                                <% question.options.size.times do |j| %>
+                                  <option value="<%= j+1 %>"><%= j+1 %></option>
+                                <% end %>
+                              </select>
                             </div>
                             <div class="flex-grow-1"><%= sentence %></div>
-                            <div class="ms-2 text-muted">
-                              <i class="fas fa-arrows-alt-v"></i>
-                            </div>
                           </div>
-                        </li>
+                        </div>
                       <% end %>
-                    </ul>
-                    
-                    <!-- Botão auxiliar para solucionar problemas de inicialização -->
-                    <button type="button" 
-                            class="btn btn-sm btn-outline-secondary mt-2 reinit-sortable-btn"
-                            style="display: none;"
-                            data-sortable-id="<%= question.id %>"
-                            onclick="reinitSortable(this)">
-                      Reiniciar ordenação
-                    </button>
+                    </div>
                   </div>
                 <% end %>
               </div>
@@ -130,302 +125,98 @@
   </div>
 </div>
 
-<!-- Carregando o Sortable.js no cabeçalho da página para garantir disponibilidade -->
+<!-- Script para implementação com select boxes -->
 <script>
-// Este script é mantido apenas para verificar a inicialização do Sortable
-document.addEventListener('DOMContentLoaded', function() {
-  // Adicionar observador para verificar se elementos sortable estão funcionando corretamente
-  setTimeout(function() {
-    const sortableLists = document.querySelectorAll('[data-controller="sortable"] .sortable-list');
-    
-    if (sortableLists.length > 0) {
-      console.log(`Encontrados ${sortableLists.length} elementos de lista ordenável`);
+  document.addEventListener('DOMContentLoaded', function() {
+    // Função para atualizar o input escondido quando os selects mudam
+    function updateOrderInput(questionId) {
+      const selects = document.querySelectorAll(`.order-select[data-question-id="${questionId}"]`);
+      const input = document.getElementById(`order_sentences_answer_${questionId}`);
       
-      // Verificar se os controllers estão inicializados
-      sortableLists.forEach(list => {
-        if (!list.classList.contains('sortable-initialized')) {
-          console.warn(`Lista ${list.id} não inicializada, mostrando botão de reinicialização`);
-          const btn = list.closest('.order-sentences-container').querySelector('.reinit-sortable-btn');
-          if (btn) btn.style.display = 'block';
-        }
+      // Criar array para armazenar frases na ordem selecionada
+      const orderedSentences = new Array(selects.length);
+      
+      // Preencher o array baseado na ordem selecionada
+      selects.forEach(select => {
+        const position = parseInt(select.value) - 1;
+        const sentence = select.dataset.sentence;
+        orderedSentences[position] = sentence;
+      });
+      
+      // Remover possíveis undefined (caso haja duplicatas na ordem)
+      const cleanedSentences = orderedSentences.filter(s => s !== undefined);
+      
+      // Atualizar o campo escondido
+      input.value = cleanedSentences.join('|');
+    }
+    
+    // Inicializar os selects com valores diferentes e evitar duplicatas
+    const questionsIds = [...new Set([...document.querySelectorAll('.order-select')].map(s => s.dataset.questionId))];
+    
+    questionsIds.forEach(qId => {
+      const selects = document.querySelectorAll(`.order-select[data-question-id="${qId}"]`);
+      
+      // Atribuir valores iniciais diferentes para cada select
+      selects.forEach((select, index) => {
+        select.value = index + 1;
+        
+        // Adicionar evento de mudança
+        select.addEventListener('change', function() {
+          // Detectar duplicatas e corrigir
+          const allSelects = [...document.querySelectorAll(`.order-select[data-question-id="${qId}"]`)];
+          const selectedValues = allSelects.map(s => s.value);
+          
+          // Verificar se há outro select com o mesmo valor
+          const duplicates = allSelects.filter(s => s !== this && s.value === this.value);
+          
+          if (duplicates.length > 0) {
+            // Trocar o valor do outro select para o valor que este tinha antes
+            const oldPositions = allSelects.map((s, i) => ({ select: s, oldPos: i + 1 }));
+            const myOldPos = oldPositions.find(item => item.select === this)?.oldPos;
+            
+            if (myOldPos) {
+              duplicates[0].value = myOldPos;
+            }
+          }
+          
+          // Atualizar o input escondido
+          updateOrderInput(qId);
+        });
+      });
+      
+      // Atualizar o input inicial
+      updateOrderInput(qId);
+    });
+    
+    // Adicionar evento ao formulário para garantir que os dados estão atualizados
+    const form = document.querySelector('form');
+    if (form) {
+      form.addEventListener('submit', function() {
+        questionsIds.forEach(qId => updateOrderInput(qId));
+        return true;
       });
     }
-  }, 1000);
-});
+  });
 </script>
 
-<!-- Estilo para os elementos sortable -->
+<!-- Estilo para os elementos de ordenação -->
 <style>
-  .sortable-ghost {
-    opacity: 0.6;
-    background-color: #e9ecef !important;
-    border: 2px dashed #6c757d !important;
-  }
-  
-  .sortable-chosen {
-    background-color: #fff !important;
-    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
-    transform: scale(1.02);
-    z-index: 1000;
-  }
-  
-  .sortable-drag {
-    cursor: grabbing !important;
-    background-color: #fff !important;
-    box-shadow: 0 1rem 3rem rgba(0, 0, 0, 0.175) !important;
-  }
-  
-  .sortable-item {
-    transition: all 0.2s ease-in-out;
-    background-color: #fff;
-    border-radius: 8px !important;
-    padding: 0.8rem 0.5rem;
-  }
-  
-  .sortable-item:hover {
-    background-color: #f8f9fa;
-    transform: translateY(-2px);
-    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075) !important;
-  }
-  
-  .drag-handle {
-    border-radius: 4px;
-    transition: all 0.2s;
-    cursor: grab;
-  }
-  
-  .drag-handle:hover {
-    background-color: #e9ecef;
-  }
-  
-  .drag-handle:active {
-    cursor: grabbing;
-    background-color: #dee2e6;
-  }
-  
   .list-group-item {
     margin-bottom: 0.5rem;
     border-radius: 8px !important;
   }
-
+  
   .order-sentences-container {
     max-width: 800px;
     margin: 0 auto;
   }
-
+  
   .order-sentences-container .list-group {
     margin-top: 1rem;
   }
+  
+  .order-select:focus {
+    border-color: #0d6efd;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+  }
 </style>
-
-<!-- Função global para reinicializar um Sortable específico -->
-<script>
-  function reinitSortable(button) {
-    // Desabilita o botão para evitar múltiplos cliques
-    button.disabled = true;
-    
-    const sortableId = button.dataset.sortableId;
-    const listElement = document.getElementById(`sortable_${sortableId}`);
-    
-    if (!listElement) {
-      console.error(`Lista sortable_${sortableId} não encontrada`);
-      return;
-    }
-    
-    console.log("Verificando disponibilidade do Sortable:", typeof Sortable);
-    
-    // Força reinicialização do controller Stimulus
-    const container = listElement.closest('[data-controller="sortable"]');
-    if (container) {
-      // Remove a instância atual (se existir)
-      if (typeof Sortable !== 'undefined') {
-        try {
-          const sortableInstance = Sortable.get(listElement);
-          if (sortableInstance) {
-            sortableInstance.destroy();
-          }
-        } catch (e) {
-          console.error("Erro ao destruir instância existente:", e);
-        }
-      } else {
-        console.error("Sortable não está disponível como objeto global");
-      }
-      
-      // Reiniciar controller
-      container.dataset.sortableInitialized = 'false';
-      
-      // Cria um novo evento e dispara
-      const event = new CustomEvent('stimulus:connect', { bubbles: true });
-      container.dispatchEvent(event);
-      
-      console.log(`Tentativa de reinicialização para sortable_${sortableId}`);
-      
-      // Oculta o botão após alguns segundos se a inicialização for bem-sucedida
-      setTimeout(() => {
-        if (listElement.classList.contains('sortable-initialized')) {
-          button.style.display = 'none';
-          console.log(`Reinicialização bem-sucedida para sortable_${sortableId}`);
-        } else {
-          button.disabled = false;
-          console.error(`Falha na reinicialização para sortable_${sortableId}`);
-          // Tenta uma última abordagem - recarregar o módulo diretamente
-          if (typeof Sortable === 'undefined') {
-            console.log("Tentando importar Sortable novamente via import dinâmico");
-            import("/vendor/sortable.min.js").then(module => {
-              window.Sortable = module.default;
-              container.dispatchEvent(event);
-            }).catch(err => {
-              console.error("Falha ao importar dinamicamente:", err);
-            });
-          }
-        }
-      }, 500);
-    }
-  }
-</script>
-
-<!-- Script para garantir a inicialização do Sortable -->
-<script>
-  // Função para inicializar manualmente o Sortable em todas as listas
-  function initAllSortables() {
-    console.log("Tentando inicializar todas as listas Sortable manualmente");
-    
-    // Se o Sortable não estiver disponível, tente recarregar o script
-    if (typeof Sortable !== 'function') {
-      console.error("Sortable não está disponível para inicialização manual!");
-      
-      // Carregar novamente de múltiplos CDNs para garantir disponibilidade
-      var cdns = [
-        "https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js",
-        "https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js",
-        "/js/sortable.min.js"  // Fallback local
-      ];
-      
-      function loadScript(index) {
-        if (index >= cdns.length) {
-          console.error("Falha ao carregar Sortable.js de todos os CDNs");
-          return;
-        }
-        
-        var script = document.createElement('script');
-        script.src = cdns[index];
-        script.onload = function() {
-          console.log("Sortable carregado com sucesso de: " + cdns[index]);
-          window.Sortable = Sortable;
-          setTimeout(initAllSortables, 100);
-        };
-        script.onerror = function() {
-          console.error("Falha ao carregar de: " + cdns[index]);
-          loadScript(index + 1);
-        };
-        document.head.appendChild(script);
-      }
-      
-      loadScript(0);
-      return;
-    }
-    
-    // Encontrar todas as listas ordenáveis
-    var sortableLists = document.querySelectorAll('.sortable-list');
-    
-    console.log(`Encontradas ${sortableLists.length} listas para inicializar manualmente`);
-    
-    // Inicializar cada lista
-    sortableLists.forEach(function(list) {
-      try {
-        // Verificar se já foi inicializada
-        var instance = Sortable.get(list);
-        if (instance) {
-          console.log(`Lista ${list.id} já está inicializada, ignorando`);
-          return;
-        }
-        
-        // Inicializar nova instância
-        var sortable = Sortable.create(list, {
-          animation: 150,
-          handle: '.drag-handle',
-          ghostClass: 'sortable-ghost',
-          onEnd: function(evt) {
-            // Atualizar o campo de input após reordenação
-            var items = evt.to.querySelectorAll('.sortable-item');
-            var values = [];
-            
-            items.forEach(function(item) {
-              var value = item.dataset.value;
-              if (value) values.push(value);
-            });
-            
-            // Encontrar o input correspondente
-            var questionId = evt.to.dataset.questionId;
-            var input = document.getElementById('order_sentences_answer_' + questionId);
-            if (input && values.length > 0) {
-              input.value = values.join('|');
-              console.log("Input atualizado manualmente:", input.value);
-            }
-          }
-        });
-        
-        // Marcar como inicializada
-        list.classList.add('sortable-initialized');
-        
-        // Esconder botão de reinicialização se existir
-        var btn = list.closest('.order-sentences-container').querySelector('.reinit-sortable-btn');
-        if (btn) btn.style.display = 'none';
-        
-        console.log(`Lista ${list.id} inicializada manualmente com sucesso`);
-      } catch (e) {
-        console.error(`Erro ao inicializar manualmente lista ${list.id}:`, e);
-      }
-    });
-  }
-  
-  // Registrar para inicializar quando o DOM estiver pronto
-  document.addEventListener('DOMContentLoaded', function() {
-    // Esperar um tempo para garantir que outros scripts tenham chance de inicializar
-    setTimeout(initAllSortables, 500);
-  });
-  
-  // Registrar também para quando a página for carregada via Turbo
-  document.addEventListener('turbo:load', function() {
-    // Esperar um tempo para garantir que outros scripts tenham chance de inicializar
-    setTimeout(initAllSortables, 500);
-  });
-  
-  // Inicializar agora também, para o caso de o evento já ter ocorrido
-  setTimeout(initAllSortables, 1000);
-</script>
-
-<!-- Adicionar um fallback direto para o caso da lib não carregar -->
-<script>
-  document.addEventListener('DOMContentLoaded', function() {
-    setTimeout(function() {
-      // Se ainda não tiver o Sortable disponível após 2 segundos, adicione tratamento para questões de ordem
-      if (typeof Sortable !== 'function') {
-        console.warn("Sortable ainda não disponível após 2s, adicionando tratamento manual para formulário");
-        
-        // Adicionar evento ao formulário para lidar com questões de ordem sem o Sortable
-        var form = document.querySelector('form');
-        if (form) {
-          form.addEventListener('submit', function(e) {
-            var orderSentencesContainers = document.querySelectorAll('.order-sentences-container');
-            orderSentencesContainers.forEach(function(container) {
-              var hiddenInput = container.querySelector('.order-sentences-answer');
-              var listItems = container.querySelectorAll('.sortable-item');
-              
-              if (hiddenInput && listItems.length > 0 && !hiddenInput.value) {
-                console.log("Preenchendo manualmente campo de ordenação");
-                var values = [];
-                listItems.forEach(function(item) {
-                  values.push(item.dataset.value);
-                });
-                hiddenInput.value = values.join('|');
-              }
-            });
-            // Continuar com o envio do formulário
-            return true;
-          });
-        }
-      }
-    }, 2000);
-  });
-</script>

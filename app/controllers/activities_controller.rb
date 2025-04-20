@@ -186,60 +186,11 @@ class ActivitiesController < ApplicationController
     return false unless given_answer.present?
     
     # Log para debug
-    Rails.logger.info "Processando resposta de ordenação: '#{given_answer}' (tipo: #{given_answer.class.name})"
-    Rails.logger.info "Resposta correta esperada: '#{correct_answer}' (tipo: #{correct_answer.class.name})"
+    Rails.logger.debug "Processando resposta de ordenação: '#{given_answer}' vs '#{correct_answer}'"
     
-    # Verificação principal: formato correto (com pipe) e ordenação correta
-    if given_answer.to_s.include?('|')
-      result = given_answer.to_s == correct_answer.to_s
-      Rails.logger.info "Formato com pipe, resultado: #{result}"
-      return result
-    end
-    
-    # Tentativas de fallback para o caso do Sortable.js não funcionar corretamente
-    
-    # Caso 1: Os elementos estão em formato JSON ou array
-    begin
-      if given_answer.to_s.include?('[') && given_answer.to_s.include?(']')
-        json_data = JSON.parse(given_answer)
-        if json_data.is_a?(Array)
-          # Transformar array em string com pipe
-          processed_answer = json_data.join('|')
-          result = processed_answer == correct_answer.to_s
-          Rails.logger.info "Formato JSON/Array, resultado: #{result}"
-          return result
-        end
-      end
-    rescue JSON::ParserError => e
-      Rails.logger.warn "Erro ao analisar possível JSON: #{e.message}"
-    end
-    
-    # Caso 2: Verificar se os elementos estão exatamente na ordem correta
-    # mas sem o formato de pipe
-    expected_sentences = correct_answer.to_s.split('|')
-    
-    # Verificar se a resposta contém todas as sentenças na ordem correta
-    matched = true
-    expected_sentences.each_with_index do |sentence, idx|
-      next_idx = given_answer.to_s.index(sentence, idx == 0 ? 0 : 1)
-      if next_idx.nil?
-        matched = false
-        break
-      end
-    end
-    
-    if matched
-      Rails.logger.info "Elementos encontrados na ordem, resultado: true"
-      return true
-    end
-    
-    # Fallback final: Verificar apenas se os elementos estão presentes
-    Rails.logger.warn "Formato de resposta inesperado para questão de ordenação: #{given_answer}"
-    all_present = expected_sentences.all? { |sentence| given_answer.to_s.include?(sentence) }
-    Rails.logger.info "Verificação de presença de elementos, resultado: #{all_present}"
-    
-    # Se encontrar todos os elementos, considerar parcialmente correto
-    return all_present
+    # A resposta sempre vem com formato de pipe agora que usamos select boxes
+    # Comparação direta é suficiente
+    given_answer.to_s == correct_answer.to_s
   end
 
   def quiz_results

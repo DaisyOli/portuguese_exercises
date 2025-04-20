@@ -144,6 +144,7 @@ pt:
     error_updating: "Erro ao atualizar a questão"
     error_deleting: "Erro ao excluir a questão"
     permission_denied: "Você não tem permissão para modificar esta questão"
+    order_sentences_instruction: "Selecione a ordem correta das frases usando os números:"
     form:
       question_type: "Tipo de Questão"
       question_content: "Enunciado da Questão"
