@@ -23,8 +23,11 @@ if rails_env == "production"
   # Preload app para melhor desempenho com múltiplos workers
   preload_app!
   
-  # Adiciona configuração para timeout de worker para evitar processos zumbis
-  worker_timeout 60
+  # Aumentar o timeout do worker para evitar problemas com requisições longas
+  worker_timeout 120
+  
+  # Configuração para requisições maiores
+  persistent_timeout 60
   
   # Configurações de baixa latência
   # fast_exit!  # Removendo esta linha que está causando o erro

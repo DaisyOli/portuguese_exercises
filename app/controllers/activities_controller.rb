@@ -55,175 +55,97 @@ class ActivitiesController < ApplicationController
       @activity = Activity.find(params[:id])
       @questions = @activity.questions
       
-      # Logs detalhados para debug em produção
-      Rails.logger.info "=== SUBMIT QUIZ DEBUG ==="
-      Rails.logger.info "Activity ID: #{@activity.id}"
-      Rails.logger.info "Activity Questions Count: #{@questions.count}"
-      Rails.logger.info "Params recebidos: #{params.to_json}"
+      # Logs básicos
+      Rails.logger.info "Iniciando processamento para atividade #{@activity.id} com #{@questions.count} questões"
       
-      # Processa os parâmetros para extrair as respostas
+      # OTIMIZAÇÃO: Reduzir a quantidade de dados processados
+      question_ids = @questions.pluck(:id)
+      results = {}
+      total_correct = 0
+      
+      # Simplifique as respostas para processamento mais rápido
       answers = params[:answers] || {}
-      Rails.logger.info "Respostas extraídas: #{answers.to_json}"
       
-      Rails.logger.info "Iniciando processamento de respostas para atividade #{@activity.id}"
+      # Processamento mais eficiente, tudo de uma vez
+      all_questions = Question.where(id: question_ids).select(:id, :content, :question_type, :correct_answer).to_a
+      question_map = all_questions.index_by(&:id)
       
-      # FALLBACK DE EMERGÊNCIA: Se algo der errado aqui, ainda teremos uma resposta válida
-      emergency_results = {
+      # Processar cada resposta - método simplificado
+      answers.each do |question_id_str, given_answer|
+        question_id = question_id_str.to_i
+        question = question_map[question_id]
+        
+        next unless question # Pula se a questão não existir
+        
+        # Processamento simplificado
+        is_correct = false
+        begin
+          # Comparação direta para todos os tipos de questão
+          is_correct = given_answer.present? && given_answer.to_s.strip == question.correct_answer.to_s.strip
+        rescue => e
+          Rails.logger.error "Erro ao processar resposta: #{e.message}"
+        end
+        
+        # Incrementar contador
+        total_correct += 1 if is_correct
+        
+        # Armazenar apenas o mínimo necessário
+        results[question_id] = {
+          "is_correct" => is_correct
+        }
+      end
+      
+      # Calcular score
+      score = @questions.count.positive? ? ((total_correct.to_f / @questions.count) * 100).round(2) : 0
+      
+      # Hash simplificado de resultados
+      quiz_results_data = {
         "activity_id" => @activity.id,
-        "results" => {},
-        "score" => 0,
-        "total_correct" => 0,
+        "results" => results,
+        "score" => score,
+        "total_correct" => total_correct,
         "total_questions" => @questions.count,
-        "submitted_at" => Time.current,
-        "emergency_mode" => true
+        "submitted_at" => Time.current
       }
       
-      # Verifica se há perguntas antes de processar
-      if @questions.empty?
-        redirect_to resolve_quiz_activity_path(@activity, locale: I18n.locale), alert: t('messages.no_questions')
-        return
-      end
+      # Salvar na sessão
+      session[:quiz_results] = quiz_results_data
       
-      # Tenta processar as respostas
-      begin
-        # Processamento otimizado: Pré-carrega todas as questões de uma vez
-        question_ids = @questions.pluck(:id)
-        results = {}
-        total_correct = 0
+      # Salvar no banco de dados de forma eficiente
+      if current_user
+        @quiz_attempt = QuizAttempt.find_or_initialize_by(
+          user_id: current_user.id, 
+          activity_id: @activity.id
+        )
         
-        # Processamento em batch para evitar memory bloat
-        question_ids.each_slice(10) do |batch_ids|
-          # Carregar apenas os campos necessários para as questões no batch atual
-          batch_questions = Question.where(id: batch_ids).select(:id, :content, :question_type, :correct_answer)
-          
-          # Processar cada questão no batch
-          batch_questions.each do |question|
-            # Otimização: transformar em string apenas uma vez
-            question_id_str = question.id.to_s
-            given_answer = answers[question_id_str]
-            correct_answer = question.correct_answer
-            
-            # Inicializar resultado padrão
-            is_correct = false
-            
-            # SIMPLIFICAÇÃO: Processar respostas com segurança
-            begin
-              # Otimização: extrair método para processamento específico
-              is_correct = process_answer(question.question_type, given_answer, correct_answer)
-            rescue => e
-              Rails.logger.error "Erro ao processar resposta específica: #{e.message}"
-              is_correct = false
-            end
-            
-            # Incrementar contador se correto
-            total_correct += 1 if is_correct
-            
-            # Armazenar resultados
-            results[question.id] = {
-              "question_text" => question.content,
-              "question_type" => question.question_type,
-              "given_answer" => given_answer.presence || t('quiz.not_answered'),
-              "correct_answer" => correct_answer,
-              "is_correct" => is_correct
-            }
-            
-            # Atualize o fallback de emergência também
-            emergency_results["results"][question.id] = {
-              "is_correct" => false
-            }
-          end
-        end
+        @quiz_attempt.score = score
+        @quiz_attempt.results = quiz_results_data
+        @quiz_attempt.submitted_at = Time.current
         
-        Rails.logger.info "Respostas processadas com sucesso: #{total_correct} de #{@questions.count} corretas"
-        
-        # Cálculo do score
-        score = @questions.count.positive? ? ((total_correct.to_f / @questions.count) * 100).round(2) : 0
-        
-        # Preparar o hash de resultados no formato exato que a view espera
-        quiz_results_data = {
-          "activity_id" => @activity.id,
-          "results" => results,
-          "score" => score,
-          "total_correct" => total_correct,
-          "total_questions" => @questions.count,
-          "submitted_at" => Time.current
-        }
-        
-        # DEBUG: Salvar os resultados na sessão para todos os casos
-        session[:quiz_results] = quiz_results_data
-        Rails.logger.info "DEBUG: Salvando resultados na sessão: activity_id=#{quiz_results_data['activity_id']}, score=#{quiz_results_data['score']}"
-        
-        # Criar ou atualizar a tentativa
-        if current_user
-          @quiz_attempt = QuizAttempt.find_or_initialize_by(
-            user_id: current_user.id, 
-            activity_id: @activity.id
-          )
-          
-          @quiz_attempt.score = score
-          
-          # SEGURANÇA EXTRA: Verifica se os dados estão sendo salvos corretamente
-          begin
-            @quiz_attempt.results = quiz_results_data # Usar o hash completo para garantir consistência
-          rescue => e
-            Rails.logger.error "Erro ao definir resultados: #{e.message}"
-            @quiz_attempt.results = emergency_results
-          end
-          
-          @quiz_attempt.submitted_at = Time.current
-          
-          # Salvar resultados no banco de dados
-          if @quiz_attempt.save
-            Rails.logger.info "Tentativa de quiz salva com sucesso para usuário #{current_user.id}"
-            redirect_to quiz_results_activity_path(@activity, locale: I18n.locale), 
-                      notice: t('quiz.success', score: score)
-          else
-            Rails.logger.error "Erro ao salvar tentativa: #{@quiz_attempt.errors.full_messages.join(', ')}"
-            
-            # FALLBACK: Se falhar ao salvar, ainda use a sessão
-            flash[:alert] = t('quiz.error')
-            redirect_to quiz_results_activity_path(@activity, locale: I18n.locale)
-          end
+        if @quiz_attempt.save
+          redirect_to quiz_results_activity_path(@activity, locale: I18n.locale), 
+                    notice: t('quiz.success', score: score)
         else
-          # Para usuários não autenticados, apenas redirecionar
-          redirect_to quiz_results_activity_path(@activity, locale: I18n.locale), notice: t('quiz.success', score: score)
+          flash[:alert] = t('quiz.error')
+          redirect_to quiz_results_activity_path(@activity, locale: I18n.locale)
         end
-      rescue => e
-        # Se tudo falhar, use o fallback de emergência
-        Rails.logger.error "ERRO NO PROCESSAMENTO PRINCIPAL: #{e.class.name} - #{e.message}"
-        Rails.logger.error e.backtrace.join("\n")
-        
-        # Salvar o fallback de emergência na sessão
-        session[:quiz_results] = emergency_results
+      else
+        # Para usuários não autenticados
         redirect_to quiz_results_activity_path(@activity, locale: I18n.locale), 
-                  alert: "Ocorreu um problema ao processar suas respostas. Por favor, tente novamente."
+                   notice: t('quiz.success', score: score)
       end
       
-    rescue StandardError => e
-      # Log detalhado do erro para diagnóstico
-      Rails.logger.error "ERRO FATAL: #{e.class.name} - #{e.message}"
+    rescue => e
+      # Log do erro
+      Rails.logger.error "ERRO: #{e.class.name} - #{e.message}"
       Rails.logger.error e.backtrace.join("\n")
       
-      # Tenta criar um fallback mínimo mesmo sem acesso à atividade
+      # Fallback
       begin
         activity_id = params[:id].to_i
-        emergency_fallback = {
-          "activity_id" => activity_id,
-          "results" => {},
-          "score" => 0,
-          "total_correct" => 0,
-          "total_questions" => 0,
-          "submitted_at" => Time.current,
-          "critical_error" => true
-        }
-        
-        session[:quiz_results] = emergency_fallback
-        redirect_to quiz_results_activity_path(activity_id, locale: I18n.locale), 
-                   alert: "Ocorreu um erro ao processar o quiz. Entre em contato com o suporte."
-      rescue => final_error
-        # Se absolutamente tudo falhar, simplesmente redirecione para a página inicial
-        Rails.logger.error "ERRO CRÍTICO FINAL: #{final_error.message}"
-        redirect_to activities_path, alert: "Ocorreu um erro. Por favor, tente outra atividade."
+        redirect_to activities_path, alert: "Ocorreu um erro ao processar o quiz. Tente novamente com menos questões."
+      rescue => final_e
+        redirect_to activities_path, alert: "Erro no processamento."
       end
     end
   end

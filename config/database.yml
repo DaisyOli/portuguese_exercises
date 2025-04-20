@@ -7,7 +7,13 @@
 default: &default
   adapter: postgresql
   encoding: unicode
-  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 8 } %>
+  # Aumentar o timeout para evitar que conexões expirem durante requisições longas
+  timeout: 10000
+  connect_timeout: 2
+  checkout_timeout: 15
+  variables:
+    statement_timeout: '90s'
 
 development:
   <<: *default
