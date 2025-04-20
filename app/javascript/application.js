@@ -20,25 +20,6 @@ document.addEventListener("turbo:load", () => {
     form.setAttribute("data-turbo", "false");
   });
   
-  // Inicializar sortables após o carregamento da página
-  if (window.Sortable) {
-    console.log("Sortable disponível, inicializando listas ordenáveis...");
-    document.querySelectorAll('.sortable-list').forEach(list => {
-      try {
-        const sortableId = list.id;
-        new Sortable(list, {
-          animation: 150,
-          ghostClass: 'bg-light'
-        });
-        console.log(`Lista ${sortableId} inicializada com sucesso`);
-      } catch (e) {
-        console.error(`Erro ao inicializar lista sortable ${list.id}:`, e);
-      }
-    });
-  } else {
-    console.error("Sortable não está disponível globalmente!");
-  }
-  
   console.log("Application initialized");
 })
 
