@@ -4,7 +4,7 @@ document.addEventListener('turbo:load', function() {
   if (window.location.pathname.includes('quiz_results')) {
     console.log('Inicializando página de resultados do quiz');
     
-    // Verifica se o jQuery está disponível de forma mais segura
+    // Verifica se o jQuery está disponível de forma mais segura, mas não tenta carregá-lo
     if (typeof jQuery !== 'undefined' && jQuery) {
       console.log('jQuery disponível na página de resultados');
       
@@ -19,24 +19,7 @@ document.addEventListener('turbo:load', function() {
       }
     } else {
       console.error('jQuery não está disponível na página de resultados!');
-      
-      // Tenta carregar o jQuery de forma síncrona
-      const script = document.createElement('script');
-      script.src = 'https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js';
-      script.onload = function() {
-        console.log('jQuery carregado manualmente com sucesso');
-        window.$ = window.jQuery = jQuery;
-        
-        // Tenta inicializar os componentes novamente após o carregamento
-        try {
-          jQuery('.card-header').each(function() {
-            console.log('Processando card de resultado após carregamento manual');
-          });
-        } catch (error) {
-          console.error('Erro ao processar com jQuery após carregamento manual:', error);
-        }
-      };
-      document.head.appendChild(script);
+      // NÃO tentamos carregá-lo aqui para evitar duplicação
     }
   }
 }); 

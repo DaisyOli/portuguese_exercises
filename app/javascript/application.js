@@ -5,31 +5,20 @@ import "@hotwired/stimulus-loading"
 import "@rails/ujs"
 import "bootstrap"
 
+// Não importamos jQuery via importmap, pois já está no layout como tag script
+console.log('Importmap: Verificando jQuery...');
+
 // Garante que o jQuery está carregado
 document.addEventListener('DOMContentLoaded', function() {
   // Verifica se o jQuery já está disponível (carregado via script tag)
   if (typeof window.jQuery === 'undefined') {
-    console.error('jQuery não foi carregado pela tag script. Tentando carregar via importmap...');
-    
-    // Tenta carregar o jQuery via importmap
-    import("jquery").then(module => {
-      window.jQuery = window.$ = module.default || module;
-      console.log('jQuery carregado via importmap');
-      
-      // Carrega jquery_ujs depois do jQuery
-      import("jquery_ujs").then(() => {
-        console.log('jquery_ujs carregado via importmap');
-      });
-    }).catch(error => {
-      console.error('Falha ao carregar jQuery via importmap:', error);
-    });
+    console.error('jQuery não foi carregado pela tag script');
+    // Não tentamos carregá-lo aqui novamente, já que há um fallback no layout
   } else {
     console.log('jQuery já está disponível via tag script');
     
-    // Carrega jquery_ujs depois do jQuery
-    import("jquery_ujs").then(() => {
-      console.log('jquery_ujs carregado via importmap');
-    });
+    // NÃO carregamos jquery_ujs aqui, para evitar duplicação
+    console.log('Não importando jquery_ujs para evitar carregamento duplo');
   }
 });
 

@@ -78,54 +78,29 @@
 </div>
 
 <script>
-  // Garantir que o jQuery esteja disponível nesta página
+  // Inicializar página sem tentar carregar jQuery novamente
   document.addEventListener('DOMContentLoaded', function() {
-    if (typeof jQuery === 'undefined') {
-      console.error('jQuery não foi carregado na página de resultados!');
-      
-      // Tenta carregar o jQuery diretamente
-      var script = document.createElement('script');
-      script.src = "https://code.jquery.com/jquery-3.7.1.min.js";
-      script.onload = function() {
-        console.log('jQuery carregado com sucesso na página de resultados!');
-        window.$ = window.jQuery = jQuery;
-        
-        // Inicializar a página após o carregamento do jQuery
-        inicializarPagina();
-      };
-      document.head.appendChild(script);
-    } else {
-      console.log('jQuery já está disponível na página de resultados!');
-      
-      // Inicializar a página já que o jQuery está disponível
-      inicializarPagina();
-    }
+    console.log('Página de resultados inicializada');
     
-    function inicializarPagina() {
-      // Carregar os resultados do debug se disponíveis
-      <% if @debug_results_json.present? %>
-        console.log('Carregando resultados do debug');
-        try {
-          var resultsData = <%= raw @debug_results_json %>;
-          console.log('Dados de resultados carregados:', resultsData);
-          
-          if (resultsData && resultsData.results) {
-            console.log('Número de resultados:', Object.keys(resultsData.results).length);
-          }
-        } catch (e) {
-          console.error('Erro ao carregar resultados do debug:', e);
-        }
-      <% end %>
-      
-      // Inicializar elementos que dependem do jQuery
+    // Verifica se temos resultados
+    <% if @debug_results_json.present? %>
       try {
-        jQuery('.card').each(function() {
-          // Apenas para verificar se o jQuery está funcionando
-          console.log('Processando card de resultado com jQuery');
-        });
+        var resultsData = <%= raw @debug_results_json %>;
+        console.log('Total de questões:', resultsData.total_questions);
+        console.log('Acertos:', resultsData.total_correct);
+        
+        if (resultsData && resultsData.results) {
+          console.log('Número de resultados:', Object.keys(resultsData.results).length);
+          
+          // Verificar detalhes de cada resultado
+          Object.keys(resultsData.results).forEach(function(key) {
+            var result = resultsData.results[key];
+            console.log('Questão ' + key + ':', result.is_correct ? 'Correta' : 'Incorreta');
+          });
+        }
       } catch (e) {
-        console.error('Erro ao processar cards:', e);
+        console.error('Erro ao processar dados:', e);
       }
-    }
+    <% end %>
   });
 </script>
