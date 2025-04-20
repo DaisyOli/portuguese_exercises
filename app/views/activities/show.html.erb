@@ -216,7 +216,7 @@
                   <div class="collapse mt-3" id="edit-question-form-<%= question.id %>">
                     <div class="card card-body">
                       <div data-controller="question-form">
-                        <%= form_with model: [question.activity, question], html: { data: { action: "turbo:submit-end->question-form#toggleFields" } } do |form| %>
+                        <%= form_with model: [question.activity, question], html: { data: { action: "turbo:submit-end->question-form#updateFields" } } do |form| %>
                           <div class="row mb-3">
                             <div class="col-md-12">
                               <%= form.label :question_type, t('questions.form.question_type') %>
@@ -227,7 +227,7 @@
                                     class: "form-control", 
                                     data: { 
                                       question_form_target: "questionType",
-                                      action: "change->question-form#toggleFields"
+                                      action: "change->question-form#updateFields"
                                     }
                                   } 
                               %>
@@ -273,7 +273,7 @@
                             </div>
                           </div>
                       
-                          <div class="row mb-3">
+                          <div class="row mb-3" data-question-form-target="correctAnswerField">
                             <div class="col-md-12">
                               <%= form.label :correct_answer, t('questions.form.correct_answer') %>
                               <%= form.text_field :correct_answer, class: "form-control" %>
@@ -312,7 +312,7 @@
             <button type="button" class="btn btn-success" 
                     data-action="content-form#toggle"
                     data-bs-toggle="collapse"
-                    data-target="#new-statement-form"
+                    data-bs-target="#new-statement-form"
                     aria-expanded="false"
                     aria-controls="new-statement-form">
               <%= t('activities.add_statement') %>
@@ -321,7 +321,7 @@
             <button type="button" class="btn btn-primary" 
                     data-action="content-form#toggle"
                     data-bs-toggle="collapse"
-                    data-target="#new-media-form"
+                    data-bs-target="#new-media-form"
                     aria-expanded="false"
                     aria-controls="new-media-form">
               <%= t('activities.add_media') %>
@@ -330,7 +330,7 @@
             <button type="button" class="btn btn-info text-white" 
                     data-action="content-form#toggle"
                     data-bs-toggle="collapse"
-                    data-target="#new-text-form"
+                    data-bs-target="#new-text-form"
                     aria-expanded="false"
                     aria-controls="new-text-form">
               <%= t('activities.add_text') %>
@@ -339,7 +339,7 @@
             <button type="button" class="btn btn-warning" 
                     data-action="content-form#toggle"
                     data-bs-toggle="collapse"
-                    data-target="#new-question-form"
+                    data-bs-target="#new-question-form"
                     aria-expanded="false"
                     aria-controls="new-question-form">
               <%= t('activities.add_question') %>
@@ -392,7 +392,7 @@
           </div>
         </div>
         
-        <div class="collapse" id="new-question-form" data-content-form-target="form">
+        <div class="collapse" id="new-question-form" data-content-form-target="form" data-question-form-target="form">
           <div class="card card-body mt-3 mb-3">
             <%= render partial: "questions/form", locals: { question: @activity.questions.build, activity: @activity } %>
           </div>

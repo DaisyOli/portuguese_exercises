@@ -1,6 +1,9 @@
 <%= form_with model: [activity, question], html: { 
     class: "question-form",
-    id: "question-form"
+    id: "question-form",
+    data: {
+      controller: "question-form"
+    }
   } do |form| %>
 
   <div class="row mb-3">
@@ -11,13 +14,17 @@
           { selected: question.question_type || 'multiple_choice' }, 
           { 
             class: "form-control question-type-select", 
-            id: "question_type_select"
+            id: "question_type_select",
+            data: { 
+              question_form_target: "questionType",
+              action: "change->question-form#updateFields"
+            }
           } 
       %>
     </div>
   </div>
   
-  <div class="row mb-3" id="content_field">
+  <div class="row mb-3" id="content_field" data-question-form-target="contentField">
     <div class="col-md-12">
       <%= form.label :content, t('questions.form.question_content') %>
       <%= form.text_area :content, 
@@ -32,7 +39,7 @@
     </div>
   </div>
 
-  <div class="row mb-3 fill-in-blank-help" id="fill_in_blank_help" style="display: none;">
+  <div class="row mb-3 fill-in-blank-help" id="fill_in_blank_help" style="display: none;" data-question-form-target="fillInBlankHelp">
     <div class="col-md-12">
       <div class="alert alert-info">
         <%= t('questions.form.fill_in_blank_help_html') %>
@@ -40,7 +47,7 @@
     </div>
   </div>
   
-  <div class="row mb-3 order-sentences-help" id="order_sentences_help" style="display: none;">
+  <div class="row mb-3 order-sentences-help" id="order_sentences_help" style="display: none;" data-question-form-target="orderSentencesHelp">
     <div class="col-md-12">
       <div class="alert alert-info">
         <%= t('questions.form.order_sentences_help_html') %>
@@ -48,7 +55,7 @@
     </div>
   </div>
   
-  <div class="row mb-3 multiple-choice-fields" id="multiple_choice_fields" style="display: none;">
+  <div class="row mb-3 multiple-choice-fields" id="multiple_choice_fields" style="display: none;" data-question-form-target="multipleChoiceFields">
     <div class="col-md-12">
       <%= form.label :options_text, t('questions.form.options') %>
       <%= form.text_area :options_text, 
@@ -60,7 +67,7 @@
     </div>
   </div>
   
-  <div class="row mb-3 order-sentences-fields" id="order_sentences_fields" style="display: none;">
+  <div class="row mb-3 order-sentences-fields" id="order_sentences_fields" style="display: none;" data-question-form-target="orderSentencesFields">
     <div class="col-md-12">
       <%= form.label :sentences_content, t('questions.form.sentences') %>
       <%= form.text_area :sentences_content, 
@@ -72,7 +79,7 @@
     </div>
   </div>
   
-  <div class="row mb-3" id="correct_answer_field">
+  <div class="row mb-3" id="correct_answer_field" data-question-form-target="correctAnswerField">
     <div class="col-md-12">
       <%= form.label :correct_answer, t('questions.form.correct_answer') %>
       <%= form.text_field :correct_answer, 
@@ -93,76 +100,5 @@
       <% end %>
     </div>
   </div>
-
-  <script>
-    // Função para atualizar os campos do formulário
-    function setupQuestionForm() {
-      const questionTypeSelect = document.getElementById('question_type_select');
-      if (!questionTypeSelect) return; // Sai se o select não for encontrado
-      
-      const multipleChoiceFields = document.getElementById('multiple_choice_fields');
-      const fillInBlankHelp = document.getElementById('fill_in_blank_help');
-      const orderSentencesHelp = document.getElementById('order_sentences_help');
-      const orderSentencesFields = document.getElementById('order_sentences_fields');
-      const correctAnswerField = document.getElementById('correct_answer_field');
-      const contentTextarea = document.getElementById('content_textarea');
-      
-      // Placeholders específicos para cada tipo
-      const placeholders = {
-        'multiple_choice': '<%= t('questions.form.multiple_choice_placeholder') %>',
-        'fill_in_blank': '<%= t('questions.form.fill_in_blank_placeholder') %>',
-        'order_sentences': '<%= t('questions.form.content_placeholder') %>'
-      };
-      
-      function updateFormFields() {
-        const questionType = questionTypeSelect.value;
-        console.log('Tipo de questão selecionado:', questionType);
-        
-        // Esconder todos os campos específicos
-        if (multipleChoiceFields) multipleChoiceFields.style.display = 'none';
-        if (fillInBlankHelp) fillInBlankHelp.style.display = 'none';
-        if (orderSentencesHelp) orderSentencesHelp.style.display = 'none';
-        if (orderSentencesFields) orderSentencesFields.style.display = 'none';
-        
-        // Mostrar campo de resposta correta por padrão
-        if (correctAnswerField) correctAnswerField.style.display = 'block';
-        
-        // Atualizar o placeholder do campo de conteúdo
-        if (contentTextarea && placeholders[questionType]) {
-          contentTextarea.placeholder = placeholders[questionType];
-        }
-        
-        // Mostrar campos específicos baseado no tipo
-        switch (questionType) {
-          case 'multiple_choice':
-            if (multipleChoiceFields) multipleChoiceFields.style.display = 'block';
-            break;
-          case 'fill_in_blank':
-            if (fillInBlankHelp) fillInBlankHelp.style.display = 'block';
-            break;
-          case 'order_sentences':
-            if (orderSentencesHelp) orderSentencesHelp.style.display = 'block';
-            if (orderSentencesFields) orderSentencesFields.style.display = 'block';
-            if (correctAnswerField) correctAnswerField.style.display = 'none';
-            break;
-        }
-      }
-      
-      // Configurar evento de mudança
-      questionTypeSelect.addEventListener('change', updateFormFields);
-      
-      // Executar no carregamento inicial
-      updateFormFields();
-    }
-    
-    // Registrar para diversos eventos
-    document.addEventListener('DOMContentLoaded', setupQuestionForm);
-    document.addEventListener('turbo:load', setupQuestionForm);
-    document.addEventListener('turbo:render', setupQuestionForm);
-    document.addEventListener('turbo:frame-load', setupQuestionForm);
-    
-    // Executar após um pequeno atraso (garantia adicional)
-    setTimeout(setupQuestionForm, 50);
-  </script>
 <% end %>
 

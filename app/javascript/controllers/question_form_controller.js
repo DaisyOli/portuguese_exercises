@@ -9,7 +9,8 @@ export default class extends Controller {
     "fillInBlankHelp",
     "orderSentencesHelp",
     "orderSentencesFields",
-    "correctAnswerField"
+    "correctAnswerField",
+    "form"
   ];
 
   connect() {
