@@ -17,9 +17,29 @@ class QuestionsController < ApplicationController
     Rails.logger.debug "Parâmetros permitidos: #{question_params.inspect}"
     Rails.logger.debug "Tipo de questão: #{@question.question_type}"
     
+    # Verificações específicas por tipo de questão
     if @question.question_type == 'order_sentences'
       Rails.logger.debug "QUESTÃO DE ORDENAÇÃO DE FRASES"
+      
+      # Verificar se temos as frases
+      if @question.sentences_content.blank?
+        Rails.logger.error "Sentences content está em branco!"
+        @question.errors.add(:sentences_content, "não pode ficar em branco")
+        render :new, status: :unprocessable_entity
+        return
+      end
+      
       Rails.logger.debug "Sentences content: #{@question.sentences_content.inspect}"
+      
+      # Verificar se temos pelo menos 2 frases
+      sentences = @question.sentences_content.to_s.split("\n").map(&:strip).reject(&:blank?)
+      if sentences.length < 2
+        Rails.logger.error "Sentences content tem menos de 2 frases: #{sentences.length}"
+        @question.errors.add(:sentences_content, "deve conter pelo menos 2 frases")
+        render :new, status: :unprocessable_entity
+        return
+      end
+      
     elsif @question.question_type == 'multiple_choice'
       Rails.logger.debug "QUESTÃO DE MÚLTIPLA ESCOLHA"
       Rails.logger.debug "Options text: #{@question.options_text.inspect}"
@@ -38,6 +58,7 @@ class QuestionsController < ApplicationController
       Rails.logger.debug "Erros de validação: #{@question.errors.full_messages}"
       Rails.logger.debug "============================================="
       
+      # Simplificar para evitar problemas com partial missing
       flash.now[:alert] = "Erro ao criar questão: #{@question.errors.full_messages.join(', ')}"
       render :new, status: :unprocessable_entity
     end

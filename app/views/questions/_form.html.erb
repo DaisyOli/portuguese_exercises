@@ -65,10 +65,11 @@
     
     <div class="row mb-3 order-sentences-fields" style="display: <%= question.order_sentences? ? 'block' : 'none' %>;" data-question-selector-target="orderSentences">
       <div class="col-md-12">
-        <%= form.label :sentences_content, t('questions.form.sentences') %>
+        <%= form.label :sentences_content, t('questions.form.sentences'), class: "form-label required" %>
         <%= form.text_area :sentences_content, 
             class: "form-control", 
             rows: 5,
+            required: question.order_sentences?,
             placeholder: t('questions.form.sentences_placeholder'),
             value: (question.order_sentences? && question.correct_answer.present? ? question.correct_answer.gsub('|', "\n") : nil) %>
         <small class="form-text text-muted"><%= t('questions.form.order_sentences_input_help') %></small>
