@@ -45,9 +45,25 @@ class ActivitiesController < ApplicationController
   end
 
   def resolve_quiz
-    @questions = Rails.cache.fetch(["activity_questions", @activity.id, @activity.updated_at.to_i], expires_in: 1.hour) do
-      @activity.questions.to_a
+    # Obter questões sem usar o cache para verificar se é um problema de cache
+    if params[:skip_cache] == "true"
+      @questions = @activity.questions.to_a
+      Rails.logger.debug "Carregando questões sem cache: #{@questions.count} questões encontradas"
+    else
+      @questions = Rails.cache.fetch(["activity_questions", @activity.id, @activity.updated_at.to_i], expires_in: 1.hour) do
+        @activity.questions.to_a
+      end
     end
+    
+    # Logging para debug do problema de questões não aparecendo
+    Rails.logger.debug "=== DIAGNÓSTICO DE EXIBIÇÃO DE QUESTÕES ==="
+    Rails.logger.debug "Atividade ID: #{@activity.id}, Título: #{@activity.title}"
+    Rails.logger.debug "Total de questões carregadas: #{@questions.count}"
+    Rails.logger.debug "Cache utilizado: #{params[:skip_cache] != 'true'}"
+    @questions.each_with_index do |q, i|
+      Rails.logger.debug "Questão #{i+1}: ID=#{q.id}, Tipo=#{q.question_type}, Conteúdo=#{q.content.truncate(50) if q.content.present?}"
+    end
+    Rails.logger.debug "=========================================="
   end
 
   def submit_quiz
@@ -66,6 +82,12 @@ class ActivitiesController < ApplicationController
       # Simplifique as respostas para processamento mais rápido
       answers = params[:answers] || {}
       
+      # Log detalhado das respostas recebidas
+      Rails.logger.debug "====== RESPOSTAS RECEBIDAS ======"
+      answers.each do |qid, answer|
+        Rails.logger.debug "Questão #{qid}: '#{answer}' (#{answer.class.name})"
+      end
+      
       # Processamento mais eficiente, tudo de uma vez
       all_questions = Question.where(id: question_ids).select(:id, :content, :question_type, :correct_answer).to_a
       question_map = all_questions.index_by(&:id)
@@ -77,14 +99,62 @@ class ActivitiesController < ApplicationController
         
         next unless question # Pula se a questão não existir
         
-        # Processamento simplificado
+        # Processamento baseado no tipo de questão
         is_correct = false
         begin
-          # Comparação direta para todos os tipos de questão
-          is_correct = given_answer.present? && given_answer.to_s.strip == question.correct_answer.to_s.strip
+          if question.question_type == 'order_sentences'
+            # Log detalhado para questões de ordem
+            Rails.logger.debug "Processando questão de ordem: #{question_id}"
+            Rails.logger.debug "Resposta recebida: '#{given_answer}'"
+            Rails.logger.debug "Resposta correta: '#{question.correct_answer}'"
+            
+            # Verificar se a resposta não está vazia
+            if given_answer.present? && given_answer.to_s.strip != ''
+              # Verificar se é uma resposta válida para ordem de frases
+              if given_answer.to_s.include?('|')
+                given_items = given_answer.to_s.split('|').map(&:strip)
+                correct_items = question.correct_answer.to_s.split('|').map(&:strip)
+                
+                Rails.logger.debug "Itens recebidos: #{given_items.inspect}"
+                Rails.logger.debug "Itens corretos: #{correct_items.inspect}"
+                
+                # Comparar os arrays
+                is_correct = (given_items == correct_items)
+                
+                # Log adicional se não for correto para entender o que deu errado
+                unless is_correct
+                  Rails.logger.debug "COMPARAÇÃO FALHOU - Verificando detalhes:"
+                  Rails.logger.debug "Número de itens recebidos: #{given_items.length}, Número de itens corretos: #{correct_items.length}"
+                  
+                  # Verificar diferenças item a item
+                  if given_items.length == correct_items.length
+                    given_items.each_with_index do |item, idx|
+                      if item != correct_items[idx]
+                        Rails.logger.debug "Item #{idx+1} difere: '#{item}' vs esperado '#{correct_items[idx]}'"
+                      end
+                    end
+                  end
+                end
+              else
+                # Resposta sem separador de pipe não é válida para order_sentences
+                Rails.logger.debug "Resposta sem separador de pipe: #{given_answer}"
+                is_correct = false
+              end
+            else
+              Rails.logger.debug "Resposta vazia para questão de ordem"
+              is_correct = false
+            end
+          else
+            # Comparação direta para outros tipos de questão
+            is_correct = given_answer.present? && given_answer.to_s.strip == question.correct_answer.to_s.strip
+          end
         rescue => e
           Rails.logger.error "Erro ao processar resposta: #{e.message}"
+          Rails.logger.error e.backtrace.join("\n")
         end
+        
+        # Log do resultado
+        Rails.logger.debug "Resultado da questão #{question_id}: #{is_correct ? 'CORRETO' : 'INCORRETO'}"
         
         # Incrementar contador
         total_correct += 1 if is_correct
@@ -111,6 +181,9 @@ class ActivitiesController < ApplicationController
         "total_questions" => @questions.count,
         "submitted_at" => Time.current
       }
+      
+      # Log resumo do processamento
+      Rails.logger.info "Processamento finalizado: #{total_correct} corretas de #{@questions.count} questões (#{score}%)"
       
       # Em vez de salvar na sessão, armazenar apenas no banco de dados
       # e guardar apenas o ID da tentativa na sessão

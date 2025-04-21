@@ -191,6 +191,7 @@ pt:
     success: "Quiz enviado com sucesso! Sua pontuação: %{score}%"
     error: "Erro ao processar o quiz. Por favor, tente novamente."
     no_results: "Nenhum resultado encontrado. Por favor, responda o quiz primeiro."
+    order_correct_sequence: "Ordem correta das frases:"
 
   # Formulários
   forms:

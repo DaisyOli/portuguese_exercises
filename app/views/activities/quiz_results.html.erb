@@ -35,14 +35,16 @@
             <h5 class="mb-0"><%= t('questions.title') %></h5>
           </div>
           <div class="card-body">
-            <p class="card-text mb-3"><strong><%= t('questions.content') %>:</strong> <%= result["question_text"].present? ? result["question_text"] : "N/A" %></p>
+            <% if result["question_type"] != "order_sentences" %>
+              <p class="card-text mb-3"><strong><%= t('questions.content') %>:</strong> <%= result["question_text"].present? ? result["question_text"] : "N/A" %></p>
+            <% end %>
             <p class="card-text mb-3"><strong><%= t('questions.type') %>:</strong> <%= result["question_type"].present? ? t("questions.types.#{result["question_type"]}") : "N/A" %></p>
             
             <div class="mb-2">
               <strong><%= t('quiz.your_answer') %>:</strong>
               <span class="<%= result["is_correct"] ? 'text-success' : 'text-danger' %>">
                 <% if result["question_type"] == "order_sentences" %>
-                  <% if !result["given_answer"].present? || result["given_answer"] == t('quiz.not_answered') %>
+                  <% if !result["given_answer"].present? || result["given_answer"] == t('quiz.not_answered') || result["given_answer"] == "Não respondida" %>
                     <%= t('quiz.not_answered') %>
                   <% else %>
                     <ol class="mt-2">
@@ -52,7 +54,7 @@
                     </ol>
                   <% end %>
                 <% else %>
-                  <%= !result["given_answer"].present? || result["given_answer"] == "Não respondida" ? t('quiz.not_answered') : result["given_answer"] %>
+                  <%= !result["given_answer"].present? || result["given_answer"] == t('quiz.not_answered') || result["given_answer"] == "Não respondida" ? t('quiz.not_answered') : result["given_answer"] %>
                 <% end %>
               </span>
             </div>
@@ -61,11 +63,14 @@
               <div class="mt-2">
                 <strong><%= t('quiz.correct_answer') %>:</strong>
                 <% if result["question_type"] == "order_sentences" && result["correct_answer"].present? %>
-                  <ol class="mt-2 text-success">
-                    <% result["correct_answer"].to_s.split("|").each do |sentence| %>
-                      <li class="mb-1"><%= sentence %></li>
-                    <% end %>
-                  </ol>
+                  <div class="mt-2">
+                    <p class="text-success mb-2"><strong><%= t('quiz.order_correct_sequence') %></strong></p>
+                    <ol class="text-success">
+                      <% result["correct_answer"].to_s.split("|").each do |sentence| %>
+                        <li class="mb-1"><%= sentence %></li>
+                      <% end %>
+                    </ol>
+                  </div>
                 <% else %>
                   <span class="text-success"><%= result["correct_answer"].present? ? result["correct_answer"] : "N/A" %></span>
                 <% end %>
