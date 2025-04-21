@@ -215,8 +215,10 @@
                 <% if @activity.teacher == current_user %>
                   <div class="collapse mt-3" id="edit-question-form-<%= question.id %>">
                     <div class="card card-body">
-                      <div data-controller="question-form">
-                        <%= form_with model: [question.activity, question], html: { data: { action: "turbo:submit-end->question-form#updateFields" } } do |form| %>
+                      <div data-controller="question-selector">
+                        <%= form_with model: [question.activity, question], html: { 
+                            id: "edit-form-#{question.id}"
+                          } do |form| %>
                           <div class="row mb-3">
                             <div class="col-md-12">
                               <%= form.label :question_type, t('questions.form.question_type') %>
@@ -226,8 +228,8 @@
                                   { 
                                     class: "form-control", 
                                     data: { 
-                                      question_form_target: "questionType",
-                                      action: "change->question-form#updateFields"
+                                      question_selector_target: "selector",
+                                      action: "change->question-selector#change"
                                     }
                                   } 
                               %>
@@ -241,7 +243,7 @@
                             </div>
                           </div>
 
-                          <div class="row mb-3 fill-in-blank-help" data-question-form-target="fillInBlankHelp" style="display: <%= question.fill_in_blank? ? 'block' : 'none' %>;">
+                          <div class="row mb-3 fill-in-blank-help" data-question-selector-target="fillInBlank" style="display: <%= question.fill_in_blank? ? 'block' : 'none' %>;">
                             <div class="col-md-12">
                               <div class="alert alert-info">
                                 <%= t('questions.form.fill_in_blank_help_html') %>
@@ -249,7 +251,7 @@
                             </div>
                           </div>
                       
-                          <div class="row mb-3 order-sentences-help" data-question-form-target="orderSentencesHelp" style="display: <%= question.order_sentences? ? 'block' : 'none' %>;">
+                          <div class="row mb-3 order-sentences-help" data-question-selector-target="orderSentences" style="display: <%= question.order_sentences? ? 'block' : 'none' %>;">
                             <div class="col-md-12">
                               <div class="alert alert-info">
                                 <%= t('questions.form.order_sentences_help_html') %>
@@ -257,7 +259,7 @@
                             </div>
                           </div>
                       
-                          <div class="row mb-3 multiple-choice-fields" data-question-form-target="multipleChoiceFields" style="display: <%= question.multiple_choice? ? 'block' : 'none' %>;">
+                          <div class="row mb-3 multiple-choice-fields" data-question-selector-target="multipleChoice" style="display: <%= question.multiple_choice? ? 'block' : 'none' %>;">
                             <div class="col-md-12">
                               <%= form.label :options, t('questions.form.options') %>
                               <%= form.text_area :options_text, value: question.options&.join(','), class: "form-control", rows: 3 %>
@@ -265,15 +267,18 @@
                             </div>
                           </div>
                       
-                          <div class="row mb-3 order-sentences-fields" data-question-form-target="orderSentencesFields" style="display: <%= question.order_sentences? ? 'block' : 'none' %>;">
+                          <div class="row mb-3 order-sentences-fields" data-question-selector-target="orderSentences" style="display: <%= question.order_sentences? ? 'block' : 'none' %>;">
                             <div class="col-md-12">
-                              <%= form.label :content, t('questions.form.sentences') %>
-                              <%= form.text_area :content, class: "form-control", rows: 5 %>
+                              <%= form.label :sentences_content, t('questions.form.sentences') %>
+                              <%= form.text_area :sentences_content, 
+                                  class: "form-control", 
+                                  rows: 5,
+                                  value: question.order_sentences? && question.correct_answer.present? ? question.correct_answer.gsub('|', "\n") : nil %>
                               <small class="form-text text-muted"><%= t('questions.form.order_sentences_input_help') %></small>
                             </div>
                           </div>
                       
-                          <div class="row mb-3" data-question-form-target="correctAnswerField">
+                          <div class="row mb-3" data-question-selector-target="correctAnswer" style="display: <%= question.order_sentences? ? 'none' : 'block' %>;">
                             <div class="col-md-12">
                               <%= form.label :correct_answer, t('questions.form.correct_answer') %>
                               <%= form.text_field :correct_answer, class: "form-control" %>
@@ -291,6 +296,62 @@
                               <% end %>
                             </div>
                           </div>
+                          
+                          <!-- Script de fallback para edição de questões -->
+                          <script>
+                            document.addEventListener('DOMContentLoaded', function() {
+                              const form = document.getElementById('edit-form-<%= question.id %>');
+                              if (!form) return;
+                              
+                              const select = form.querySelector('select[name="question[question_type]"]');
+                              if (!select) return;
+                              
+                              function updateEditFields() {
+                                const type = select.value;
+                                console.log("Script fallback (edit): tipo alterado para", type);
+                                
+                                // Esconder todos os campos
+                                const multipleChoiceFields = form.querySelector('.multiple-choice-fields');
+                                const fillInBlankHelp = form.querySelector('.fill-in-blank-help');
+                                const orderSentencesHelp = form.querySelector('.order-sentences-help');
+                                const orderSentencesFields = form.querySelector('.order-sentences-fields');
+                                const correctAnswerField = form.querySelector('[data-question-selector-target="correctAnswer"]');
+                                
+                                if (multipleChoiceFields) multipleChoiceFields.style.display = 'none';
+                                if (fillInBlankHelp) fillInBlankHelp.style.display = 'none';
+                                if (orderSentencesHelp) orderSentencesHelp.style.display = 'none';
+                                if (orderSentencesFields) orderSentencesFields.style.display = 'none';
+                                if (correctAnswerField) correctAnswerField.style.display = 'block';
+                                
+                                // Mostrar campos para o tipo selecionado
+                                switch (type) {
+                                  case 'multiple_choice':
+                                    if (multipleChoiceFields) multipleChoiceFields.style.display = 'block';
+                                    break;
+                                  case 'fill_in_blank':
+                                    if (fillInBlankHelp) fillInBlankHelp.style.display = 'block';
+                                    break;
+                                  case 'order_sentences':
+                                    if (orderSentencesHelp) orderSentencesHelp.style.display = 'block';
+                                    if (orderSentencesFields) orderSentencesFields.style.display = 'block';
+                                    if (correctAnswerField) correctAnswerField.style.display = 'none';
+                                    break;
+                                }
+                              }
+                              
+                              // Adicionar listener para o select
+                              select.addEventListener('change', updateEditFields);
+                              
+                              // Também executar quando o colapso é exibido
+                              const collapse = document.getElementById('edit-question-form-<%= question.id %>');
+                              if (collapse) {
+                                collapse.addEventListener('shown.bs.collapse', updateEditFields);
+                              }
+                              
+                              // Inicializar assim que o DOM estiver pronto
+                              updateEditFields();
+                            });
+                          </script>
                         <% end %>
                       </div>
                     </div>
@@ -392,9 +453,11 @@
           </div>
         </div>
         
-        <div class="collapse" id="new-question-form" data-content-form-target="form" data-question-form-target="form">
+        <div class="collapse" id="new-question-form" data-content-form-target="form">
           <div class="card card-body mt-3 mb-3">
-            <%= render partial: "questions/form", locals: { question: @activity.questions.build, activity: @activity } %>
+            <div data-controller="question-form">
+              <%= render partial: "questions/form", locals: { question: @activity.questions.build, activity: @activity } %>
+            </div>
           </div>
         </div>
 
@@ -482,6 +545,11 @@
   
   // E também após um pequeno atraso para garantir que o DOM está carregado
   setTimeout(scrollToElement, 500);
+  
+  // Debug Stimulus
+  document.addEventListener('DOMContentLoaded', function() {
+    console.log('Sistema de formulários inicializado');
+  });
 </script>
 
 <style>

@@ -1,81 +1,169 @@
 // app/javascript/controllers/question_form_controller.js
 import { Controller } from "@hotwired/stimulus";
 
+// Controlador para gerenciar formulários de questões
 export default class extends Controller {
+  // Definir os targets que vamos usar
   static targets = [
     "questionType",
-    "contentField",
     "multipleChoiceFields",
     "fillInBlankHelp",
     "orderSentencesHelp",
     "orderSentencesFields",
-    "correctAnswerField",
-    "form"
+    "correctAnswerField"
   ];
 
+  // Inicialização do controlador
   connect() {
     console.log("QuestionFormController conectado");
-    this.updateFields();
+    this.refreshFields();
   }
 
-  updateFields() {
-    if (!this.hasQuestionTypeTarget) return;
+  // Método chamado quando o tipo de questão muda
+  changeQuestionType() {
+    console.log("Método changeQuestionType chamado");
+    this.refreshFields();
+  }
+
+  // Método para atualizar a visibilidade dos campos
+  refreshFields() {
+    if (!this.hasQuestionTypeTarget) {
+      console.error("Alvo questionType não encontrado");
+      return;
+    }
+
     const type = this.questionTypeTarget.value;
-    console.log("Atualizando campos para tipo:", type);
-    
-    // Esconder todos os campos específicos
+    console.log("Tipo de questão:", type);
+
+    // Esconder todos os campos
     this.hideAllFields();
+
+    // Mostrar campos específicos para o tipo selecionado
+    if (type === "multiple_choice") {
+      this.showMultipleChoiceFields();
+    } else if (type === "fill_in_blank") {
+      this.showFillInBlankFields();
+    } else if (type === "order_sentences") {
+      this.showOrderSentencesFields();
+    }
+  }
+
+  // Esconde todos os campos específicos
+  hideAllFields() {
+    if (this.hasMultipleChoiceFieldsTarget) {
+      this.multipleChoiceFieldsTarget.style.display = "none";
+    }
     
-    // Mostrar campos baseados no tipo selecionado
+    if (this.hasFillInBlankHelpTarget) {
+      this.fillInBlankHelpTarget.style.display = "none";
+    }
+    
+    if (this.hasOrderSentencesHelpTarget) {
+      this.orderSentencesHelpTarget.style.display = "none";
+    }
+    
+    if (this.hasOrderSentencesFieldsTarget) {
+      this.orderSentencesFieldsTarget.style.display = "none";
+    }
+    
+    // Mostrar campo de resposta correta por padrão
+    if (this.hasCorrectAnswerFieldTarget) {
+      this.correctAnswerFieldTarget.style.display = "block";
+    }
+  }
+
+  
+  // Método para mostrar campos baseados no tipo
+  showFieldsForType(type) {
+    console.log("Mostrando campos para tipo:", type);
+    
     switch (type) {
       case 'multiple_choice':
-        if (this.hasMultipleChoiceFieldsTarget) {
-          console.log("Mostrando campos de múltipla escolha");
-          this.multipleChoiceFieldsTarget.style.display = 'block';
-        }
+        this.showMultipleChoiceFields();
         break;
         
       case 'fill_in_blank':
-        if (this.hasFillInBlankHelpTarget) {
-          console.log("Mostrando ajuda para lacunas");
-          this.fillInBlankHelpTarget.style.display = 'block';
-        }
+        this.showFillInBlankFields();
         break;
         
       case 'order_sentences':
-        if (this.hasOrderSentencesHelpTarget) {
-          console.log("Mostrando ajuda para ordenar frases");
-          this.orderSentencesHelpTarget.style.display = 'block';
-        }
-        if (this.hasOrderSentencesFieldsTarget) {
-          console.log("Mostrando campos para ordenar frases");
-          this.orderSentencesFieldsTarget.style.display = 'block';
-        }
-        if (this.hasCorrectAnswerFieldTarget) {
-          console.log("Escondendo campo de resposta correta para ordenar frases");
-          this.correctAnswerFieldTarget.style.display = 'none';
-        }
+        this.showOrderSentencesFields();
+        break;
+        
+      default:
+        console.warn("Tipo de questão desconhecido:", type);
         break;
     }
   }
   
-  hideAllFields() {
-    console.log("Escondendo todos os campos específicos");
-    if (this.hasMultipleChoiceFieldsTarget) this.multipleChoiceFieldsTarget.style.display = 'none';
-    if (this.hasFillInBlankHelpTarget) this.fillInBlankHelpTarget.style.display = 'none';
-    if (this.hasOrderSentencesHelpTarget) this.orderSentencesHelpTarget.style.display = 'none';
-    if (this.hasOrderSentencesFieldsTarget) this.orderSentencesFieldsTarget.style.display = 'none';
-    
-    // Mostrar campo de resposta correta por padrão
-    if (this.hasCorrectAnswerFieldTarget) this.correctAnswerFieldTarget.style.display = 'block';
-  }
-
-  toggleForm(event) {
-    event.preventDefault();
-    console.log("Toggling form visibility...");
-    
-    if (this.hasFormTarget) {
-      this.formTarget.classList.toggle("d-none");
+  // Métodos auxiliares para cada tipo de questão
+  showMultipleChoiceFields() {
+    if (this.hasMultipleChoiceFieldsTarget) {
+      console.log("Mostrando campos de múltipla escolha");
+      this.multipleChoiceFieldsTarget.style.display = 'block';
+    } else {
+      console.error("Alvo multipleChoiceFields não encontrado");
     }
+  }
+  
+  showFillInBlankFields() {
+    if (this.hasFillInBlankHelpTarget) {
+      console.log("Mostrando ajuda para lacunas");
+      this.fillInBlankHelpTarget.style.display = 'block';
+    } else {
+      console.error("Alvo fillInBlankHelp não encontrado");
+    }
+  }
+  
+  showOrderSentencesFields() {
+    if (this.hasOrderSentencesHelpTarget) {
+      console.log("Mostrando ajuda para ordenar frases");
+      this.orderSentencesHelpTarget.style.display = 'block';
+    } else {
+      console.error("Alvo orderSentencesHelp não encontrado");
+    }
+    
+    if (this.hasOrderSentencesFieldsTarget) {
+      console.log("Mostrando campos para ordenar frases");
+      this.orderSentencesFieldsTarget.style.display = 'block';
+    } else {
+      console.error("Alvo orderSentencesFields não encontrado");
+    }
+    
+    if (this.hasCorrectAnswerFieldTarget) {
+      console.log("Escondendo campo de resposta correta para ordenar frases");
+      this.correctAnswerFieldTarget.style.display = 'none';
+    } else {
+      console.error("Alvo correctAnswerField não encontrado");
+    }
+  }
+  
+  // Método para verificar e logar status dos targets
+  logTargetsStatus() {
+    const targets = [
+      { name: "questionType", has: this.hasQuestionTypeTarget },
+      { name: "contentField", has: this.hasContentFieldTarget },
+      { name: "multipleChoiceFields", has: this.hasMultipleChoiceFieldsTarget },
+      { name: "fillInBlankHelp", has: this.hasFillInBlankHelpTarget },
+      { name: "orderSentencesHelp", has: this.hasOrderSentencesHelpTarget },
+      { name: "orderSentencesFields", has: this.hasOrderSentencesFieldsTarget },
+      { name: "correctAnswerField", has: this.hasCorrectAnswerFieldTarget }
+    ];
+    
+    console.log("Status dos targets:", targets);
+    
+    // Debug adicional - verificar elementos no DOM
+    targets.forEach(target => {
+      if (!target.has) {
+        const elements = document.querySelectorAll(`[data-question-form-target="${target.name}"]`);
+        console.log(`Elementos para target ${target.name} no DOM:`, elements.length);
+      }
+    });
+  }
+  
+  // Manter updateFields como alias para compatibilidade
+  updateFields() {
+    console.log("Método updateFields chamado (alias)");
+    this.changeQuestionType();
   }
 }

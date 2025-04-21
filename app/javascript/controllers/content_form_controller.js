@@ -7,27 +7,46 @@ export default class extends Controller {
   connect() {
     console.log("ContentFormController connected")
     
-    // Inicializa todos os collapses
-    this.formTargets.forEach(form => {
-      new bootstrap.Collapse(form, {
-        toggle: false
-      })
-    })
+    // Não inicializa os collapses automaticamente, deixa o Bootstrap fazer isso
+    console.log(`Encontrados ${this.formTargets.length} alvos de formulário`)
   }
 
   toggle(event) {
     event.preventDefault()
-    const targetId = event.currentTarget.getAttribute('data-target')
+    console.log("Toggle chamado", event.currentTarget)
+    
+    // Usa data-bs-target no padrão Bootstrap 5
+    const targetId = event.currentTarget.getAttribute('data-bs-target')
+    console.log("Target ID:", targetId)
+    
+    if (!targetId) {
+      console.error("Atributo data-bs-target não encontrado no botão")
+      return
+    }
+    
     const targetForm = document.querySelector(targetId)
+    
+    if (!targetForm) {
+      console.error(`Elemento com seletor ${targetId} não encontrado`)
+      return
+    }
     
     // Fecha todos os outros formulários primeiro
     this.formTargets.forEach(form => {
       if (form !== targetForm && form.classList.contains('show')) {
-        bootstrap.Collapse.getInstance(form)?.hide()
+        const instance = bootstrap.Collapse.getInstance(form)
+        if (instance) {
+          instance.hide()
+        }
       }
     })
     
-    // Toggle do formulário atual
-    bootstrap.Collapse.getOrCreateInstance(targetForm).toggle()
+    // Toggle do formulário atual usando getOrCreateInstance
+    try {
+      const collapse = bootstrap.Collapse.getOrCreateInstance(targetForm)
+      collapse.toggle()
+    } catch (error) {
+      console.error("Erro ao alternar collapse:", error)
+    }
   }
 } 

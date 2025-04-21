@@ -68,12 +68,27 @@ class Question < ApplicationRecord
   def process_order_sentences
     if order_sentences?
       if sentences_content.present?
+        # Separar as frases por quebras de linha e limpar espaços
         sentences = sentences_content.split("\n").map(&:strip).reject(&:blank?)
-        self.content = "" # Define o content como vazio para questões de ordenar frases
-        self.options = sentences.shuffle
-        self.correct_answer = sentences.join("|")
+        
+        if sentences.length < 2
+          errors.add(:sentences_content, "deve conter pelo menos 2 frases para ordenar")
+          return false
+        end
+        
+        # Campos específicos para este tipo de questão
+        self.content = "" # Content não é usado para questões de ordenar frases
+        self.options = sentences.shuffle # Opções são as frases embaralhadas
+        self.correct_answer = sentences.join("|") # A resposta correta é a ordem original separada por |
+        
+        # Log para debug
+        Rails.logger.debug "Processando questão de ordenação de frases:"
+        Rails.logger.debug "Frases originais: #{sentences.inspect}"
+        Rails.logger.debug "Opções embaralhadas: #{options.inspect}"
+        Rails.logger.debug "Resposta correta: #{correct_answer}"
       else
         errors.add(:sentences_content, "não pode ficar em branco")
+        return false
       end
     end
   end

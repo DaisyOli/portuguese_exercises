@@ -11,18 +11,40 @@ class QuestionsController < ApplicationController
   def create
     @question = @activity.questions.build(question_params)
     
+    Rails.logger.debug "============================================="
+    Rails.logger.debug "CRIANDO NOVA QUESTÃO"
     Rails.logger.debug "Parâmetros recebidos: #{params.inspect}"
     Rails.logger.debug "Parâmetros permitidos: #{question_params.inspect}"
-    Rails.logger.debug "Questão construída: #{@question.inspect}"
-    Rails.logger.debug "Opções: #{@question.options.inspect}"
-    Rails.logger.debug "Options text: #{@question.options_text.inspect}"
-    Rails.logger.debug "Sentences content: #{@question.sentences_content.inspect}"
+    Rails.logger.debug "Tipo de questão: #{@question.question_type}"
+    
+    if @question.question_type == 'order_sentences'
+      Rails.logger.debug "QUESTÃO DE ORDENAÇÃO DE FRASES"
+      Rails.logger.debug "Sentences content: #{@question.sentences_content.inspect}"
+    elsif @question.question_type == 'multiple_choice'
+      Rails.logger.debug "QUESTÃO DE MÚLTIPLA ESCOLHA"
+      Rails.logger.debug "Options text: #{@question.options_text.inspect}"
+    elsif @question.question_type == 'fill_in_blank'
+      Rails.logger.debug "QUESTÃO DE PREENCHER LACUNAS"
+      Rails.logger.debug "Content: #{@question.content.inspect}"
+    end
 
     if @question.save
+      Rails.logger.debug "QUESTÃO SALVA COM SUCESSO"
+      Rails.logger.debug "ID: #{@question.id}"
+      Rails.logger.debug "============================================="
       redirect_to activity_path(@activity, ultimo_id: @question.id), notice: t('messages.question_created')
     else
+      Rails.logger.debug "ERRO AO SALVAR QUESTÃO"
       Rails.logger.debug "Erros de validação: #{@question.errors.full_messages}"
-      render :new, status: :unprocessable_entity
+      Rails.logger.debug "============================================="
+      
+      respond_to do |format|
+        format.html { render :new, status: :unprocessable_entity }
+        format.turbo_stream do
+          flash.now[:alert] = "Erro ao criar questão: #{@question.errors.full_messages.join(', ')}"
+          render turbo_stream: turbo_stream.replace(:flash, partial: "shared/flash")
+        end
+      end
     end
   end
 
