@@ -112,10 +112,8 @@ class ActivitiesController < ApplicationController
         "submitted_at" => Time.current
       }
       
-      # Salvar na sessão
-      session[:quiz_results] = quiz_results_data
-      
-      # Salvar no banco de dados de forma eficiente
+      # Em vez de salvar na sessão, armazenar apenas no banco de dados
+      # e guardar apenas o ID da tentativa na sessão
       if current_user
         @quiz_attempt = QuizAttempt.find_or_initialize_by(
           user_id: current_user.id, 
@@ -127,6 +125,10 @@ class ActivitiesController < ApplicationController
         @quiz_attempt.submitted_at = Time.current
         
         if @quiz_attempt.save
+          # Armazenar apenas o ID da tentativa na sessão, evitando o CookieOverflow
+          session[:quiz_attempt_id] = @quiz_attempt.id
+          session[:last_quiz_score] = score
+          
           redirect_to quiz_results_activity_path(@activity, locale: I18n.locale), 
                     notice: t('quiz.success', score: score)
         else
@@ -134,9 +136,26 @@ class ActivitiesController < ApplicationController
           redirect_to quiz_results_activity_path(@activity, locale: I18n.locale)
         end
       else
-        # Para usuários não autenticados
-        redirect_to quiz_results_activity_path(@activity, locale: I18n.locale), 
-                   notice: t('quiz.success', score: score)
+        # Para usuários não autenticados - criar uma tentativa temporária
+        # sem associação a um usuário
+        @quiz_attempt = QuizAttempt.new(
+          activity_id: @activity.id,
+          score: score,
+          results: quiz_results_data,
+          submitted_at: Time.current
+        )
+        
+        if @quiz_attempt.save
+          # Armazenar apenas o ID da tentativa na sessão
+          session[:quiz_attempt_id] = @quiz_attempt.id
+          session[:last_quiz_score] = score
+          
+          redirect_to quiz_results_activity_path(@activity, locale: I18n.locale), 
+                    notice: t('quiz.success', score: score)
+        else
+          flash[:alert] = t('quiz.error')
+          redirect_to activities_path
+        end
       end
       
     rescue => e
@@ -213,90 +232,66 @@ class ActivitiesController < ApplicationController
     begin
       @activity = Activity.find(params[:id])
       
-      # Debug: Verificar se há dados na sessão
-      if session[:quiz_results].present?
-        Rails.logger.info "DEBUG: Dados na sessão: #{session[:quiz_results].inspect}"
-      else
-        Rails.logger.info "DEBUG: Nenhum dado encontrado na sessão para quiz_results"
+      # Tentar obter a tentativa a partir do ID na sessão
+      if session[:quiz_attempt_id].present?
+        @quiz_attempt = QuizAttempt.find_by(id: session[:quiz_attempt_id])
       end
       
-      # Primeiramente, tentar obter da sessão (para compatibilidade)
-      if session[:quiz_results].present? && session[:quiz_results]["activity_id"].to_s == @activity.id.to_s
-        Rails.logger.info "DEBUG: Usando resultados da sessão"
-        @quiz_results = session[:quiz_results]
-      else
-        Rails.logger.info "DEBUG: Tentando obter resultados do banco de dados"
-        # Se não estiver na sessão, procurar no banco de dados
-        if current_user
-          @quiz_attempt = current_user.quiz_attempts.where(activity_id: @activity.id).order(created_at: :desc).first
+      # Se não encontrar pelo ID na sessão, buscar a última tentativa do usuário
+      if @quiz_attempt.nil? && current_user
+        @quiz_attempt = current_user.quiz_attempts.where(activity_id: @activity.id).order(created_at: :desc).first
+      end
+      
+      if @quiz_attempt.present?
+        # Usar os resultados do banco de dados
+        begin
+          @quiz_results = @quiz_attempt.results
           
-          if @quiz_attempt
-            Rails.logger.info "DEBUG: Encontrada tentativa para o usuário #{current_user.id}, score: #{@quiz_attempt.score}"
-            # Usar os resultados do banco de dados com segurança
-            begin
-              @quiz_results = @quiz_attempt.results
-              
-              # Garantir que os dados têm o formato correto
-              unless @quiz_results.key?("total_questions")
-                # Se os dados estiverem em formato antigo, converter para novo formato
-                Rails.logger.info "DEBUG: Convertendo formato antigo de resultados para novo formato"
-                
-                if @quiz_results.is_a?(Hash) && @quiz_results.values.any? { |v| v.is_a?(Hash) && v["is_correct"] }
-                  # Formato antigo com resultados individuais
-                  @quiz_results = {
-                    "activity_id" => @activity.id,
-                    "results" => @quiz_results,
-                    "score" => @quiz_attempt.score,
-                    "total_correct" => @quiz_results.values.count { |r| r["is_correct"] },
-                    "total_questions" => @quiz_results.size,
-                    "submitted_at" => @quiz_attempt.submitted_at
-                  }
-                else
-                  # Formato totalmente inválido, criar um fallback
-                  @quiz_results = {
-                    "activity_id" => @activity.id,
-                    "results" => {},
-                    "score" => @quiz_attempt.score || 0,
-                    "total_correct" => 0,
-                    "total_questions" => 0,
-                    "submitted_at" => @quiz_attempt.submitted_at || Time.current,
-                    "data_recovery" => true
-                  }
-                end
-              end
-            rescue => e
-              # Se ocorrer algum erro no processamento dos resultados, usar um fallback
-              Rails.logger.error "Erro ao processar resultados do banco: #{e.message}"
+          # Garantir que os dados têm o formato correto
+          unless @quiz_results.key?("total_questions")
+            # Se os dados estiverem em formato antigo, converter para novo formato
+            Rails.logger.info "Convertendo formato antigo de resultados para novo formato"
+            
+            if @quiz_results.is_a?(Hash) && @quiz_results.values.any? { |v| v.is_a?(Hash) && v["is_correct"] }
+              # Formato antigo com resultados individuais
+              @quiz_results = {
+                "activity_id" => @activity.id,
+                "results" => @quiz_results,
+                "score" => @quiz_attempt.score,
+                "total_correct" => @quiz_results.values.count { |r| r["is_correct"] },
+                "total_questions" => @quiz_results.size,
+                "submitted_at" => @quiz_attempt.submitted_at
+              }
+            else
+              # Formato totalmente inválido, criar um fallback
               @quiz_results = {
                 "activity_id" => @activity.id,
                 "results" => {},
                 "score" => @quiz_attempt.score || 0,
                 "total_correct" => 0,
                 "total_questions" => 0,
-                "submitted_at" => Time.current,
-                "fallback" => true
+                "submitted_at" => @quiz_attempt.submitted_at || Time.current,
+                "data_recovery" => true
               }
             end
-          else
-            Rails.logger.info "DEBUG: Nenhuma tentativa encontrada para o usuário #{current_user.id}"
-            # Se não encontrar nem na sessão nem no banco de dados, redirecionar para resolver o quiz
-            redirect_to resolve_quiz_activity_path(@activity, locale: I18n.locale), alert: t('messages.answer_quiz_first')
-            return
           end
-        else
-          # Caso extremo: usuário não autenticado mas com dados na sessão
-          # Criar um resultado temporário para exibição
-          Rails.logger.info "DEBUG: Usuário não autenticado, criando resultado temporário"
+        rescue => e
+          # Se ocorrer algum erro no processamento dos resultados, usar um fallback
+          Rails.logger.error "Erro ao processar resultados do banco: #{e.message}"
           @quiz_results = {
             "activity_id" => @activity.id,
             "results" => {},
-            "score" => 0,
+            "score" => @quiz_attempt.score || 0,
             "total_correct" => 0,
             "total_questions" => 0,
             "submitted_at" => Time.current,
-            "temporary" => true
+            "fallback" => true
           }
         end
+      else
+        # Se não encontrar tentativa, redirecionar para resolver o quiz
+        redirect_to resolve_quiz_activity_path(@activity, locale: I18n.locale), alert: t('messages.answer_quiz_first')
+        return
       end
       
       # Verificação final de segurança dos dados
@@ -345,11 +340,9 @@ class ActivitiesController < ApplicationController
       
       render 'quiz_results'
     rescue => e
-      # Se tudo falhar, redirecionar com uma mensagem amigável
-      Rails.logger.error "ERRO NA EXIBIÇÃO DOS RESULTADOS: #{e.message}"
+      Rails.logger.error "Erro ao mostrar resultados: #{e.message}"
       Rails.logger.error e.backtrace.join("\n")
-      flash[:alert] = "Ocorreu um erro ao exibir os resultados: #{e.message}"
-      redirect_to activities_path
+      redirect_to activities_path, alert: "Ocorreu um erro ao exibir os resultados. Tente novamente."
     end
   end
 

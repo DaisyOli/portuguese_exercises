@@ -43,7 +43,7 @@
       </div>
     </div>
     
-    <div class="row mb-3 order-sentences-help" style="display: <%= question.order_sentences? ? 'block' : 'none' %>;" data-question-selector-target="orderSentences">
+    <div class="row mb-3 order-sentences-help" style="display: <%= question.order_sentences? ? 'block' : 'none' %>;" data-question-selector-target="orderSentencesHelp">
       <div class="col-md-12">
         <div class="alert alert-info">
           <%= t('questions.form.order_sentences_help_html') %>
@@ -63,7 +63,7 @@
       </div>
     </div>
     
-    <div class="row mb-3 order-sentences-fields" style="display: <%= question.order_sentences? ? 'block' : 'none' %>;" data-question-selector-target="orderSentences">
+    <div class="row mb-3 order-sentences-fields" style="display: <%= question.order_sentences? ? 'block' : 'none' %>;" data-question-selector-target="orderSentencesFields">
       <div class="col-md-12">
         <%= form.label :sentences_content, t('questions.form.sentences'), class: "form-label required" %>
         <%= form.text_area :sentences_content, 

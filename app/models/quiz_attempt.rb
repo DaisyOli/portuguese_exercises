@@ -1,5 +1,5 @@
 class QuizAttempt < ApplicationRecord
-  belongs_to :user
+  belongs_to :user, optional: true
   belongs_to :activity
   
   validates :score, presence: true, numericality: { greater_than_or_equal_to: 0, less_than_or_equal_to: 100 }
@@ -7,13 +7,13 @@ class QuizAttempt < ApplicationRecord
   
   # Definir quais campos resultados deve ter
   validates_each :results do |record, attr, value|
-    unless value.is_a?(Hash) && value.key?("total_correct") && value.key?("total_questions")
-      record.errors.add(attr, "deve conter total_correct e total_questions")
+    unless value.is_a?(Hash) && value.key?("score") && value.key?("total_questions")
+      record.errors.add(attr, "deve conter score e total_questions")
     end
   end
   
   before_create :set_submitted_at
-  after_create :clear_user_attempts_cache
+  after_commit :clear_user_attempts_cache, if: :user_id?
   
   # Métodos de conveniência para acessar informações dos resultados
   def total_correct
@@ -32,6 +32,11 @@ class QuizAttempt < ApplicationRecord
     results["results"] if results
   end
   
+  # Método para limpar tentativas anônimas antigas (pode ser executado por um job)
+  def self.clean_anonymous_attempts(older_than = 1.day)
+    where(user_id: nil).where('created_at < ?', older_than.ago).delete_all
+  end
+  
   private
   
   def set_submitted_at
@@ -39,6 +44,6 @@ class QuizAttempt < ApplicationRecord
   end
   
   def clear_user_attempts_cache
-    Rails.cache.delete_matched("best_attempts/#{user_id}*")
+    Rails.cache.delete_matched("best_attempts/#{user_id}*") if user_id.present?
   end
 end

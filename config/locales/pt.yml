@@ -188,6 +188,9 @@ pt:
     clear_history: "Limpar histórico"
     confirm_clear_history: "Limpar histórico de tentativas"
     clear_history_warning: "Tem certeza que deseja limpar todo o histórico de tentativas para esta atividade? Esta ação não pode ser desfeita."
+    success: "Quiz enviado com sucesso! Sua pontuação: %{score}%"
+    error: "Erro ao processar o quiz. Por favor, tente novamente."
+    no_results: "Nenhum resultado encontrado. Por favor, responda o quiz primeiro."
 
   # Formulários
   forms:
