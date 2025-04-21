@@ -38,13 +38,8 @@ class QuestionsController < ApplicationController
       Rails.logger.debug "Erros de validação: #{@question.errors.full_messages}"
       Rails.logger.debug "============================================="
       
-      respond_to do |format|
-        format.html { render :new, status: :unprocessable_entity }
-        format.turbo_stream do
-          flash.now[:alert] = "Erro ao criar questão: #{@question.errors.full_messages.join(', ')}"
-          render turbo_stream: turbo_stream.replace(:flash, partial: "shared/flash")
-        end
-      end
+      flash.now[:alert] = "Erro ao criar questão: #{@question.errors.full_messages.join(', ')}"
+      render :new, status: :unprocessable_entity
     end
   end
 

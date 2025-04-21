@@ -66,30 +66,28 @@ class Question < ApplicationRecord
   end
 
   def process_order_sentences
-    if order_sentences?
-      if sentences_content.present?
-        # Separar as frases por quebras de linha e limpar espaços
-        sentences = sentences_content.split("\n").map(&:strip).reject(&:blank?)
-        
-        if sentences.length < 2
-          errors.add(:sentences_content, "deve conter pelo menos 2 frases para ordenar")
-          return false
-        end
-        
-        # Campos específicos para este tipo de questão
-        self.content = "" # Content não é usado para questões de ordenar frases
-        self.options = sentences.shuffle # Opções são as frases embaralhadas
-        self.correct_answer = sentences.join("|") # A resposta correta é a ordem original separada por |
-        
-        # Log para debug
-        Rails.logger.debug "Processando questão de ordenação de frases:"
-        Rails.logger.debug "Frases originais: #{sentences.inspect}"
-        Rails.logger.debug "Opções embaralhadas: #{options.inspect}"
-        Rails.logger.debug "Resposta correta: #{correct_answer}"
-      else
-        errors.add(:sentences_content, "não pode ficar em branco")
+    return unless order_sentences?
+    return unless sentences_content.present?
+    
+    begin
+      # Separar as frases por quebras de linha e limpar espaços
+      sentences = sentences_content.to_s.split("\n").map(&:strip).reject(&:blank?)
+      
+      if sentences.length < 2
+        errors.add(:sentences_content, "deve conter pelo menos 2 frases para ordenar")
         return false
       end
+      
+      # Campos específicos para este tipo de questão
+      self.content = "" # Content não é usado para questões de ordenar frases
+      self.options = sentences.shuffle # Opções são as frases embaralhadas
+      self.correct_answer = sentences.join("|") # A resposta correta é a ordem original
+      
+      true
+    rescue => e
+      Rails.logger.error "Erro ao processar questão de ordem de frases: #{e.message}"
+      errors.add(:sentences_content, "ocorreu um erro ao processar as frases")
+      false
     end
   end
 end

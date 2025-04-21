@@ -70,7 +70,7 @@
             class: "form-control", 
             rows: 5,
             placeholder: t('questions.form.sentences_placeholder'),
-            value: question.order_sentences? && question.correct_answer ? question.correct_answer.gsub('|', "\n") : nil %>
+            value: (question.order_sentences? && question.correct_answer.present? ? question.correct_answer.gsub('|', "\n") : nil) %>
         <small class="form-text text-muted"><%= t('questions.form.order_sentences_input_help') %></small>
       </div>
     </div>
