@@ -119,10 +119,8 @@ pt:
     type: "Tipo de questão"
     types:
       multiple_choice: "Múltipla escolha"
-      fill_in_blank: "Completar lacunas"
-      order_sentences: "Ordenar frases"
+      fill_in_blank: "Preencher lacuna"
     fill_in_blank_help: "Use _____ (5 underscores) para marcar onde o aluno deve inserir a resposta."
-    order_sentences_help: "Digite cada frase em uma nova linha. A ordem em que você digita será considerada a ordem correta."
     confirm_delete: "Tem certeza que deseja excluir esta questão?"
     add_options: "Adicionar Opções"
     options_placeholder: "Digite as opções separadas por vírgula"
@@ -144,7 +142,6 @@ pt:
     error_updating: "Erro ao atualizar a questão"
     error_deleting: "Erro ao excluir a questão"
     permission_denied: "Você não tem permissão para modificar esta questão"
-    order_sentences_instruction: "Selecione a ordem correta das frases usando os números:"
     form:
       question_type: "Tipo de Questão"
       question_content: "Enunciado da Questão"
@@ -161,8 +158,7 @@ pt:
       sentences_placeholder: "Digite cada frase em uma linha separada. Ex:\nEu vi o cachorro\nO cachorro me viu\nO cachorro latiu\nEu saí correndo"
       points: "Pontos"
       fill_in_blank_help_html: "<strong>Dica:</strong> Use exatamente 5 underscores (_____) para marcar as lacunas a serem preenchidas. Ex: 'Eu _____ chocolate' (a lacuna será substituída por um campo de texto)."
-      order_sentences_help_html: "<strong>Como funciona:</strong><br>1. Digite cada frase em uma linha separada<br>2. A ordem em que você digitar será considerada a ordem correta<br>3. O sistema embaralhará as frases para o aluno ordenar<br>4. O aluno verá as frases embaralhadas e deverá arrastá-las para a ordem correta"
-      order_sentences_input_help: "Digite cada frase em uma linha separada. A ordem em que você digitar será considerada a ordem correta."
+      help: "Use o formulário abaixo para criar sua questão."
 
   # Quiz
   quiz:

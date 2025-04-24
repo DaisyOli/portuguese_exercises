@@ -167,19 +167,6 @@
                       <div>
                         <% if question.fill_in_blank? %>
                           <p class="mb-3 fs-5"><%= question.content.gsub('_____', '<span class="text-decoration-underline" style="width: 100px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>').html_safe %></p>
-                        <% elsif question.order_sentences? %>
-                          <p class="mb-3"><strong><%= t('questions.content') %>:</strong></p>
-                          <div class="mb-3">
-                            <% question.correct_answer.split("|").each do |sentence| %>
-                              <p class="mb-2"><%= sentence %></p>
-                            <% end %>
-                          </div>
-                          <p class="mb-3"><strong><%= t('questions.options') %>:</strong></p>
-                          <ul class="list-group mb-3">
-                            <% question.options.each do |sentence| %>
-                              <li class="list-group-item"><%= sentence %></li>
-                            <% end %>
-                          </ul>
                         <% else %>
                           <p class="mb-3 fs-5"><%= question.content %></p>
                         <% end %>
@@ -251,14 +238,6 @@
                             </div>
                           </div>
                       
-                          <div class="row mb-3 order-sentences-help" data-question-selector-target="orderSentences" style="display: <%= question.order_sentences? ? 'block' : 'none' %>;">
-                            <div class="col-md-12">
-                              <div class="alert alert-info">
-                                <%= t('questions.form.order_sentences_help_html') %>
-                              </div>
-                            </div>
-                          </div>
-                      
                           <div class="row mb-3 multiple-choice-fields" data-question-selector-target="multipleChoice" style="display: <%= question.multiple_choice? ? 'block' : 'none' %>;">
                             <div class="col-md-12">
                               <%= form.label :options, t('questions.form.options') %>
@@ -267,20 +246,7 @@
                             </div>
                           </div>
                       
-                          <div class="row mb-3 order-sentences-fields" data-question-selector-target="orderSentences" style="display: <%= question.order_sentences? ? 'block' : 'none' %>;">
-                            <div class="col-md-12">
-                              <%= form.label :sentences_content, t('questions.form.sentences'), class: "form-label required" %>
-                              <%= form.text_area :sentences_content, 
-                                  class: "form-control", 
-                                  rows: 5,
-                                  required: question.order_sentences?,
-                                  placeholder: t('questions.form.sentences_placeholder'),
-                                  value: (question.order_sentences? && question.correct_answer.present? ? question.correct_answer.gsub('|', "\n") : nil) %>
-                              <small class="form-text text-muted"><%= t('questions.form.order_sentences_input_help') %></small>
-                            </div>
-                          </div>
-                      
-                          <div class="row mb-3" data-question-selector-target="correctAnswer" style="display: <%= question.order_sentences? ? 'none' : 'block' %>;">
+                          <div class="row mb-3" data-question-selector-target="correctAnswer">
                             <div class="col-md-12">
                               <%= form.label :correct_answer, t('questions.form.correct_answer') %>
                               <%= form.text_field :correct_answer, class: "form-control" %>
@@ -315,14 +281,10 @@
                                 // Esconder todos os campos
                                 const multipleChoiceFields = form.querySelector('.multiple-choice-fields');
                                 const fillInBlankHelp = form.querySelector('.fill-in-blank-help');
-                                const orderSentencesHelp = form.querySelector('.order-sentences-help');
-                                const orderSentencesFields = form.querySelector('.order-sentences-fields');
                                 const correctAnswerField = form.querySelector('[data-question-selector-target="correctAnswer"]');
                                 
                                 if (multipleChoiceFields) multipleChoiceFields.style.display = 'none';
                                 if (fillInBlankHelp) fillInBlankHelp.style.display = 'none';
-                                if (orderSentencesHelp) orderSentencesHelp.style.display = 'none';
-                                if (orderSentencesFields) orderSentencesFields.style.display = 'none';
                                 if (correctAnswerField) correctAnswerField.style.display = 'block';
                                 
                                 // Mostrar campos para o tipo selecionado
@@ -332,11 +294,6 @@
                                     break;
                                   case 'fill_in_blank':
                                     if (fillInBlankHelp) fillInBlankHelp.style.display = 'block';
-                                    break;
-                                  case 'order_sentences':
-                                    if (orderSentencesHelp) orderSentencesHelp.style.display = 'block';
-                                    if (orderSentencesFields) orderSentencesFields.style.display = 'block';
-                                    if (correctAnswerField) correctAnswerField.style.display = 'none';
                                     break;
                                 }
                               }

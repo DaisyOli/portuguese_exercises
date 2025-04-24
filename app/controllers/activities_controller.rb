@@ -71,119 +71,90 @@ class ActivitiesController < ApplicationController
       @activity = Activity.find(params[:id])
       @questions = @activity.questions
       
-      # Logs básicos
-      Rails.logger.info "Iniciando processamento para atividade #{@activity.id} com #{@questions.count} questões"
-      
-      # OTIMIZAÇÃO: Reduzir a quantidade de dados processados
-      question_ids = @questions.pluck(:id)
+      # Verificar se já existe uma tentativa recente para este quiz
+      recent_attempt = current_user&.quiz_attempts&.where(activity_id: @activity.id)&.where('created_at > ?', 30.minutes.ago)&.order(created_at: :desc)&.first
+
+      # Inicializar arrays para capturar questões e respostas
       results = {}
-      total_correct = 0
+      total_score = 0
       
-      # Simplifique as respostas para processamento mais rápido
-      answers = params[:answers] || {}
+      # Obter todas as formas de respostas
+      raw_answers = params[:answers_raw] || {}
+      alt_answers = params[:answers_alt] || {}
+      order_values = params[:answers_order] || {}
       
-      # Log detalhado das respostas recebidas
-      Rails.logger.debug "====== RESPOSTAS RECEBIDAS ======"
-      answers.each do |qid, answer|
-        Rails.logger.debug "Questão #{qid}: '#{answer}' (#{answer.class.name})"
-      end
+      # Nova abordagem: processar frases separadas
+      sentences_answers = params[:answers_sentences] || {}
       
-      # Processamento mais eficiente, tudo de uma vez
-      all_questions = Question.where(id: question_ids).select(:id, :content, :question_type, :correct_answer).to_a
-      question_map = all_questions.index_by(&:id)
-      
-      # Processar cada resposta - método simplificado
-      answers.each do |question_id_str, given_answer|
-        question_id = question_id_str.to_i
-        question = question_map[question_id]
+      # Processar cada questão
+      @questions.each do |question|
+        # Obter a resposta dada pelo usuário
+        given_answer = params[:answers][question.id.to_s]
         
-        next unless question # Pula se a questão não existir
+        # Obter resposta correta
+        correct_answer = question.correct_answer
         
         # Processamento baseado no tipo de questão
-        is_correct = false
+        is_correct = false 
+        
         begin
-          if question.question_type == 'order_sentences'
-            # Log detalhado para questões de ordem
-            Rails.logger.debug "Processando questão de ordem: #{question_id}"
-            Rails.logger.debug "Resposta recebida: '#{given_answer}'"
-            Rails.logger.debug "Resposta correta: '#{question.correct_answer}'"
-            
-            # Verificar se a resposta não está vazia
-            if given_answer.present? && given_answer.to_s.strip != ''
-              # Verificar se é uma resposta válida para ordem de frases
-              if given_answer.to_s.include?('|')
-                given_items = given_answer.to_s.split('|').map(&:strip)
-                correct_items = question.correct_answer.to_s.split('|').map(&:strip)
-                
-                Rails.logger.debug "Itens recebidos: #{given_items.inspect}"
-                Rails.logger.debug "Itens corretos: #{correct_items.inspect}"
-                
-                # Comparar os arrays
-                is_correct = (given_items == correct_items)
-                
-                # Log adicional se não for correto para entender o que deu errado
-                unless is_correct
-                  Rails.logger.debug "COMPARAÇÃO FALHOU - Verificando detalhes:"
-                  Rails.logger.debug "Número de itens recebidos: #{given_items.length}, Número de itens corretos: #{correct_items.length}"
-                  
-                  # Verificar diferenças item a item
-                  if given_items.length == correct_items.length
-                    given_items.each_with_index do |item, idx|
-                      if item != correct_items[idx]
-                        Rails.logger.debug "Item #{idx+1} difere: '#{item}' vs esperado '#{correct_items[idx]}'"
-                      end
-                    end
-                  end
-                end
-              else
-                # Resposta sem separador de pipe não é válida para order_sentences
-                Rails.logger.debug "Resposta sem separador de pipe: #{given_answer}"
-                is_correct = false
-              end
-            else
-              Rails.logger.debug "Resposta vazia para questão de ordem"
-              is_correct = false
-            end
-          else
-            # Comparação direta para outros tipos de questão
-            is_correct = given_answer.present? && given_answer.to_s.strip == question.correct_answer.to_s.strip
-          end
+          # Processamento para outros tipos de questão - mantido idêntico
+          is_correct = given_answer.present? && given_answer.to_s.strip == correct_answer.to_s.strip
+          
+          results[question.id] = {
+            "is_correct" => is_correct,
+            "question_text" => question.content,
+            "question_type" => question.question_type,
+            "given_answer" => given_answer.present? ? given_answer.to_s.strip : t('quiz.not_answered'),
+            "correct_answer" => correct_answer,
+            "raw_answer" => given_answer.to_s.strip
+          }
+          
+          # Incrementar contador
+          total_score += 1 if is_correct
+          
         rescue => e
-          Rails.logger.error "Erro ao processar resposta: #{e.message}"
+          # Log detalhado de erros
+          Rails.logger.error "ERRO ao processar questão #{question.id}: #{e.message}"
           Rails.logger.error e.backtrace.join("\n")
+          
+          # Criar um resultado de erro
+          results[question.id] = {
+            "is_correct" => false,
+            "question_text" => question.content,
+            "question_type" => question.question_type,
+            "given_answer" => "ERRO: #{e.message}",
+            "correct_answer" => correct_answer,
+            "error" => true
+          }
         end
-        
-        # Log do resultado
-        Rails.logger.debug "Resultado da questão #{question_id}: #{is_correct ? 'CORRETO' : 'INCORRETO'}"
-        
-        # Incrementar contador
-        total_correct += 1 if is_correct
-        
-        # Armazenar informações completas sobre a questão
-        results[question_id] = {
-          "is_correct" => is_correct,
-          "question_text" => question.content,
-          "question_type" => question.question_type,
-          "given_answer" => given_answer.present? ? given_answer.to_s.strip : t('quiz.not_answered'),
-          "correct_answer" => question.correct_answer
-        }
       end
       
       # Calcular score
-      score = @questions.count.positive? ? ((total_correct.to_f / @questions.count) * 100).round(2) : 0
+      score = @questions.count.positive? ? ((total_score.to_f / @questions.count) * 100).round(2) : 0
       
       # Hash simplificado de resultados
       quiz_results_data = {
         "activity_id" => @activity.id,
         "results" => results,
         "score" => score,
-        "total_correct" => total_correct,
+        "total_correct" => total_score,
         "total_questions" => @questions.count,
         "submitted_at" => Time.current
       }
       
       # Log resumo do processamento
-      Rails.logger.info "Processamento finalizado: #{total_correct} corretas de #{@questions.count} questões (#{score}%)"
+      Rails.logger.info "Processamento finalizado: #{total_score} corretas de #{@questions.count} questões (#{score}%)"
+      
+      # Log adicional para diagnóstico das respostas order_sentences
+      order_sentences_results = results.select { |_, r| r["question_type"] == "order_sentences" }
+      if order_sentences_results.any?
+        Rails.logger.info "=== DIAGNÓSTICO DAS QUESTÕES DE ORDEM ==="
+        order_sentences_results.each do |qid, result|
+          Rails.logger.info "Questão #{qid}: is_correct=#{result["is_correct"]}, given_answer='#{result["given_answer"]}'"
+        end
+        Rails.logger.info "========================================"
+      end
       
       # Em vez de salvar na sessão, armazenar apenas no banco de dados
       # e guardar apenas o ID da tentativa na sessão
@@ -245,121 +216,61 @@ class ActivitiesController < ApplicationController
       end
     end
   end
-  
-  # Método auxiliar para processar respostas de diferentes tipos
-  def process_answer(question_type, given_answer, correct_answer)
-    case question_type
-    when 'multiple_choice', 'fill_in_blank'
-      # Para escolha múltipla e preenchimento de lacunas, a resposta deve corresponder exatamente
-      given_answer.present? && given_answer.to_s.strip == correct_answer.to_s.strip
-    when 'order_sentences'
-      process_order_sentences_answer(given_answer, correct_answer)
-    else
-      false
-    end
-  rescue => e
-    Rails.logger.error "Erro ao processar resposta: #{e.message}"
-    false
-  end
-  
-  # Método específico para processar respostas de ordenação
-  def process_order_sentences_answer(given_answer, correct_answer)
-    # Segurança: se não tiver resposta, já retorna falso
-    return false if given_answer.blank?
-    
-    # Log de debug com valores completos
-    Rails.logger.debug "Processando resposta de ordenação - Dada: '#{given_answer}' (#{given_answer.class.name}) vs Correta: '#{correct_answer}' (#{correct_answer.class.name})"
-    
-    # Versão ultra segura - compara strings diretas, sem nenhuma manipulação
-    begin
-      # Comparação direta como string
-      if given_answer.to_s == correct_answer.to_s
-        Rails.logger.debug "Resposta exata correspondeu"
-        return true
-      end
-      
-      # Se as strings não correspondem exatamente mas dado contém pipe, compare os valores normalizados
-      if given_answer.to_s.include?('|')
-        # Tente normalizar ambos os lados
-        given_items = given_answer.to_s.split('|').map(&:strip)
-        correct_items = correct_answer.to_s.split('|').map(&:strip)
-        
-        # Comparar os arrays
-        if given_items == correct_items
-          Rails.logger.debug "Normalizado correspondeu"
-          return true
-        end
-      end
-      
-      # Não corresponde
-      Rails.logger.debug "Não correspondeu"
-      return false
-    rescue => e
-      # Se qualquer coisa der errado, log e retorne falso
-      Rails.logger.error "Erro ao comparar respostas de ordenação: #{e.message}"
-      return false
-    end
-  end
 
   def quiz_results
     begin
       @activity = Activity.find(params[:id])
       
+      # Verificar se devemos desativar as correções de emergência
+      @disable_emergency_fixes = params[:raw_display] == "true"
+      
       # Tentar obter a tentativa a partir do ID na sessão
       if session[:quiz_attempt_id].present?
         @quiz_attempt = QuizAttempt.find_by(id: session[:quiz_attempt_id])
+        Rails.logger.info "Recuperando tentativa pelo ID da sessão: #{session[:quiz_attempt_id]}"
       end
       
       # Se não encontrar pelo ID na sessão, buscar a última tentativa do usuário
       if @quiz_attempt.nil? && current_user
         @quiz_attempt = current_user.quiz_attempts.where(activity_id: @activity.id).order(created_at: :desc).first
+        Rails.logger.info "Recuperando última tentativa do usuário para atividade #{@activity.id}: #{@quiz_attempt&.id}"
       end
       
       if @quiz_attempt.present?
+        # Log do formato original no banco de dados
+        Rails.logger.info "Formato dos resultados no banco de dados: #{@quiz_attempt.results.class.name}"
+        Rails.logger.info "Dados brutos: #{@quiz_attempt.results.inspect.truncate(500)}"
+        
         # Usar os resultados do banco de dados
-        begin
-          @quiz_results = @quiz_attempt.results
+        @quiz_results = @quiz_attempt.results
+        
+        # Garantir que os dados têm o formato correto
+        unless @quiz_results.key?("total_questions")
+          # Se os dados estiverem em formato antigo, converter para novo formato
+          Rails.logger.info "Convertendo formato antigo de resultados para novo formato"
           
-          # Garantir que os dados têm o formato correto
-          unless @quiz_results.key?("total_questions")
-            # Se os dados estiverem em formato antigo, converter para novo formato
-            Rails.logger.info "Convertendo formato antigo de resultados para novo formato"
-            
-            if @quiz_results.is_a?(Hash) && @quiz_results.values.any? { |v| v.is_a?(Hash) && v["is_correct"] }
-              # Formato antigo com resultados individuais
-              @quiz_results = {
-                "activity_id" => @activity.id,
-                "results" => @quiz_results,
-                "score" => @quiz_attempt.score,
-                "total_correct" => @quiz_results.values.count { |r| r["is_correct"] },
-                "total_questions" => @quiz_results.size,
-                "submitted_at" => @quiz_attempt.submitted_at
-              }
-            else
-              # Formato totalmente inválido, criar um fallback
-              @quiz_results = {
-                "activity_id" => @activity.id,
-                "results" => {},
-                "score" => @quiz_attempt.score || 0,
-                "total_correct" => 0,
-                "total_questions" => 0,
-                "submitted_at" => @quiz_attempt.submitted_at || Time.current,
-                "data_recovery" => true
-              }
-            end
+          if @quiz_results.is_a?(Hash) && @quiz_results.values.any? { |v| v.is_a?(Hash) && v["is_correct"] }
+            # Formato antigo com resultados individuais
+            @quiz_results = {
+              "activity_id" => @activity.id,
+              "results" => @quiz_results,
+              "score" => @quiz_attempt.score,
+              "total_correct" => @quiz_results.values.count { |r| r["is_correct"] },
+              "total_questions" => @quiz_results.size,
+              "submitted_at" => @quiz_attempt.submitted_at
+            }
+          else
+            # Formato totalmente inválido, criar um fallback
+            @quiz_results = {
+              "activity_id" => @activity.id,
+              "results" => {},
+              "score" => @quiz_attempt.score || 0,
+              "total_correct" => 0,
+              "total_questions" => 0,
+              "submitted_at" => @quiz_attempt.submitted_at || Time.current,
+              "data_recovery" => true
+            }
           end
-        rescue => e
-          # Se ocorrer algum erro no processamento dos resultados, usar um fallback
-          Rails.logger.error "Erro ao processar resultados do banco: #{e.message}"
-          @quiz_results = {
-            "activity_id" => @activity.id,
-            "results" => {},
-            "score" => @quiz_attempt.score || 0,
-            "total_correct" => 0,
-            "total_questions" => 0,
-            "submitted_at" => Time.current,
-            "fallback" => true
-          }
         end
       else
         # Se não encontrar tentativa, redirecionar para resolver o quiz

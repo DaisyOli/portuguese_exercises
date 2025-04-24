@@ -3,7 +3,7 @@ import { Controller } from "@hotwired/stimulus"
 // Controlador para gerenciar a seleção de tipos de questão
 export default class extends Controller {
   // Definir os targets
-  static targets = ["selector", "multipleChoice", "fillInBlank", "orderSentencesHelp", "orderSentencesFields", "correctAnswer"]
+  static targets = ["selector", "multipleChoice", "fillInBlank", "correctAnswer"]
 
   // Conectar o controlador
   connect() {
@@ -51,9 +51,6 @@ export default class extends Controller {
       case "fill_in_blank":
         this.showFillInBlankFields()
         break
-      case "order_sentences":
-        this.showOrderSentencesFields()
-        break
     }
   }
   
@@ -61,8 +58,6 @@ export default class extends Controller {
   hideAllFields() {
     if (this.hasMultipleChoiceTarget) this.multipleChoiceTarget.style.display = "none"
     if (this.hasFillInBlankTarget) this.fillInBlankTarget.style.display = "none"
-    if (this.hasOrderSentencesHelpTarget) this.orderSentencesHelpTarget.style.display = "none"
-    if (this.hasOrderSentencesFieldsTarget) this.orderSentencesFieldsTarget.style.display = "none"
     
     // Mostrar campo de resposta por padrão
     if (this.hasCorrectAnswerTarget) this.correctAnswerTarget.style.display = "block"
@@ -76,12 +71,5 @@ export default class extends Controller {
   // Mostra campos para preencher lacunas
   showFillInBlankFields() {
     if (this.hasFillInBlankTarget) this.fillInBlankTarget.style.display = "block"
-  }
-  
-  // Mostra campos para ordenar frases
-  showOrderSentencesFields() {
-    if (this.hasOrderSentencesHelpTarget) this.orderSentencesHelpTarget.style.display = "block"
-    if (this.hasOrderSentencesFieldsTarget) this.orderSentencesFieldsTarget.style.display = "block"
-    if (this.hasCorrectAnswerTarget) this.correctAnswerTarget.style.display = "none"
   }
 } 

@@ -140,9 +140,7 @@ en:
     types:
       multiple_choice: "Multiple choice"
       fill_in_blank: "Fill in the blank"
-      order_sentences: "Order sentences"
     fill_in_blank_help: "Use _____ (5 underscores) to mark where the student should enter the answer."
-    order_sentences_help: "Enter each sentence on a new line. The order you type will be considered the correct order."
     form:
       question_type: "Question Type"
       question_content: "Question Content"
@@ -158,8 +156,6 @@ en:
       sentences: "Sentences (one per line)"
       points: "Points"
       fill_in_blank_help_html: "<strong>Tip:</strong> Use exactly 5 underscores (_____) to mark blanks to be filled. Ex: 'I _____ chocolate' (the blank will be replaced with a text field)."
-      order_sentences_help_html: "<strong>Tip:</strong> Write sentences in correct order, one per line. The system will shuffle them for students."
-      order_sentences_input_help: "Enter each sentence on a separate line. The order you type will be considered the correct order."
     options_required: "At least two options are required"
     add: "Add Question"
     

@@ -122,9 +122,7 @@ fr:
     types:
       multiple_choice: "Choix multiple"
       fill_in_blank: "Texte à trous"
-      order_sentences: "Ordonner les phrases"
     fill_in_blank_help: "Utilisez _____ (5 tirets bas) pour marquer où l'étudiant doit saisir la réponse."
-    order_sentences_help: "Entrez chaque phrase sur une nouvelle ligne. L'ordre dans lequel vous tapez sera considéré comme l'ordre correct."
     confirm_delete: "Êtes-vous sûr de vouloir supprimer cette question?"
     add_options: "Ajouter des Options"
     options_placeholder: "Saisissez les options séparées par des virgules"
@@ -161,8 +159,6 @@ fr:
       sentences: "Phrases (une par ligne)"
       points: "Points"
       fill_in_blank_help_html: "<strong>Conseil:</strong> Utilisez exactement 5 tirets bas (_____) pour marquer les espaces à remplir. Ex: 'Je _____ le chocolat' (l'espace sera remplacé par un champ de texte)."
-      order_sentences_help_html: "<strong>Conseil:</strong> Écrivez les phrases dans l'ordre correct, une par ligne. Le système les mélangera pour l'étudiant."
-      order_sentences_input_help: "Saisissez chaque phrase sur une ligne séparée. L'ordre dans lequel vous tapez sera considéré comme l'ordre correct."
 
   # Quiz
   quiz:

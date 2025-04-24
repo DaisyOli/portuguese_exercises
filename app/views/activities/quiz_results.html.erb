@@ -18,6 +18,13 @@
                         'Resposta dada: <%= result["given_answer"].to_s.gsub(/"/, '\"').truncate(30) if result["given_answer"] %>',
                         'Resposta correta: <%= result["correct_answer"].to_s.gsub(/"/, '\"').truncate(30) if result["correct_answer"] %>',
                         'Correto: <%= result["is_correct"] %>');
+            
+            <% if result["question_type"] == "order_sentences" %>
+              console.log('DIAGNÓSTICO ORDEM - Questão <%= question_id %>:',
+                        'Texto completo da resposta: "<%= result["given_answer"] %>"',
+                        'Contém separador |: <%= result["given_answer"].to_s.include?("|") %>',
+                        'Começa com "Não respondida": <%= result["given_answer"].to_s.start_with?("Não respondida") %>');
+            <% end %>
           <% end %>
         <% else %>
           console.error('Resultados não disponíveis ou formato incorreto');
@@ -27,6 +34,11 @@
       <div class="alert alert-info mb-4">
         <h4 class="alert-heading"><%= t('quiz.final_score') %></h4>
         <p class="mb-0"><%= t('quiz.correct_answers', correct: @quiz_results["total_correct"], total: @quiz_results["total_questions"], score: @quiz_results["score"]) %></p>
+        <% if params[:raw_display] == "true" %>
+          <div class="mt-2"><small><em>Exibindo dados brutos sem correções</em> - <a href="<%= quiz_results_activity_path(@activity) %>">Voltar ao modo normal</a></small></div>
+        <% else %>
+          <div class="mt-2"><small><a href="<%= quiz_results_activity_path(@activity, raw_display: true) %>">Visualizar dados originais</a></small></div>
+        <% end %>
       </div>
 
       <% @quiz_results["results"].each do |question_id, result| %>
@@ -43,37 +55,14 @@
             <div class="mb-2">
               <strong><%= t('quiz.your_answer') %>:</strong>
               <span class="<%= result["is_correct"] ? 'text-success' : 'text-danger' %>">
-                <% if result["question_type"] == "order_sentences" %>
-                  <% if !result["given_answer"].present? || result["given_answer"] == t('quiz.not_answered') || result["given_answer"] == "Não respondida" %>
-                    <%= t('quiz.not_answered') %>
-                  <% else %>
-                    <ol class="mt-2">
-                      <% result["given_answer"].to_s.split("|").each do |sentence| %>
-                        <li class="mb-1"><%= sentence %></li>
-                      <% end %>
-                    </ol>
-                  <% end %>
-                <% else %>
-                  <%= !result["given_answer"].present? || result["given_answer"] == t('quiz.not_answered') || result["given_answer"] == "Não respondida" ? t('quiz.not_answered') : result["given_answer"] %>
-                <% end %>
+                <%= !result["given_answer"].present? || result["given_answer"] == t('quiz.not_answered') || result["given_answer"] == "Não respondida" ? t('quiz.not_answered') : result["given_answer"] %>
               </span>
             </div>
             
             <% unless result["is_correct"] %>
               <div class="mt-2">
                 <strong><%= t('quiz.correct_answer') %>:</strong>
-                <% if result["question_type"] == "order_sentences" && result["correct_answer"].present? %>
-                  <div class="mt-2">
-                    <p class="text-success mb-2"><strong><%= t('quiz.order_correct_sequence') %></strong></p>
-                    <ol class="text-success">
-                      <% result["correct_answer"].to_s.split("|").each do |sentence| %>
-                        <li class="mb-1"><%= sentence %></li>
-                      <% end %>
-                    </ol>
-                  </div>
-                <% else %>
-                  <span class="text-success"><%= result["correct_answer"].present? ? result["correct_answer"] : "N/A" %></span>
-                <% end %>
+                <span class="text-success"><%= result["correct_answer"].present? ? result["correct_answer"] : "N/A" %></span>
               </div>
             <% end %>
           </div>

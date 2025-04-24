@@ -8,8 +8,6 @@ export default class extends Controller {
     "questionType",
     "multipleChoiceFields",
     "fillInBlankHelp",
-    "orderSentencesHelp",
-    "orderSentencesFields",
     "correctAnswerField"
   ];
 
@@ -43,8 +41,6 @@ export default class extends Controller {
       this.showMultipleChoiceFields();
     } else if (type === "fill_in_blank") {
       this.showFillInBlankFields();
-    } else if (type === "order_sentences") {
-      this.showOrderSentencesFields();
     }
   }
 
@@ -56,14 +52,6 @@ export default class extends Controller {
     
     if (this.hasFillInBlankHelpTarget) {
       this.fillInBlankHelpTarget.style.display = "none";
-    }
-    
-    if (this.hasOrderSentencesHelpTarget) {
-      this.orderSentencesHelpTarget.style.display = "none";
-    }
-    
-    if (this.hasOrderSentencesFieldsTarget) {
-      this.orderSentencesFieldsTarget.style.display = "none";
     }
     
     // Mostrar campo de resposta correta por padrão
@@ -84,10 +72,6 @@ export default class extends Controller {
         
       case 'fill_in_blank':
         this.showFillInBlankFields();
-        break;
-        
-      case 'order_sentences':
-        this.showOrderSentencesFields();
         break;
         
       default:
@@ -115,29 +99,6 @@ export default class extends Controller {
     }
   }
   
-  showOrderSentencesFields() {
-    if (this.hasOrderSentencesHelpTarget) {
-      console.log("Mostrando ajuda para ordenar frases");
-      this.orderSentencesHelpTarget.style.display = 'block';
-    } else {
-      console.error("Alvo orderSentencesHelp não encontrado");
-    }
-    
-    if (this.hasOrderSentencesFieldsTarget) {
-      console.log("Mostrando campos para ordenar frases");
-      this.orderSentencesFieldsTarget.style.display = 'block';
-    } else {
-      console.error("Alvo orderSentencesFields não encontrado");
-    }
-    
-    if (this.hasCorrectAnswerFieldTarget) {
-      console.log("Escondendo campo de resposta correta para ordenar frases");
-      this.correctAnswerFieldTarget.style.display = 'none';
-    } else {
-      console.error("Alvo correctAnswerField não encontrado");
-    }
-  }
-  
   // Método para verificar e logar status dos targets
   logTargetsStatus() {
     const targets = [
@@ -145,8 +106,6 @@ export default class extends Controller {
       { name: "contentField", has: this.hasContentFieldTarget },
       { name: "multipleChoiceFields", has: this.hasMultipleChoiceFieldsTarget },
       { name: "fillInBlankHelp", has: this.hasFillInBlankHelpTarget },
-      { name: "orderSentencesHelp", has: this.hasOrderSentencesHelpTarget },
-      { name: "orderSentencesFields", has: this.hasOrderSentencesFieldsTarget },
       { name: "correctAnswerField", has: this.hasCorrectAnswerFieldTarget }
     ];
     
