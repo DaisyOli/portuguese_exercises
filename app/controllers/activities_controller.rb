@@ -100,6 +100,11 @@ class ActivitiesController < ApplicationController
         begin
           # Processamento específico para questões fill_in_blank
           if question.fill_in_blank?
+            # Log dos valores originais
+            Rails.logger.info "RESPOSTA DEBUG: Questão ID=#{question.id}, Conteúdo='#{question.content}'"
+            Rails.logger.info "RESPOSTA DEBUG: Resposta dada='#{given_answer}', Tipo: #{given_answer.class}"
+            Rails.logger.info "RESPOSTA DEBUG: Resposta correta='#{correct_answer}', Tipo: #{correct_answer.class}"
+            
             # Normalizar resposta: remover espaços extras, converter para minúsculas e remover acentos
             normalized_given = given_answer.to_s.strip.downcase.gsub(/\s+/, '')
             normalized_correct = correct_answer.to_s.strip.downcase.gsub(/\s+/, '')
@@ -108,8 +113,20 @@ class ActivitiesController < ApplicationController
             normalized_given = I18n.transliterate(normalized_given)
             normalized_correct = I18n.transliterate(normalized_correct)
             
-            # Comparar respostas normalizadas
-            is_correct = given_answer.present? && normalized_given == normalized_correct
+            # Log dos valores normalizados
+            Rails.logger.info "RESPOSTA DEBUG: Normalizado dado='#{normalized_given}'"
+            Rails.logger.info "RESPOSTA DEBUG: Normalizado correto='#{normalized_correct}'"
+            Rails.logger.info "RESPOSTA DEBUG: São iguais? #{normalized_given == normalized_correct}"
+            
+            # Verificar se a resposta foi preenchida
+            if given_answer.blank?
+              Rails.logger.info "RESPOSTA DEBUG: Resposta em branco!"
+              is_correct = false
+            else
+              # Comparar respostas normalizadas
+              is_correct = normalized_given == normalized_correct
+              Rails.logger.info "RESPOSTA DEBUG: Resultado da comparação: #{is_correct}"
+            end
           else
             # Processamento para outros tipos de questão - mantido idêntico
             is_correct = given_answer.present? && given_answer.to_s.strip == correct_answer.to_s.strip
