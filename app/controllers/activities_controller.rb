@@ -100,9 +100,13 @@ class ActivitiesController < ApplicationController
         begin
           # Processamento específico para questões fill_in_blank
           if question.fill_in_blank?
-            # Normalizar resposta: remover espaços extras e converter para minúsculas
+            # Normalizar resposta: remover espaços extras, converter para minúsculas e remover acentos
             normalized_given = given_answer.to_s.strip.downcase.gsub(/\s+/, '')
             normalized_correct = correct_answer.to_s.strip.downcase.gsub(/\s+/, '')
+            
+            # Remover acentos usando transliterate
+            normalized_given = I18n.transliterate(normalized_given)
+            normalized_correct = I18n.transliterate(normalized_correct)
             
             # Comparar respostas normalizadas
             is_correct = given_answer.present? && normalized_given == normalized_correct
