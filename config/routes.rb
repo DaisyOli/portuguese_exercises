@@ -28,6 +28,7 @@ Rails.application.routes.draw do
     end
 
     resources :questions
+    resources :suggestions, only: [:create, :destroy]
   end
 
   # Health check para monitoramento

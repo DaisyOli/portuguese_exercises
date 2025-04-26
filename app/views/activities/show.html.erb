@@ -325,6 +325,38 @@
           <% end %>
         </div>
 
+        <!-- Exibir as sugestões após as questões -->
+        <% if @activity.suggestions.any? %>
+          <div id="suggestions-section" class="mt-4 mb-4">
+            <h5 class="mb-3"><%= t('activities.suggestions') %></h5>
+            <% @activity.suggestions.each_with_index do |suggestion, index| %>
+              <div id="suggestion-<%= suggestion.id %>" class="card bg-light mb-3">
+                <div class="card-body">
+                  <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                      <%= simple_format(suggestion.content) %>
+                    </div>
+                    <% if current_user.teacher? && @activity.teacher == current_user %>
+                      <div>
+                        <%= link_to activity_suggestion_path(@activity, suggestion), 
+                            method: :delete,
+                            class: "btn btn-danger btn-sm",
+                            data: { confirm: t('activities.confirm_delete_suggestion') } do %>
+                          <i class="bi bi-trash"></i>
+                        <% end %>
+                      </div>
+                    <% end %>
+                  </div>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        <% else %>
+          <div id="suggestions-section" class="mt-4 mb-4" style="display: none;">
+            <h5 class="mb-3"><%= t('activities.suggestions') %></h5>
+          </div>
+        <% end %>
+
         <!-- Seção de Adicionar Conteúdo em cima ocupando toda a largura -->
         <div id="add-content-section" class="card border-primary p-3 mb-4" data-controller="content-form">
           <h5 class="card-title text-center mb-3"><%= t('activities.add_content') %></h5>
@@ -363,6 +395,15 @@
                     aria-expanded="false"
                     aria-controls="new-question-form">
               <%= t('activities.add_question') %>
+            </button>
+            
+            <button type="button" class="btn btn-secondary" 
+                    data-action="content-form#toggle"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#new-suggestion-form"
+                    aria-expanded="false"
+                    aria-controls="new-suggestion-form">
+              <%= t('activities.add_suggestion') %>
             </button>
           </div>
         </div>
@@ -420,6 +461,22 @@
           </div>
         </div>
 
+        <!-- Novo formulário para adicionar sugestão -->
+        <div class="collapse" id="new-suggestion-form" data-content-form-target="form">
+          <div class="card card-body mt-3 mb-3">
+            <%= form_with(model: [@activity, Suggestion.new], local: true) do |f| %>
+              <div class="mb-3">
+                <%= f.label :content, t('activities.suggestion_label'), class: "form-label" %>
+                <%= f.text_area :content, class: "form-control", rows: 5,
+                    placeholder: t('activities.suggestion_placeholder') %>
+              </div>
+              <div class="d-grid">
+                <%= f.submit t('activities.save_suggestion'), class: "btn btn-primary" %>
+              </div>
+            <% end %>
+          </div>
+        </div>
+
         <!-- Outras Ações no final da página -->
         <div class="card border-secondary p-3 mt-5 mb-4">
           <h5 class="card-title text-center mb-3"><%= t('activities.other_actions') || "Outras ações" %></h5>
@@ -455,10 +512,10 @@
           <%= link_to t('activities.back_to_dashboard'), student_dashboard_path, class: "btn btn-secondary" %>
         <% end %>
       </div>
-                              </div>
-                            </div>
-                          </div>
-                      
+    </div>
+  </div>
+</div>
+
 <script>
   // Script unificado para rolar a página para o elemento recém-adicionado/atualizado
   function scrollToElement() {
@@ -474,9 +531,21 @@
     
     // Verificar se há um tipo de conteúdo
     <% if params[:ultimo_conteudo].present? %>
-      targetId = '<%= params[:ultimo_conteudo] %>';
-      elemento = document.getElementById(targetId);
-      console.log('Procurando conteúdo com ID:', targetId);
+      // Para sugestões, tratamos diferente
+      if ('<%= params[:ultimo_conteudo] %>' === 'suggestion') {
+        const ultimaSugestao = document.querySelector('#suggestions-section .card:last-child');
+        if (ultimaSugestao) {
+          elemento = ultimaSugestao;
+          console.log('Encontrada última sugestão adicionada');
+          // Garantir que a seção de sugestões esteja visível
+          document.getElementById('suggestions-section').style.display = 'block';
+        }
+      } else {
+        // Para outros conteúdos
+        targetId = '<%= params[:ultimo_conteudo] %>';
+        elemento = document.getElementById(targetId);
+        console.log('Procurando conteúdo com ID:', targetId);
+      }
     <% end %>
     
     // Se encontrou o elemento, rola até ele
@@ -489,12 +558,14 @@
       // Destaque visual
       elemento.style.backgroundColor = 'rgba(255, 243, 205, 0.7)';
       elemento.style.boxShadow = '0 0 20px rgba(255, 193, 7, 0.7)';
+      elemento.style.border = '1px solid rgba(255, 193, 7, 0.5)';
       
       // Remove o destaque após 3 segundos
       setTimeout(function() {
         elemento.style.transition = 'all 1s ease';
         elemento.style.backgroundColor = '';
         elemento.style.boxShadow = '';
+        elemento.style.border = '';
       }, 3000);
     }
   }

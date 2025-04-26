@@ -2,6 +2,7 @@ class Activity < ApplicationRecord
   belongs_to :teacher, class_name: 'User'
   has_many :questions, dependent: :destroy
   has_many :quiz_attempts, dependent: :destroy
+  has_many :suggestions, dependent: :destroy
 
   validates :title, presence: true
   validates :description, presence: true

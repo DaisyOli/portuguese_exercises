@@ -102,6 +102,12 @@ pt:
     add_content: "Adicionar conteúdo"
     main_actions: "Ações principais"
     other_actions: "Outras ações"
+    add_suggestion: "Adicionar Sugestão"
+    suggestion_label: "Sugestão para atividade"
+    suggestion_placeholder: "Digite uma sugestão ou comentário para esta atividade"
+    save_suggestion: "Salvar sugestão"
+    suggestions: "Sugestões"
+    confirm_delete_suggestion: "Tem certeza que deseja excluir esta sugestão?"
     level_count:
       zero: "Nenhuma atividade disponível"
       one: "1 atividade disponível"
@@ -223,6 +229,9 @@ pt:
     media_deleted: "Mídia excluída com sucesso."
     explanation_deleted: "Texto explicativo excluído com sucesso."
     attempt_history_cleared: "Histórico de tentativas limpo com sucesso."
+    suggestion_created: "Sugestão adicionada com sucesso."
+    suggestion_deleted: "Sugestão removida com sucesso."
+    suggestion_create_error: "Erro ao adicionar sugestão. Por favor, tente novamente."
     
   # Devise
   devise:

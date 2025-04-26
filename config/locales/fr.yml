@@ -104,6 +104,12 @@ fr:
     add_content: "Ajouter du contenu"
     main_actions: "Actions principales"
     other_actions: "Autres actions"
+    add_suggestion: "Ajouter une Suggestion"
+    suggestion_label: "Suggestion pour l'activité"
+    suggestion_placeholder: "Tapez une suggestion ou un commentaire pour cette activité"
+    save_suggestion: "Enregistrer la suggestion"
+    suggestions: "Suggestions"
+    confirm_delete_suggestion: "Êtes-vous sûr de vouloir supprimer cette suggestion?"
     level_count:
       zero: "Aucune activité disponible"
       one: "1 activité disponible"
@@ -209,6 +215,9 @@ fr:
     language_update_failed: "Impossible de changer la langue."
     answer_quiz_first: "Veuillez d'abord répondre au quiz."
     permission_denied: "Vous n'avez pas la permission de modifier cette activité."
+    suggestion_created: "Suggestion ajoutée avec succès."
+    suggestion_deleted: "Suggestion supprimée avec succès."
+    suggestion_create_error: "Erreur lors de l'ajout de la suggestion. Veuillez réessayer."
     
   # Devise
   devise:
