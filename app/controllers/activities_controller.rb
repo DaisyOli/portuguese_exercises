@@ -98,8 +98,18 @@ class ActivitiesController < ApplicationController
         is_correct = false 
         
         begin
-          # Processamento para outros tipos de questão - mantido idêntico
-          is_correct = given_answer.present? && given_answer.to_s.strip == correct_answer.to_s.strip
+          # Processamento específico para questões fill_in_blank
+          if question.fill_in_blank?
+            # Normalizar resposta: remover espaços extras e converter para minúsculas
+            normalized_given = given_answer.to_s.strip.downcase.gsub(/\s+/, '')
+            normalized_correct = correct_answer.to_s.strip.downcase.gsub(/\s+/, '')
+            
+            # Comparar respostas normalizadas
+            is_correct = given_answer.present? && normalized_given == normalized_correct
+          else
+            # Processamento para outros tipos de questão - mantido idêntico
+            is_correct = given_answer.present? && given_answer.to_s.strip == correct_answer.to_s.strip
+          end
           
           results[question.id] = {
             "is_correct" => is_correct,
@@ -146,15 +156,8 @@ class ActivitiesController < ApplicationController
       # Log resumo do processamento
       Rails.logger.info "Processamento finalizado: #{total_score} corretas de #{@questions.count} questões (#{score}%)"
       
-      # Log adicional para diagnóstico das respostas order_sentences
-      order_sentences_results = results.select { |_, r| r["question_type"] == "order_sentences" }
-      if order_sentences_results.any?
-        Rails.logger.info "=== DIAGNÓSTICO DAS QUESTÕES DE ORDEM ==="
-        order_sentences_results.each do |qid, result|
-          Rails.logger.info "Questão #{qid}: is_correct=#{result["is_correct"]}, given_answer='#{result["given_answer"]}'"
-        end
-        Rails.logger.info "========================================"
-      end
+     
+      
       
       # Em vez de salvar na sessão, armazenar apenas no banco de dados
       # e guardar apenas o ID da tentativa na sessão
