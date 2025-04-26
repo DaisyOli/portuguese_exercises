@@ -12,7 +12,7 @@ class QuestionsController < ApplicationController
     @question = @activity.questions.new(question_params)
 
     if @question.save
-      redirect_to activity_path(@activity), notice: t('messages.question_created')
+      redirect_to activity_path(@activity, ultimo_id: @question.id), notice: t('messages.question_created')
     else
       render :new, status: :unprocessable_entity
     end

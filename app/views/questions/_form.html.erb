@@ -1,7 +1,8 @@
 <div data-controller="question-selector">
   <%= form_with model: [activity, question], html: { 
       class: "question-form",
-      id: "question-form-#{question.id || 'new'}"
+      id: "question-form-#{question.id || 'new'}",
+      data: { turbo: false }
     } do |form| %>
 
     <div class="row mb-3">
@@ -115,6 +116,19 @@
         
         // Inicializar no carregamento
         updateFields();
+        
+        // Adicionar o efeito visual fofo ao formulário quando for enviado
+        form.addEventListener('submit', function(event) {
+          // Os dados serão enviados normalmente, mas preparamos o highlight para quando a página recarregar
+          // O ID da questão será passado como parâmetro na URL e capturado pelo script em show.html.erb
+          if (!form.action.includes('?')) {
+            form.action = form.action + '?destaque=true';
+          } else {
+            form.action = form.action + '&destaque=true';
+          }
+          
+          console.log('Formulário enviado, adicionando destaque');
+        });
       });
     </script>
   <% end %>

@@ -100,11 +100,6 @@ class ActivitiesController < ApplicationController
         begin
           # Processamento específico para questões fill_in_blank
           if question.fill_in_blank?
-            # Log dos valores originais
-            Rails.logger.info "RESPOSTA DEBUG: Questão ID=#{question.id}, Conteúdo='#{question.content}'"
-            Rails.logger.info "RESPOSTA DEBUG: Resposta dada='#{given_answer}', Tipo: #{given_answer.class}"
-            Rails.logger.info "RESPOSTA DEBUG: Resposta correta='#{correct_answer}', Tipo: #{correct_answer.class}"
-            
             # Normalizar resposta: remover espaços extras, converter para minúsculas e remover acentos
             normalized_given = given_answer.to_s.strip.downcase.gsub(/\s+/, '')
             normalized_correct = correct_answer.to_s.strip.downcase.gsub(/\s+/, '')
