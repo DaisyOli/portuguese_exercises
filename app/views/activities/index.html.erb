@@ -20,59 +20,69 @@
           <%= link_to t('activities.back_to_all'), activities_path, class: "btn btn-sm btn-outline-secondary mb-4" %>
         </div>
 
-        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
-          <% @activities.each do |activity| %>
-            <% cache [activity, current_user.role, @best_attempts&.dig(activity.id), I18n.locale] do %>
-              <div class="col">
-                <div class="card h-100 shadow-sm position-relative">
-                  <% if current_user.student? && @best_attempts && @best_attempts[activity.id].present? %>
-                    <div class="position-absolute top-0 end-0 m-2">
-                      <% score = @best_attempts[activity.id] %>
-                      <% if score >= 90 %>
-                        <span class="badge bg-success" style="font-size: 0.8rem;">
-                          <i class="fas fa-trophy"></i> <%= number_to_percentage(score, precision: 0) %>
-                        </span>
-                      <% elsif score >= 70 %>
-                        <span class="badge bg-info" style="font-size: 0.8rem;">
-                          <i class="fas fa-check-circle"></i> <%= number_to_percentage(score, precision: 0) %>
-                        </span>
-                      <% else %>
-                        <span class="badge bg-warning" style="font-size: 0.8rem;">
-                          <i class="fas fa-star"></i> <%= number_to_percentage(score, precision: 0) %>
-                        </span>
+        <% if @activities.any? %>
+          <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+            <% @activities.each do |activity| %>
+              <% cache [activity, current_user.role, @best_attempts&.dig(activity.id), I18n.locale] do %>
+                <div class="col">
+                  <div class="card h-100 shadow-sm position-relative">
+                    <% if current_user.student? %>
+                      <% if session[:completed_quizzes]&.include?(activity.id) %>
+                        <div class="position-absolute top-0 end-0 m-2">
+                          <span style="font-size: 1.5rem; color: green;" title="<%= t('quiz.completed_recently') %>">✓</span>
+                        </div>
+                      <% elsif @best_attempts && @best_attempts[activity.id].present? %>
+                        <div class="position-absolute top-0 end-0 m-2">
+                          <% score = @best_attempts[activity.id] %>
+                          <% if score >= 90 %>
+                            <span class="badge bg-success" style="font-size: 0.8rem;">
+                              <i class="fas fa-trophy"></i> <%= number_to_percentage(score, precision: 0) %>
+                            </span>
+                          <% elsif score >= 70 %>
+                            <span class="badge bg-info" style="font-size: 0.8rem;">
+                              <i class="fas fa-check-circle"></i> <%= number_to_percentage(score, precision: 0) %>
+                            </span>
+                          <% else %>
+                            <span class="badge bg-warning" style="font-size: 0.8rem;">
+                              <i class="fas fa-star"></i> <%= number_to_percentage(score, precision: 0) %>
+                            </span>
+                          <% end %>
+                        </div>
                       <% end %>
+                    <% end %>
+                    <div class="card-body">
+                      <h5 class="card-title"><%= activity.title %></h5>
+                      <p class="card-text"><%= truncate(activity.description, length: 100) %></p>
+                      <div class="d-flex justify-content-between align-items-center">
+                        <span class="badge <%= activity.level_color_class %>"><%= activity.level %></span>
+                        <small class="text-muted"><%= activity.questions.count %> <%= t('activities.question_count') %></small>
+                      </div>
                     </div>
-                  <% end %>
-                  <div class="card-body">
-                    <h5 class="card-title"><%= activity.title %></h5>
-                    <p class="card-text"><%= truncate(activity.description, length: 100) %></p>
-                    <div class="d-flex justify-content-between align-items-center">
-                      <span class="badge <%= activity.level_color_class %>"><%= activity.level %></span>
-                      <small class="text-muted"><%= activity.questions.count %> <%= t('activities.question_count') %></small>
-                    </div>
-                  </div>
-                  <div class="card-footer bg-transparent border-top-0">
-                    <div class="d-flex flex-column gap-2">
-                      <%= link_to t('activities.solve_quiz'), activity_path(activity), class: "btn btn-outline-primary" %>
-                      <% if current_user.teacher? && activity.teacher == current_user %>
-                        <%= link_to t('activities.edit_btn'), edit_activity_path(activity), class: "btn btn-outline-warning" %>
-                        <%= link_to t('activities.delete'), activity_path(activity), 
-                            data: { 
-                              turbo_method: :delete,
-                              turbo_confirm: t('activities.confirm_delete')
-                            }, 
-                            class: "btn btn-outline-danger" %>
-                      <% end %>
+                    <div class="card-footer bg-transparent border-top-0">
+                      <div class="d-flex flex-column gap-2">
+                        <% if current_user.role == "student" %>
+                          <%= link_to t('activities.solve_quiz'), resolve_quiz_activity_path(activity), class: "btn btn-primary w-100" %>
+                        <% else %>
+                          <%= link_to t('activities.view'), activity_path(activity), class: "btn btn-info w-100" %>
+                        <% end %>
+                        <% if current_user.teacher? && activity.teacher == current_user %>
+                          <%= link_to t('activities.edit_btn'), edit_activity_path(activity), class: "btn btn-outline-warning" %>
+                          <%= link_to t('activities.delete'), activity_path(activity), 
+                              data: { 
+                                turbo_method: :delete,
+                                turbo_confirm: t('activities.confirm_delete')
+                              }, 
+                              class: "btn btn-outline-danger" %>
+                        <% end %>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
+              <% end %>
             <% end %>
-          <% end %>
-        </div>
-
-        <% if @activities.empty? %>
-          <div class="alert alert-info mt-4">
+          </div>
+        <% else %>
+          <div class="alert alert-info">
             <p class="mb-0"><%= t('activities.no_activities_for_level', level: @current_level) %></p>
           </div>
         <% end %>

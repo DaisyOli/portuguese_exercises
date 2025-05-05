@@ -21,6 +21,9 @@ class ActivitiesController < ApplicationController
             hash[attempt.activity_id] = attempt.max_score
           end
         end
+        
+        # Carregar lista de exercícios completados para a sessão
+        load_completed_exercises
       end
     else
       @activities = Rails.cache.fetch(["all_activities"], expires_in: 1.hour) do
@@ -192,6 +195,10 @@ class ActivitiesController < ApplicationController
           session[:quiz_attempt_id] = @quiz_attempt.id
           session[:last_quiz_score] = score
           
+          # Atualizar a lista de quizzes completados na sessão
+          session[:completed_quizzes] ||= []
+          session[:completed_quizzes] << @activity.id unless session[:completed_quizzes].include?(@activity.id)
+          
           redirect_to quiz_results_activity_path(@activity, locale: I18n.locale), 
                     notice: t('quiz.success', score: score)
         else
@@ -212,6 +219,10 @@ class ActivitiesController < ApplicationController
           # Armazenar apenas o ID da tentativa na sessão
           session[:quiz_attempt_id] = @quiz_attempt.id
           session[:last_quiz_score] = score
+          
+          # Atualizar a lista de quizzes completados na sessão
+          session[:completed_quizzes] ||= []
+          session[:completed_quizzes] << @activity.id unless session[:completed_quizzes].include?(@activity.id)
           
           redirect_to quiz_results_activity_path(@activity, locale: I18n.locale), 
                     notice: t('quiz.success', score: score)
@@ -489,5 +500,21 @@ class ActivitiesController < ApplicationController
 
   def activity_params
     params.require(:activity).permit(:title, :description, :level, :media_url, :explanation_text, :statement)
+  end
+  
+  def load_completed_exercises
+    # Inicializar array de exercícios concluídos na sessão se não existir
+    session[:completed_quizzes] ||= []
+    
+    # Carregar todos os quiz_attempts do usuário atual
+    completed_activities = current_user.quiz_attempts
+                                     .select(:activity_id)
+                                     .distinct
+                                     .pluck(:activity_id)
+    
+    # Atualizar a sessão com os IDs de atividades concluídas
+    completed_activities.each do |activity_id|
+      session[:completed_quizzes] << activity_id unless session[:completed_quizzes].include?(activity_id)
+    end
   end
 end
