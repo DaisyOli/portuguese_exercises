@@ -20,10 +20,10 @@
                     <button type="button" class="btn btn-warning btn-sm" data-bs-toggle="collapse" data-bs-target="#edit-statement-form">
                       <i class="bi bi-pencil"></i>
                     </button>
-                    <%= link_to clear_statement_activity_path(@activity), 
-                        method: :patch,
-                        class: "btn btn-danger btn-sm",
-                        data: { confirm: t('activities.confirm_delete_statement') } do %>
+                    <%= button_to clear_statement_activity_path(@activity), 
+                    method: :patch,
+                    data: { turbo_confirm: t('activities.confirm_delete_statement') },
+                    class: "btn btn-danger btn-sm" do %>
                       <i class="bi bi-trash"></i>
                     <% end %>
                   </div>
@@ -60,10 +60,10 @@
                 <button type="button" class="btn btn-warning btn-sm" data-bs-toggle="collapse" data-bs-target="#edit-media-form">
                   <i class="bi bi-pencil"></i>
                 </button>
-                <%= link_to clear_media_activity_path(@activity), 
-                    method: :patch, 
-                    class: "btn btn-danger btn-sm",
-                    data: { confirm: t('activities.confirm_delete_media') } do %>
+                <%= button_to clear_media_activity_path(@activity), 
+                    method: :patch,
+                    data: { turbo_confirm: t('activities.confirm_delete_media') },
+                    class: "btn btn-danger btn-sm" do %>
                   <i class="bi bi-trash"></i>
                 <% end %>
               </div>
@@ -122,10 +122,10 @@
                     <button type="button" class="btn btn-warning btn-sm" data-bs-toggle="collapse" data-bs-target="#edit-explanation-form">
                       <i class="bi bi-pencil"></i>
                     </button>
-                    <%= link_to clear_explanation_activity_path(@activity), 
-                        method: :patch, 
-                        class: "btn btn-danger btn-sm",
-                        data: { confirm: t('activities.confirm_delete_explanation') } do %>
+                    <%= button_to clear_explanation_activity_path(@activity), 
+                    method: :patch,
+                    data: { turbo_confirm: t('activities.confirm_delete_explanation') },
+                    class: "btn btn-danger btn-sm" do %>
                       <i class="bi bi-trash"></i>
                     <% end %>
                   </div>
@@ -338,10 +338,10 @@
                     </div>
                     <% if current_user.teacher? && @activity.teacher == current_user %>
                       <div>
-                        <%= link_to activity_suggestion_path(@activity, suggestion), 
+                        <%= button_to activity_suggestion_path(@activity, suggestion), 
                             method: :delete,
                             class: "btn btn-danger btn-sm",
-                            data: { confirm: t('activities.confirm_delete_suggestion') } do %>
+                            data: { turbo_confirm: t('activities.confirm_delete_suggestion') } do %>
                           <i class="bi bi-trash"></i>
                         <% end %>
                       </div>
@@ -587,5 +587,21 @@
     transform: translateY(-5px);
     box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
     transition: all 0.3s ease;
+  }
+  
+  /* Estilo para que os formulários button_to se comportem como inline */
+  form.button_to {
+    display: inline-block;
+    margin: 0;
+  }
+  
+  /* Ajusta botões dentro de grupos */
+  .btn-group form.button_to {
+    display: flex;
+  }
+  
+  .btn-group form.button_to .btn {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
   }
 </style>
