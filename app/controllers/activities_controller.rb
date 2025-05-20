@@ -424,8 +424,17 @@ class ActivitiesController < ApplicationController
 
   def clear_media
     if @activity.teacher == current_user
-      @activity.update(media_url: nil)
-      redirect_to activity_path(@activity, ultima_acao: 'conteudo_excluido'), notice: t('messages.media_deleted')
+      # Log para debug
+      Rails.logger.info "Executando clear_media para activity #{@activity.id}. Método HTTP: #{request.method}"
+      
+      # Limpar a media_url
+      if @activity.update(media_url: nil)
+        Rails.logger.info "Media limpa com sucesso para activity #{@activity.id}"
+        redirect_to activity_path(@activity, locale: I18n.locale, ultima_acao: 'conteudo_excluido'), notice: t('messages.media_deleted')
+      else
+        Rails.logger.error "Falha ao limpar media para activity #{@activity.id}: #{@activity.errors.full_messages.join(', ')}"
+        redirect_to @activity, alert: "Erro ao remover a mídia. #{@activity.errors.full_messages.join(', ')}"
+      end
     else
       redirect_to @activity, alert: "Você não tem permissão para remover a mídia."
     end

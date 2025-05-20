@@ -22,7 +22,7 @@ Rails.application.routes.draw do
       get :quiz_results
       get :result_quiz
       patch :clear_statement
-      patch :clear_media
+      match :clear_media, via: [:patch, :post]
       patch :clear_explanation
       delete :clear_attempt_history
     end
