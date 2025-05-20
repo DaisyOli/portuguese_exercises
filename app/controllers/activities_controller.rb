@@ -423,14 +423,12 @@ class ActivitiesController < ApplicationController
   end
 
   def clear_media
-    if @activity.teacher != current_user
-      redirect_to activities_path, alert: t('messages.permission_denied')
-      return
+    if @activity.teacher == current_user
+      @activity.update(media_url: nil)
+      redirect_to activity_path(@activity, ultima_acao: 'conteudo_excluido'), notice: t('messages.media_deleted')
+    else
+      redirect_to @activity, alert: "Você não tem permissão para remover a mídia."
     end
-
-    @activity.update(media_url: nil)
-    # Redirecionar para a parte superior da página ou para outro conteúdo
-    redirect_to activity_path(@activity, ultima_acao: 'conteudo_excluido'), notice: t('messages.media_deleted')
   end
 
   def clear_explanation
