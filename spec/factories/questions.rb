@@ -1,0 +1,27 @@
+FactoryBot.define do
+  factory :question do
+    association :activity
+    content { "Complete a frase: O gato _____ no telhado." }
+    question_type { 'fill_in_blank' }
+    correct_answer { 'está' }
+    
+    trait :multiple_choice do
+      question_type { 'multiple_choice' }
+      content { "Qual é a capital do Brasil?" }
+      options { ["São Paulo", "Rio de Janeiro", "Brasília", "Salvador"] }
+      correct_answer { "Brasília" }
+    end
+    
+    trait :fill_in_blank do
+      question_type { 'fill_in_blank' }
+      content { "O _____ é um animal doméstico." }
+      correct_answer { "gato" }
+    end
+    
+    trait :true_false do
+      question_type { 'true_false' }
+      content { "O Brasil é um país da América do Sul." }
+      correct_answer { "true" }
+    end
+  end
+end 

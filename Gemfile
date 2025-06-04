@@ -64,6 +64,12 @@ gem 'terser'  # JavaScript compressor
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
   gem "debug", platforms: %i[ mri windows ]
+  
+  # Gems de teste (SEGURO - só para desenvolvimento e teste)
+  gem 'rspec-rails', '~> 6.0'
+  gem 'factory_bot_rails'
+  gem 'shoulda-matchers'
+  gem 'faker'
 end
 
 group :development do
@@ -83,6 +89,10 @@ group :test do
   # Use system testing [https://guides.rubyonrails.org/testing.html#system-testing]
   gem "capybara"
   gem "selenium-webdriver"
+  
+  # Gems adicionais para testes (SEGURO - só para testes)
+  gem 'simplecov', require: false
+  gem 'database_cleaner-active_record'
 end
 
 # Gems para o Heroku

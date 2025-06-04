@@ -34,11 +34,6 @@
       <div class="alert alert-info mb-4">
         <h4 class="alert-heading"><%= t('quiz.final_score') %></h4>
         <p class="mb-0"><%= t('quiz.correct_answers', correct: @quiz_results["total_correct"], total: @quiz_results["total_questions"], score: @quiz_results["score"]) %></p>
-        <% if params[:raw_display] == "true" %>
-          <div class="mt-2"><small><em>Exibindo dados brutos sem correções</em> - <a href="<%= quiz_results_activity_path(@activity) %>">Voltar ao modo normal</a></small></div>
-        <% else %>
-          <div class="mt-2"><small><a href="<%= quiz_results_activity_path(@activity, raw_display: true) %>">Visualizar dados originais</a></small></div>
-        <% end %>
       </div>
 
       <% @quiz_results["results"].each do |question_id, result| %>

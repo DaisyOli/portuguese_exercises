@@ -1,15 +1,15 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
 one:
-  title: MyString
-  description: MyText
-  content_type: MyString
-  content_url: MyString
-  user: one
+  title: Exercício de Português 1
+  description: Descrição do primeiro exercício
+  content_type: quiz
+  level: básico
+  teacher: one
 
 two:
-  title: MyString
-  description: MyText
-  content_type: MyString
-  content_url: MyString
-  user: two
+  title: Exercício de Português 2
+  description: Descrição do segundo exercício
+  content_type: quiz
+  level: intermediário
+  teacher: one

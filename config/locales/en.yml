@@ -82,6 +82,7 @@ en:
     description: "Description"
     questions: "Questions"
     total_questions: "Total Questions"
+    correct_answers: "Correct Answers"
     actions: "Actions"
     title_placeholder: "Enter activity title"
     description_placeholder: "Describe the objective of this activity"
@@ -185,6 +186,9 @@ en:
     score: "Score"
     xp: "XP"
     view_results: "View results"
+    completed: "Quiz Completed!"
+    total_questions: "Total Questions"
+    see_detailed_results: "See Detailed Results"
     
   forms:
     save: "Save"

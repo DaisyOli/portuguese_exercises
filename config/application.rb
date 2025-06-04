@@ -32,5 +32,9 @@ module PracticePt
     
     # Configuração de fuso horário
     config.time_zone = 'Brasilia'
+
+    # Adicionar autoload para services
+    config.autoload_paths += %W(#{config.root}/app/services)
+    config.eager_load_paths += %W(#{config.root}/app/services)
   end
 end

@@ -187,6 +187,9 @@ fr:
     score: "Score"
     xp: "XP"
     view_results: "Voir les résultats"
+    completed: "Quiz Terminé !"
+    total_questions: "Total des Questions"
+    see_detailed_results: "Voir les Résultats Détaillés"
 
   # Forms
   forms:

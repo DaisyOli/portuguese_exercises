@@ -505,18 +505,6 @@
         <%= link_to t('activities.solve_quiz'), resolve_quiz_activity_path(@activity), class: "btn btn-success btn-lg rounded-3 shadow" %>
       </div>
 
-      <!-- Botão alternativo para remover mídia (só para professores) -->
-      <% if current_user.teacher? && @activity.teacher == current_user && @activity.media_url.present? %>
-        <div class="d-grid mt-2 mb-3">
-          <form action="<%= clear_media_activity_path(@activity) %>" method="post" onsubmit="return confirm('<%= t('activities.confirm_delete_media') %>')">
-            <%= hidden_field_tag :authenticity_token, form_authenticity_token %>
-            <button type="submit" class="btn btn-outline-danger">
-              <i class="bi bi-trash"></i> Remover Mídia (método alternativo)
-            </button>
-          </form>
-        </div>
-      <% end %>
-
       <!-- Botão Voltar -->
       <div class="d-grid mt-4">
         <% if current_user.teacher? %>

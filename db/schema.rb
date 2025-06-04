@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_04_27_182319) do
+ActiveRecord::Schema[7.1].define(version: 2025_06_04_171609) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -40,7 +40,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_04_27_182319) do
   end
 
   create_table "quiz_attempts", force: :cascade do |t|
-    t.bigint "user_id", null: false
+    t.bigint "user_id"
     t.bigint "activity_id", null: false
     t.float "score"
     t.jsonb "results"
@@ -82,6 +82,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_04_27_182319) do
     t.string "invited_by_type"
     t.bigint "invited_by_id"
     t.integer "invitations_count", default: 0
+    t.boolean "admin"
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["invitation_token"], name: "index_users_on_invitation_token", unique: true

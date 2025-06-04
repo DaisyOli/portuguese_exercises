@@ -5,98 +5,129 @@
     <a href="<%= resolve_quiz_activity_path(@activity, locale: params[:locale]) %>" class="btn btn-sm btn-outline-primary ms-3">Voltar para versão padrão</a>
   </div>
   <% end %>
+  
   <div class="card shadow-lg p-4 w-100" style="max-width: 900px;">
     <div class="card-body">
-      <h1 class="text-center mb-4"><%= t('quiz.title') %> <%= @activity.title %></h1>
+      <h1 class="text-center mb-4"><%= @activity.title %></h1>
       
-      <% cache [@activity, "header", I18n.locale] do %>
-        <div class="mb-4">
-          <p><strong><%= t('activities.description') %>:</strong> <%= @activity.description %></p>
-          <p><strong><%= t('activities.level') %>:</strong> <span class="badge bg-info"><%= @activity.level %></span></p>
-          
-          <% if @activity.statement.present? %>
-            <div class="card bg-light mb-3">
-              <div class="card-body">
-                <%= simple_format(@activity.statement) %>
+      <!-- NOVA FUNCIONALIDADE: Seção de Score -->
+      <% if @show_score %>
+        <div class="alert alert-success text-center mb-4" id="score-section">
+          <div class="row">
+            <div class="col-md-12">
+              <h3 class="mb-3">
+                <i class="fas fa-check-circle me-2"></i>
+                <%= t('quiz.completed') %>
+              </h3>
+              <div class="mb-3">
+                <p class="lead">
+                  <%= t('quiz.correct_answers', correct: @total_correct, total: @total_questions, score: @score) %>
+                </p>
               </div>
-            </div>
-          <% end %>
-        </div>
-        
-        <!-- Exibição da mídia -->
-        <% if @activity.media_url.present? %>
-          <div class="mb-4">
-            <% if @activity.media_url.include?('youtube.com') || @activity.media_url.include?('youtu.be') %>
-              <% youtube_id = @activity.media_url.match(/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/) %>
-              <% if youtube_id && youtube_id[1] %>
-                <div style="max-width: 560px; margin: 0 auto;">
-                  <div class="ratio ratio-16x9 mb-3">
-                    <iframe 
-                      src="https://www.youtube.com/embed/<%= youtube_id[1] %>" 
-                      allowfullscreen
-                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture">
-                    </iframe>
+              
+              <div class="row">
+                <div class="col-md-4">
+                  <div class="card bg-light border-0">
+                    <div class="card-body text-center py-3">
+                      <h4 class="text-primary mb-1"><%= @score %>%</h4>
+                      <small class="text-muted"><%= t('quiz.score') %></small>
+                    </div>
                   </div>
                 </div>
-              <% end %>
-            <% else %>
-              <img src="<%= @activity.media_url %>" alt="Imagem da atividade" class="img-fluid mb-3">
-            <% end %>
-          </div>
-        <% end %>
-
-        <!-- Exibição do texto explicativo -->
-        <% if @activity.explanation_text.present? %>
-          <div class="mb-4">
-            <div class="card">
-              <div class="card-body">
-                <%= simple_format(@activity.explanation_text) %>
+                <div class="col-md-4">
+                  <div class="card bg-light border-0">
+                    <div class="card-body text-center py-3">
+                      <h4 class="text-success mb-1"><%= @total_correct %></h4>
+                      <small class="text-muted"><%= t('activities.correct_answers') %></small>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="card bg-light border-0">
+                    <div class="card-body text-center py-3">
+                      <h4 class="text-info mb-1"><%= @total_questions %></h4>
+                      <small class="text-muted"><%= t('activities.total_questions') %></small>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="mt-4">
+                <div class="d-grid gap-2 d-md-flex justify-content-md-center">
+                  <%= link_to quiz_results_activity_path(@activity), class: "btn btn-primary btn-lg me-md-2" do %>
+                    <i class="fas fa-eye me-2"></i><%= t('quiz.see_detailed_results') %>
+                  <% end %>
+                  <%= link_to resolve_quiz_activity_path(@activity), class: "btn btn-secondary btn-lg" do %>
+                    <i class="fas fa-redo me-2"></i><%= t('quiz.try_again') %>
+                  <% end %>
+                </div>
               </div>
             </div>
           </div>
-        <% end %>
-      <% end %>
-      
-      <%= form_with(url: submit_quiz_activity_path(@activity), method: :post, data: { turbo: false }) do |f| %>
-        <!-- Debug de questões - remover após resolver o problema -->
-        <% if params[:debug_questions] == "true" %>
-          <div class="alert alert-warning">
-            <h5>Informações de Debug</h5>
-            <p>Total de questões: <%= @questions.size %></p>
-            <p>IDs: <%= @questions.map(&:id).join(", ") %></p>
+        </div>
+      <% else %>
+        <!-- Seção original do quiz (só aparece quando não há score) -->
+        <% cache [@activity, "header", I18n.locale] do %>
+          <div class="mb-4">
+            <p><strong><%= t('activities.description') %>:</strong> <%= @activity.description %></p>
+            <p><strong><%= t('activities.level') %>:</strong> <span class="badge bg-info"><%= @activity.level %></span></p>
+            
+            <% if @activity.statement.present? %>
+              <div class="card bg-light mb-3">
+                <div class="card-body">
+                  <%= simple_format(@activity.statement) %>
+                </div>
+              </div>
+            <% end %>
           </div>
-        <% end %>
-        
-        <% @questions.each_with_index do |question, index| %>
-          <% # Versão alternativa sem cache
-             if params[:skip_cache] == "true" %>
-            <div class="card mb-3">
-              <div class="card-body py-3">
-                <h6 class="card-subtitle text-muted mb-2"><%= t('questions.title') %> <%= index + 1 %></h6>
-                <p class="card-text mb-3 fs-5">
-                  <% if question.fill_in_blank? %>
-                    <%= question.content.gsub('_____', text_field_tag("answers[#{question.id}]", nil, class: 'form-control d-inline-block', style: 'width: 150px;')).html_safe %>
-                  <% else %>
-                    <%= question.content %>
-                  <% end %>
-                </p>
-
-                <% if question.multiple_choice? && question.options.any? %>
-                  <div class="options-list">
-                    <div class="ps-2">
-                      <% question.options.each do |option| %>
-                        <div class="form-check mb-2">
-                          <%= radio_button_tag "answers[#{question.id}]", option, false, class: 'form-check-input' %>
-                          <%= label_tag "answers_#{question.id}_#{option.parameterize}", option, class: 'form-check-label' %>
-                        </div>
-                      <% end %>
+          
+          <!-- Exibição da mídia -->
+          <% if @activity.media_url.present? %>
+            <div class="mb-4">
+              <% if @activity.media_url.include?('youtube.com') || @activity.media_url.include?('youtu.be') %>
+                <% youtube_id = @activity.media_url.match(/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/) %>
+                <% if youtube_id && youtube_id[1] %>
+                  <div style="max-width: 560px; margin: 0 auto;">
+                    <div class="ratio ratio-16x9 mb-3">
+                      <iframe 
+                        src="https://www.youtube.com/embed/<%= youtube_id[1] %>" 
+                        allowfullscreen
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture">
+                      </iframe>
                     </div>
                   </div>
                 <% end %>
+              <% else %>
+                <img src="<%= @activity.media_url %>" alt="Imagem da atividade" class="img-fluid mb-3">
+              <% end %>
+            </div>
+          <% end %>
+
+          <!-- Exibição do texto explicativo -->
+          <% if @activity.explanation_text.present? %>
+            <div class="mb-4">
+              <div class="card">
+                <div class="card-body">
+                  <%= simple_format(@activity.explanation_text) %>
+                </div>
               </div>
             </div>
-          <% else %>
-            <% cache [question, index, I18n.locale] do %>
+          <% end %>
+        <% end %>
+        
+        <%= form_with(url: submit_quiz_activity_path(@activity), method: :post, data: { turbo: false }) do |f| %>
+          <!-- Debug de questões - remover após resolver o problema -->
+          <% if params[:debug_questions] == "true" %>
+            <div class="alert alert-warning">
+              <h5>Informações de Debug</h5>
+              <p>Total de questões: <%= @questions.size %></p>
+              <p>IDs: <%= @questions.map(&:id).join(", ") %></p>
+            </div>
+          <% end %>
+          
+          <% @questions.each_with_index do |question, index| %>
+            <% # Versão alternativa sem cache
+               if params[:skip_cache] == "true" %>
               <div class="card mb-3">
                 <div class="card-body py-3">
                   <h6 class="card-subtitle text-muted mb-2"><%= t('questions.title') %> <%= index + 1 %></h6>
@@ -122,14 +153,42 @@
                   <% end %>
                 </div>
               </div>
+            <% else %>
+              <% cache [question, index, I18n.locale] do %>
+                <div class="card mb-3">
+                  <div class="card-body py-3">
+                    <h6 class="card-subtitle text-muted mb-2"><%= t('questions.title') %> <%= index + 1 %></h6>
+                    <p class="card-text mb-3 fs-5">
+                      <% if question.fill_in_blank? %>
+                        <%= question.content.gsub('_____', text_field_tag("answers[#{question.id}]", nil, class: 'form-control d-inline-block', style: 'width: 150px;')).html_safe %>
+                      <% else %>
+                        <%= question.content %>
+                      <% end %>
+                    </p>
+
+                    <% if question.multiple_choice? && question.options.any? %>
+                      <div class="options-list">
+                        <div class="ps-2">
+                          <% question.options.each do |option| %>
+                            <div class="form-check mb-2">
+                              <%= radio_button_tag "answers[#{question.id}]", option, false, class: 'form-check-input' %>
+                              <%= label_tag "answers_#{question.id}_#{option.parameterize}", option, class: 'form-check-label' %>
+                            </div>
+                          <% end %>
+                        </div>
+                      </div>
+                    <% end %>
+                  </div>
+                </div>
+              <% end %>
             <% end %>
           <% end %>
-        <% end %>
 
-        <div class="d-grid gap-2">
-          <%= f.submit t('quiz.submit'), class: "btn btn-primary btn-lg mb-3", data: { disable_with: t('quiz.submitting') } %>
-          <%= link_to t('activities.back_to_activities'), activities_path, class: "btn btn-secondary" %>
-        </div>
+          <div class="d-grid gap-2">
+            <%= f.submit t('quiz.submit'), class: "btn btn-primary btn-lg mb-3", data: { disable_with: t('quiz.submitting') } %>
+            <%= link_to t('activities.back_to_activities'), activities_path, class: "btn btn-secondary" %>
+          </div>
+        <% end %>
       <% end %>
     </div>
   </div>
@@ -147,5 +206,21 @@
   .list-group-item {
     margin-bottom: 0.5rem;
     border-radius: 8px !important;
+  }
+  
+  /* NOVA FUNCIONALIDADE: Animação para a seção de score */
+  #score-section {
+    animation: fadeInUp 0.6s ease-out;
+  }
+  
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 </style>
