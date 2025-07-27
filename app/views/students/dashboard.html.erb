@@ -471,7 +471,17 @@
 
   <!-- ✅ Scripts para melhorar a experiência -->
   <script>
+    let dashboardInitialized = false;
+    
     function initializeStudentDashboard() {
+      // Prevenir execução múltipla
+      if (dashboardInitialized) {
+        console.log('⚠️ Dashboard já inicializado, pulando...');
+        return;
+      }
+      
+      console.log('🚀 Inicializando dashboard do estudante...');
+      dashboardInitialized = true;
       // Animação das barras de progresso
       const progressBars = document.querySelectorAll('.progress-fill');
       progressBars.forEach(bar => {
@@ -542,7 +552,11 @@
       if (loadMoreBtn) {
         console.log('✅ Botão load-more encontrado:', loadMoreBtn);
         
-        loadMoreBtn.addEventListener('click', function() {
+        // Remover event listeners anteriores para evitar duplicação
+        loadMoreBtn.replaceWith(loadMoreBtn.cloneNode(true));
+        const newLoadMoreBtn = document.querySelector('.load-more-btn');
+        
+        newLoadMoreBtn.addEventListener('click', function() {
           console.log('🔥 Botão clicado!');
           
           const level = this.dataset.level;
@@ -587,18 +601,20 @@
               // Update button state
               spinner.classList.add('d-none');
               if (data.has_more) {
-                button.dataset.offset = data.next_offset;
-                button.innerHTML = `<i class="fas fa-plus"></i> <%= t('student_dashboard.actions.load_more') %> (${data.remaining} <%= t('student_dashboard.messages.remaining') %>)`;
-                button.style.display = 'inline-block';
+                this.dataset.offset = data.next_offset;
+                console.log('🔄 Offset atualizado para:', data.next_offset);
+                this.innerHTML = `<i class="fas fa-plus"></i> <%= t('student_dashboard.actions.load_more') %> (${data.remaining} <%= t('student_dashboard.messages.remaining') %>)`;
+                this.style.display = 'inline-block';
               } else {
-                button.style.display = 'none';
+                console.log('✅ Não há mais atividades');
+                this.style.display = 'none';
               }
             })
             .catch(error => {
               console.error('💥 Erro:', error);
               spinner.classList.add('d-none');
-              button.style.display = 'inline-block';
-            });
+              this.style.display = 'inline-block';
+            }.bind(this));
         });
       } else {
         console.error('❌ Botão load-more NÃO encontrado!');
@@ -622,16 +638,12 @@
        }
      }
 
-     // Executar quando DOM estiver pronto
+     // Executar apenas uma vez quando DOM estiver pronto
      if (document.readyState === 'loading') {
-       document.addEventListener('DOMContentLoaded', initializeStudentDashboard);
+       document.addEventListener('DOMContentLoaded', function() {
+         setTimeout(initializeStudentDashboard, 50);
+       });
      } else {
-       initializeStudentDashboard();
+       setTimeout(initializeStudentDashboard, 50);
      }
-     
-     // Também executar após Turbo navegação
-     document.addEventListener('turbo:load', initializeStudentDashboard);
-     
-     // E garantir que execute após um pequeno delay
-     setTimeout(initializeStudentDashboard, 100);
    </script>
