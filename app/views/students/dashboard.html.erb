@@ -634,16 +634,23 @@
               icon.style.transform = 'rotate(0deg)';
             }
           }, 100);
-                 });
-       }
-     }
+        });
+      }
+    }
 
-     // Executar apenas uma vez quando DOM estiver pronto
-     if (document.readyState === 'loading') {
-       document.addEventListener('DOMContentLoaded', function() {
-         setTimeout(initializeStudentDashboard, 50);
-       });
-     } else {
-       setTimeout(initializeStudentDashboard, 50);
-     }
+    // Executar apenas uma vez quando DOM estiver pronto
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', function() {
+        setTimeout(initializeStudentDashboard, 50);
+      });
+    } else {
+      setTimeout(initializeStudentDashboard, 50);
+    }
+
+    // Também executar no evento turbo:load para compatibilidade com Turbo
+    document.addEventListener('turbo:load', function() {
+      if (!dashboardInitialized) {
+        setTimeout(initializeStudentDashboard, 50);
+      }
+    });
    </script>
