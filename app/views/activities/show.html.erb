@@ -1,432 +1,670 @@
-<div class="container mt-5 mb-5">
-  <div class="card shadow-lg p-4 w-100" style="max-width: 900px; margin: 0 auto;">
-    <div class="card-body">
-      <h1 class="text-center mb-4"><%= @activity.title %></h1>
+<!DOCTYPE html>
+<html>
+<head>
+  <title><%= @activity.title %> - Practice PT</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Kalam:wght@400;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --quadro-verde: #1e3a2e;
+      --madeira-clara: #efebe9;
+      --verde-destaque: #2e7d32;
+      --azul-acao: #1976d2;
+      --roxo-acao: #7b1fa2;
+      --fundo-neutro: #f8f9fa;
+      --card-branco: #ffffff;
+      --amarelo-acao: #f57c00;
+      --cyan-acao: #00acc1;
+      --vermelho-acao: #e53935;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: linear-gradient(135deg, var(--fundo-neutro) 0%, #e3f2fd 100%);
+      min-height: 100vh;
+      font-family: 'Inter', sans-serif;
+      color: #37474f;
+      line-height: 1.6;
+    }
+
+    .atividade-container {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 2rem;
+      min-height: 100vh;
+    }
+
+    /* Header estilo madeira */
+    .header-atividade {
+      background: var(--madeira-clara);
+      color: #333;
+      padding: 1.5rem 2rem;
+      border-radius: 15px 15px 5px 5px;
+      margin-bottom: 2rem;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+      border: 4px solid #8d6e63;
+      position: relative;
+      text-align: center;
+    }
+
+    .header-atividade::before {
+      content: '';
+      position: absolute;
+      top: -8px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 80px;
+      height: 8px;
+      background: #5d4037;
+      border-radius: 4px;
+    }
+
+    .header-atividade h1 {
+      font-family: 'Kalam', cursive;
+      font-size: 2rem;
+      color: var(--verde-destaque);
+      margin-bottom: 1rem;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .meta-info {
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+      flex-wrap: wrap;
+      margin-top: 1rem;
+    }
+
+    .meta-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-weight: 600;
+    }
+
+    .nivel-badge {
+      padding: 0.25rem 0.8rem;
+      border-radius: 15px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: white;
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+    }
+
+    .nivel-badge.A1 { background: #2196f3; }
+    .nivel-badge.A2 { background: #3f51b5; }
+    .nivel-badge.B1 { background: #4caf50; }
+    .nivel-badge.B2 { background: #ff9800; }
+    .nivel-badge.C1 { background: #f44336; }
+
+         /* Cards principais */
+     .main-card {
+       background: var(--card-branco);
+       border-radius: 16px;
+       box-shadow: 0 8px 32px rgba(0,0,0,0.08);
+       margin-bottom: 3rem;
+       border: 1px solid rgba(46, 125, 50, 0.1);
+       overflow: hidden;
+     }
+
+    .card-header-custom {
+      background: linear-gradient(90deg, var(--verde-destaque), var(--azul-acao));
+      color: white;
+      padding: 1rem 1.5rem;
+      font-family: 'Kalam', cursive;
+      font-size: 1.2rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .card-body-custom {
+      padding: 1.5rem;
+    }
+
+         /* Seções de conteúdo */
+     .content-section {
+       background: var(--card-branco);
+       border-radius: 12px;
+       box-shadow: 0 4px 16px rgba(0,0,0,0.05);
+       margin-bottom: 2rem;
+       border: 1px solid rgba(0,0,0,0.05);
+       overflow: hidden;
+     }
+
+    .content-header {
+      background: #f8f9fa;
+      padding: 0.75rem 1rem;
+      border-bottom: 1px solid #e0e0e0;
+      display: flex;
+      justify-content: between;
+      align-items: center;
+      font-weight: 600;
+      color: #666;
+    }
+
+    .content-body {
+      padding: 1rem;
+    }
+
+    /* Botões de ação */
+    .btn-group-custom {
+      display: flex;
+      gap: 0.25rem;
+    }
+
+    .btn-icon {
+      padding: 0.4rem;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 32px;
+      height: 32px;
+    }
+
+    .btn-icon.edit {
+      background: var(--amarelo-acao);
+      color: white;
+    }
+
+    .btn-icon.delete {
+      background: var(--vermelho-acao);
+      color: white;
+    }
+
+    .btn-icon:hover {
+      transform: scale(1.1);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+
+    /* Questions */
+    .question-card {
+      background: #ffffff;
+      border-radius: 12px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.05);
+      margin-bottom: 1rem;
+      border: 1px solid #e0e0e0;
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+
+    .question-card:hover {
+      box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+    }
+
+    .question-header {
+      background: linear-gradient(90deg, #f8f9fa, #e3f2fd);
+      padding: 0.75rem 1rem;
+      border-bottom: 1px solid #e0e0e0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .question-number {
+      font-family: 'Kalam', cursive;
+      font-weight: 600;
+      color: var(--verde-destaque);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .question-type-badge {
+      background: var(--azul-acao);
+      color: white;
+      padding: 0.25rem 0.5rem;
+      border-radius: 8px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+
+         /* Botões de adicionar conteúdo */
+     .add-content-section {
+       background: var(--card-branco);
+       border-radius: 16px;
+       box-shadow: 0 8px 32px rgba(0,0,0,0.08);
+       padding: 2rem;
+       margin: 3rem 0;
+       border: 2px solid var(--azul-acao);
+       position: relative;
+       overflow: hidden;
+     }
+
+    .add-content-section::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 4px;
+      background: linear-gradient(90deg, var(--verde-destaque), var(--azul-acao), var(--roxo-acao));
+    }
+
+    .section-title {
+      font-family: 'Kalam', cursive;
+      font-size: 1.4rem;
+      color: var(--verde-destaque);
+      text-align: center;
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+
+    .action-buttons {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .btn-action {
+      padding: 0.8rem 1.5rem;
+      border: none;
+      border-radius: 12px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      font-family: 'Inter', sans-serif;
+      text-decoration: none;
+      color: white;
+    }
+
+    .btn-action:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+      color: white;
+      text-decoration: none;
+    }
+
+    .btn-action.statement {
+      background: linear-gradient(145deg, var(--verde-destaque), #1b5e20);
+    }
+
+    .btn-action.media {
+      background: linear-gradient(145deg, var(--azul-acao), #1565c0);
+    }
+
+    .btn-action.text {
+      background: linear-gradient(145deg, var(--cyan-acao), #00838f);
+    }
+
+    .btn-action.question {
+      background: linear-gradient(145deg, var(--amarelo-acao), #ef6c00);
+    }
+
+    .btn-action.suggestion {
+      background: linear-gradient(145deg, #616161, #424242);
+    }
+
+         /* Outras ações */
+     .other-actions {
+       background: var(--card-branco);
+       border-radius: 16px;
+       box-shadow: 0 8px 32px rgba(0,0,0,0.08);
+       padding: 2rem;
+       margin: 3rem 0 2rem 0;
+       border: 2px solid #ff9800;
+     }
+
+    .btn-other {
+      padding: 0.8rem 1.5rem;
+      border: 2px solid transparent;
+      border-radius: 12px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      text-decoration: none;
+      margin-bottom: 0.8rem;
+    }
+
+    .btn-other.edit {
+      background: white;
+      color: var(--amarelo-acao);
+      border-color: var(--amarelo-acao);
+    }
+
+    .btn-other.delete {
+      background: white;
+      color: var(--vermelho-acao);
+      border-color: var(--vermelho-acao);
+    }
+
+    .btn-other:hover {
+      text-decoration: none;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+    }
+
+    .btn-other.edit:hover {
+      background: var(--amarelo-acao);
+      color: white;
+    }
+
+    .btn-other.delete:hover {
+      background: var(--vermelho-acao);
+      color: white;
+    }
+
+    /* Botão principal resolver */
+    .solve-section {
+      text-align: center;
+      margin: 2rem 0;
+    }
+
+    .btn-solve {
+      background: linear-gradient(145deg, var(--verde-destaque), #1b5e20);
+      color: white;
+      border: none;
+      padding: 1rem 3rem;
+      border-radius: 25px;
+      font-weight: 700;
+      font-size: 1.2rem;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 8px 32px rgba(46, 125, 50, 0.3);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.75rem;
+      text-decoration: none;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .btn-solve:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 40px rgba(46, 125, 50, 0.4);
+      background: linear-gradient(145deg, #4caf50, var(--verde-destaque));
+      color: white;
+      text-decoration: none;
+    }
+
+    /* Botão voltar */
+    .btn-back {
+      background: #ffffff;
+      color: #666;
+      border: 2px solid #e0e0e0;
+      padding: 0.8rem 2rem;
+      border-radius: 25px;
+      font-weight: 600;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .btn-back:hover {
+      color: #666;
+      text-decoration: none;
+      border-color: var(--verde-destaque);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+    }
+
+         /* Form styling */
+     .form-collapse {
+       background: var(--card-branco);
+       border-radius: 12px;
+       margin: 1rem 0;
+       border: 2px solid var(--azul-acao);
+       box-shadow: 0 4px 16px rgba(25, 118, 210, 0.1);
+       overflow: hidden;
+     }
+
+     .form-collapse .card-body {
+       padding: 2rem;
+       background: var(--card-branco);
+     }
+
+     .form-collapse .form-label {
+       font-weight: 600;
+       color: var(--verde-destaque);
+       margin-bottom: 0.75rem;
+       display: block;
+       font-size: 1rem;
+     }
+
+     .form-collapse .form-control {
+       border: 2px solid #e0e0e0;
+       border-radius: 8px;
+       padding: 0.75rem 1rem;
+       font-size: 0.95rem;
+       transition: all 0.3s ease;
+       font-family: 'Inter', sans-serif;
+     }
+
+     .form-collapse .form-control:focus {
+       outline: none;
+       border-color: var(--azul-acao);
+       box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.1);
+     }
+
+     .form-collapse .btn-primary {
+       background: linear-gradient(145deg, var(--azul-acao), #1565c0);
+       border: none;
+       padding: 0.75rem 2rem;
+       border-radius: 25px;
+       font-weight: 600;
+       font-size: 0.95rem;
+       transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+       color: white;
+     }
+
+     .form-collapse .btn-primary:hover {
+       transform: translateY(-2px);
+       box-shadow: 0 8px 24px rgba(25, 118, 210, 0.3);
+       background: linear-gradient(145deg, #1976d2, var(--azul-acao));
+     }
+
+    /* Media responsiva */
+    .media-container {
+      max-width: 600px;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    /* Alertas customizados */
+    .alert-custom {
+      border-radius: 12px;
+      border: none;
+      padding: 1rem 1.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .alert-warning-custom {
+      background: rgba(255, 193, 7, 0.1);
+      color: #856404;
+      border-left: 4px solid #ffc107;
+    }
+
+    /* Responsividade */
+    @media (max-width: 768px) {
+      .atividade-container {
+        padding: 1rem;
+      }
       
-      <div class="mb-4">
-        <p><strong><%= t('activities.description') %>:</strong> <%= @activity.description %></p>
-        <p><strong><%= t('activities.level') %>:</strong> <span class="badge <%= @activity.level_color_class %>"><%= @activity.level %></span></p>
-        <p><strong><%= t('activities.total_questions') %>:</strong> <%= @activity.questions.count %></p>
-        
-        <% if @activity.statement.present? %>
-          <div id="statement" class="card bg-light mb-3">
-            <div class="card-body">
-              <div class="d-flex justify-content-between align-items-start">
-                <div>
-                  <%= simple_format(@activity.statement) %>
-                </div>
-                <% if current_user.teacher? && @activity.teacher == current_user %>
-                  <div class="btn-group">
-                    <button type="button" class="btn btn-warning btn-sm" data-bs-toggle="collapse" data-bs-target="#edit-statement-form">
-                      <i class="bi bi-pencil"></i>
-                    </button>
-                    <%= button_to clear_statement_activity_path(@activity), 
-                    method: :patch,
-                    data: { turbo_confirm: t('activities.confirm_delete_statement') },
-                    class: "btn btn-danger btn-sm" do %>
-                      <i class="bi bi-trash"></i>
-                    <% end %>
-                  </div>
-                <% end %>
-              </div>
-            </div>
+      .header-atividade h1 {
+        font-size: 1.6rem;
+      }
+      
+      .meta-info {
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+      
+      .action-buttons {
+        grid-template-columns: 1fr;
+      }
+      
+      .btn-solve {
+        padding: 0.8rem 2rem;
+        font-size: 1rem;
+      }
+    }
+
+    /* Animações */
+    .question-card, .content-section {
+      animation: slideInUp 0.6s ease-out;
+      animation-fill-mode: both;
+    }
+
+    @keyframes slideInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Hover effects */
+    .hover-shadow:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.15) !important;
+      transition: all 0.3s ease;
+    }
+
+    /* Estilo para forms inline */
+    form.button_to {
+      display: inline-block;
+      margin: 0;
+    }
+
+    .btn-group form.button_to {
+      display: flex;
+    }
+  </style>
+</head>
+<body>
+
+<div class="atividade-container">
+  <!-- Header estilo madeira -->
+  <div class="header-atividade">
+    <h1><i class="fas fa-book-open"></i> <%= @activity.title %></h1>
+    <p><%= @activity.description %></p>
+    
+    <div class="meta-info">
+      <div class="meta-item">
+        <i class="fas fa-signal"></i>
+        <span>Nível:</span>
+        <span class="nivel-badge <%= @activity.level %>"><%= @activity.level %></span>
+      </div>
+      <div class="meta-item">
+        <i class="fas fa-question-circle"></i>
+        <span>Questões: <%= @activity.questions.count %></span>
+      </div>
+    </div>
+  </div>
+
+     <!-- Statement/Enunciado -->
+   <% if @activity.statement.present? %>
+     <div class="content-section" id="statement" style="margin-top: 2.5rem;">
+      <div class="content-header">
+        <span><i class="fas fa-file-text"></i> Enunciado</span>
+        <% if current_user.teacher? && @activity.teacher == current_user %>
+          <div class="btn-group-custom">
+            <button type="button" class="btn-icon edit" data-bs-toggle="collapse" data-bs-target="#edit-statement-form">
+              <i class="fas fa-edit"></i>
+            </button>
+            <%= button_to clear_statement_activity_path(@activity), 
+                method: :patch,
+                data: { turbo_confirm: t('activities.confirm_delete_statement') },
+                class: "btn-icon delete" do %>
+              <i class="fas fa-trash"></i>
+            <% end %>
           </div>
-          
-          <% if current_user.teacher? && @activity.teacher == current_user %>
-            <div class="collapse" id="edit-statement-form">
-              <div class="card card-body mt-3 mb-3">
-                <%= form_with(model: @activity, local: true) do |f| %>
-                  <div class="mb-3">
-                    <%= f.label :statement, t('activities.statement_label'), class: "form-label" %>
-                    <%= f.text_area :statement, class: "form-control", rows: 5 %>
-                  </div>
-                  <div class="d-grid">
-                    <%= f.submit t('common.save'), class: "btn btn-primary" %>
-                  </div>
-                <% end %>
-              </div>
-            </div>
-          <% end %>
         <% end %>
       </div>
-
-      <!-- Exibição da mídia -->
-      <% if @activity.media_url.present? %>
-        <div id="media" class="mb-4">
-          <div class="d-flex justify-content-between align-items-start mb-2">
-            <h5 class="mb-0"></h5>
-            <% if current_user.teacher? && @activity.teacher == current_user %>
-              <div class="btn-group">
-                <button type="button" class="btn btn-warning btn-sm" data-bs-toggle="collapse" data-bs-target="#edit-media-form">
-                  <i class="bi bi-pencil"></i>
-                </button>
-                <%= button_to clear_media_activity_path(@activity), 
-                    method: :post,
-                    form: { "data-turbo" => "true" },
-                    data: { turbo_confirm: t('activities.confirm_delete_media') },
-                    class: "btn btn-danger btn-sm" do %>
-                  <i class="bi bi-trash"></i>
-                <% end %>
-              </div>
-            <% end %>
-          </div>
-          
-          <% if @activity.media_url.include?('youtube.com') || @activity.media_url.include?('youtu.be') %>
-            <% youtube_id = @activity.media_url.match(/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/) %>
-            <% if youtube_id && youtube_id[1] %>
-              <div style="max-width: 560px; margin: 0 auto;">
-                <div class="ratio ratio-16x9 mb-3">
-                  <iframe 
-                    src="https://www.youtube.com/embed/<%= youtube_id[1] %>" 
-                    allowfullscreen
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture">
-                  </iframe>
-                </div>
-              </div>
-            <% end %>
-          <% else %>
-            <div style="max-width: 560px; margin: 0 auto;">
-              <img src="<%= @activity.media_url %>" alt="Imagem da atividade" class="img-fluid mb-3">
-            </div>
-          <% end %>
-        </div>
-        
-        <% if current_user.teacher? && @activity.teacher == current_user %>
-          <div class="collapse" id="edit-media-form">
-            <div class="card card-body mt-3 mb-3">
-              <%= form_with(model: @activity, local: true) do |f| %>
-                <div class="mb-3">
-                  <%= f.label :media_url, t('activities.media_url_label'), class: "form-label" %>
-                  <%= f.text_field :media_url, class: "form-control", 
-                      placeholder: t('activities.media_url_placeholder') %>
-                </div>
-                <div class="d-grid">
-                  <%= f.submit t('common.save'), class: "btn btn-primary" %>
-                </div>
-              <% end %>
-            </div>
-          </div>
-        <% end %>
-      <% end %>
-
-      <!-- Exibição do texto explicativo -->
-      <% if @activity.explanation_text.present? %>
-        <div id="explanation" class="mb-4">
-          <div class="card">
-            <div class="card-body">
-              <div class="d-flex justify-content-between align-items-start">
-                <div>
-                  <%= simple_format(@activity.explanation_text) %>
-                </div>
-                <% if current_user.teacher? && @activity.teacher == current_user %>
-                  <div class="btn-group">
-                    <button type="button" class="btn btn-warning btn-sm" data-bs-toggle="collapse" data-bs-target="#edit-explanation-form">
-                      <i class="bi bi-pencil"></i>
-                    </button>
-                    <%= button_to clear_explanation_activity_path(@activity), 
-                    method: :patch,
-                    data: { turbo_confirm: t('activities.confirm_delete_explanation') },
-                    class: "btn btn-danger btn-sm" do %>
-                      <i class="bi bi-trash"></i>
-                    <% end %>
-                  </div>
-                <% end %>
-              </div>
-            </div>
-          </div>
-        </div>
-        
-        <% if current_user.teacher? && @activity.teacher == current_user %>
-          <div class="collapse" id="edit-explanation-form">
-            <div class="card card-body mt-3 mb-3">
-              <%= form_with(model: @activity, local: true) do |f| %>
-                <div class="mb-3">
-                  <%= f.label :explanation_text, t('activities.explanation_text_label'), class: "form-label" %>
-                  <%= f.text_area :explanation_text, class: "form-control", rows: 5 %>
-                </div>
-                <div class="d-grid">
-                  <%= f.submit t('common.save'), class: "btn btn-primary" %>
-                </div>
-              <% end %>
-            </div>
-          </div>
-        <% end %>
-      <% end %>
-
-      <% if current_user.teacher? %>
-        <!-- Visualização do Professor -->
-        <div id="questions-list" class="mb-4">
-          <% if @activity.questions.any? %>
-            <div class="list-group">
-              <% @activity.questions.each_with_index do |question, index| %>
-                <div id="question-<%= question.id %>" class="card mb-4">
-                  <div class="card-header d-flex justify-content-between align-items-center">
-                    <h5 class="mb-0"><%= t('questions.question_number', number: index + 1) %> <span class="badge bg-info"><%= t("questions.types.#{question.question_type}") %></span></h5>
-                  </div>
-                  <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-start">
-                      <div>
-                        <% if question.fill_in_blank? %>
-                          <p class="mb-3 fs-5"><%= question.content.gsub('_____', '<span class="text-decoration-underline" style="width: 100px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>').html_safe %></p>
-                        <% else %>
-                          <p class="mb-3 fs-5"><%= question.content %></p>
-                        <% end %>
-                        
-                        <% if question.multiple_choice? && question.options.any? %>
-                          <ul class="list-group mb-3">
-                            <% question.options.each do |option| %>
-                              <li class="list-group-item <%= question.correct_answer == option ? 'list-group-item-success' : '' %>">
-                                <%= option %>
-                              </li>
-                            <% end %>
-                          </ul>
-                        <% end %>
-                        <small class="text-success"><%= t('questions.correct_answer') %>: <%= question.correct_answer %></small>
-                      </div>
-                      <% if @activity.teacher == current_user %>
-                        <div class="btn-group">
-                          <button type="button" class="btn btn-warning btn-sm" data-bs-toggle="collapse" data-bs-target="#edit-question-form-<%= question.id %>">
-                            <i class="bi bi-pencil"></i>
-                          </button>
-                          <%= button_to activity_question_path(@activity, question), 
-                              method: :delete, 
-                              class: "btn btn-danger btn-sm",
-                              data: { confirm: t('questions.confirm_delete') } do %>
-                            <i class="bi bi-trash"></i>
-                          <% end %>
-                        </div>
-                      <% end %>
-                    </div>
-                  </div>
-                </div>
-                
-                <% if @activity.teacher == current_user %>
-                  <div class="collapse mt-3" id="edit-question-form-<%= question.id %>">
-                    <div class="card card-body">
-                      <div data-controller="question-selector">
-                        <%= form_with model: [question.activity, question], html: { 
-                            id: "edit-form-#{question.id}"
-                          } do |form| %>
-                          <div class="row mb-3">
-                            <div class="col-md-12">
-                              <%= form.label :question_type, t('questions.form.question_type') %>
-                              <%= form.select :question_type, 
-                                  Question::QUESTION_TYPES.map { |type| [t("questions.types.#{type}"), type] }, 
-                                  { selected: question.question_type || 'multiple_choice' }, 
-                                  { 
-                                    class: "form-control", 
-                                    data: { 
-                                      question_selector_target: "selector",
-                                      action: "change->question-selector#change"
-                                    }
-                                  } 
-                              %>
-                            </div>
-                          </div>
-                      
-                          <div class="row mb-3">
-                            <div class="col-md-12">
-                              <%= form.label :content, t('questions.form.question_content') %>
-                              <%= form.text_area :content, class: "form-control", rows: 3 %>
-                            </div>
-                          </div>
-
-                          <div class="row mb-3 fill-in-blank-help" data-question-selector-target="fillInBlank" style="display: <%= question.fill_in_blank? ? 'block' : 'none' %>;">
-                            <div class="col-md-12">
-                              <div class="alert alert-info">
-                                <%= t('questions.form.fill_in_blank_help_html') %>
-                              </div>
-                            </div>
-                          </div>
-                      
-                          <div class="row mb-3 multiple-choice-fields" data-question-selector-target="multipleChoice" style="display: <%= question.multiple_choice? ? 'block' : 'none' %>;">
-                            <div class="col-md-12">
-                              <%= form.label :options, t('questions.form.options') %>
-                              <%= form.text_area :options_text, value: question.options&.join(','), class: "form-control", rows: 3 %>
-                              <small class="form-text text-muted"><%= t('questions.form.options_help') %></small>
-                            </div>
-                          </div>
-                      
-                          <div class="row mb-3" data-question-selector-target="correctAnswer">
-                            <div class="col-md-12">
-                              <%= form.label :correct_answer, t('questions.form.correct_answer') %>
-                              <%= form.text_field :correct_answer, class: "form-control" %>
-                            </div>
-                          </div>
-
-                          <div class="row">
-                            <div class="col-md-12">
-                              <%= form.submit t('common.save'), class: "btn btn-primary" %>
-                              <% if question.persisted? %>
-                                <%= link_to t('common.delete'), 
-                                          activity_question_path(@activity, question), 
-                                          data: { turbo_method: :delete, turbo_confirm: t('common.confirm_delete') },
-                                          class: "btn btn-outline-danger ms-2" %>
-                              <% end %>
-                            </div>
-                          </div>
-                          
-                          <!-- Script de fallback para edição de questões -->
-                          <script>
-                            document.addEventListener('DOMContentLoaded', function() {
-                              const form = document.getElementById('edit-form-<%= question.id %>');
-                              if (!form) return;
-                              
-                              const select = form.querySelector('select[name="question[question_type]"]');
-                              if (!select) return;
-                              
-                              function updateEditFields() {
-                                const type = select.value;
-                                console.log("Script fallback (edit): tipo alterado para", type);
-                                
-                                // Esconder todos os campos
-                                const multipleChoiceFields = form.querySelector('.multiple-choice-fields');
-                                const fillInBlankHelp = form.querySelector('.fill-in-blank-help');
-                                const correctAnswerField = form.querySelector('[data-question-selector-target="correctAnswer"]');
-                                
-                                if (multipleChoiceFields) multipleChoiceFields.style.display = 'none';
-                                if (fillInBlankHelp) fillInBlankHelp.style.display = 'none';
-                                if (correctAnswerField) correctAnswerField.style.display = 'block';
-                                
-                                // Mostrar campos para o tipo selecionado
-                                switch (type) {
-                                  case 'multiple_choice':
-                                    if (multipleChoiceFields) multipleChoiceFields.style.display = 'block';
-                                    break;
-                                  case 'fill_in_blank':
-                                    if (fillInBlankHelp) fillInBlankHelp.style.display = 'block';
-                                    break;
-                                }
-                              }
-                              
-                              // Adicionar listener para o select
-                              select.addEventListener('change', updateEditFields);
-                              
-                              // Também executar quando o colapso é exibido
-                              const collapse = document.getElementById('edit-question-form-<%= question.id %>');
-                              if (collapse) {
-                                collapse.addEventListener('shown.bs.collapse', updateEditFields);
-                              }
-                              
-                              // Inicializar assim que o DOM estiver pronto
-                              updateEditFields();
-                            });
-                          </script>
-                        <% end %>
-                      </div>
-                    </div>
-                  </div>
-                <% end %>
-              <% end %>
-            </div>
-          <% else %>
-            <div class="alert alert-warning">
-              <p class="mb-0"><%= t('activities.no_questions') %></p>
-            </div>
-          <% end %>
-        </div>
-
-        <!-- Exibir as sugestões após as questões -->
-        <% if @activity.suggestions.any? %>
-          <div id="suggestions-section" class="mt-4 mb-4">
-            <h5 class="mb-3"><%= t('activities.suggestions') %></h5>
-            <% @activity.suggestions.each_with_index do |suggestion, index| %>
-              <div id="suggestion-<%= suggestion.id %>" class="card bg-light mb-3">
-                <div class="card-body">
-                  <div class="d-flex justify-content-between align-items-start">
-                    <div>
-                      <%= simple_format(suggestion.content) %>
-                    </div>
-                    <% if current_user.teacher? && @activity.teacher == current_user %>
-                      <div>
-                        <%= button_to activity_suggestion_path(@activity, suggestion), 
-                            method: :delete,
-                            class: "btn btn-danger btn-sm",
-                            data: { turbo_confirm: t('activities.confirm_delete_suggestion') } do %>
-                          <i class="bi bi-trash"></i>
-                        <% end %>
-                      </div>
-                    <% end %>
-                  </div>
-                </div>
-              </div>
-            <% end %>
-          </div>
-        <% else %>
-          <div id="suggestions-section" class="mt-4 mb-4" style="display: none;">
-            <h5 class="mb-3"><%= t('activities.suggestions') %></h5>
-          </div>
-        <% end %>
-
-        <!-- Seção de Adicionar Conteúdo em cima ocupando toda a largura -->
-        <div id="add-content-section" class="card border-primary p-3 mb-4" data-controller="content-form">
-          <h5 class="card-title text-center mb-3"><%= t('activities.add_content') %></h5>
-          <div class="d-grid gap-2">
-            <button type="button" class="btn btn-success" 
-                    data-action="content-form#toggle"
-                    data-bs-toggle="collapse"
-                    data-bs-target="#new-statement-form"
-                    aria-expanded="false"
-                    aria-controls="new-statement-form">
-              <%= t('activities.add_statement') %>
-            </button>
-            
-            <button type="button" class="btn btn-primary" 
-                    data-action="content-form#toggle"
-                    data-bs-toggle="collapse"
-                    data-bs-target="#new-media-form"
-                    aria-expanded="false"
-                    aria-controls="new-media-form">
-              <%= t('activities.add_media') %>
-            </button>
-            
-            <button type="button" class="btn btn-info text-white" 
-                    data-action="content-form#toggle"
-                    data-bs-toggle="collapse"
-                    data-bs-target="#new-text-form"
-                    aria-expanded="false"
-                    aria-controls="new-text-form">
-              <%= t('activities.add_text') %>
-            </button>
-            
-            <button type="button" class="btn btn-warning" 
-                    data-action="content-form#toggle"
-                    data-bs-toggle="collapse"
-                    data-bs-target="#new-question-form"
-                    aria-expanded="false"
-                    aria-controls="new-question-form">
-              <%= t('activities.add_question') %>
-            </button>
-            
-            <button type="button" class="btn btn-secondary" 
-                    data-action="content-form#toggle"
-                    data-bs-toggle="collapse"
-                    data-bs-target="#new-suggestion-form"
-                    aria-expanded="false"
-                    aria-controls="new-suggestion-form">
-              <%= t('activities.add_suggestion') %>
-            </button>
-          </div>
-        </div>
-        
-        <!-- Formulários de adição de conteúdo (colapsados) -->
-        <div class="collapse" id="new-statement-form" data-content-form-target="form">
-          <div class="card card-body mt-3 mb-3">
+      <div class="content-body">
+        <%= simple_format(@activity.statement) %>
+      </div>
+      
+      <% if current_user.teacher? && @activity.teacher == current_user %>
+        <div class="collapse form-collapse" id="edit-statement-form">
+          <div class="card-body">
             <%= form_with(model: @activity, local: true) do |f| %>
               <div class="mb-3">
                 <%= f.label :statement, t('activities.statement_label'), class: "form-label" %>
-                <%= f.text_area :statement, class: "form-control", rows: 5,
-                    placeholder: t('activities.statement_placeholder') %>
+                <%= f.text_area :statement, class: "form-control", rows: 5 %>
               </div>
               <div class="d-grid">
-                <%= f.submit t('activities.save_statement'), class: "btn btn-primary" %>
+                <%= f.submit t('common.save'), class: "btn btn-primary" %>
               </div>
             <% end %>
           </div>
         </div>
-        
-        <div class="collapse" id="new-media-form" data-content-form-target="form">
-          <div class="card card-body mt-3 mb-3">
+      <% end %>
+    </div>
+  <% end %>
+
+     <!-- Mídia -->
+   <% if @activity.media_url.present? %>
+     <div class="content-section" id="media" style="<%= @activity.statement.blank? ? 'margin-top: 2.5rem;' : '' %>">
+      <div class="content-header">
+        <span><i class="fas fa-photo-video"></i> Mídia</span>
+        <% if current_user.teacher? && @activity.teacher == current_user %>
+          <div class="btn-group-custom">
+            <button type="button" class="btn-icon edit" data-bs-toggle="collapse" data-bs-target="#edit-media-form">
+              <i class="fas fa-edit"></i>
+            </button>
+            <%= button_to clear_media_activity_path(@activity), 
+                method: :post,
+                data: { turbo_confirm: t('activities.confirm_delete_media') },
+                class: "btn-icon delete" do %>
+              <i class="fas fa-trash"></i>
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+      <div class="content-body">
+        <div class="media-container">
+          <% if @activity.media_url.include?('youtube.com') || @activity.media_url.include?('youtu.be') %>
+            <% youtube_id = @activity.media_url.match(/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/) %>
+            <% if youtube_id && youtube_id[1] %>
+              <div class="ratio ratio-16x9 mb-3">
+                <iframe 
+                  src="https://www.youtube.com/embed/<%= youtube_id[1] %>" 
+                  allowfullscreen
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture">
+                </iframe>
+              </div>
+            <% end %>
+          <% else %>
+            <img src="<%= @activity.media_url %>" alt="Imagem da atividade" class="img-fluid mb-3" style="border-radius: 8px;">
+          <% end %>
+        </div>
+      </div>
+      
+      <% if current_user.teacher? && @activity.teacher == current_user %>
+        <div class="collapse form-collapse" id="edit-media-form">
+          <div class="card-body">
             <%= form_with(model: @activity, local: true) do |f| %>
               <div class="mb-3">
                 <%= f.label :media_url, t('activities.media_url_label'), class: "form-label" %>
@@ -434,89 +672,431 @@
                     placeholder: t('activities.media_url_placeholder') %>
               </div>
               <div class="d-grid">
-                <%= f.submit t('activities.save_media'), class: "btn btn-primary" %>
+                <%= f.submit t('common.save'), class: "btn btn-primary" %>
               </div>
             <% end %>
           </div>
-        </div>
-        
-        <div class="collapse" id="new-text-form" data-content-form-target="form">
-          <div class="card card-body mt-3 mb-3">
-            <%= form_with(model: @activity, local: true) do |f| %>
-              <div class="mb-3">
-                <%= f.text_area :explanation_text, class: "form-control", rows: 5,
-                    placeholder: t('activities.explanation_text_placeholder') %>
-              </div>
-              <div class="d-grid">
-                <%= f.submit t('activities.save_text'), class: "btn btn-primary" %>
-              </div>
-            <% end %>
-          </div>
-        </div>
-        
-        <div class="collapse" id="new-question-form" data-content-form-target="form">
-          <div class="card card-body mt-3 mb-3">
-            <div data-controller="question-form">
-              <%= render partial: "questions/form", locals: { question: @activity.questions.build, activity: @activity } %>
-            </div>
-          </div>
-        </div>
-
-        <!-- Novo formulário para adicionar sugestão -->
-        <div class="collapse" id="new-suggestion-form" data-content-form-target="form">
-          <div class="card card-body mt-3 mb-3">
-            <%= form_with(model: [@activity, Suggestion.new], local: true) do |f| %>
-              <div class="mb-3">
-                <%= f.label :content, t('activities.suggestion_label'), class: "form-label" %>
-                <%= f.text_area :content, class: "form-control", rows: 5,
-                    placeholder: t('activities.suggestion_placeholder') %>
-              </div>
-              <div class="d-grid">
-                <%= f.submit t('activities.save_suggestion'), class: "btn btn-primary" %>
-              </div>
-            <% end %>
-          </div>
-        </div>
-
-        <!-- Outras Ações no final da página -->
-        <div class="card border-secondary p-3 mt-5 mb-4">
-          <h5 class="card-title text-center mb-3"><%= t('activities.other_actions') || "Outras ações" %></h5>
-          <div class="d-grid gap-2">
-            <%= link_to t('activities.edit_description_btn'), edit_activity_path(@activity), class: "btn btn-outline-warning rounded-3" %>
-            <%= link_to t('activities.delete_activity_btn'), 
-                activity_path(@activity), 
-                class: "btn btn-outline-danger rounded-3",
-                data: {
-                  turbo_method: :delete,
-                  turbo_confirm: t('activities.confirm_delete')
-                } %>
-          </div>
-        </div>
-
-      <% else %>
-        <!-- Visualização do Aluno -->
-        <div class="d-grid gap-2">
-          <%= link_to t('activities.solve_quiz'), resolve_quiz_activity_path(@activity), class: "btn btn-success rounded-3" %>
         </div>
       <% end %>
+    </div>
+  <% end %>
 
-      <!-- Botão Resolver no final da página -->
-      <div class="d-grid mt-5 mb-3">
-        <%= link_to t('activities.solve_quiz'), resolve_quiz_activity_path(@activity), class: "btn btn-success btn-lg rounded-3 shadow" %>
+     <!-- Texto Explicativo -->
+   <% if @activity.explanation_text.present? %>
+     <div class="content-section" id="explanation" style="<%= (@activity.statement.blank? && @activity.media_url.blank?) ? 'margin-top: 2.5rem;' : '' %>">
+      <div class="content-header">
+        <span><i class="fas fa-align-left"></i> Texto Explicativo</span>
+        <% if current_user.teacher? && @activity.teacher == current_user %>
+          <div class="btn-group-custom">
+            <button type="button" class="btn-icon edit" data-bs-toggle="collapse" data-bs-target="#edit-explanation-form">
+              <i class="fas fa-edit"></i>
+            </button>
+            <%= button_to clear_explanation_activity_path(@activity), 
+                method: :patch,
+                data: { turbo_confirm: t('activities.confirm_delete_explanation') },
+                class: "btn-icon delete" do %>
+              <i class="fas fa-trash"></i>
+            <% end %>
+          </div>
+        <% end %>
       </div>
+      <div class="content-body">
+        <%= simple_format(@activity.explanation_text) %>
+      </div>
+      
+      <% if current_user.teacher? && @activity.teacher == current_user %>
+        <div class="collapse form-collapse" id="edit-explanation-form">
+          <div class="card-body">
+            <%= form_with(model: @activity, local: true) do |f| %>
+              <div class="mb-3">
+                <%= f.label :explanation_text, t('activities.explanation_text_label'), class: "form-label" %>
+                <%= f.text_area :explanation_text, class: "form-control", rows: 5 %>
+              </div>
+              <div class="d-grid">
+                <%= f.submit t('common.save'), class: "btn btn-primary" %>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
 
-      <!-- Botão Voltar -->
-      <div class="d-grid mt-4">
-        <% if current_user.teacher? %>
-          <%= link_to t('activities.back_to_dashboard'), teacher_dashboard_path, class: "btn btn-secondary" %>
-        <% else %>
-          <%= link_to t('activities.back_to_dashboard'), student_dashboard_path, class: "btn btn-secondary" %>
+  <% if current_user.teacher? %>
+         <!-- Questões -->
+     <% if @activity.questions.any? %>
+       <div class="main-card" style="<%= (@activity.statement.blank? && @activity.media_url.blank? && @activity.explanation_text.blank?) ? 'margin-top: 2.5rem;' : '' %>">
+        <div class="card-header-custom">
+          <i class="fas fa-list-ol"></i>
+          <span>Questões da Atividade</span>
+        </div>
+        <div class="card-body-custom">
+          <% @activity.questions.each_with_index do |question, index| %>
+            <div id="question-<%= question.id %>" class="question-card">
+              <div class="question-header">
+                <div class="question-number">
+                  <span>Questão <%= index + 1 %></span>
+                  <span class="question-type-badge"><%= t("questions.types.#{question.question_type}") %></span>
+                </div>
+                <% if @activity.teacher == current_user %>
+                  <div class="btn-group-custom">
+                    <button type="button" class="btn-icon edit" data-bs-toggle="collapse" data-bs-target="#edit-question-form-<%= question.id %>">
+                      <i class="fas fa-edit"></i>
+                    </button>
+                    <%= button_to activity_question_path(@activity, question), 
+                        method: :delete, 
+                        class: "btn-icon delete",
+                        data: { confirm: t('questions.confirm_delete') } do %>
+                      <i class="fas fa-trash"></i>
+                    <% end %>
+                  </div>
+                <% end %>
+              </div>
+              <div class="content-body">
+                <% if question.fill_in_blank? %>
+                  <p class="mb-3 fs-5"><%= question.content.gsub('_____', '<span class="text-decoration-underline" style="width: 100px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>').html_safe %></p>
+                <% else %>
+                  <p class="mb-3 fs-5"><%= question.content %></p>
+                <% end %>
+                
+                <% if question.multiple_choice? && question.options.any? %>
+                  <ul class="list-group mb-3">
+                    <% question.options.each do |option| %>
+                      <li class="list-group-item <%= question.correct_answer == option ? 'list-group-item-success' : '' %>">
+                        <%= option %>
+                      </li>
+                    <% end %>
+                  </ul>
+                <% end %>
+                <small class="text-success">
+                  <i class="fas fa-check-circle"></i>
+                  <%= t('questions.correct_answer') %>: <%= question.correct_answer %>
+                </small>
+              </div>
+            </div>
+            
+            <% if @activity.teacher == current_user %>
+              <div class="collapse form-collapse" id="edit-question-form-<%= question.id %>">
+                <div class="card-body">
+                  <div data-controller="question-selector">
+                    <%= form_with model: [question.activity, question], html: { 
+                        id: "edit-form-#{question.id}"
+                      } do |form| %>
+                      <!-- Manter toda a lógica do formulário de edição de questão -->
+                      <div class="row mb-3">
+                        <div class="col-md-12">
+                          <%= form.label :question_type, t('questions.form.question_type') %>
+                          <%= form.select :question_type, 
+                              Question::QUESTION_TYPES.map { |type| [t("questions.types.#{type}"), type] }, 
+                              { selected: question.question_type || 'multiple_choice' }, 
+                              { 
+                                class: "form-control", 
+                                data: { 
+                                  question_selector_target: "selector",
+                                  action: "change->question-selector#change"
+                                }
+                              } 
+                          %>
+                        </div>
+                      </div>
+                  
+                      <div class="row mb-3">
+                        <div class="col-md-12">
+                          <%= form.label :content, t('questions.form.question_content') %>
+                          <%= form.text_area :content, class: "form-control", rows: 3 %>
+                        </div>
+                      </div>
+
+                      <div class="row mb-3 fill-in-blank-help" data-question-selector-target="fillInBlank" style="display: <%= question.fill_in_blank? ? 'block' : 'none' %>;">
+                        <div class="col-md-12">
+                          <div class="alert alert-info">
+                            <%= t('questions.form.fill_in_blank_help_html') %>
+                          </div>
+                        </div>
+                      </div>
+                  
+                      <div class="row mb-3 multiple-choice-fields" data-question-selector-target="multipleChoice" style="display: <%= question.multiple_choice? ? 'block' : 'none' %>;">
+                        <div class="col-md-12">
+                          <%= form.label :options, t('questions.form.options') %>
+                          <%= form.text_area :options_text, value: question.options&.join(','), class: "form-control", rows: 3 %>
+                          <small class="form-text text-muted"><%= t('questions.form.options_help') %></small>
+                        </div>
+                      </div>
+                  
+                      <div class="row mb-3" data-question-selector-target="correctAnswer">
+                        <div class="col-md-12">
+                          <%= form.label :correct_answer, t('questions.form.correct_answer') %>
+                          <%= form.text_field :correct_answer, class: "form-control" %>
+                        </div>
+                      </div>
+
+                      <div class="row">
+                        <div class="col-md-12">
+                          <%= form.submit t('common.save'), class: "btn btn-primary" %>
+                          <% if question.persisted? %>
+                            <%= link_to t('common.delete'), 
+                                      activity_question_path(@activity, question), 
+                                      data: { turbo_method: :delete, turbo_confirm: t('common.confirm_delete') },
+                                      class: "btn btn-outline-danger ms-2" %>
+                          <% end %>
+                        </div>
+                      </div>
+                      
+                      <!-- Manter script de fallback -->
+                      <script>
+                        document.addEventListener('DOMContentLoaded', function() {
+                          const form = document.getElementById('edit-form-<%= question.id %>');
+                          if (!form) return;
+                          
+                          const select = form.querySelector('select[name="question[question_type]"]');
+                          if (!select) return;
+                          
+                          function updateEditFields() {
+                            const type = select.value;
+                            console.log("Script fallback (edit): tipo alterado para", type);
+                            
+                            const multipleChoiceFields = form.querySelector('.multiple-choice-fields');
+                            const fillInBlankHelp = form.querySelector('.fill-in-blank-help');
+                            const correctAnswerField = form.querySelector('[data-question-selector-target="correctAnswer"]');
+                            
+                            if (multipleChoiceFields) multipleChoiceFields.style.display = 'none';
+                            if (fillInBlankHelp) fillInBlankHelp.style.display = 'none';
+                            if (correctAnswerField) correctAnswerField.style.display = 'block';
+                            
+                            switch (type) {
+                              case 'multiple_choice':
+                                if (multipleChoiceFields) multipleChoiceFields.style.display = 'block';
+                                break;
+                              case 'fill_in_blank':
+                                if (fillInBlankHelp) fillInBlankHelp.style.display = 'block';
+                                break;
+                            }
+                          }
+                          
+                          select.addEventListener('change', updateEditFields);
+                          
+                          const collapse = document.getElementById('edit-question-form-<%= question.id %>');
+                          if (collapse) {
+                            collapse.addEventListener('shown.bs.collapse', updateEditFields);
+                          }
+                          
+                          updateEditFields();
+                        });
+                      </script>
+                    <% end %>
+                  </div>
+                </div>
+              </div>
+            <% end %>
+          <% end %>
+        </div>
+      </div>
+         <% else %>
+       <div class="alert-custom alert-warning-custom" style="<%= (@activity.statement.blank? && @activity.media_url.blank? && @activity.explanation_text.blank?) ? 'margin-top: 2.5rem;' : '' %>">
+        <i class="fas fa-exclamation-triangle"></i>
+        <span><%= t('activities.no_questions') %></span>
+      </div>
+    <% end %>
+
+    <!-- Sugestões -->
+    <% if @activity.suggestions.any? %>
+      <div class="main-card" id="suggestions-section">
+        <div class="card-header-custom">
+          <i class="fas fa-lightbulb"></i>
+          <span><%= t('activities.suggestions') %></span>
+        </div>
+        <div class="card-body-custom">
+          <% @activity.suggestions.each do |suggestion| %>
+            <div id="suggestion-<%= suggestion.id %>" class="content-section">
+              <div class="content-body">
+                <div class="d-flex justify-content-between align-items-start">
+                  <div>
+                    <%= simple_format(suggestion.content) %>
+                  </div>
+                  <% if current_user.teacher? && @activity.teacher == current_user %>
+                    <%= button_to activity_suggestion_path(@activity, suggestion), 
+                        method: :delete,
+                        class: "btn-icon delete",
+                        data: { turbo_confirm: t('activities.confirm_delete_suggestion') } do %>
+                      <i class="fas fa-trash"></i>
+                    <% end %>
+                  <% end %>
+                </div>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+
+         <!-- Adicionar Conteúdo -->
+     <div class="add-content-section" data-controller="content-form" style="<%= (@activity.statement.blank? && @activity.media_url.blank? && @activity.explanation_text.blank? && @activity.questions.empty?) ? 'margin-top: 2.5rem;' : '' %>">
+      <div class="section-title">
+        <i class="fas fa-plus-circle"></i>
+        <span><%= t('activities.add_content') %></span>
+      </div>
+      
+      <div class="action-buttons">
+        <button type="button" class="btn-action statement" 
+                data-action="content-form#toggle"
+                data-bs-toggle="collapse"
+                data-bs-target="#new-statement-form">
+          <i class="fas fa-file-text"></i>
+          <span><%= t('activities.add_statement') %></span>
+        </button>
+        
+        <button type="button" class="btn-action media" 
+                data-action="content-form#toggle"
+                data-bs-toggle="collapse"
+                data-bs-target="#new-media-form">
+          <i class="fas fa-photo-video"></i>
+          <span><%= t('activities.add_media') %></span>
+        </button>
+        
+        <button type="button" class="btn-action text" 
+                data-action="content-form#toggle"
+                data-bs-toggle="collapse"
+                data-bs-target="#new-text-form">
+          <i class="fas fa-align-left"></i>
+          <span><%= t('activities.add_text') %></span>
+        </button>
+        
+        <button type="button" class="btn-action question" 
+                data-action="content-form#toggle"
+                data-bs-toggle="collapse"
+                data-bs-target="#new-question-form">
+          <i class="fas fa-question-circle"></i>
+          <span><%= t('activities.add_question') %></span>
+        </button>
+        
+        <button type="button" class="btn-action suggestion" 
+                data-action="content-form#toggle"
+                data-bs-toggle="collapse"
+                data-bs-target="#new-suggestion-form">
+          <i class="fas fa-lightbulb"></i>
+          <span><%= t('activities.add_suggestion') %></span>
+        </button>
+      </div>
+    </div>
+    
+    <!-- Formulários colapsáveis (manter todos os existentes) -->
+    <div class="collapse form-collapse" id="new-statement-form" data-content-form-target="form">
+      <div class="card-body">
+        <%= form_with(model: @activity, local: true) do |f| %>
+          <div class="mb-3">
+            <%= f.label :statement, t('activities.statement_label'), class: "form-label" %>
+            <%= f.text_area :statement, class: "form-control", rows: 5,
+                placeholder: t('activities.statement_placeholder') %>
+          </div>
+          <div class="d-grid">
+            <%= f.submit t('activities.save_statement'), class: "btn btn-primary" %>
+          </div>
         <% end %>
       </div>
     </div>
+    
+    <div class="collapse form-collapse" id="new-media-form" data-content-form-target="form">
+      <div class="card-body">
+        <%= form_with(model: @activity, local: true) do |f| %>
+          <div class="mb-3">
+            <%= f.label :media_url, t('activities.media_url_label'), class: "form-label" %>
+            <%= f.text_field :media_url, class: "form-control", 
+                placeholder: t('activities.media_url_placeholder') %>
+          </div>
+          <div class="d-grid">
+            <%= f.submit t('activities.save_media'), class: "btn btn-primary" %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+    
+    <div class="collapse form-collapse" id="new-text-form" data-content-form-target="form">
+      <div class="card-body">
+        <%= form_with(model: @activity, local: true) do |f| %>
+          <div class="mb-3">
+            <%= f.text_area :explanation_text, class: "form-control", rows: 5,
+                placeholder: t('activities.explanation_text_placeholder') %>
+          </div>
+          <div class="d-grid">
+            <%= f.submit t('activities.save_text'), class: "btn btn-primary" %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+    
+    <div class="collapse form-collapse" id="new-question-form" data-content-form-target="form">
+      <div class="card-body">
+        <div data-controller="question-form">
+          <%= render partial: "questions/form", locals: { question: @activity.questions.build, activity: @activity } %>
+        </div>
+      </div>
+    </div>
+
+    <div class="collapse form-collapse" id="new-suggestion-form" data-content-form-target="form">
+      <div class="card-body">
+        <%= form_with(model: [@activity, Suggestion.new], local: true) do |f| %>
+          <div class="mb-3">
+            <%= f.label :content, t('activities.suggestion_label'), class: "form-label" %>
+            <%= f.text_area :content, class: "form-control", rows: 5,
+                placeholder: t('activities.suggestion_placeholder') %>
+          </div>
+          <div class="d-grid">
+            <%= f.submit t('activities.save_suggestion'), class: "btn btn-primary" %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+
+    <!-- Outras Ações -->
+    <div class="other-actions">
+      <div class="section-title">
+        <i class="fas fa-cog"></i>
+        <span><%= t('activities.other_actions') || "Outras ações" %></span>
+      </div>
+      
+             <%= link_to edit_activity_path(@activity), class: "btn-other edit" do %>
+         <i class="fas fa-edit"></i>
+         <span>Editar descrição da atividade</span>
+       <% end %>
+       
+       <%= link_to activity_path(@activity), 
+           class: "btn-other delete",
+           data: {
+             turbo_method: :delete,
+             turbo_confirm: t('activities.confirm_delete')
+           } do %>
+         <i class="fas fa-trash"></i>
+         <span>Excluir atividade</span>
+       <% end %>
+    </div>
+
+  <% end %>
+
+  <!-- Botão Resolver Quiz -->
+  <div class="solve-section">
+    <%= link_to solve_activity_path(@activity), class: "btn-solve" do %>
+      <i class="fas fa-play-circle"></i>
+      <span><%= t('activities.solve_quiz') %></span>
+    <% end %>
+  </div>
+
+  <!-- Botão Voltar -->
+  <div style="text-align: center;">
+    <% if current_user.teacher? %>
+      <%= link_to teacher_dashboard_path, class: "btn-back" do %>
+        <i class="fas fa-arrow-left"></i>
+        <span><%= t('activities.back_to_dashboard') %></span>
+      <% end %>
+    <% else %>
+      <%= link_to student_dashboard_path, class: "btn-back" do %>
+        <i class="fas fa-arrow-left"></i>
+        <span><%= t('activities.back_to_dashboard') %></span>
+      <% end %>
+    <% end %>
   </div>
 </div>
 
+<!-- Manter todo o JavaScript existente -->
 <script>
   // Script unificado para rolar a página para o elemento recém-adicionado/atualizado
   function scrollToElement() {
@@ -583,26 +1163,5 @@
   });
 </script>
 
-<style>
-  .hover-shadow:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
-    transition: all 0.3s ease;
-  }
-  
-  /* Estilo para que os formulários button_to se comportem como inline */
-  form.button_to {
-    display: inline-block;
-    margin: 0;
-  }
-  
-  /* Ajusta botões dentro de grupos */
-  .btn-group form.button_to {
-    display: flex;
-  }
-  
-  .btn-group form.button_to .btn {
-    border-top-left-radius: 0;
-    border-bottom-left-radius: 0;
-  }
-</style>
+</body>
+</html>

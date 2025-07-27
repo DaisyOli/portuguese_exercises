@@ -1,0 +1,393 @@
+// ==============================================
+// 📝 COMPONENTES DE FORMULÁRIOS
+// ==============================================
+
+// 🎯 CONTAINER BASE PARA FORMULÁRIOS
+.form-container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: var(--spacing-xl);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+// 🃏 CARD PRINCIPAL DO FORMULÁRIO
+.form-card {
+  background: var(--card-branco);
+  border-radius: var(--border-radius-large);
+  box-shadow: 0 8px 32px var(--sombra-light);
+  padding: 2.5rem;
+  flex: 1;
+  border: 1px solid rgba(46, 125, 50, 0.1);
+  position: relative;
+  overflow: hidden;
+  
+  // ✨ Borda colorida superior
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: linear-gradient(90deg, var(--verde-destaque), var(--azul-acao), var(--roxo-acao));
+  }
+  
+  // 📱 Responsividade
+  @media (max-width: 768px) {
+    padding: var(--spacing-lg);
+    margin: var(--spacing-md);
+  }
+}
+
+// 🏷️ TÍTULO DO FORMULÁRIO
+.form-title {
+  font-family: var(--font-display);
+  font-size: 1.4rem;
+  color: var(--verde-destaque);
+  margin-bottom: var(--spacing-xl);
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-sm);
+}
+
+// 📂 SEÇÕES DO FORMULÁRIO
+.form-section {
+  margin-bottom: var(--spacing-xl);
+  
+  .section-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--verde-destaque);
+    margin-bottom: var(--spacing-md);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    padding-bottom: var(--spacing-sm);
+    border-bottom: 2px solid #e0f2f1;
+    
+    i {
+      color: var(--azul-acao);
+    }
+  }
+}
+
+// 📝 GRUPO DE CAMPO
+.form-group {
+  margin-bottom: var(--spacing-lg);
+  
+  // 🎭 Animação de entrada
+  &.animate {
+    opacity: 0;
+    transform: translateY(20px);
+    animation: formGroupSlideIn 0.5s ease forwards;
+  }
+  
+  // ⏱️ Delays escalonados para animação
+  &:nth-child(1) { animation-delay: 0.1s; }
+  &:nth-child(2) { animation-delay: 0.2s; }
+  &:nth-child(3) { animation-delay: 0.3s; }
+  &:nth-child(4) { animation-delay: 0.4s; }
+  &:nth-child(5) { animation-delay: 0.5s; }
+}
+
+// 🏷️ LABEL DOS CAMPOS
+.form-label {
+  display: block;
+  font-weight: 600;
+  color: var(--texto-escuro);
+  margin-bottom: var(--spacing-sm);
+  font-size: 0.95rem;
+  
+  .required {
+    color: var(--vermelho-acao);
+    margin-left: 0.25rem;
+  }
+  
+  .optional {
+    color: #999;
+    font-weight: normal;
+    font-size: 0.85rem;
+    margin-left: 0.25rem;
+  }
+}
+
+// ✏️ CAMPOS DE INPUT
+.form-input {
+  width: 100%;
+  padding: 0.75rem var(--spacing-md);
+  border: 2px solid #e0e0e0;
+  border-radius: var(--border-radius-small);
+  font-size: 0.95rem;
+  font-family: var(--font-primary);
+  color: var(--texto-escuro);
+  background: var(--card-branco);
+  transition: var(--transition-normal);
+  
+  &:focus {
+    outline: none;
+    border-color: var(--azul-acao);
+    box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.2);
+    transform: translateY(-1px);
+  }
+  
+  &:hover:not(:focus) {
+    border-color: #ccc;
+  }
+  
+  &::placeholder {
+    color: #999;
+    font-style: italic;
+  }
+  
+  // 🚨 Estados de erro
+  &.error {
+    border-color: var(--vermelho-acao);
+    
+    &:focus {
+      box-shadow: 0 0 0 3px rgba(229, 57, 53, 0.2);
+    }
+  }
+  
+  // ✅ Estados de sucesso
+  &.success {
+    border-color: var(--verde-destaque);
+    
+    &:focus {
+      box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.2);
+    }
+  }
+}
+
+// 📄 TEXTAREA
+.form-textarea {
+  @extend .form-input;
+  min-height: 120px;
+  resize: vertical;
+  font-family: var(--font-primary);
+}
+
+// 📋 SELECT
+.form-select {
+  @extend .form-input;
+  cursor: pointer;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+  background-position: right 0.5rem center;
+  background-repeat: no-repeat;
+  background-size: 1.5em 1.5em;
+  padding-right: 2.5rem;
+}
+
+// ☑️ CHECKBOX E RADIO
+.form-checkbox,
+.form-radio {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  margin-bottom: var(--spacing-sm);
+  cursor: pointer;
+  
+  input[type="checkbox"],
+  input[type="radio"] {
+    width: 1.2rem;
+    height: 1.2rem;
+    accent-color: var(--azul-acao);
+    cursor: pointer;
+  }
+  
+  label {
+    cursor: pointer;
+    font-weight: normal;
+    margin: 0;
+  }
+}
+
+// 📊 GRUPO DE CAMPOS INLINE
+.form-row {
+  display: flex;
+  gap: var(--spacing-md);
+  
+  .form-group {
+    flex: 1;
+  }
+  
+  // 📱 Responsividade
+  @media (max-width: 768px) {
+    flex-direction: column;
+    gap: 0;
+  }
+}
+
+// 🚨 MENSAGENS DE ERRO
+.form-error {
+  color: var(--vermelho-acao);
+  font-size: 0.85rem;
+  margin-top: var(--spacing-xs);
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  
+  i {
+    font-size: 0.8rem;
+  }
+}
+
+// ✅ MENSAGENS DE SUCESSO
+.form-success {
+  color: var(--verde-destaque);
+  font-size: 0.85rem;
+  margin-top: var(--spacing-xs);
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  
+  i {
+    font-size: 0.8rem;
+  }
+}
+
+// 💡 DICAS E AJUDA
+.form-help {
+  font-size: 0.85rem;
+  color: #666;
+  margin-top: var(--spacing-xs);
+  font-style: italic;
+}
+
+// 🎯 AÇÕES DO FORMULÁRIO
+.form-actions {
+  margin-top: var(--spacing-xl);
+  padding-top: var(--spacing-lg);
+  border-top: 1px solid #f0f0f0;
+  display: flex;
+  gap: var(--spacing-md);
+  justify-content: flex-end;
+  
+  // 📱 Responsividade
+  @media (max-width: 768px) {
+    flex-direction: column-reverse;
+    
+    .btn-form {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+}
+
+// 📋 FIELDSET CUSTOMIZADO
+.form-fieldset {
+  border: 2px solid #e0f2f1;
+  border-radius: var(--border-radius-small);
+  padding: var(--spacing-lg);
+  margin-bottom: var(--spacing-lg);
+  
+  .fieldset-legend {
+    background: var(--card-branco);
+    padding: 0 var(--spacing-sm);
+    font-weight: 600;
+    color: var(--verde-destaque);
+    font-size: 0.95rem;
+  }
+}
+
+// 📝 LISTA DE ITENS DINÂMICA (questões, etc.)
+.form-list {
+  .form-list-item {
+    background: #f8f9fa;
+    border: 1px solid #e0e0e0;
+    border-radius: var(--border-radius-small);
+    padding: var(--spacing-md);
+    margin-bottom: var(--spacing-md);
+    position: relative;
+    
+    .item-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: var(--spacing-sm);
+      
+      .item-title {
+        font-weight: 600;
+        color: var(--verde-destaque);
+      }
+      
+      .item-actions {
+        display: flex;
+        gap: var(--spacing-xs);
+      }
+    }
+    
+    .item-remove {
+      background: var(--vermelho-acao);
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 2rem;
+      height: 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: var(--transition-normal);
+      
+      &:hover {
+        background: #d32f2f;
+        transform: scale(1.1);
+      }
+    }
+  }
+  
+  .form-list-add {
+    border: 2px dashed var(--azul-acao);
+    background: transparent;
+    color: var(--azul-acao);
+    padding: var(--spacing-md);
+    border-radius: var(--border-radius-small);
+    cursor: pointer;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-sm);
+    transition: var(--transition-normal);
+    
+    &:hover {
+      background: var(--post-it-azul-gelo);
+      border-color: var(--azul-acao-claro);
+    }
+  }
+}
+
+// 🎭 ANIMAÇÕES
+@keyframes formGroupSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// 📱 RESPONSIVIDADE GERAL
+@media (max-width: 576px) {
+  .form-container {
+    padding: var(--spacing-md);
+  }
+  
+  .form-card {
+    padding: var(--spacing-lg);
+  }
+  
+  .form-title {
+    font-size: 1.2rem;
+  }
+  
+  .form-section .section-title {
+    font-size: 1rem;
+  }
+} 

@@ -136,5 +136,47 @@
       
       <%= yield %>
     <% end %>
+    <!-- Toast Notifications Container -->
+    <div id="toast-container" 
+         class="toast-container position-fixed top-0 end-0 p-3" 
+         style="z-index: 1050;"
+         data-controller="toast">
+    </div>
+
+    <!-- Script para conectar flash messages aos toast notifications -->
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        // Converter flash messages em toast notifications
+        <% if flash[:notice] %>
+          document.dispatchEvent(new CustomEvent('show-toast', {
+            detail: { message: '<%= j(flash[:notice]) %>', type: 'success' }
+          }));
+        <% end %>
+        
+        <% if flash[:alert] %>
+          document.dispatchEvent(new CustomEvent('show-toast', {
+            detail: { message: '<%= j(flash[:alert]) %>', type: 'error' }
+          }));
+        <% end %>
+        
+        // Listener para eventos de toast customizados
+        document.addEventListener('show-toast', function(event) {
+          const toastController = document.querySelector('[data-controller*="toast"]');
+          if (toastController && window.Stimulus) {
+            const controller = window.Stimulus.getControllerForElementAndIdentifier(toastController, 'toast');
+            if (controller) {
+              controller.show(event.detail.message, event.detail.type);
+            }
+          }
+        });
+
+        // Listener para eventos de validação de quiz
+        document.addEventListener('quiz:validation-error', function(event) {
+          document.dispatchEvent(new CustomEvent('show-toast', {
+            detail: { message: event.detail.message, type: 'warning' }
+          }));
+        });
+      });
+    </script>
   </body>
 </html>

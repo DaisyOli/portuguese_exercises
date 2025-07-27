@@ -61,10 +61,71 @@ en:
 
   # Student Dashboard
   student_dashboard:
-    welcome: "Welcome, Student!"
+    welcome: "Hello, Student!"
+    welcome_with_name: "Hello, %{name}!"
     control_panel: "This is your control panel."
+    welcome_back: "Welcome! Let's continue learning Portuguese?"
+    welcome_back_with_name: "Great to see you again, %{name}! Let's continue learning Portuguese?"
     available_activities: "Available Activities"
     no_activities: "There are no activities available at the moment."
+    
+    # Metrics
+    metrics:
+      completed_activities: "Completed Activities"
+      streak_days: "Consecutive Days"
+      total_progress: "Total Progress"
+      last_score: "Last Score"
+    
+    # Sections
+    choose_level: "Choose Your Level"
+    choose_level_description: "Select the level that best represents your current Portuguese knowledge!"
+    achievements: "Your Brazilian Achievements"
+    achievements_description: "Badges you've unlocked on your journey!"
+    my_account: "My Account"
+    logged_as: "Logged in as"
+    connected_as: "Connected as"
+    your_profile: "Your Profile"
+    
+    # Levels
+    levels:
+      beginner: "Beginner"
+      basic: "Basic"
+      intermediate: "Intermediate"
+      advanced: "Advanced"
+      expert: "Expert"
+      
+    level_descriptions:
+      a1: "First steps in Portuguese. Basic vocabulary and simple phrases."
+      a2: "Build a solid foundation. Basic conversation and fundamental grammar."
+      b1: "Develop fluency. More complex texts and idiomatic expressions."
+      b2: "Master advanced structures. Effective communication in various contexts."
+      c1: "Refined Portuguese. Complex texts and professional communication."
+    
+    # Actions
+    actions:
+      retry_quiz: "Retry Quiz"
+      explore_levels: "Explore Other Levels"
+      back_to_panel: "Back to My Panel"
+
+      load_more: "Load more"
+      show_completed: "Show completed activities"
+      review_activities: "Review activities"
+      
+    # Messages
+    messages:
+      general_progress: "General Progress"
+      activities_text: "activities"
+      next_challenge: "Next challenge"
+      in_days: "in"
+      days: "days"
+      tomorrow: "Tomorrow!"
+      no_activities_level: "We don't have activities for level"
+      try_other_levels: "How about exploring other levels in the meantime?"
+
+      remaining: "remaining"
+      loading: "Loading"
+      level_completed: "Level Completed!"
+      level_completed_desc: "Congratulations! You've completed all activities for level %{level}."
 
   navigation:
     home: "Home"

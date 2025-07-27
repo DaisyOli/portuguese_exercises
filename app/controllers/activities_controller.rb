@@ -6,14 +6,37 @@ class ActivitiesController < ApplicationController
   
   before_action :authenticate_user!
   before_action :set_activity, only: [:show, :edit, :update, :destroy, :resolve_quiz, :submit_quiz, :quiz_results, :clear_statement, :clear_media, :clear_explanation, :clear_attempt_history]
+  before_action :authorize_teacher, only: [:new, :create, :edit, :update, :destroy]
 
   def index
-    # REFATORADO: Usando service para organizar a lógica
-    service_result = ActivitiesIndexService.new(
-      user: current_user,
-      level: params[:level]
-    ).call
+    @activities = Activity.all
+
+    # Aplicar filtros
+    @activities = @activities.where(level: params[:level]) if params[:level].present?
+    @activities = @activities.where("title ILIKE ?", "%#{params[:search]}%") if params[:search].present?
+
+    # Aplicar ordenação
+    case params[:sort]
+    when 'antigos'
+      @activities = @activities.order(created_at: :asc)
+    when 'titulo'
+      @activities = @activities.order(title: :asc)
+    when 'tentativas'
+      @activities = @activities.left_joins(:quiz_attempts)
+                             .group('activities.id')
+                             .order('COUNT(quiz_attempts.id) DESC')
+    else # 'recentes' ou padrão
+      @activities = @activities.order(created_at: :desc)
+    end
+
+    # Aplicar paginação
+    @activities = @activities.page(params[:page]).per(12)
+
+    # Carregar métricas para cada atividade
+    @activities = @activities.includes(:quiz_attempts)
     
+    # REFATORADO: Usando service para organizar a lógica
+    service_result = ActivitiesIndexService.new(params: params, current_user: current_user).call
     @activities = service_result[:activities]
     @current_level = service_result[:current_level]
     @activities_by_level = service_result[:activities_by_level]
@@ -23,38 +46,6 @@ class ActivitiesController < ApplicationController
       @best_attempts = service_result[:best_attempts]
       load_completed_exercises
     end
-
-    # CÓDIGO ORIGINAL MANTIDO COMO BACKUP (comentado):
-    # if params[:level].present?
-    #   @activities = Rails.cache.fetch(["activities", params[:level], current_user.id], expires_in: 1.hour) do
-    #     Activity.where(level: params[:level]).to_a
-    #   end
-    #   @current_level = params[:level]
-    #   
-    #   # Buscar os melhores resultados para o estudante
-    #   if current_user.student?
-    #     @best_attempts = Rails.cache.fetch(["best_attempts", current_user.id], expires_in: 30.minutes) do
-    #       attempts = current_user.quiz_attempts.where(activity_id: @activities.map(&:id))
-    #                            .group(:activity_id)
-    #                            .select('activity_id, MAX(score) as max_score')
-    #       
-    #       attempts.each_with_object({}) do |attempt, hash|
-    #         hash[attempt.activity_id] = attempt.max_score
-    #       end
-    #     end
-    #     
-    #     # Carregar lista de exercícios completados para a sessão
-    #     load_completed_exercises
-    #   end
-    # else
-    #   @activities = Rails.cache.fetch(["all_activities"], expires_in: 1.hour) do
-    #     Activity.all.to_a
-    #   end
-    #   
-    #   @activities_by_level = Rails.cache.fetch(["activities_by_level"], expires_in: 1.hour) do
-    #     Activity.all.group_by(&:level)
-    #   end
-    # end
   end
 
   def show
@@ -140,7 +131,7 @@ class ActivitiesController < ApplicationController
 
   def quiz_results
     begin
-      @activity = Activity.find(params[:id])
+      @activity = Activity.find_by!(slug: params[:slug])
       
       # Tentar obter a tentativa a partir do ID na sessão
       if session[:quiz_attempt_id].present?
@@ -340,7 +331,7 @@ class ActivitiesController < ApplicationController
   end
 
   def clear_attempt_history
-    @activity = Activity.find(params[:id])
+    @activity = Activity.find_by!(slug: params[:slug])
     
     # Manter apenas a tentativa mais recente
     latest_attempt = current_user.quiz_attempts.where(activity_id: @activity.id).order(created_at: :desc).first
@@ -358,7 +349,7 @@ class ActivitiesController < ApplicationController
 
   # Método para exibir os resultados após submissão do quiz
   def result_quiz
-    @activity = Activity.find(params[:id])
+    @activity = Activity.find_by!(slug: params[:slug])
     
     # Tenta encontrar a tentativa pelo ID ou pegar a última do usuário atual
     if params[:attempt_id].present?
@@ -390,7 +381,7 @@ class ActivitiesController < ApplicationController
   private
 
   def set_activity
-    @activity = Activity.find(params[:id])
+    @activity = Activity.find_by!(slug: params[:slug])
   end
 
   def activity_params
@@ -410,6 +401,12 @@ class ActivitiesController < ApplicationController
     # Atualizar a sessão com os IDs de atividades concluídas
     completed_activities.each do |activity_id|
       session[:completed_quizzes] << activity_id unless session[:completed_quizzes].include?(activity_id)
+    end
+  end
+
+  def authorize_teacher
+    unless current_user&.teacher?
+      redirect_to root_path, alert: "Acesso restrito a professores."
     end
   end
 end

@@ -1,0 +1,270 @@
+// ==============================================
+// 📋 COMPONENTES DE HEADERS
+// ==============================================
+
+// 🎯 BASE PARA TODOS OS HEADERS TEMÁTICOS
+.header-base {
+  background: var(--madeira-clara);
+  color: #333;
+  padding: 1.5rem 2rem;
+  border-radius: 15px 15px 5px 5px;
+  margin-bottom: 2rem;
+  box-shadow: 0 8px 25px var(--sombra-medium);
+  border: 4px solid var(--madeira-escura);
+  position: relative;
+  
+  // ✨ Suporte superior (detalhe madeira)
+  &::before {
+    content: '';
+    position: absolute;
+    top: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 8px;
+    background: var(--madeira-suporte);
+    border-radius: 4px;
+  }
+  
+  // 📝 Tipografia padrão do header
+  h1 {
+    font-family: var(--font-display);
+    font-size: 2rem;
+    color: var(--verde-destaque);
+    margin-bottom: 0.5rem;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+  }
+  
+  p {
+    font-size: 1rem;
+    color: #555;
+    opacity: 0.8;
+    margin-bottom: 0;
+  }
+}
+
+// 🏫 HEADER DO DASHBOARD DO PROFESSOR
+.header-quadro {
+  @extend .header-base;
+  
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--spacing-md);
+  
+  .professor-info {
+    flex: 1;
+    min-width: 250px;
+    
+    h1 {
+      font-size: 2.2rem;
+      margin-bottom: 0.5rem;
+    }
+    
+    p {
+      font-size: 1.1rem;
+    }
+  }
+  
+  .action-buttons {
+    display: flex;
+    gap: var(--spacing-md);
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  
+  // 📱 Responsividade
+  @media (max-width: 768px) {
+    flex-direction: column;
+    text-align: center;
+    
+    .action-buttons {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+}
+
+// 📚 HEADER DAS ATIVIDADES (lista geral)
+.header-atividades {
+  @extend .header-base;
+  
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--spacing-md);
+  
+  .header-info {
+    flex: 1;
+    min-width: 200px;
+    
+    h1 {
+      font-size: 2rem;
+    }
+  }
+  
+  .header-actions {
+    display: flex;
+    gap: var(--spacing-md);
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  
+  // 📱 Responsividade
+  @media (max-width: 768px) {
+    flex-direction: column;
+    text-align: center;
+    
+    .header-actions {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+}
+
+// 📝 HEADER DE ATIVIDADE INDIVIDUAL (show/new/edit)
+.header-atividade {
+  @extend .header-base;
+  
+  text-align: center;
+  
+  h1 {
+    font-size: 2rem;
+    justify-content: center;
+  }
+  
+  p {
+    font-size: 1rem;
+  }
+  
+  // ➕ Variação para formulários
+  &.form {
+    margin-bottom: 2rem;
+    
+    h1 {
+      font-size: 1.8rem;
+    }
+  }
+  
+  // 🎯 Variação para visualização
+  &.show {
+    margin-bottom: 2rem;
+    
+    .meta-info {
+      margin-top: var(--spacing-md);
+      display: flex;
+      justify-content: center;
+      gap: var(--spacing-lg);
+      flex-wrap: wrap;
+      font-size: 0.9rem;
+      color: #666;
+      
+      .meta-item {
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-xs);
+      }
+    }
+  }
+}
+
+// 💌 HEADER DE CONVITES
+.header-convite {
+  @extend .header-base;
+  
+  text-align: center;
+  background: var(--post-it-amarelo);
+  border-color: var(--amarelo-acao);
+  
+  &::before {
+    background: var(--amarelo-acao);
+  }
+  
+  h1 {
+    color: var(--roxo-acao);
+    
+    i {
+      color: var(--amarelo-acao);
+    }
+  }
+}
+
+// 🎨 HEADER GENÉRICO CUSTOMIZÁVEL
+.header-custom {
+  @extend .header-base;
+  
+  // 🌈 Variações de cor
+  &.verde {
+    background: var(--post-it-menta);
+    border-color: var(--verde-destaque);
+    
+    &::before {
+      background: var(--verde-destaque);
+    }
+  }
+  
+  &.azul {
+    background: var(--post-it-azul-gelo);
+    border-color: var(--azul-acao);
+    
+    &::before {
+      background: var(--azul-acao);
+    }
+  }
+  
+  &.roxo {
+    background: var(--post-it-lavanda);
+    border-color: var(--roxo-acao);
+    
+    &::before {
+      background: var(--roxo-acao);
+    }
+  }
+  
+  &.pessego {
+    background: var(--post-it-pessego);
+    border-color: #e91e63;
+    
+    &::before {
+      background: #e91e63;
+    }
+  }
+}
+
+// 🔧 UTILITÁRIOS PARA HEADERS
+.header-actions-right {
+  display: flex;
+  gap: var(--spacing-sm);
+  align-items: center;
+  margin-left: auto;
+}
+
+.header-badge {
+  background: var(--azul-acao);
+  color: var(--giz-branco);
+  padding: 0.2rem 0.6rem;
+  border-radius: 12px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-left: var(--spacing-sm);
+}
+
+// 📱 RESPONSIVIDADE GLOBAL PARA HEADERS
+@media (max-width: 576px) {
+  .header-base {
+    padding: 1rem 1.5rem;
+    
+    h1 {
+      font-size: 1.5rem !important;
+    }
+    
+    p {
+      font-size: 0.9rem;
+    }
+  }
+} 

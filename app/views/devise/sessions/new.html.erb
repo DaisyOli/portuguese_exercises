@@ -1,39 +1,183 @@
-<div class="container d-flex justify-content-center align-items-center vh-100">
-  <div class="card shadow-lg p-4" style="width: 100%; max-width: 400px;">
-    <div class="card-body">
-      <h2 class="card-title text-center mb-4">Log in</h2>
-
-      <%= form_for(resource, as: resource_name, url: session_path(resource_name), html: { class: 'needs-validation' }) do |f| %>
-        <!-- Campo de Email -->
-        <div class="mb-3">
-          <%= f.label :email, class: "form-label" %>
-          <%= f.email_field :email, autofocus: true, autocomplete: "email", class: "form-control", placeholder: "Enter your email" %>
+<!-- 🎨 Página de Login Estilizada -->
+<div class="login-page">
+  <div class="container d-flex justify-content-center align-items-center vh-100">
+    <div class="login-card">
+        <div class="login-header">
+          <div class="login-icon">
+            <i class="fas fa-graduation-cap"></i>
+          </div>
+          <h2>Practice PT</h2>
+          <p>Seja bem-vindo! Entre para continuar sua jornada.</p>
         </div>
 
-        <!-- Campo de Senha -->
-        <div class="mb-3">
-          <%= f.label :password, class: "form-label" %>
-          <%= f.password_field :password, autocomplete: "current-password", class: "form-control", placeholder: "Enter your password" %>
-        </div>
+        <%= form_for(resource, as: resource_name, url: session_path(resource_name), html: { class: 'login-form' }) do |f| %>
+          <!-- Campo de Email -->
+          <div class="form-group-custom">
+            <%= f.label :email, "Email", class: "form-label-custom" %>
+            <%= f.email_field :email, autofocus: true, autocomplete: "email", 
+                class: "form-input", placeholder: "Digite seu email" %>
+          </div>
 
-        <!-- Checkbox "Remember Me" -->
-        <% if devise_mapping.rememberable? %>
-          <div class="form-check mb-3">
-            <%= f.check_box :remember_me, class: "form-check-input" %>
-            <%= f.label :remember_me, class: "form-check-label" %>
+          <!-- Campo de Senha -->
+          <div class="form-group-custom">
+            <%= f.label :password, "Password", class: "form-label-custom" %>
+            <%= f.password_field :password, autocomplete: "current-password", 
+                class: "form-input", placeholder: "Digite sua senha" %>
+          </div>
+
+          <!-- Checkbox "Remember Me" -->
+          <% if devise_mapping.rememberable? %>
+            <div class="remember-me-section">
+              <%= f.check_box :remember_me, class: "custom-checkbox" %>
+              <%= f.label :remember_me, "Remember me", class: "checkbox-label" %>
+            </div>
+          <% end %>
+
+          <!-- Botão de Login -->
+          <div class="login-button-section">
+            <%= f.submit "Log in", class: "btn-login" %>
           </div>
         <% end %>
 
-        <!-- Botão de Login -->
-        <div class="d-grid">
-          <%= f.submit "Log in", class: "btn btn-primary btn-block" %>
+        <!-- Links adicionais -->
+        <div class="login-footer">
+          <%= link_to "Forgot your password?", new_password_path(resource_name), class: "forgot-link" %>
         </div>
-      <% end %>
-
-      <!-- Links adicionais -->
-      <div class="mt-3 text-center">
-        <%= link_to "Forgot your password?", new_password_path(resource_name), class: "text-decoration-none" %>
       </div>
     </div>
-  </div>
 </div>
+
+<style>
+/* 🎨 ESTILO SIMPLIFICADO PARA LOGIN */
+.login-page {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 50%, #dee2e6 100%);
+}
+
+.login-card {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+  padding: 2.5rem;
+  width: 100%;
+  max-width: 420px;
+  border: 1px solid rgba(76,175,80,0.1);
+}
+
+.login-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.login-icon {
+  background: linear-gradient(145deg, #4CAF50, #66BB6A);
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1rem;
+  color: white;
+  font-size: 2rem;
+  box-shadow: 0 8px 25px rgba(76,175,80,0.3);
+}
+
+.login-header h2 {
+  color: #333;
+  font-weight: 700;
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+}
+
+.login-header p {
+  color: #6c757d;
+  font-size: 0.95rem;
+  margin: 0;
+}
+
+.form-group-custom {
+  margin-bottom: 1.5rem;
+}
+
+.form-label-custom {
+  display: block;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.form-input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 2px solid #e9ecef;
+  border-radius: 8px;
+  font-size: 1rem;
+  background: #f8f9fa;
+  box-sizing: border-box;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: #4CAF50;
+  background: white;
+  box-shadow: 0 0 0 3px rgba(76,175,80,0.1);
+}
+
+.remember-me-section {
+  display: flex;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.custom-checkbox {
+  margin-right: 0.5rem;
+}
+
+.checkbox-label {
+  color: #6c757d;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.login-button-section {
+  margin-bottom: 1.5rem;
+}
+
+.btn-login {
+  width: 100%;
+  background: #4CAF50 !important;
+  color: white !important;
+  padding: 12px 20px !important;
+  border: none !important;
+  border-radius: 8px !important;
+  font-size: 16px !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  display: block !important;
+  text-align: center !important;
+  margin: 0 !important;
+}
+
+.btn-login:hover {
+  background: #45a049 !important;
+  transform: translateY(-2px);
+}
+
+.login-footer {
+  text-align: center;
+}
+
+.forgot-link {
+  color: #2196F3;
+  font-size: 0.9rem;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.forgot-link:hover {
+  color: #4CAF50;
+  text-decoration: underline;
+}
+</style>

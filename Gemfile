@@ -106,3 +106,5 @@ group :production do
   gem 'kgio'  # Gem para aumentar a performance do Dalli
   gem 'rack-cache' # Cache HTTP para requisições
 end
+
+gem "kaminari", "~> 1.2"

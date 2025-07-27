@@ -1,0 +1,142 @@
+// ==============================================
+// 🌍 ESTILOS GLOBAIS - BASE STYLES
+// ==============================================
+
+// 🔄 RESET BÁSICO CUSTOMIZADO
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+// 📱 BODY BASE
+body {
+  font-family: var(--font-primary);
+  line-height: 1.6;
+  color: var(--texto-escuro);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+// 🔗 LINKS BASE
+a {
+  color: inherit;
+  text-decoration: none;
+  transition: var(--transition-normal);
+}
+
+// 🎯 FOCUS STATES ACESSÍVEIS
+*:focus {
+  outline: 2px solid var(--azul-acao);
+  outline-offset: 2px;
+}
+
+button:focus,
+input:focus,
+select:focus,
+textarea:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.2);
+}
+
+// 📝 TIPOGRAFIA BASE
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 600;
+  line-height: 1.3;
+  margin-bottom: var(--spacing-md);
+}
+
+p {
+  margin-bottom: var(--spacing-md);
+}
+
+// ==============================================
+// 🛠️ UTILITY CLASSES
+// ==============================================
+
+// 📐 SPACING UTILITIES
+.m-0 { margin: 0 !important; }
+.mt-1 { margin-top: var(--spacing-sm) !important; }
+.mb-1 { margin-bottom: var(--spacing-sm) !important; }
+.mt-2 { margin-top: var(--spacing-md) !important; }
+.mb-2 { margin-bottom: var(--spacing-md) !important; }
+.mt-3 { margin-top: var(--spacing-lg) !important; }
+.mb-3 { margin-bottom: var(--spacing-lg) !important; }
+
+.p-1 { padding: var(--spacing-sm) !important; }
+.p-2 { padding: var(--spacing-md) !important; }
+.p-3 { padding: var(--spacing-lg) !important; }
+
+// 📝 TEXT UTILITIES
+.text-center { text-align: center !important; }
+.text-left { text-align: left !important; }
+.text-right { text-align: right !important; }
+
+.font-display { font-family: var(--font-display) !important; }
+.font-primary { font-family: var(--font-primary) !important; }
+
+.text-muted { opacity: 0.7; }
+.text-small { font-size: 0.875rem; }
+.text-large { font-size: 1.125rem; }
+
+// 🎨 COLOR UTILITIES  
+.text-verde { color: var(--verde-destaque) !important; }
+.text-azul { color: var(--azul-acao) !important; }
+.text-roxo { color: var(--roxo-acao) !important; }
+
+// 📦 LAYOUT UTILITIES
+.d-flex { display: flex !important; }
+.d-grid { display: grid !important; }
+.d-none { display: none !important; }
+
+.flex-column { flex-direction: column !important; }
+.flex-wrap { flex-wrap: wrap !important; }
+.align-center { align-items: center !important; }
+.justify-center { justify-content: center !important; }
+.justify-between { justify-content: space-between !important; }
+
+.gap-1 { gap: var(--spacing-sm) !important; }
+.gap-2 { gap: var(--spacing-md) !important; }
+.gap-3 { gap: var(--spacing-lg) !important; }
+
+// 🌊 BORDER UTILITIES
+.rounded { border-radius: var(--border-radius-small) !important; }
+.rounded-lg { border-radius: var(--border-radius-large) !important; }
+.rounded-pill { border-radius: var(--border-radius-pill) !important; }
+
+// ✨ SHADOW UTILITIES
+.shadow-sm { box-shadow: 0 2px 8px var(--sombra-light) !important; }
+.shadow { box-shadow: 0 4px 12px var(--sombra-light) !important; }
+.shadow-lg { box-shadow: 0 8px 25px var(--sombra-medium) !important; }
+
+// 🎭 ANIMATION UTILITIES
+.transition { transition: var(--transition-normal) !important; }
+.transition-fast { transition: var(--transition-fast) !important; }
+.transition-smooth { transition: var(--transition-smooth) !important; }
+
+// ==============================================
+// 🎯 HOVER EFFECTS COMUNS
+// ==============================================
+.hover-lift {
+  transition: var(--transition-smooth);
+  
+  &:hover {
+    transform: translateY(-2px);
+  }
+}
+
+.hover-scale {
+  transition: var(--transition-smooth);
+  
+  &:hover {
+    transform: scale(1.02);
+  }
+}
+
+.hover-glow {
+  transition: var(--transition-smooth);
+  
+  &:hover {
+    box-shadow: 0 8px 25px var(--sombra-medium);
+  }
+} 

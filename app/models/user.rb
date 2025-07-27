@@ -13,6 +13,7 @@ class User < ApplicationRecord
 
   validates :role, presence: true, inclusion: { in: ROLES }
   validates :language, presence: true, inclusion: { in: LANGUAGES }
+  validates :name, length: { maximum: 50 }, allow_blank: true
 
   before_validation :set_default_language, on: :create
 
@@ -35,6 +36,14 @@ class User < ApplicationRecord
     when 'fr' then 'Français'
     else 'English'
     end
+  end
+
+  def display_name
+    name.present? ? name : email.split('@').first.capitalize
+  end
+
+  def greeting_name
+    name.present? ? name : nil
   end
 
   private

@@ -1,31 +1,327 @@
-<div class="container d-flex justify-content-center align-items-center vh-100">
-  <div class="card shadow-lg p-4" style="width: 100%; max-width: 400px;">
-    <div class="card-body">
-      <h2 class="card-title text-center mb-4"><%= t "devise.invitations.new.header" %></h2>
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Convidar Usuário - Practice PT</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Kalam:wght@400;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --quadro-verde: #1e3a2e;
+      --giz-branco: #f8f9fa;
+      --post-it-amarelo: #fff3e0;
+      --post-it-rosa: #fce4ec;
+      --madeira-clara: #efebe9;
+      --verde-destaque: #2e7d32;
+      --azul-acao: #1976d2;
+      --roxo-acao: #7b1fa2;
+    }
 
-      <%= form_for(resource, as: resource_name, url: invitation_path(resource_name), html: { method: :post, class: 'needs-validation' }) do |f| %>
-        <%= render "devise/shared/error_messages", resource: resource %>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-        <% resource.class.invite_key_fields.each do |field| -%>
-          <div class="mb-3">
-            <%= f.label field, class: "form-label" %><br />
-            <%= f.text_field field, class: "form-control", placeholder: "Enter #{field}" %>
-          </div>
-        <% end -%>
+    body {
+      background: linear-gradient(135deg, var(--quadro-verde) 0%, #0d2818 100%);
+      min-height: 100vh;
+      font-family: 'Inter', sans-serif;
+      color: var(--giz-branco);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow-x: hidden;
+    }
 
-        <div class="mb-3">
-          <%= f.label :role, class: "form-label" %>
-          <%= f.select :role, [['Professor', 'teacher'], ['Estudante', 'student']], { include_blank: true }, { class: "form-select" } %>
-        </div>
+    /* Textura do quadro */
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: 
+        repeating-linear-gradient(
+          90deg,
+          transparent,
+          transparent 49px,
+          rgba(255,255,255,0.015) 50px
+        ),
+        repeating-linear-gradient(
+          0deg,
+          transparent,
+          transparent 49px,
+          rgba(255,255,255,0.015) 50px
+        );
+      pointer-events: none;
+      z-index: 1;
+    }
 
-        <div class="d-grid">
-          <%= f.submit t("devise.invitations.new.submit_button"), class: "btn btn-primary btn-block" %>
+    .convite-container {
+      position: relative;
+      z-index: 2;
+      max-width: 500px;
+      width: 100%;
+      padding: 2rem;
+    }
+
+    /* Header estilo madeira */
+    .header-convite {
+      background: var(--madeira-clara);
+      color: #333;
+      padding: 1.5rem;
+      border-radius: 15px 15px 5px 5px;
+      margin-bottom: 2rem;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+      border: 4px solid #8d6e63;
+      position: relative;
+      text-align: center;
+    }
+
+    .header-convite::before {
+      content: '';
+      position: absolute;
+      top: -8px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 60px;
+      height: 8px;
+      background: #5d4037;
+      border-radius: 4px;
+    }
+
+    .header-convite h1 {
+      font-family: 'Kalam', cursive;
+      font-size: 1.8rem;
+      color: var(--verde-destaque);
+      margin-bottom: 0.5rem;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .header-convite p {
+      font-size: 0.95rem;
+      color: #555;
+      opacity: 0.8;
+    }
+
+    /* Formulário estilo post-it */
+    .form-post-it {
+      background: var(--post-it-rosa);
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+      position: relative;
+      transform: rotate(-1deg);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      color: #37474f;
+      border: 1px solid rgba(0,0,0,0.08);
+    }
+
+    .form-post-it::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 6px;
+      background: linear-gradient(90deg, rgba(0,0,0,0.08), rgba(0,0,0,0.04));
+      border-radius: 12px 12px 0 0;
+    }
+
+    .form-post-it:hover {
+      transform: rotate(0deg);
+      box-shadow: 0 16px 48px rgba(0,0,0,0.2);
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .form-label {
+      display: block;
+      font-weight: 600;
+      color: var(--verde-destaque);
+      margin-bottom: 0.5rem;
+      font-size: 0.95rem;
+      text-shadow: 1px 1px 2px rgba(255,255,255,0.8);
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 0.75rem;
+      border: 2px solid var(--verde-destaque);
+      border-radius: 8px;
+      font-size: 0.95rem;
+      background: rgba(255,255,255,0.9);
+      color: #37474f;
+      transition: all 0.3s ease;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .form-input:focus {
+      outline: none;
+      border-color: var(--azul-acao);
+      box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.2);
+      background: rgba(255,255,255,1);
+    }
+
+    .form-input::placeholder {
+      color: #999;
+      font-style: italic;
+    }
+
+    .form-select {
+      width: 100%;
+      padding: 0.75rem;
+      border: 2px solid var(--verde-destaque);
+      border-radius: 8px;
+      font-size: 0.95rem;
+      background: rgba(255,255,255,0.9);
+      color: #37474f;
+      transition: all 0.3s ease;
+      font-family: 'Inter', sans-serif;
+      cursor: pointer;
+    }
+
+    .form-select:focus {
+      outline: none;
+      border-color: var(--azul-acao);
+      box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.2);
+    }
+
+    .btn-convite {
+      background: linear-gradient(145deg, var(--roxo-acao), #6a1b9a);
+      color: white;
+      border: none;
+      padding: 0.8rem 2rem;
+      border-radius: 25px;
+      font-weight: 600;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 6px 24px rgba(123, 31, 162, 0.3);
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .btn-convite:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 32px rgba(123, 31, 162, 0.4);
+      background: linear-gradient(145deg, #9c27b0, var(--roxo-acao));
+    }
+
+    .btn-back {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--giz-branco);
+      text-decoration: none;
+      font-weight: 500;
+      opacity: 0.8;
+      transition: all 0.3s ease;
+      margin-top: 1.5rem;
+      justify-content: center;
+      width: 100%;
+    }
+
+    .btn-back:hover {
+      opacity: 1;
+      color: var(--giz-branco);
+      text-decoration: none;
+      transform: translateX(-3px);
+    }
+
+    /* Mensagens de erro */
+    .error-messages {
+      background: rgba(244, 67, 54, 0.1);
+      border: 1px solid #f44336;
+      color: #c62828;
+      padding: 1rem;
+      border-radius: 8px;
+      margin-bottom: 1.5rem;
+      font-size: 0.9rem;
+    }
+
+    /* Responsividade */
+    @media (max-width: 576px) {
+      .convite-container {
+        padding: 1rem;
+      }
+      
+      .form-post-it {
+        padding: 1.5rem;
+        transform: rotate(0deg);
+      }
+      
+      .header-convite h1 {
+        font-size: 1.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="convite-container">
+  <!-- Header estilo madeira -->
+  <div class="header-convite">
+    <h1><i class="fas fa-user-plus"></i> Convidar Novo Usuário</h1>
+    <p>Adicione professores e estudantes à plataforma</p>
+  </div>
+
+  <!-- Formulário estilo post-it -->
+  <div class="form-post-it">
+    <%= form_for(resource, as: resource_name, url: invitation_path(resource_name), html: { method: :post }) do |f| %>
+      
+      <% if resource.errors.any? %>
+        <div class="error-messages">
+          <strong><i class="fas fa-exclamation-triangle"></i> Ops! Temos alguns problemas:</strong>
+          <ul style="margin: 0.5rem 0 0 1.5rem;">
+            <% resource.errors.full_messages.each do |message| %>
+              <li><%= message %></li>
+            <% end %>
+          </ul>
         </div>
       <% end %>
 
-      <div class="mt-3 text-center">
-        <%= link_to t('common.back'), :back, class: "text-decoration-none" %>
+      <% resource.class.invite_key_fields.each do |field| -%>
+        <div class="form-group">
+          <%= f.label field, "Email do usuário", class: "form-label" %>
+          <%= f.email_field field, 
+                           class: "form-input", 
+                           placeholder: "exemplo@email.com",
+                           required: true %>
+        </div>
+      <% end -%>
+
+      <div class="form-group">
+        <%= f.label :role, "Tipo de usuário", class: "form-label" %>
+        <%= f.select :role, 
+                     [['👨‍🏫 Professor', 'teacher'], ['👨‍🎓 Estudante', 'student']], 
+                     { include_blank: 'Selecione o tipo de usuário...' }, 
+                     { class: "form-select", required: true } %>
       </div>
-    </div>
+
+      <div class="form-group">
+        <%= f.submit "Enviar Convite", class: "btn-convite" do %>
+          <i class="fas fa-paper-plane"></i>
+          <span>Enviar Convite</span>
+        <% end %>
+      </div>
+    <% end %>
   </div>
+
+  <!-- Link para voltar -->
+  <%= link_to :back, class: "btn-back" do %>
+    <i class="fas fa-arrow-left"></i>
+    <span>Voltar</span>
+  <% end %>
 </div>
+
+</body>
+</html>

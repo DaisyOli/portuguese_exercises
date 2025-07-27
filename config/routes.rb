@@ -4,6 +4,7 @@ Rails.application.routes.draw do
 
   # Rotas para dashboards
   get 'student_dashboard', to: 'students#dashboard'
+  get 'students/load_more', to: 'students#load_more'
   get 'teacher_dashboard', to: 'teachers#dashboard'
   
   # Rota para atualização de idioma
@@ -15,11 +16,11 @@ Rails.application.routes.draw do
   }
 
   # Rotas para atividades e questões
-  resources :activities do
+  resources :activities, param: :slug do
     member do
-      get :resolve_quiz
-      post :submit_quiz
-      get :quiz_results
+      get :solve, action: :resolve_quiz  # /activities/:slug/solve
+      post :submit, action: :submit_quiz # /activities/:slug/submit
+      get :results, action: :quiz_results # /activities/:slug/results
       get :result_quiz
       patch :clear_statement
       match :clear_media, via: [:patch, :post]

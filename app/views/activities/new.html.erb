@@ -1,53 +1,435 @@
-<div class="container mt-5 d-flex justify-content-center">
-  <div class="card shadow-lg p-4" style="max-width: 800px; width: 100%;">
-    <div class="card-body">
-      <h1 class="text-center mb-4"><%= t('activities.new') %></h1>
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Nova Atividade - Practice PT</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Kalam:wght@400;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --quadro-verde: #1e3a2e;
+      --madeira-clara: #efebe9;
+      --verde-destaque: #2e7d32;
+      --azul-acao: #1976d2;
+      --roxo-acao: #7b1fa2;
+      --fundo-neutro: #f8f9fa;
+      --card-branco: #ffffff;
+    }
 
-      <%= simple_form_for(@activity, html: { class: 'needs-validation' }) do |f| %>
-        <!-- Campo de Título -->
-        <div class="mb-3">
-          <%= f.input :title, 
-                      label: t('forms.title'), 
-                      input_html: { class: "form-control" },
-                      placeholder: t('activities.title_placeholder'),
-                      error: t('activities.title_required') %>
-        </div>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-        <!-- Campo de Descrição -->
-        <div class="mb-3">
-          <%= f.input :description, 
-                      as: :text, 
-                      label: t('forms.description'), 
-                      input_html: { class: "form-control", rows: 4 },
-                      placeholder: t('activities.description_placeholder'),
-                      error: t('activities.description_required') %>
-        </div>
+    body {
+      background: linear-gradient(135deg, var(--fundo-neutro) 0%, #e3f2fd 100%);
+      min-height: 100vh;
+      font-family: 'Inter', sans-serif;
+      color: #37474f;
+      line-height: 1.6;
+    }
 
-        <!-- Campo de Nível -->
-        <div class="mb-3">
-          <%= f.input :level, 
-                      as: :select, 
-                      collection: [['A1', 'A1'], 
-                                 ['A2', 'A2'], 
-                                 ['B1', 'B1'],
-                                 ['B2', 'B2'],
-                                 ['C1', 'C1']],
-                      label: t('forms.level'), 
-                      include_blank: t('activities.select_level'),
-                      input_html: { class: "form-select" },
-                      error: t('activities.level_required') %>
-        </div>
+    .atividade-container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 2rem;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
 
-        <!-- Botão de Criar -->
-        <div class="d-grid">
-          <%= f.button :submit, t('forms.create_activity'), class: "btn btn-primary" %>
-        </div>
-      <% end %>
+    /* Header estilo madeira */
+    .header-atividade {
+      background: var(--madeira-clara);
+      color: #333;
+      padding: 1.5rem 2rem;
+      border-radius: 15px 15px 5px 5px;
+      margin-bottom: 2rem;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+      border: 4px solid #8d6e63;
+      position: relative;
+      text-align: center;
+    }
 
-      <!-- Link para Voltar -->
-      <div class="text-center mt-3">
-        <%= link_to t('activities.back_to_activities'), activities_path, class: "btn btn-secondary" %>
-      </div>
+    .header-atividade::before {
+      content: '';
+      position: absolute;
+      top: -8px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 80px;
+      height: 8px;
+      background: #5d4037;
+      border-radius: 4px;
+    }
+
+    .header-atividade h1 {
+      font-family: 'Kalam', cursive;
+      font-size: 2rem;
+      color: var(--verde-destaque);
+      margin-bottom: 0.5rem;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .header-atividade p {
+      font-size: 1rem;
+      color: #555;
+      opacity: 0.8;
+    }
+
+    /* Card do formulário */
+    .form-card {
+      background: var(--card-branco);
+      border-radius: 16px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.08);
+      padding: 2.5rem;
+      flex: 1;
+      border: 1px solid rgba(46, 125, 50, 0.1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .form-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 4px;
+      background: linear-gradient(90deg, var(--verde-destaque), var(--azul-acao), var(--roxo-acao));
+    }
+
+    .form-title {
+      font-family: 'Kalam', cursive;
+      font-size: 1.4rem;
+      color: var(--verde-destaque);
+      margin-bottom: 2rem;
+      text-align: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+
+    .form-section {
+      margin-bottom: 2rem;
+    }
+
+    .section-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--verde-destaque);
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 2px solid #e0f2f1;
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .form-label {
+      display: block;
+      font-weight: 600;
+      color: #37474f;
+      margin-bottom: 0.5rem;
+      font-size: 0.95rem;
+    }
+
+    .form-label .required {
+      color: #f44336;
+      margin-left: 0.25rem;
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      background: #ffffff;
+      color: #37474f;
+      transition: all 0.3s ease;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .form-input:focus {
+      outline: none;
+      border-color: var(--azul-acao);
+      box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.1);
+      background: #ffffff;
+    }
+
+    .form-textarea {
+      resize: vertical;
+      min-height: 120px;
+    }
+
+    .form-select {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      background: #ffffff;
+      color: #37474f;
+      transition: all 0.3s ease;
+      font-family: 'Inter', sans-serif;
+      cursor: pointer;
+    }
+
+    .form-select:focus {
+      outline: none;
+      border-color: var(--azul-acao);
+      box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.1);
+    }
+
+    .form-hint {
+      font-size: 0.85rem;
+      color: #666;
+      margin-top: 0.25rem;
+      font-style: italic;
+    }
+
+    /* Nível indicators */
+    .nivel-options {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+      gap: 0.5rem;
+      margin-top: 0.5rem;
+    }
+
+    .nivel-badge {
+      padding: 0.25rem 0.5rem;
+      border-radius: 12px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-align: center;
+      color: white;
+      opacity: 0.7;
+    }
+
+    .nivel-badge.a1 { background: #2196f3; }
+    .nivel-badge.a2 { background: #3f51b5; }
+    .nivel-badge.b1 { background: #4caf50; }
+    .nivel-badge.b2 { background: #ff9800; }
+    .nivel-badge.c1 { background: #f44336; }
+
+    /* Botões */
+    .form-actions {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      margin-top: 2.5rem;
+      padding-top: 2rem;
+      border-top: 1px solid #e0e0e0;
+    }
+
+    .btn-criar {
+      background: linear-gradient(145deg, var(--verde-destaque), #1b5e20);
+      color: white;
+      border: none;
+      padding: 0.8rem 2.5rem;
+      border-radius: 25px;
+      font-weight: 600;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 6px 24px rgba(46, 125, 50, 0.3);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .btn-criar:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 32px rgba(46, 125, 50, 0.4);
+      background: linear-gradient(145deg, #4caf50, var(--verde-destaque));
+    }
+
+    .btn-voltar {
+      background: #ffffff;
+      color: #666;
+      border: 2px solid #e0e0e0;
+      padding: 0.8rem 2rem;
+      border-radius: 25px;
+      font-weight: 600;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .btn-voltar:hover {
+      color: #666;
+      text-decoration: none;
+      border-color: var(--verde-destaque);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+    }
+
+    /* Mensagens de erro */
+    .error-messages {
+      background: rgba(244, 67, 54, 0.05);
+      border: 1px solid rgba(244, 67, 54, 0.2);
+      color: #c62828;
+      padding: 1rem;
+      border-radius: 8px;
+      margin-bottom: 2rem;
+      font-size: 0.9rem;
+    }
+
+    /* Responsividade */
+    @media (max-width: 768px) {
+      .atividade-container {
+        padding: 1rem;
+      }
+      
+      .form-card {
+        padding: 1.5rem;
+      }
+      
+      .header-atividade h1 {
+        font-size: 1.6rem;
+      }
+      
+      .form-actions {
+        flex-direction: column;
+      }
+      
+      .btn-criar, .btn-voltar {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+
+    /* Animações sutis */
+    .form-group {
+      animation: slideInUp 0.6s ease-out;
+      animation-fill-mode: both;
+    }
+
+    .form-group:nth-child(1) { animation-delay: 0.1s; }
+    .form-group:nth-child(2) { animation-delay: 0.2s; }
+    .form-group:nth-child(3) { animation-delay: 0.3s; }
+
+    @keyframes slideInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="atividade-container">
+  <!-- Header estilo madeira -->
+  <div class="header-atividade">
+    <h1><i class="fas fa-plus-circle"></i> Criar Nova Atividade</h1>
+    <p>Desenvolva conteúdos educacionais incríveis para seus alunos</p>
+  </div>
+
+  <!-- Card do formulário -->
+  <div class="form-card">
+    <div class="form-title">
+      <i class="fas fa-edit"></i>
+      <span>Dados da Atividade</span>
     </div>
+
+    <%= simple_form_for(@activity, html: { class: 'needs-validation' }) do |f| %>
+      
+      <!-- Seção básica -->
+      <div class="form-section">
+        <div class="section-title">
+          <i class="fas fa-info-circle"></i>
+          <span>Informações Básicas</span>
+        </div>
+
+        <div class="form-group">
+          <%= f.label :title, class: "form-label" do %>
+            Título da Atividade <span class="required">*</span>
+          <% end %>
+          <%= f.text_field :title, 
+                          class: "form-input", 
+                          placeholder: "Ex: Verbos no Presente do Indicativo",
+                          required: true %>
+          <div class="form-hint">Escolha um título claro e descritivo</div>
+        </div>
+
+        <div class="form-group">
+          <%= f.label :description, class: "form-label" do %>
+            Descrição <span class="required">*</span>
+          <% end %>
+          <%= f.text_area :description, 
+                         class: "form-input form-textarea", 
+                         placeholder: "Descreva os objetivos e conteúdo desta atividade...",
+                         required: true %>
+          <div class="form-hint">Explique o que os alunos irão aprender</div>
+        </div>
+      </div>
+
+      <!-- Seção de configuração -->
+      <div class="form-section">
+        <div class="section-title">
+          <i class="fas fa-cog"></i>
+          <span>Configurações</span>
+        </div>
+
+        <div class="form-group">
+          <%= f.label :level, class: "form-label" do %>
+            Nível de Dificuldade <span class="required">*</span>
+          <% end %>
+          <%= f.select :level, 
+                       [
+                         ['A1 - Iniciante', 'A1'], 
+                         ['A2 - Básico', 'A2'], 
+                         ['B1 - Intermediário', 'B1'],
+                         ['B2 - Intermediário Superior', 'B2'],
+                         ['C1 - Avançado', 'C1']
+                       ],
+                       { include_blank: 'Selecione o nível de dificuldade...' },
+                       { class: "form-select", required: true } %>
+          
+          <!-- Indicadores visuais dos níveis -->
+          <div class="nivel-options">
+            <div class="nivel-badge a1">A1</div>
+            <div class="nivel-badge a2">A2</div>
+            <div class="nivel-badge b1">B1</div>
+            <div class="nivel-badge b2">B2</div>
+            <div class="nivel-badge c1">C1</div>
+          </div>
+          <div class="form-hint">Baseado no Quadro Europeu Comum de Referência</div>
+        </div>
+      </div>
+
+      <!-- Ações do formulário -->
+      <div class="form-actions">
+        <%= f.button :submit, class: "btn-criar" do %>
+          <i class="fas fa-save"></i>
+          <span>Criar Atividade</span>
+        <% end %>
+        
+        <%= link_to activities_path, class: "btn-voltar" do %>
+          <i class="fas fa-arrow-left"></i>
+          <span>Voltar</span>
+        <% end %>
+      </div>
+    <% end %>
   </div>
 </div>
+
+</body>
+</html>

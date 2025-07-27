@@ -1,0 +1,78 @@
+// ==============================================
+// 🎨 CSS VARIABLES - DESIGN SYSTEM
+// ==============================================
+// Centralizando todas as variáveis que estavam espalhadas pelas views
+
+:root {
+  // 🎨 CORES PRIMÁRIAS DO TEMA ESCOLAR
+  --quadro-verde: #1e3a2e;           // Verde escuro do quadro
+  --quadro-verde-escuro: #0d2818;    // Variação mais escura para gradientes
+  --giz-branco: #f8f9fa;             // Cor principal do texto "giz"
+  --madeira-clara: #efebe9;          // Cor dos headers estilo madeira
+  --madeira-escura: #8d6e63;         // Bordas dos headers
+  --madeira-suporte: #5d4037;        // Suporte superior dos headers
+
+  // 🌈 PALETTE POST-IT (Cards coloridos)
+  --post-it-creme: #fff3e0;          // Cor padrão dos post-its
+  --post-it-lavanda: #e8eaf6;        // Roxo claro
+  --post-it-menta: #e0f2f1;          // Verde claro
+  --post-it-pessego: #fce4ec;        // Rosa claro
+  --post-it-azul-gelo: #e3f2fd;      // Azul claro
+  --post-it-amarelo: #fff3e0;        // Mesmo que creme (padronizar)
+
+  // 🎯 CORES DE AÇÃO
+  --verde-destaque: #2e7d32;         // Verde principal
+  --verde-destaque-escuro: #1b5e20;  // Verde mais escuro
+  --azul-acao: #1976d2;              // Azul primário
+  --azul-acao-claro: #2196f3;        // Azul hover
+  --azul-acao-escuro: #1565c0;       // Azul gradiente
+  --roxo-acao: #7b1fa2;              // Roxo primário
+  --roxo-acao-claro: #9c27b0;        // Roxo hover
+  --roxo-acao-escuro: #6a1b9a;       // Roxo gradiente
+
+  // 🎨 CORES SECUNDÁRIAS
+  --amarelo-acao: #f57c00;           // Laranja/amarelo
+  --cyan-acao: #00acc1;              // Ciano
+  --vermelho-acao: #e53935;          // Vermelho
+
+  // 🖼️ BACKGROUNDS E NEUTROS
+  --fundo-neutro: #f8f9fa;           // Fundo claro
+  --fundo-papel: #fafafa;            // Fundo papel
+  --card-branco: #ffffff;            // Cards brancos
+  --texto-escuro: #37474f;           // Texto principal escuro
+
+  // ✨ EFEITOS E SOMBRAS
+  --sombra-giz: rgba(248, 249, 250, 0.4);
+  --sombra-light: rgba(0, 0, 0, 0.08);
+  --sombra-medium: rgba(0, 0, 0, 0.15);
+  --sombra-strong: rgba(0, 0, 0, 0.25);
+
+  // 📏 TIPOGRAFIA
+  --font-primary: 'Inter', sans-serif;
+  --font-display: 'Kalam', cursive;
+  
+  // 📐 ESPAÇAMENTOS E BORDAS
+  --border-radius-small: 8px;
+  --border-radius-medium: 12px;
+  --border-radius-large: 16px;
+  --border-radius-pill: 25px;
+  
+  --spacing-xs: 0.25rem;    // 4px
+  --spacing-sm: 0.5rem;     // 8px
+  --spacing-md: 1rem;       // 16px
+  --spacing-lg: 1.5rem;     // 24px
+  --spacing-xl: 2rem;       // 32px
+  --spacing-2xl: 2.5rem;    // 40px
+
+  // ⚡ TRANSIÇÕES
+  --transition-fast: 0.15s ease;
+  --transition-normal: 0.3s ease;
+  --transition-smooth: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+  // 🎭 Z-INDEX SCALE
+  --z-background: 1;
+  --z-content: 2;
+  --z-floating: 10;
+  --z-overlay: 100;
+  --z-modal: 1000;
+} 

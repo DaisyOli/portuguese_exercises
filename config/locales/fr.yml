@@ -22,10 +22,71 @@ fr:
 
   # Student Dashboard
   student_dashboard:
-    welcome: "Bienvenue, Étudiant !"
+    welcome: "Bonjour, Étudiant·e !"
+    welcome_with_name: "Bonjour, %{name} !"
     control_panel: "Voici votre tableau de bord."
+    welcome_back: "Bienvenue ! Continuons à apprendre le portugais ?"
+    welcome_back_with_name: "Ravi·e de vous revoir, %{name} ! Continuons à apprendre le portugais ?"
     available_activities: "Activités Disponibles"
     no_activities: "Il n'y a pas d'activités disponibles pour le moment."
+    
+    # Métriques
+    metrics:
+      completed_activities: "Activités Terminées"
+      streak_days: "Jours Consécutifs"
+      total_progress: "Progrès Total"
+      last_score: "Dernier Score"
+    
+    # Sections
+    choose_level: "Choisissez Votre Niveau"
+    choose_level_description: "Sélectionnez le niveau qui représente le mieux vos connaissances actuelles en portugais !"
+    achievements: "Vos Réussites Brésiliennes"
+    achievements_description: "Badges que vous avez débloqués lors de votre parcours !"
+    my_account: "Mon Compte"
+    logged_as: "Connecté en tant que"
+    connected_as: "Connecté·e en tant que"
+    your_profile: "Votre Profil"
+    
+    # Niveaux
+    levels:
+      beginner: "Débutant"
+      basic: "Basique"
+      intermediate: "Intermédiaire"
+      advanced: "Avancé"
+      expert: "Expert"
+      
+    level_descriptions:
+      a1: "Premiers pas en portugais. Vocabulaire de base et phrases simples."
+      a2: "Construire une base solide. Conversation de base et grammaire fondamentale."
+      b1: "Développer la fluidité. Textes plus complexes et expressions idiomatiques."
+      b2: "Maîtriser les structures avancées. Communication efficace dans divers contextes."
+      c1: "Portugais raffiné. Textes complexes et communication professionnelle."
+    
+    # Actions
+    actions:
+      retry_quiz: "Refaire le Quiz"
+      explore_levels: "Explorer d'Autres Niveaux"
+      back_to_panel: "Retour à Mon Panneau"
+
+      load_more: "Charger plus"
+      show_completed: "Voir les activités terminées"
+      review_activities: "Réviser les activités"
+      
+    # Messages
+    messages:
+      general_progress: "Progrès Général"
+      activities_text: "activités"
+      next_challenge: "Prochain défi"
+      in_days: "dans"
+      days: "jours"
+      tomorrow: "Demain !"
+      no_activities_level: "Nous n'avons pas encore d'activités pour le niveau"
+      try_other_levels: "Que diriez-vous d'explorer d'autres niveaux en attendant ?"
+
+      remaining: "restantes"
+      loading: "Chargement"
+      level_completed: "Niveau Terminé !"
+      level_completed_desc: "Félicitations ! Vous avez terminé toutes les activités du niveau %{level}."
 
   # Navigation
   navigation:

@@ -1,0 +1,55 @@
+<% activities.each_with_index do |activity, index| %>
+  <div class="card-atividade activity-card-animated">
+    
+    <!-- Indicador de conclusão -->
+    <% if session[:completed_quizzes]&.include?(activity.id) %>
+      <div class="completed-indicator">
+        <i class="fas fa-check"></i>
+      </div>
+    <% end %>
+    
+    <div class="card-header">
+      <h3 class="card-title"><%= activity.title %></h3>
+      <span class="card-level level-badge <%= activity.level %>"><%= activity.level %></span>
+    </div>
+    
+    <div class="card-content">
+      <p class="card-description">
+        <%= truncate(activity.description.presence || "Pratique português com exercícios interativos e divertidos!", length: 100) %>
+      </p>
+      
+      <div class="card-meta">
+        <span class="meta-item">
+          <i class="fas fa-question-circle"></i>
+          <%= activity.questions.count %> questões
+        </span>
+        <span class="meta-item">
+          <i class="fas fa-clock"></i>
+          ~<%= (activity.questions.count * 1.5).round %> min
+        </span>
+        <span class="meta-item">
+          <i class="fas fa-signal"></i>
+          <%= case activity.level
+              when 'A1' then t('student_dashboard.levels.beginner')
+              when 'A2' then t('student_dashboard.levels.basic')  
+              when 'B1' then t('student_dashboard.levels.intermediate')
+              when 'B2' then t('student_dashboard.levels.advanced')
+              when 'C1' then t('student_dashboard.levels.expert')
+              end %>
+        </span>
+      </div>
+    </div>
+    
+    <div class="card-actions">
+      <%= link_to solve_activity_path(activity), class: "btn-giz #{session[:completed_quizzes]&.include?(activity.id) ? 'secondary' : ''}" do %>
+        <% if session[:completed_quizzes]&.include?(activity.id) %>
+          <i class="fas fa-redo"></i>
+          <%= t('student_dashboard.actions.retry_quiz') %>
+        <% else %>
+          <i class="fas fa-play"></i>
+          <%= t('activities.solve_quiz') %>
+        <% end %>
+      <% end %>
+    </div>
+  </div>
+<% end %> 

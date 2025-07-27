@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_06_04_171609) do
+ActiveRecord::Schema[7.1].define(version: 2025_07_27_063138) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -25,6 +25,8 @@ ActiveRecord::Schema[7.1].define(version: 2025_06_04_171609) do
     t.string "media_url"
     t.text "explanation_text"
     t.text "statement"
+    t.string "slug"
+    t.index ["slug"], name: "index_activities_on_slug"
     t.index ["teacher_id"], name: "index_activities_on_teacher_id"
   end
 
@@ -83,6 +85,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_06_04_171609) do
     t.bigint "invited_by_id"
     t.integer "invitations_count", default: 0
     t.boolean "admin"
+    t.string "name"
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["invitation_token"], name: "index_users_on_invitation_token", unique: true

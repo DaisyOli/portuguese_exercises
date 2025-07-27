@@ -32,10 +32,71 @@ pt:
 
   # Student Dashboard
   student_dashboard:
-    welcome: "Bem-vindo, Aluno!"
+    welcome: "Olá, Estudante!"
+    welcome_with_name: "Olá, %{name}!"
     control_panel: "Este é seu painel de controle."
+    welcome_back: "Seja bem-vindo(a)! Vamos continuar aprendendo português?"
+    welcome_back_with_name: "Que bom te ver de novo, %{name}! Vamos continuar aprendendo português?"
     available_activities: "Atividades Disponíveis"
     no_activities: "Não há atividades disponíveis no momento."
+    
+    # Métricas
+    metrics:
+      completed_activities: "Atividades Concluídas"
+      streak_days: "Dias Seguidos"
+      total_progress: "Progresso Total"
+      last_score: "Última Pontuação"
+    
+    # Seções
+    choose_level: "Escolha Seu Nível"
+    choose_level_description: "Selecione o nível que melhor representa seu conhecimento atual de português!"
+    achievements: "Suas Conquistas Brasileiras"
+    achievements_description: "Badges que você já desbloqueou na sua jornada!"
+    my_account: "Minha Conta"
+    logged_as: "Logado como"
+    connected_as: "Conectado(a) como"
+    your_profile: "Seu Perfil"
+    
+    # Níveis
+    levels:
+      beginner: "Iniciante"
+      basic: "Básico"
+      intermediate: "Intermediário"
+      advanced: "Avançado"
+      expert: "Expert"
+      
+    level_descriptions:
+      a1: "Primeiros passos no português. Vocabulário básico e frases simples."
+      a2: "Construa uma base sólida. Conversação básica e gramática fundamental."
+      b1: "Desenvolva fluência. Textos mais complexos e expressões idiomáticas."
+      b2: "Domine estruturas avançadas. Comunicação eficaz em diversos contextos."
+      c1: "Português refinado. Textos complexos e comunicação profissional."
+    
+    # Ações
+    actions:
+      retry_quiz: "Refazer Quiz"
+      explore_levels: "Explorar Outros Níveis"
+      back_to_panel: "Voltar ao Meu Painel"
+
+      load_more: "Carregar mais"
+      show_completed: "Ver atividades concluídas"
+      review_activities: "Revisar atividades"
+      
+    # Mensagens
+    messages:
+      general_progress: "Progresso Geral"
+      activities_text: "atividades"
+      next_challenge: "Próximo desafio"
+      in_days: "em"
+      days: "dias"
+      tomorrow: "Amanhã!"
+      no_activities_level: "Ainda não temos atividades para o nível"
+      try_other_levels: "Que tal explorar outros níveis enquanto isso?"
+
+      remaining: "restantes"
+      loading: "Carregando"
+      level_completed: "Nível Concluído!"
+      level_completed_desc: "Parabéns! Você completou todas as atividades do nível %{level}."
 
   # Menus e navegação
   navigation:

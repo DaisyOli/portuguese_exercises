@@ -1,0 +1,518 @@
+/* 🎓 COMPONENTES ESPECÍFICOS DO ESTUDANTE
+ * =====================================
+ * Componentes únicos para a experiência do aluno
+ * Extraído da dashboard inline CSS para reutilização
+ */
+
+/* 🌟 BACKGROUND LIMPO E PROFISSIONAL */
+.student-dashboard-page {
+  background: #ffffff;
+  min-height: 100vh;
+  font-family: var(--font-primary);
+  color: var(--texto-escuro);
+  position: relative;
+  overflow-x: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 1;
+  }
+}
+
+/* 📐 GRIDS RESPONSIVOS PARA ESTUDANTE */
+.student-container {
+  position: relative;
+  z-index: var(--z-content);
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: var(--spacing-xl);
+  min-height: 100vh;
+}
+
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-xl);
+}
+
+.activities-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: var(--spacing-lg);
+  margin-bottom: var(--spacing-xl);
+}
+
+.levels-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: var(--spacing-lg);
+}
+
+/* 🏆 LEVEL BADGES CUSTOMIZADOS */
+.level-badge {
+  font-size: 1.8rem;
+  padding: 0.5rem 1rem;
+  border-radius: var(--border-radius-pill);
+  font-weight: 700;
+  font-family: var(--font-display);
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+
+  &.A1 { 
+    background: linear-gradient(145deg, #4caf50, var(--verde-destaque)); 
+    color: white; 
+  }
+  
+  &.A2 { 
+    background: linear-gradient(145deg, #2196f3, var(--azul-acao)); 
+    color: white; 
+  }
+  
+  &.B1 { 
+    background: linear-gradient(145deg, #ff9800, #f57c00); 
+    color: white; 
+  }
+  
+  &.B2 { 
+    background: linear-gradient(145deg, var(--roxo-acao), #6a1b9a); 
+    color: white; 
+  }
+  
+  &.C1 { 
+    background: linear-gradient(145deg, #f44336, #d32f2f); 
+    color: white; 
+  }
+}
+
+/* ✨ ANIMAÇÕES PARA CARDS DE ATIVIDADE */
+.activity-card-animated {
+  animation: slideInUp 0.6s ease forwards;
+  opacity: 0;
+  transform: translateY(30px);
+
+  &:nth-child(1) { animation-delay: 0.1s; }
+  &:nth-child(2) { animation-delay: 0.2s; }
+  &:nth-child(3) { animation-delay: 0.3s; }
+  &:nth-child(4) { animation-delay: 0.4s; }
+  &:nth-child(5) { animation-delay: 0.5s; }
+  &:nth-child(6) { animation-delay: 0.6s; }
+}
+
+@keyframes slideInUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 🎯 INDICADOR DE CONCLUSÃO */
+.completed-indicator {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  background: linear-gradient(145deg, #4caf50, var(--verde-destaque));
+  color: white;
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  box-shadow: 0 4px 12px rgba(76, 175, 80, 0.4);
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}
+
+/* 🚨 CORREÇÕES ESPECÍFICAS PARA DASHBOARD DO ESTUDANTE */
+/* Sobrescreve estilos Bootstrap quando necessário */
+
+.student-dashboard-page {
+  .container:first-child {
+    background: transparent !important;
+    padding: 0 !important;
+    box-shadow: none !important;
+  }
+
+  .alert {
+    background: rgba(255,255,255,0.95) !important;
+    border: 2px solid rgba(76,175,80,0.3) !important;
+    border-radius: 12px !important;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.1) !important;
+    margin: 1rem auto !important;
+    max-width: 600px !important;
+    backdrop-filter: blur(10px) !important;
+  }
+
+  .alert-success {
+    border-color: rgba(76,175,80,0.5) !important;
+    color: #2e7d32 !important;
+  }
+
+  .alert-danger {
+    border-color: rgba(244,67,54,0.5) !important;
+    color: #c62828 !important;
+  }
+}
+
+/* 🇧🇷 SISTEMA DE STREAKS BRASILEIRO */
+.streak-card {
+  position: relative;
+  overflow: visible;
+  transition: all 0.3s ease;
+
+  /* Badge atual no card */
+  .current-badge {
+    margin-top: var(--spacing-xs);
+    text-align: center;
+
+    .badge-name {
+      display: block;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--texto-escuro);
+      margin-bottom: 2px;
+    }
+
+    .badge-phrase {
+      display: block;
+      font-size: 0.7rem;
+      font-style: italic;
+      color: #666;
+      line-height: 1.2;
+    }
+  }
+
+  /* Próximo marco */
+  .next-milestone {
+    margin-top: var(--spacing-sm);
+    padding: var(--spacing-xs);
+    background: rgba(255,255,255,0.3);
+    border-radius: var(--border-radius-sm);
+    border: 1px solid rgba(255,255,255,0.5);
+
+    .next-badge-info {
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: var(--texto-escuro);
+      text-align: center;
+      margin-bottom: 4px;
+    }
+
+    .days-remaining {
+      font-size: 0.75rem;
+      text-align: center;
+      color: #666;
+      margin-bottom: var(--spacing-xs);
+    }
+  }
+
+  /* Barra de progresso entre marcos */
+  .milestone-progress {
+    height: 4px;
+    background: rgba(255,255,255,0.5);
+    border-radius: 2px;
+    overflow: hidden;
+
+    .milestone-progress-bar {
+      height: 100%;
+      background: linear-gradient(90deg, var(--verde-destaque), #4caf50);
+      border-radius: 2px;
+      transition: width 1s ease;
+    }
+  }
+
+  /* 🎨 CORES TEMÁTICAS DOS BADGES BRASILEIROS */
+  &.iniciante { 
+    background: linear-gradient(145deg, #fff3e0, #ffe0b2); 
+    border-color: #ff9800; 
+  }
+  
+  &.pao-frances { 
+    background: linear-gradient(145deg, #efebe9, #d7ccc8); 
+    border-color: #8d6e63; 
+  }
+  
+  &.cafezinho { 
+    background: linear-gradient(145deg, #3e2723, #5d4037); 
+    border-color: #3e2723; 
+    color: white; 
+  }
+  
+  &.pao-queijo { 
+    background: linear-gradient(145deg, #fff8e1, #ffecb3); 
+    border-color: #ffc107; 
+  }
+  
+  &.agua-coco { 
+    background: linear-gradient(145deg, #e8f5e8, #c8e6c8); 
+    border-color: #4caf50; 
+  }
+  
+  &.mel { 
+    background: linear-gradient(145deg, #fff3e0, #ffe0b2); 
+    border-color: #ff9800; 
+  }
+  
+  &.tapioca { 
+    background: linear-gradient(145deg, #fafafa, #f5f5f5); 
+    border-color: #9e9e9e; 
+  }
+  
+  &.churrasco { 
+    background: linear-gradient(145deg, #ffebee, #ffcdd2); 
+    border-color: #f44336; 
+  }
+  
+  &.moqueca { 
+    background: linear-gradient(145deg, #fff8e1, #ffecb3); 
+    border-color: #ff9800; 
+  }
+  
+  &.feijoada { 
+    background: linear-gradient(145deg, #3e2723, #5d4037); 
+    border-color: #3e2723; 
+    color: white; 
+  }
+  
+  &.samba { 
+    background: linear-gradient(145deg, #fce4ec, #f8bbd9); 
+    border-color: #e91e63; 
+  }
+  
+  &.acai { 
+    background: linear-gradient(145deg, #e1bee7, #ce93d8); 
+    border-color: #9c27b0; 
+  }
+  
+  &.pamonha { 
+    background: linear-gradient(145deg, #fff8e1, #ffecb3); 
+    border-color: #ffeb3b; 
+  }
+  
+  &.brigadeiro { 
+    background: linear-gradient(145deg, #3e2723, #5d4037); 
+    border-color: #3e2723; 
+    color: white; 
+  }
+  
+  &.caipirinha { 
+    background: linear-gradient(145deg, #e8f5e8, #c8e6c8); 
+    border-color: #4caf50; 
+  }
+  
+  &.carnaval { 
+    background: linear-gradient(145deg, #fff3e0, #ffe0b2); 
+    border-color: #ff9800; 
+  }
+  
+  &.brasileiro-raiz { 
+    background: linear-gradient(145deg, #e3f2fd, #bbdefb); 
+    border-color: #2196f3; 
+  }
+
+  /* Texto branco para badges escuros */
+  &.cafezinho,
+  &.feijoada,
+  &.brigadeiro {
+    .metrica-numero,
+    .badge-name {
+      color: white !important;
+    }
+
+    .badge-phrase {
+      color: #ccc !important;
+    }
+  }
+}
+
+/* ⚡ CARREGAMENTO PROGRESSIVO */
+.load-more-section {
+  padding: var(--spacing-md) 0;
+
+  .load-more-btn {
+    transition: all 0.3s ease;
+    position: relative;
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+    }
+  }
+
+  .loading-spinner {
+    color: var(--verde-principal);
+    font-size: 0.9rem;
+    animation: pulse 1.5s infinite;
+  }
+}
+
+/* 📊 SEÇÃO DE ATIVIDADES COMPLETADAS */
+.completed-activities-section {
+  border-top: 2px dashed var(--cinza-claro);
+  padding-top: var(--spacing-md);
+
+  .btn-toggle-completed {
+    width: 100%;
+    justify-content: space-between;
+    align-items: center;
+    display: flex;
+    background: rgba(76, 175, 80, 0.1);
+    border: 2px dashed var(--verde-principal);
+
+    .toggle-icon {
+      transition: transform 0.3s ease;
+    }
+
+    &:hover .toggle-icon {
+      transform: rotate(180deg);
+    }
+  }
+}
+
+/* 🎊 ESTADO DE NÍVEL COMPLETO */
+.level-complete {
+  .post-it.verde {
+    background: linear-gradient(135deg, #4CAF50, #66BB6A);
+    color: white;
+    border: none;
+    
+    h3 {
+      color: white;
+    }
+    
+    &::before {
+      content: '🎉';
+      position: absolute;
+      top: -10px;
+      right: -10px;
+      font-size: 1.5rem;
+      animation: bounce 2s infinite;
+    }
+  }
+}
+
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+  40% { transform: translateY(-10px); }
+  60% { transform: translateY(-5px); }
+}
+
+/* 📈 BARRAS DE PROGRESSO CUSTOMIZADAS */
+.progress-bar-student {
+  height: 8px;
+  background: rgba(255,255,255,0.3);
+  border-radius: var(--border-radius-sm);
+  overflow: hidden;
+  position: relative;
+
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--verde-destaque), #4caf50);
+    border-radius: var(--border-radius-sm);
+    transition: width 1s ease;
+    position: relative;
+
+    &::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(45deg, 
+        transparent 25%, 
+        rgba(255,255,255,0.2) 25%, 
+        rgba(255,255,255,0.2) 50%, 
+        transparent 50%, 
+        transparent 75%, 
+        rgba(255,255,255,0.2) 75%);
+      background-size: 20px 20px;
+      animation: progress-stripes 1s linear infinite;
+    }
+  }
+}
+
+@keyframes progress-stripes {
+  0% { background-position: 0 0; }
+  100% { background-position: 20px 0; }
+}
+
+/* 🎊 ESTADO DE NÍVEL COMPLETO */
+.level-complete {
+  .post-it.verde {
+    background: linear-gradient(135deg, #4CAF50, #66BB6A);
+    color: white;
+    border: none;
+    
+    &::before {
+      content: '🎉';
+      position: absolute;
+      top: -10px;
+      right: -10px;
+      font-size: 1.5rem;
+      animation: bounce 2s infinite;
+    }
+  }
+}
+
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+  40% { transform: translateY(-10px); }
+  60% { transform: translateY(-5px); }
+}
+
+/* 📱 RESPONSIVIDADE ESPECÍFICA PARA ESTUDANTE */
+@media (max-width: 768px) {
+  .student-container {
+    padding: var(--spacing-md);
+  }
+
+  .metrics-grid {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-sm);
+  }
+
+  .activities-grid {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-md);
+  }
+
+  .levels-grid {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-md);
+  }
+
+  .level-badge {
+    font-size: 1.4rem;
+    padding: 0.4rem 0.8rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .student-container {
+    padding: var(--spacing-sm);
+  }
+
+  .level-badge {
+    font-size: 1.2rem;
+    padding: 0.3rem 0.6rem;
+  }
+  
+  .completed-indicator {
+    width: 28px;
+    height: 28px;
+    font-size: 1rem;
+  }
+} 

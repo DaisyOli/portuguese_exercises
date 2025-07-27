@@ -2,69 +2,69 @@
 class ActivitiesIndexService
   attr_reader :user, :level
 
-  def initialize(user:, level: nil)
-    @user = user
-    @level = level
+  def initialize(params:, current_user:)
+    @params = params
+    @current_user = current_user
   end
 
   def call
-    if level.present?
-      load_activities_by_level
-    else
-      load_all_activities
-    end
+    {
+      activities: fetch_activities,
+      current_level: @params[:level],
+      activities_by_level: fetch_activities_by_level,
+      best_attempts: fetch_best_attempts
+    }
   end
 
   private
 
-  def load_activities_by_level
-    activities = Rails.cache.fetch(["activities", level, user.id], expires_in: 1.hour) do
-      Activity.where(level: level).to_a
-    end
-    
-    result = {
-      activities: activities,
-      current_level: level
-    }
-    
-    # Buscar os melhores resultados para o estudante
-    if user.student?
-      result[:best_attempts] = Rails.cache.fetch(["best_attempts", user.id], expires_in: 30.minutes) do
-        attempts = user.quiz_attempts.where(activity_id: activities.map(&:id))
-                     .group(:activity_id)
-                     .select('activity_id, MAX(score) as max_score')
-        
-        attempts.each_with_object({}) do |attempt, hash|
-          hash[attempt.activity_id] = attempt.max_score
-        end
-      end
-      
-      # Carregar lista de exercícios completados para a sessão
-      result[:completed_exercises] = load_completed_exercises
-    end
-    
-    result
+  def fetch_activities
+    activities = Activity.all
+
+    # Aplicar filtros
+    activities = activities.where(level: @params[:level]) if @params[:level].present?
+    activities = activities.where("title ILIKE ?", "%#{@params[:search]}%") if @params[:search].present?
+
+    # Aplicar ordenação
+    activities = apply_sorting(activities)
+
+    # Carregar métricas
+    activities.includes(:quiz_attempts)
   end
 
-  def load_all_activities
-    activities = Rails.cache.fetch(["all_activities"], expires_in: 1.hour) do
-      Activity.all.to_a
+  def apply_sorting(activities)
+    case @params[:sort]
+    when 'antigos'
+      activities.order(created_at: :asc)
+    when 'titulo'
+      activities.order(title: :asc)
+    when 'tentativas'
+      activities.left_joins(:quiz_attempts)
+                .group('activities.id')
+                .order('COUNT(quiz_attempts.id) DESC')
+    else # 'recentes' ou padrão
+      activities.order(created_at: :desc)
     end
-    
-    activities_by_level = Rails.cache.fetch(["activities_by_level"], expires_in: 1.hour) do
+  end
+
+  def fetch_activities_by_level
+    Rails.cache.fetch(["activities_by_level"], expires_in: 1.hour) do
       Activity.all.group_by(&:level)
     end
-    
-    {
-      activities: activities,
-      activities_by_level: activities_by_level
-    }
   end
 
-  def load_completed_exercises
-    # Lógica exata do método load_completed_exercises do controller
-    # (Esta seria extraída do controller se existir)
-    # Por enquanto retornando um array vazio para manter compatibilidade
-    []
+  def fetch_best_attempts
+    return {} unless @current_user.student?
+
+    Rails.cache.fetch(["best_attempts", @current_user.id], expires_in: 30.minutes) do
+      attempts = @current_user.quiz_attempts
+                            .where(activity_id: fetch_activities.map(&:id))
+                            .group(:activity_id)
+                            .select('activity_id, MAX(score) as max_score')
+      
+      attempts.each_with_object({}) do |attempt, hash|
+        hash[attempt.activity_id] = attempt.max_score
+      end
+    end
   end
 end 

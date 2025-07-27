@@ -37,7 +37,7 @@ class QuestionsController < ApplicationController
   private
 
   def set_activity
-    @activity = Activity.find(params[:activity_id])
+    @activity = Activity.find_by!(slug: params[:activity_slug])
   end
 
   def set_question

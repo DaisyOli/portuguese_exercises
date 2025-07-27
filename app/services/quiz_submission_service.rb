@@ -153,13 +153,13 @@ class QuizSubmissionService
           score: score,
           total_correct: quiz_results_data["total_correct"],
           total_questions: quiz_results_data["total_questions"],
-          redirect_path: [:resolve_quiz, @activity, { locale: I18n.locale, show_score: true }],
+          redirect_path: Rails.application.routes.url_helpers.solve_activity_path(@activity, locale: I18n.locale, show_score: true),
           notice: nil # Removemos a notice para não mostrar alert
         }
       else
         return {
           success: false,
-          redirect_path: [:resolve_quiz, @activity, { locale: I18n.locale }],
+          redirect_path: Rails.application.routes.url_helpers.solve_activity_path(@activity, locale: I18n.locale),
           alert: I18n.t('quiz.error')
         }
       end
@@ -190,13 +190,13 @@ class QuizSubmissionService
           score: score,
           total_correct: quiz_results_data["total_correct"],
           total_questions: quiz_results_data["total_questions"],
-          redirect_path: [:resolve_quiz, @activity, { locale: I18n.locale, show_score: true }],
+          redirect_path: Rails.application.routes.url_helpers.solve_activity_path(@activity, locale: I18n.locale, show_score: true),
           notice: nil # Removemos a notice para não mostrar alert
         }
       else
         return {
           success: false,
-          redirect_path: [:activities],
+          redirect_path: Rails.application.routes.url_helpers.activities_path,
           alert: I18n.t('quiz.error')
         }
       end
@@ -211,7 +211,7 @@ class QuizSubmissionService
     # Retornar resposta de erro
     {
       success: false,
-      redirect_path: [:activities],
+      redirect_path: Rails.application.routes.url_helpers.activities_path,
       alert: I18n.t('quiz.error')
     }
   end

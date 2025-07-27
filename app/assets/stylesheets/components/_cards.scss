@@ -1,0 +1,441 @@
+// ==============================================
+// 🃏 COMPONENTES DE CARDS E POST-ITS
+// ==============================================
+
+// 🎨 POST-IT BASE (cards estilo quadro escolar)
+.post-it {
+  background: var(--post-it-creme);
+  padding: 1.2rem;
+  border-radius: var(--border-radius-medium);
+  box-shadow: 0 6px 24px var(--sombra-light);
+  position: relative;
+  transform: rotate(-1deg);
+  transition: var(--transition-smooth);
+  color: var(--texto-escuro);
+  margin-bottom: 1.2rem;
+  border: 1px solid rgba(0,0,0,0.08);
+  height: fit-content;
+  
+  // ✨ Fita adesiva superior
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 6px;
+    background: linear-gradient(90deg, rgba(0,0,0,0.08), rgba(0,0,0,0.04));
+    border-radius: var(--border-radius-medium) var(--border-radius-medium) 0 0;
+  }
+  
+  // 🎭 Estados de interação
+  &:hover {
+    transform: rotate(0deg) scale(1.01);
+    box-shadow: 0 12px 32px rgba(0,0,0,0.12);
+    z-index: var(--z-floating);
+  }
+  
+  // 📝 Tipografia do post-it
+  h2, h3 {
+    font-family: var(--font-display);
+    font-size: 1.4rem;
+    margin-bottom: var(--spacing-md);
+    color: var(--verde-destaque);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    text-shadow: 1px 1px 2px rgba(255,255,255,0.8);
+  }
+  
+  h4 {
+    font-size: 1.1rem;
+    margin-bottom: var(--spacing-sm);
+    color: var(--verde-destaque);
+  }
+  
+  p {
+    font-size: 0.95rem;
+    line-height: 1.5;
+    margin-bottom: var(--spacing-sm);
+  }
+  
+  // 🌈 VARIAÇÕES DE COR
+  &.lavanda {
+    background: var(--post-it-lavanda);
+    transform: rotate(1deg);
+  }
+  
+  &.menta {
+    background: var(--post-it-menta);
+    transform: rotate(-0.5deg);
+  }
+  
+  &.pessego {
+    background: var(--post-it-pessego);
+    transform: rotate(1.5deg);
+  }
+  
+  &.azul-gelo {
+    background: var(--post-it-azul-gelo);
+    transform: rotate(-2deg);
+  }
+  
+  &.amarelo {
+    background: var(--post-it-amarelo);
+    transform: rotate(0.8deg);
+  }
+}
+
+// 📚 CARD DE ATIVIDADE (para lista de atividades)
+.card-atividade {
+  background: var(--card-branco);
+  border-radius: var(--border-radius-medium);
+  padding: var(--spacing-lg);
+  margin-bottom: var(--spacing-lg);
+  box-shadow: 0 4px 16px var(--sombra-light);
+  border: 1px solid rgba(46, 125, 50, 0.1);
+  transition: var(--transition-smooth);
+  position: relative;
+  overflow: hidden;
+  
+  // ✨ Borda colorida superior
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: linear-gradient(90deg, var(--verde-destaque), var(--azul-acao));
+  }
+  
+  // 🎭 Estados
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 32px var(--sombra-medium);
+  }
+  
+  // 📋 Header do card
+  .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: var(--spacing-md);
+    
+    .card-title {
+      font-family: var(--font-display);
+      font-size: 1.3rem;
+      color: var(--verde-destaque);
+      margin: 0;
+      flex: 1;
+    }
+    
+    .card-level {
+      background: var(--azul-acao);
+      color: var(--giz-branco);
+      padding: 0.3rem 0.8rem;
+      border-radius: var(--border-radius-pill);
+      font-size: 0.8rem;
+      font-weight: 600;
+      margin-left: var(--spacing-sm);
+    }
+  }
+  
+  // 📝 Conteúdo do card
+  .card-content {
+    .card-description {
+      color: #666;
+      font-size: 0.95rem;
+      line-height: 1.5;
+      margin-bottom: var(--spacing-md);
+    }
+    
+    .card-meta {
+      display: flex;
+      gap: var(--spacing-lg);
+      font-size: 0.85rem;
+      color: #666;
+      margin-bottom: var(--spacing-md);
+      flex-wrap: wrap;
+      
+      .meta-item {
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-xs);
+        
+        i {
+          color: var(--azul-acao);
+        }
+      }
+    }
+  }
+  
+  // 🎯 Footer com ações
+  .card-actions {
+    display: flex;
+    gap: var(--spacing-sm);
+    justify-content: flex-end;
+    padding-top: var(--spacing-md);
+    border-top: 1px solid #f0f0f0;
+  }
+}
+
+// 📊 CARD DE MÉTRICAS (dashboard)
+.card-metrica {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  padding: var(--spacing-lg);
+  text-align: center;
+  background: rgba(255,255,255,0.9);
+  border-radius: var(--border-radius-medium);
+  border: 3px dashed var(--verde-destaque);
+  margin-bottom: var(--spacing-md);
+  transition: var(--transition-smooth);
+  box-shadow: 0 4px 12px var(--sombra-light);
+  
+  &:hover {
+    background: rgba(255,255,255,0.95);
+    border-color: var(--azul-acao);
+    transform: scale(1.02);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.12);
+  }
+  
+  .metrica-icon {
+    font-size: 2.5rem;
+    margin-bottom: var(--spacing-sm);
+    color: var(--verde-destaque);
+    filter: drop-shadow(1px 1px 2px rgba(0,0,0,0.1));
+  }
+  
+  .metrica-numero {
+    font-family: var(--font-display);
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #2c3e50;
+    text-shadow: 1px 1px 2px rgba(255,255,255,0.8);
+    margin-bottom: var(--spacing-xs);
+  }
+  
+  .metrica-label {
+    font-size: 0.9rem;
+    color: #546e7a;
+    font-weight: 500;
+  }
+}
+
+// 🎯 CARD DE AÇÃO RÁPIDA
+.card-acao {
+  background: rgba(255,255,255,0.9);
+  padding: var(--spacing-md);
+  border-radius: var(--border-radius-small);
+  margin-bottom: var(--spacing-sm);
+  border: 2px solid var(--verde-destaque);
+  transition: var(--transition-smooth);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  text-decoration: none;
+  color: var(--texto-escuro);
+  box-shadow: 0 2px 8px var(--sombra-light);
+  
+  &:hover {
+    background: var(--post-it-menta);
+    border-color: var(--azul-acao);
+    transform: translateX(4px);
+    box-shadow: 0 4px 16px var(--sombra-medium);
+    text-decoration: none;
+    color: var(--texto-escuro);
+  }
+  
+  .acao-icon {
+    font-size: 1.5rem;
+    color: var(--verde-destaque);
+    min-width: 2rem;
+    text-align: center;
+  }
+  
+  .acao-content {
+    flex: 1;
+    
+    .acao-title {
+      font-weight: 600;
+      margin-bottom: 0.2rem;
+      color: var(--verde-destaque);
+    }
+    
+    .acao-description {
+      font-size: 0.85rem;
+      color: #666;
+      margin: 0;
+    }
+  }
+  
+  .acao-arrow {
+    color: var(--azul-acao);
+    font-size: 1.2rem;
+  }
+}
+
+// 📋 ITEM DE ATIVIDADE (lista compacta)
+.atividade-item {
+  background: rgba(255,255,255,0.9);
+  padding: var(--spacing-md);
+  border-radius: var(--border-radius-small);
+  margin-bottom: var(--spacing-sm);
+  border-left: 4px solid var(--azul-acao);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: var(--transition-normal);
+  
+  &:hover {
+    background: rgba(255,255,255,1);
+    transform: translateX(3px);
+    box-shadow: 0 4px 12px var(--sombra-light);
+  }
+  
+  .atividade-info {
+    flex: 1;
+    
+    h3 {
+      font-size: 1rem;
+      margin-bottom: 0.3rem;
+      color: var(--verde-destaque);
+      margin: 0 0 0.3rem 0;
+    }
+    
+    .atividade-meta {
+      display: flex;
+      gap: var(--spacing-md);
+      font-size: 0.85rem;
+      color: #666;
+      
+      span {
+        display: flex;
+        align-items: center;
+        gap: 0.3rem;
+      }
+    }
+  }
+  
+  .atividade-actions {
+    display: flex;
+    gap: var(--spacing-sm);
+  }
+}
+
+// 🌊 FILTROS CONTAINER (estilo post-it)
+.filtros-container {
+  background: var(--post-it-azul-gelo);
+  padding: var(--spacing-lg);
+  border-radius: var(--border-radius-medium);
+  box-shadow: 0 6px 24px var(--sombra-light);
+  margin-bottom: var(--spacing-xl);
+  color: var(--texto-escuro);
+  border: 1px solid rgba(0,0,0,0.08);
+  transform: rotate(-0.5deg);
+  transition: var(--transition-normal);
+  
+  &:hover {
+    transform: rotate(0deg);
+  }
+  
+  .filtros-grid {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: var(--spacing-md);
+  }
+  
+  .filtros-left {
+    display: flex;
+    gap: var(--spacing-md);
+    flex-wrap: wrap;
+    align-items: end;
+  }
+  
+  .filtro-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    
+    .filtro-label {
+      font-size: 0.85rem;
+      color: #546e7a;
+      font-weight: 600;
+    }
+    
+    .filtro-input {
+      padding: 0.6rem;
+      border-radius: var(--border-radius-small);
+      border: 2px solid var(--verde-destaque);
+      font-size: 0.9rem;
+      background: rgba(255,255,255,0.9);
+      color: var(--texto-escuro);
+      transition: var(--transition-normal);
+      
+      &:focus {
+        outline: none;
+        border-color: var(--azul-acao);
+        box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.2);
+      }
+    }
+  }
+  
+  .view-toggle {
+    display: flex;
+    gap: var(--spacing-sm);
+  }
+}
+
+// 📱 RESPONSIVIDADE PARA CARDS
+@media (max-width: 768px) {
+  .card-atividade {
+    .card-header {
+      flex-direction: column;
+      gap: var(--spacing-sm);
+      
+      .card-level {
+        margin-left: 0;
+        align-self: flex-start;
+      }
+    }
+    
+    .card-content .card-meta {
+      flex-direction: column;
+      gap: var(--spacing-sm);
+    }
+    
+    .card-actions {
+      justify-content: center;
+    }
+  }
+  
+  .atividade-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-sm);
+    
+    .atividade-actions {
+      align-self: flex-end;
+    }
+  }
+  
+  .filtros-container {
+    .filtros-grid {
+      flex-direction: column;
+      align-items: stretch;
+    }
+    
+    .filtros-left {
+      justify-content: center;
+    }
+    
+    .view-toggle {
+      justify-content: center;
+    }
+  }
+} 

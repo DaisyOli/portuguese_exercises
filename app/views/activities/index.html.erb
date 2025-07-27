@@ -1,141 +1,629 @@
-<div class="container mt-5">
-  <div class="row">
-    <div class="col-12">
-      <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1><%= t('activities.title') %></h1>
-        <% if current_user.teacher? %>
-          <%= link_to t('activities.new'), new_activity_path, class: "btn btn-primary" %>
-        <% end %>
-      </div>
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Todas as Atividades - Practice PT</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Kalam:wght@400;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --quadro-verde: #1e3a2e;
+      --giz-branco: #f8f9fa;
+      --post-it-creme: #fff3e0;
+      --post-it-lavanda: #e8eaf6;
+      --post-it-menta: #e0f2f1;
+      --post-it-pessego: #fce4ec;
+      --post-it-azul-gelo: #e3f2fd;
+      --madeira-clara: #efebe9;
+      --verde-destaque: #2e7d32;
+      --azul-acao: #1976d2;
+      --roxo-acao: #7b1fa2;
+    }
 
-      <% if params[:level].present? %>
-        <!-- Exibição das atividades de um nível específico -->
-        <div class="mb-4">
-          <h2 class="mb-3">
-            <span class="badge <%= Activity.new(level: @current_level).level_color_class %>" style="font-size: 1.5rem;">
-              <%= @current_level %>
-            </span>
-            <%= t('activities.level_activities') %>
-          </h2>
-          <%= link_to t('activities.back_to_all'), activities_path, class: "btn btn-sm btn-outline-secondary mb-4" %>
-        </div>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-        <% if @activities.any? %>
-          <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
-            <% @activities.each do |activity| %>
-              <% cache [activity, current_user.role, @best_attempts&.dig(activity.id), I18n.locale] do %>
-                <div class="col">
-                  <div class="card h-100 shadow-sm position-relative">
-                    <% if current_user.student? %>
-                      <% if session[:completed_quizzes]&.include?(activity.id) %>
-                        <div class="position-absolute top-0 end-0 m-2">
-                          <span style="font-size: 1.5rem; color: green;" title="<%= t('quiz.completed_recently') %>">✓</span>
-                        </div>
-                      <% elsif @best_attempts && @best_attempts[activity.id].present? %>
-                        <div class="position-absolute top-0 end-0 m-2">
-                          <% score = @best_attempts[activity.id] %>
-                          <% if score >= 90 %>
-                            <span class="badge bg-success" style="font-size: 0.8rem;">
-                              <i class="fas fa-trophy"></i> <%= number_to_percentage(score, precision: 0) %>
-                            </span>
-                          <% elsif score >= 70 %>
-                            <span class="badge bg-info" style="font-size: 0.8rem;">
-                              <i class="fas fa-check-circle"></i> <%= number_to_percentage(score, precision: 0) %>
-                            </span>
-                          <% else %>
-                            <span class="badge bg-warning" style="font-size: 0.8rem;">
-                              <i class="fas fa-star"></i> <%= number_to_percentage(score, precision: 0) %>
-                            </span>
-                          <% end %>
-                        </div>
-                      <% end %>
-                    <% end %>
-                    <div class="card-body">
-                      <h5 class="card-title"><%= activity.title %></h5>
-                      <p class="card-text"><%= truncate(activity.description, length: 100) %></p>
-                      <div class="d-flex justify-content-between align-items-center">
-                        <span class="badge <%= activity.level_color_class %>"><%= activity.level %></span>
-                        <small class="text-muted"><%= activity.questions.count %> <%= t('activities.question_count') %></small>
-                      </div>
-                    </div>
-                    <div class="card-footer bg-transparent border-top-0">
-                      <div class="d-flex flex-column gap-2">
-                        <% if current_user.role == "student" %>
-                          <%= link_to t('activities.solve_quiz'), resolve_quiz_activity_path(activity), class: "btn btn-primary w-100" %>
-                        <% else %>
-                          <%= link_to t('activities.view'), activity_path(activity), class: "btn btn-info w-100" %>
-                        <% end %>
-                        <% if current_user.teacher? && activity.teacher == current_user %>
-                          <%= link_to t('activities.edit_btn'), edit_activity_path(activity), class: "btn btn-outline-warning" %>
-                          <%= link_to t('activities.delete'), activity_path(activity), 
-                              data: { 
-                                turbo_method: :delete,
-                                turbo_confirm: t('activities.confirm_delete')
-                              }, 
-                              class: "btn btn-outline-danger" %>
-                        <% end %>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              <% end %>
-            <% end %>
-          </div>
-        <% else %>
-          <div class="alert alert-info">
-            <p class="mb-0"><%= t('activities.no_activities_for_level', level: @current_level) %></p>
-          </div>
-        <% end %>
+    body {
+      background: linear-gradient(135deg, var(--quadro-verde) 0%, #0d2818 100%);
+      min-height: 100vh;
+      font-family: 'Inter', sans-serif;
+      color: var(--giz-branco);
+      position: relative;
+      overflow-x: hidden;
+    }
 
-      <% else %>
-        <!-- Exibição dos níveis como cards -->
-        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
-          <% cache [Activity.maximum(:updated_at), @activities_by_level, I18n.locale] do %>
-            <% Activity.levels.keys.each do |level| %>
-              <div class="col">
-                <div class="card h-100 shadow-sm hover-shadow">
-                  <div class="card-body text-center">
-                    <h3 class="card-title">
-                      <span class="badge <%= Activity.new(level: level).level_color_class %>" style="font-size: 2rem;">
-                        <%= level %>
-                      </span>
-                    </h3>
-                    <p class="card-text mt-3">
-                      <% level_activities_count = @activities_by_level[level]&.count || 0 %>
-                      <%= t('activities.level_count', count: level_activities_count) %>
-                    </p>
-                  </div>
-                  <div class="card-footer bg-transparent border-top-0">
-                    <div class="d-grid">
-                      <%= link_to t('activities.view_level'), activities_path(level: level), 
-                          class: "btn btn-outline-primary" %>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            <% end %>
-          <% end %>
-        </div>
+    /* Textura do quadro */
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: 
+        repeating-linear-gradient(
+          90deg,
+          transparent,
+          transparent 49px,
+          rgba(255,255,255,0.015) 50px
+        ),
+        repeating-linear-gradient(
+          0deg,
+          transparent,
+          transparent 49px,
+          rgba(255,255,255,0.015) 50px
+        );
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .atividades-container {
+      position: relative;
+      z-index: 2;
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 2rem;
+      min-height: 100vh;
+    }
+
+    /* Header estilo madeira */
+    .header-atividades {
+      background: var(--madeira-clara);
+      color: #333;
+      padding: 1.5rem 2rem;
+      border-radius: 15px 15px 5px 5px;
+      margin-bottom: 2rem;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+      border: 4px solid #8d6e63;
+      position: relative;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .header-atividades::before {
+      content: '';
+      position: absolute;
+      top: -8px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 80px;
+      height: 8px;
+      background: #5d4037;
+      border-radius: 4px;
+    }
+
+    .header-info h1 {
+      font-family: 'Kalam', cursive;
+      font-size: 2rem;
+      color: var(--verde-destaque);
+      margin-bottom: 0.5rem;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .header-info p {
+      font-size: 1rem;
+      color: #555;
+      opacity: 0.8;
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+    }
+
+    .btn-giz {
+      background: linear-gradient(145deg, var(--azul-acao), #1565c0);
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 25px;
+      color: white;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.95rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      box-shadow: 0 6px 24px rgba(25, 118, 210, 0.3);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn-giz:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(25, 118, 210, 0.25);
+      background: linear-gradient(145deg, #2196f3, var(--azul-acao));
+    }
+
+    .btn-giz.secondary {
+      background: linear-gradient(145deg, #757575, #616161);
+      box-shadow: 0 6px 24px rgba(117, 117, 117, 0.3);
+    }
+
+    .btn-giz.secondary:hover {
+      background: linear-gradient(145deg, #9e9e9e, #757575);
+      box-shadow: 0 8px 24px rgba(117, 117, 117, 0.25);
+    }
+
+    /* Filtros estilo post-it */
+    .filtros-container {
+      background: var(--post-it-azul-gelo);
+      padding: 1.5rem;
+      border-radius: 12px;
+      box-shadow: 0 6px 24px rgba(0,0,0,0.1);
+      margin-bottom: 2rem;
+      color: #37474f;
+      border: 1px solid rgba(0,0,0,0.08);
+      transform: rotate(-0.5deg);
+      transition: all 0.3s ease;
+    }
+
+    .filtros-container:hover {
+      transform: rotate(0deg);
+    }
+
+    .filtros-grid {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .filtros-left {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      align-items: end;
+    }
+
+    .filtro-item {
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+    }
+
+    .filtro-label {
+      font-size: 0.85rem;
+      color: #546e7a;
+      font-weight: 600;
+    }
+
+    .filtro-input {
+      padding: 0.6rem;
+      border-radius: 8px;
+      border: 2px solid var(--verde-destaque);
+      font-size: 0.9rem;
+      background: rgba(255,255,255,0.9);
+      color: #37474f;
+      transition: all 0.3s ease;
+    }
+
+    .filtro-input:focus {
+      outline: none;
+      border-color: var(--azul-acao);
+      box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.2);
+    }
+
+    .btn-buscar {
+      background: linear-gradient(145deg, var(--verde-destaque), #1b5e20);
+      color: white;
+      border: none;
+      padding: 0.6rem 1.2rem;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 12px rgba(46, 125, 50, 0.3);
+    }
+
+    .btn-buscar:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(46, 125, 50, 0.4);
+    }
+
+    .view-toggle {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .view-btn {
+      padding: 0.6rem;
+      border-radius: 8px;
+      color: var(--azul-acao);
+      text-decoration: none;
+      border: 2px solid var(--azul-acao);
+      background: rgba(255,255,255,0.9);
+      transition: all 0.3s ease;
+    }
+
+    .view-btn:hover {
+      background: var(--azul-acao);
+      color: white;
+    }
+
+    /* Cards de atividades estilo post-it */
+    .atividades-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .atividade-card {
+      background: var(--post-it-creme);
+      padding: 1.2rem;
+      border-radius: 12px;
+      box-shadow: 0 6px 24px rgba(0,0,0,0.1);
+      position: relative;
+      transform: rotate(-1deg);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      color: #37474f;
+      border: 1px solid rgba(0,0,0,0.08);
+      height: fit-content;
+    }
+
+    .atividade-card:nth-child(even) {
+      transform: rotate(1deg);
+      background: var(--post-it-lavanda);
+    }
+
+    .atividade-card:nth-child(3n) {
+      background: var(--post-it-menta);
+      transform: rotate(-0.5deg);
+    }
+
+    .atividade-card:hover {
+      transform: rotate(0deg) scale(1.02);
+      box-shadow: 0 12px 32px rgba(0,0,0,0.15);
+      z-index: 10;
+    }
+
+    .atividade-title {
+      font-family: 'Kalam', cursive;
+      font-size: 1.2rem;
+      color: var(--verde-destaque);
+      margin-bottom: 1rem;
+      text-shadow: 1px 1px 2px rgba(255,255,255,0.8);
+    }
+
+    .atividade-meta {
+      display: grid;
+      gap: 0.5rem;
+      margin-bottom: 1.2rem;
+    }
+
+    .meta-item {
+      display: flex;
+      align-items: center;
+      color: #546e7a;
+      font-size: 0.9rem;
+      gap: 0.5rem;
+    }
+
+    .meta-icon {
+      color: var(--verde-destaque);
+      width: 16px;
+    }
+
+    .atividade-actions {
+      display: flex;
+      gap: 0.6rem;
+    }
+
+    .btn-acao {
+      padding: 0.5rem 1rem;
+      border-radius: 15px;
+      font-size: 0.85rem;
+      text-decoration: none;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      flex: 1;
+      text-align: center;
+    }
+
+    .btn-ver {
+      background: var(--azul-acao);
+      color: white;
+      box-shadow: 0 2px 8px rgba(25, 118, 210, 0.3);
+    }
+
+    .btn-ver:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(25, 118, 210, 0.4);
+    }
+
+    .btn-editar {
+      background: rgba(255,255,255,0.9);
+      color: #546e7a;
+      border: 2px solid #e0e0e0;
+    }
+
+    .btn-editar:hover {
+      background: #f5f5f5;
+      transform: translateY(-1px);
+    }
+
+    /* Lista view */
+    .atividades-lista {
+      background: rgba(255,255,255,0.95);
+      border-radius: 12px;
+      box-shadow: 0 6px 24px rgba(0,0,0,0.1);
+      overflow: hidden;
+    }
+
+    .atividade-linha {
+      padding: 1.2rem 1.5rem;
+      border-bottom: 1px solid #e0e0e0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: all 0.3s ease;
+      color: #37474f;
+    }
+
+    .atividade-linha:hover {
+      background: rgba(25, 118, 210, 0.05);
+      transform: translateX(3px);
+    }
+
+    .atividade-linha:last-child {
+      border-bottom: none;
+    }
+
+    /* Estado vazio */
+    .estado-vazio {
+      text-align: center;
+      padding: 3rem;
+      background: var(--post-it-pessego);
+      border-radius: 12px;
+      box-shadow: 0 6px 24px rgba(0,0,0,0.1);
+      color: #37474f;
+      transform: rotate(1deg);
+      transition: all 0.3s ease;
+    }
+
+    .estado-vazio:hover {
+      transform: rotate(0deg);
+    }
+
+    .icone-vazio {
+      font-size: 3rem;
+      color: var(--verde-destaque);
+      margin-bottom: 1rem;
+      filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.1));
+    }
+
+    .titulo-vazio {
+      font-family: 'Kalam', cursive;
+      font-size: 1.5rem;
+      color: var(--verde-destaque);
+      margin-bottom: 1rem;
+    }
+
+    /* Paginação */
+    .paginacao {
+      display: flex;
+      justify-content: center;
+      margin-top: 2rem;
+      gap: 0.5rem;
+    }
+
+    .pag-btn {
+      padding: 0.6rem 1rem;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      border: 2px solid var(--azul-acao);
+      color: var(--azul-acao);
+      background: rgba(255,255,255,0.9);
+    }
+
+    .pag-btn.active {
+      background: var(--azul-acao);
+      color: white;
+    }
+
+    .pag-btn:hover {
+      background: var(--azul-acao);
+      color: white;
+      transform: translateY(-1px);
+    }
+
+    /* Responsividade */
+    @media (max-width: 1024px) {
+      .atividades-grid {
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      }
+    }
+
+    @media (max-width: 768px) {
+      .header-atividades {
+        flex-direction: column;
+        gap: 1rem;
+        text-align: center;
+      }
+
+      .filtros-left {
+        width: 100%;
+        justify-content: center;
+      }
+
+      .atividades-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .atividade-linha {
+        flex-direction: column;
+        gap: 1rem;
+        align-items: flex-start;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="atividades-container">
+  <!-- Header estilo madeira -->
+  <div class="header-atividades">
+    <div class="header-info">
+      <h1><i class="fas fa-books"></i> Todas as Atividades</h1>
+      <p>Gerencie suas atividades educacionais</p>
+    </div>
+    <div class="header-actions">
+      <%= link_to new_activity_path, class: "btn-giz" do %>
+        <i class="fas fa-plus-circle"></i>
+        <span>Nova Atividade</span>
+      <% end %>
+      
+      <%= link_to teacher_dashboard_path, class: "btn-giz secondary" do %>
+        <i class="fas fa-arrow-left"></i>
+        <span>Voltar ao Meu Espaço</span>
       <% end %>
     </div>
   </div>
-  <div class="d-grid mt-4 mb-5">
-    <% if params[:level].present? %>
-      <%= link_to t('activities.back_to_all'), activities_path, class: "btn btn-secondary" %>
+
+  <!-- Filtros -->
+  <%= form_with url: activities_path, method: :get, local: true, html: {class: 'filtros-container'} do %>
+    <div class="filtros-grid">
+      <div class="filtros-left">
+        <div class="filtro-item">
+          <label class="filtro-label">Nível</label>
+          <select name="level" class="filtro-input">
+            <option value="">Todos os níveis</option>
+            <option value="A1" <%= 'selected' if params[:level] == 'A1' %>>A1</option>
+            <option value="A2" <%= 'selected' if params[:level] == 'A2' %>>A2</option>
+            <option value="B1" <%= 'selected' if params[:level] == 'B1' %>>B1</option>
+            <option value="B2" <%= 'selected' if params[:level] == 'B2' %>>B2</option>
+            <option value="C1" <%= 'selected' if params[:level] == 'C1' %>>C1</option>
+            <option value="C2" <%= 'selected' if params[:level] == 'C2' %>>C2</option>
+          </select>
+        </div>
+        
+        <div class="filtro-item">
+          <label class="filtro-label">Ordenar por</label>
+          <select name="sort" class="filtro-input">
+            <option value="recentes" <%= 'selected' if params[:sort] == 'recentes' %>>Mais recentes</option>
+            <option value="antigos" <%= 'selected' if params[:sort] == 'antigos' %>>Mais antigos</option>
+            <option value="titulo" <%= 'selected' if params[:sort] == 'titulo' %>>Título</option>
+            <option value="tentativas" <%= 'selected' if params[:sort] == 'tentativas' %>>Mais tentativas</option>
+          </select>
+        </div>
+        
+        <div class="filtro-item">
+          <label class="filtro-label">Buscar</label>
+          <input type="text" name="search" value="<%= params[:search] %>" 
+                 placeholder="Buscar atividades..." class="filtro-input" style="width: 200px;">
+        </div>
+        
+        <button type="submit" class="btn-buscar">
+          <i class="fas fa-search"></i> Buscar
+        </button>
+      </div>
+
+      <div class="view-toggle">
+        <%= link_to activities_path(view: 'list', level: params[:level], sort: params[:sort], search: params[:search]), 
+            class: "view-btn" do %>
+          <i class="fas fa-list"></i>
+        <% end %>
+        <%= link_to activities_path(view: 'grid', level: params[:level], sort: params[:sort], search: params[:search]), 
+            class: "view-btn" do %>
+          <i class="fas fa-th-large"></i>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+
+  <!-- Atividades -->
+  <% if @activities.any? %>
+    <% if params[:view] == 'list' %>
+      <!-- Visualização em Lista -->
+      <div class="atividades-lista">
+        <% @activities.each do |activity| %>
+          <div class="atividade-linha">
+            <div>
+              <h3 class="atividade-title" style="margin-bottom: 0.5rem; font-size: 1.1rem;"><%= activity.title %></h3>
+              <div style="display: flex; gap: 1.5rem; align-items: center;">
+                <span class="meta-item">
+                  <i class="fas fa-calendar meta-icon"></i>
+                  <%= activity.created_at.strftime("%d/%m/%Y") %>
+                </span>
+                <span class="meta-item">
+                  <i class="fas fa-users meta-icon"></i>
+                  <%= QuizAttempt.where(activity: activity).distinct.count('user_id') %> estudantes
+                </span>
+                <span class="meta-item">
+                  <i class="fas fa-clipboard-check meta-icon"></i>
+                  <%= QuizAttempt.where(activity: activity).count %> tentativas
+                </span>
+              </div>
+            </div>
+            <div class="atividade-actions">
+              <%= link_to "Ver", activity_path(activity), class: "btn-acao btn-ver" %>
+              <%= link_to "Editar", edit_activity_path(activity), class: "btn-acao btn-editar" %>
+            </div>
+          </div>
+        <% end %>
+      </div>
     <% else %>
-      <% if current_user.teacher? %>
-        <%= link_to t('activities.back_to_dashboard'), teacher_dashboard_path, class: "btn btn-secondary" %>
-      <% else %>
-        <%= link_to t('activities.back_to_dashboard'), student_dashboard_path, class: "btn btn-secondary" %>
-      <% end %>
+      <!-- Visualização em Grid -->
+      <div class="atividades-grid">
+        <% @activities.each do |activity| %>
+          <div class="atividade-card">
+            <h3 class="atividade-title"><%= activity.title %></h3>
+            <div class="atividade-meta">
+              <div class="meta-item">
+                <i class="fas fa-calendar meta-icon"></i>
+                Criada em <%= activity.created_at.strftime("%d/%m/%Y") %>
+              </div>
+              <div class="meta-item">
+                <i class="fas fa-users meta-icon"></i>
+                <%= QuizAttempt.where(activity: activity).distinct.count('user_id') %> estudantes
+              </div>
+              <div class="meta-item">
+                <i class="fas fa-clipboard-check meta-icon"></i>
+                <%= QuizAttempt.where(activity: activity).count %> tentativas
+              </div>
+            </div>
+            <div class="atividade-actions">
+              <%= link_to "Ver", activity_path(activity), class: "btn-acao btn-ver" %>
+              <%= link_to "Editar", edit_activity_path(activity), class: "btn-acao btn-editar" %>
+            </div>
+          </div>
+        <% end %>
+      </div>
     <% end %>
-  </div>
+
+    <!-- Paginação -->
+    <div class="paginacao">
+      <a href="#" class="pag-btn">
+        <i class="fas fa-chevron-left"></i>
+      </a>
+      <a href="#" class="pag-btn active">1</a>
+      <a href="#" class="pag-btn">2</a>
+      <a href="#" class="pag-btn">3</a>
+      <a href="#" class="pag-btn">
+        <i class="fas fa-chevron-right"></i>
+      </a>
+    </div>
+  <% else %>
+    <!-- Estado vazio -->
+    <div class="estado-vazio">
+      <i class="fas fa-clipboard-list icone-vazio"></i>
+      <h2 class="titulo-vazio">Nenhuma atividade encontrada</h2>
+      <p style="color: #546e7a; margin-bottom: 1.5rem;">Comece criando sua primeira atividade!</p>
+      <%= link_to new_activity_path, class: "btn-giz" do %>
+        <i class="fas fa-plus-circle"></i>
+        Criar Nova Atividade
+      <% end %>
+    </div>
+  <% end %>
 </div>
 
-<style>
-  .hover-shadow:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
-    transition: all 0.3s ease;
-  }
-</style>
+</body>
+</html>

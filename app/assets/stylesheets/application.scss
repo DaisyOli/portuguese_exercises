@@ -1,15 +1,31 @@
-@import "bootstrap";/*
- * This is a manifest file that'll be compiled into application.css, which will include all the files
- * listed below.
- *
- * Any CSS (and SCSS, if configured) file within this directory, lib/assets/stylesheets, or any plugin's
- * vendor/assets/stylesheets directory can be referenced here using a relative path.
- *
- * You're free to add application-wide styles to this file and they'll appear at the bottom of the
- * compiled file so the styles you add here take precedence over styles defined in any other CSS
- * files in this directory. Styles in this file should be added after the last require_* statement.
- * It is generally better to create a new file per style scope.
- *
- *= require_tree .
- *= require_self
+// ==============================================
+// 📦 APLICAÇÃO PRINCIPAL - IMPORTAÇÕES
+// ==============================================
+
+// 🎯 1. FUNDAÇÕES (ordem importa!)
+@import "variables";              // CSS variables centralizadas
+@import "globals";                // Reset, tipografia, utilities
+
+// 🎨 2. BOOTSTRAP (depois das nossas variáveis)
+@import "bootstrap";
+
+// 🔮 3. COMPONENTES
+@import "components/buttons";         // ✅ Fase 2 - ATIVO
+@import "components/headers";         // ✅ Fase 2 - ATIVO  
+@import "components/cards";           // ✅ Fase 3 - ATIVO  
+@import "components/forms";           // ✅ Fase 3 - ATIVO
+@import "components/student_components"; // 🎓 Componentes específicos do estudante
+
+/*
+ * 📝 NOTAS DA MIGRAÇÃO:
+ * 
+ * ✅ FASE 1 (ATUAL): Variáveis e estilos globais
+ * 🔄 FASE 2: Componentes core (botões, headers)  
+ * 🔄 FASE 3: Componentes específicos (cards, forms)
+ * 
+ * 🚨 CSS inline nas views ainda está ativo!
+ * Isso é proposital para migração gradual e segura.
+ * 
+ * Os estilos inline serão removidos conforme
+ * migramos cada componente.
  */

@@ -7,7 +7,9 @@ class Activity < ApplicationRecord
   validates :title, presence: true
   validates :description, presence: true
   validates :level, presence: true
+  validates :slug, presence: true, uniqueness: true
   
+  before_validation :generate_slug, if: :should_generate_slug?
   after_commit :clear_cache
   
   enum level: {
@@ -34,8 +36,46 @@ class Activity < ApplicationRecord
       'bg-secondary'   # Cinza (caso padrão)
     end
   end
+
+  def to_param
+    slug
+  end
   
   private
+  
+  def generate_slug
+    return unless title.present?
+    
+    # Criar slug base a partir do título
+    base_slug = title.downcase
+                    .gsub(/[àáâãäå]/, 'a')
+                    .gsub(/[èéêë]/, 'e')
+                    .gsub(/[ìíîï]/, 'i')
+                    .gsub(/[òóôõö]/, 'o')
+                    .gsub(/[ùúûü]/, 'u')
+                    .gsub(/[ç]/, 'c')
+                    .gsub(/[ñ]/, 'n')
+                    .gsub(/[^a-z0-9\s-]/, '') # Remove caracteres especiais
+                    .gsub(/\s+/, '-')         # Substitui espaços por hífens
+                    .gsub(/-+/, '-')          # Remove hífens duplicados
+                    .strip
+                    .gsub(/^-|-$/, '')        # Remove hífens do início/fim
+    
+    # Garantir unicidade
+    unique_slug = base_slug
+    counter = 1
+    
+    while Activity.where(slug: unique_slug).where.not(id: self.id).exists?
+      unique_slug = "#{base_slug}-#{counter}"
+      counter += 1
+    end
+    
+    self.slug = unique_slug
+  end
+  
+  def should_generate_slug?
+    title_changed? || slug.blank?
+  end
   
   def clear_cache
     Rails.cache.delete_matched("activities*")
