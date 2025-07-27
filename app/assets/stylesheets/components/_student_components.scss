@@ -368,8 +368,15 @@
     justify-content: space-between;
     align-items: center;
     display: flex;
-    background: rgba(76, 175, 80, 0.1);
-    border: 2px dashed var(--verde-principal);
+    background: rgba(76, 175, 80, 0.1) !important;
+    border: 2px dashed var(--verde-principal) !important;
+    color: var(--verde-destaque) !important;
+    
+    &:hover {
+      background: rgba(76, 175, 80, 0.2) !important;
+      color: var(--verde-destaque) !important;
+      border-color: var(--verde-destaque) !important;
+    }
 
     .toggle-icon {
       transition: transform 0.3s ease;

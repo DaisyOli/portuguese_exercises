@@ -282,7 +282,7 @@
           <!-- Seção de atividades completadas (colapsável) -->
           <% if @completed_activities.any? %>
             <div class="completed-activities-section mt-4">
-              <button class="btn-toggle-completed btn-giz outline" data-bs-toggle="collapse" data-bs-target="#completed-activities">
+              <button class="btn-toggle-completed btn-giz secondary" data-bs-toggle="collapse" data-bs-target="#completed-activities">
                 <i class="fas fa-check-circle"></i>
                 <%= t('student_dashboard.actions.show_completed') %> (<%= @completed_activities.count %>)
                 <i class="fas fa-chevron-down toggle-icon"></i>
@@ -550,7 +550,7 @@
           button.style.display = 'none';
           spinner.classList.remove('d-none');
           
-          fetch(`/students/load_more?level=${level}&offset=${offset}`)
+          fetch(`/students/load_more?level=${level}&offset=${offset}&locale=<%= I18n.locale %>`)
             .then(response => response.json())
             .then(data => {
               // Add new activities
