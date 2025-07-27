@@ -471,7 +471,7 @@
 
   <!-- ✅ Scripts para melhorar a experiência -->
   <script>
-    document.addEventListener('DOMContentLoaded', function() {
+    function initializeStudentDashboard() {
       // Animação das barras de progresso
       const progressBars = document.querySelectorAll('.progress-fill');
       progressBars.forEach(bar => {
@@ -540,21 +540,42 @@
       // ✅ Progressive Loading para atividades
       const loadMoreBtn = document.querySelector('.load-more-btn');
       if (loadMoreBtn) {
+        console.log('✅ Botão load-more encontrado:', loadMoreBtn);
+        
         loadMoreBtn.addEventListener('click', function() {
+          console.log('🔥 Botão clicado!');
+          
           const level = this.dataset.level;
           const offset = parseInt(this.dataset.offset);
           const button = this;
           const spinner = document.querySelector('.loading-spinner');
           
+          console.log('📊 Dados:', { level, offset });
+          console.log('🎯 Container:', document.getElementById('activities-container'));
+          
           // Show loading state
           button.style.display = 'none';
           spinner.classList.remove('d-none');
           
-          fetch(`/students/load_more?level=${level}&offset=${offset}&locale=<%= I18n.locale %>`)
-            .then(response => response.json())
+          const url = `/students/load_more?level=${level}&offset=${offset}&locale=<%= I18n.locale %>`;
+          console.log('🌐 URL requisição:', url);
+          
+          fetch(url)
+            .then(response => {
+              console.log('📥 Response status:', response.status);
+              return response.json();
+            })
             .then(data => {
+              console.log('📦 Dados recebidos:', data);
+              
               // Add new activities
-              document.getElementById('activities-container').insertAdjacentHTML('beforeend', data.html);
+              const container = document.getElementById('activities-container');
+              if (container) {
+                container.insertAdjacentHTML('beforeend', data.html);
+                console.log('✅ HTML inserido');
+              } else {
+                console.error('❌ Container não encontrado!');
+              }
               
               // Add animations to new cards
               const newCards = document.querySelectorAll('.card-atividade:not(.animated)');
@@ -574,11 +595,13 @@
               }
             })
             .catch(error => {
-              console.error('Error loading more activities:', error);
+              console.error('💥 Erro:', error);
               spinner.classList.add('d-none');
               button.style.display = 'inline-block';
             });
         });
+      } else {
+        console.error('❌ Botão load-more NÃO encontrado!');
       }
       
       // Toggle completed activities section
@@ -597,7 +620,18 @@
           }, 100);
                  });
        }
+     }
 
-       
-     });
+     // Executar quando DOM estiver pronto
+     if (document.readyState === 'loading') {
+       document.addEventListener('DOMContentLoaded', initializeStudentDashboard);
+     } else {
+       initializeStudentDashboard();
+     }
+     
+     // Também executar após Turbo navegação
+     document.addEventListener('turbo:load', initializeStudentDashboard);
+     
+     // E garantir que execute após um pequeno delay
+     setTimeout(initializeStudentDashboard, 100);
    </script>
