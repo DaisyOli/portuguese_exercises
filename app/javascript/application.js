@@ -28,6 +28,7 @@ document.addEventListener('DOMContentLoaded', function() {
 import "controllers"
 import "@popperjs/core"
 import "./quiz_results"
+import "./student_dashboard"
 
 // Desabilita o Turbo para formulários específicos
 document.addEventListener("turbo:load", () => {
