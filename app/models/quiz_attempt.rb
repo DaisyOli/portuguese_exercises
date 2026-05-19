@@ -33,6 +33,46 @@ class QuizAttempt < ApplicationRecord
   def question_results
     results["results"] if results
   end
+
+  def normalized_results(questions = {})
+    data = results.dup
+
+    unless data.key?("total_questions")
+      if data.values.any? { |v| v.is_a?(Hash) && v["is_correct"] }
+        data = {
+          "activity_id" => activity_id,
+          "results"     => data,
+          "score"       => score,
+          "total_correct"   => data.values.count { |r| r["is_correct"] },
+          "total_questions" => data.size,
+          "submitted_at"    => submitted_at
+        }
+      else
+        data = {
+          "activity_id"     => activity_id,
+          "results"         => {},
+          "score"           => score.to_i,
+          "total_correct"   => 0,
+          "total_questions" => 0,
+          "submitted_at"    => submitted_at || Time.current
+        }
+      end
+    end
+
+    data["results"] = {} unless data["results"].is_a?(Hash)
+
+    data["results"].each do |question_id, result|
+      question = questions[question_id.to_i]
+      if question
+        result["question_text"]   ||= question.content
+        result["question_type"]   ||= question.question_type
+        result["correct_answer"]  ||= question.correct_answer
+      end
+      result["given_answer"] ||= I18n.t('quiz.not_answered')
+    end
+
+    data
+  end
   
   # Método para limpar tentativas anônimas antigas (pode ser executado por um job)
   def self.clean_anonymous_attempts(older_than = 1.day)

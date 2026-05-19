@@ -1,7 +1,4 @@
 class ActivitiesController < ApplicationController
-  require 'timeout'
-  require_relative '../services/quiz_submission_service'
-  require_relative '../services/activities_index_service'
   include QuizManagement
   
   before_action :authenticate_user!
@@ -9,32 +6,6 @@ class ActivitiesController < ApplicationController
   before_action :authorize_teacher, only: [:new, :create, :edit, :update, :destroy]
 
   def index
-    @activities = Activity.all
-
-    # Aplicar filtros
-    @activities = @activities.where(level: params[:level]) if params[:level].present?
-    @activities = @activities.where("title ILIKE ?", "%#{params[:search]}%") if params[:search].present?
-
-    # Aplicar ordenação
-    case params[:sort]
-    when 'antigos'
-      @activities = @activities.order(created_at: :asc)
-    when 'titulo'
-      @activities = @activities.order(title: :asc)
-    when 'tentativas'
-      @activities = @activities.left_joins(:quiz_attempts)
-                             .group('activities.id')
-                             .order('COUNT(quiz_attempts.id) DESC')
-    else # 'recentes' ou padrão
-      @activities = @activities.order(created_at: :desc)
-    end
-
-    # Aplicar paginação
-    @activities = @activities.page(params[:page]).per(12)
-
-    # Carregar métricas para cada atividade
-    @activities = @activities.includes(:quiz_attempts)
-    
     service_result = ActivitiesIndexService.new(params: params, current_user: current_user).call
     @activities = service_result[:activities]
     @current_level = service_result[:current_level]
@@ -50,7 +21,7 @@ class ActivitiesController < ApplicationController
   def show
     @questions = load_questions
     
-    if current_user.role == "student"
+    if current_user.student?
       # Redirecionamento direto para resolver o quiz
       redirect_to resolve_quiz_activity_path(@activity)
     end
@@ -97,102 +68,16 @@ class ActivitiesController < ApplicationController
   end
 
   def quiz_results
-    begin
-      @activity = Activity.find_by!(slug: params[:slug])
-      
-      # Tentar obter a tentativa a partir do ID na sessão
-      if session[:quiz_attempt_id].present?
-        @quiz_attempt = QuizAttempt.find_by(id: session[:quiz_attempt_id])
-      end
+    @quiz_attempt = find_quiz_attempt
+    return redirect_to resolve_quiz_activity_path(@activity, locale: I18n.locale),
+                        alert: t('messages.answer_quiz_first') if @quiz_attempt.nil?
 
-      if @quiz_attempt.nil? && current_user
-        @quiz_attempt = current_user.quiz_attempts.where(activity_id: @activity.id).order(created_at: :desc).first
-      end
-
-      if @quiz_attempt.present?
-        @quiz_results = @quiz_attempt.results
-
-        unless @quiz_results.key?("total_questions")
-          
-          if @quiz_results.is_a?(Hash) && @quiz_results.values.any? { |v| v.is_a?(Hash) && v["is_correct"] }
-            # Formato antigo com resultados individuais
-            @quiz_results = {
-              "activity_id" => @activity.id,
-              "results" => @quiz_results,
-              "score" => @quiz_attempt.score,
-              "total_correct" => @quiz_results.values.count { |r| r["is_correct"] },
-              "total_questions" => @quiz_results.size,
-              "submitted_at" => @quiz_attempt.submitted_at
-            }
-          else
-            # Formato totalmente inválido, criar um fallback
-            @quiz_results = {
-              "activity_id" => @activity.id,
-              "results" => {},
-              "score" => @quiz_attempt.score || 0,
-              "total_correct" => 0,
-              "total_questions" => 0,
-              "submitted_at" => @quiz_attempt.submitted_at || Time.current,
-              "data_recovery" => true
-            }
-          end
-        end
-      else
-        # Se não encontrar tentativa, redirecionar para resolver o quiz
-        redirect_to resolve_quiz_activity_path(@activity, locale: I18n.locale), alert: t('messages.answer_quiz_first')
-        return
-      end
-      
-      # Verificação final de segurança dos dados
-      unless @quiz_results.is_a?(Hash) && @quiz_results["results"].is_a?(Hash)
-        Rails.logger.error "Formato de dados inválido, criando estrutura de fallback"
-        # Criar estrutura de fallback
-        @quiz_results = {
-          "activity_id" => @activity.id,
-          "results" => {},
-          "score" => @quiz_attempt&.score || 0,
-          "total_correct" => 0,
-          "total_questions" => 0,
-          "submitted_at" => Time.current,
-          "fallback_final" => true
-        }
-      end
-      
-      # Garantir que resultados é sempre um hash para evitar erros de renderização
-      @quiz_results["results"] = {} unless @quiz_results["results"].is_a?(Hash)
-      
-      # Carregar as questões para correspondência com os resultados
-      @questions = @activity.questions.index_by(&:id)
-      
-      # Garantir que cada resultado tenha todos os dados necessários
-      @quiz_results["results"].each do |question_id, result|
-        # Complementar dados ausentes se necessário
-        question = @questions[question_id.to_i]
-        
-        if question.present?
-          # Garantir que temos texto da questão
-          result["question_text"] = question.content unless result["question_text"].present?
-          
-          # Garantir que temos o tipo da questão
-          result["question_type"] = question.question_type unless result["question_type"].present?
-          
-          # Garantir que temos a resposta correta
-          result["correct_answer"] = question.correct_answer unless result["correct_answer"].present?
-        end
-        
-        # Garantir que temos a resposta dada
-        result["given_answer"] = t('quiz.not_answered') unless result["given_answer"].present?
-      end
-      
-      # Adicionar variável javascript com os resultados para debug
-      @debug_results_json = @quiz_results.to_json
-      
-      render 'quiz_results'
-    rescue => e
-      Rails.logger.error "Erro ao mostrar resultados: #{e.message}"
-      Rails.logger.error e.backtrace.join("\n")
-      redirect_to activities_path, alert: "Ocorreu um erro ao exibir os resultados. Tente novamente."
-    end
+    @questions    = @activity.questions.index_by(&:id)
+    @quiz_results = @quiz_attempt.normalized_results(@questions)
+    render 'quiz_results'
+  rescue => e
+    Rails.logger.error "Erro ao mostrar resultados: #{e.message}\n#{e.backtrace.join("\n")}"
+    redirect_to activities_path, alert: "Ocorreu um erro ao exibir os resultados. Tente novamente."
   end
 
   def new
@@ -212,7 +97,7 @@ class ActivitiesController < ApplicationController
 
   def edit
     unless @activity.teacher == current_user
-      redirect_to activities_path, alert: t('messages.permission_denied')
+      redirect_to activities_path, alert: t('messages.permission_denied') and return
     end
   end
 
@@ -258,16 +143,12 @@ class ActivitiesController < ApplicationController
   end
 
   def clear_media
-    if @activity.teacher == current_user
-      if @activity.update(media_url: nil)
-        redirect_to activity_path(@activity, locale: I18n.locale, ultima_acao: 'conteudo_excluido'), notice: t('messages.media_deleted')
-      else
-        Rails.logger.error "Falha ao limpar media para activity #{@activity.id}: #{@activity.errors.full_messages.join(', ')}"
-        redirect_to @activity, alert: "Erro ao remover a mídia. #{@activity.errors.full_messages.join(', ')}"
-      end
-    else
-      redirect_to @activity, alert: "Você não tem permissão para remover a mídia."
+    if @activity.teacher != current_user
+      redirect_to activities_path, alert: t('messages.permission_denied') and return
     end
+
+    @activity.update(media_url: nil)
+    redirect_to activity_path(@activity, ultima_acao: 'conteudo_excluido'), notice: t('messages.media_deleted')
   end
 
   def clear_explanation
@@ -302,6 +183,12 @@ class ActivitiesController < ApplicationController
 
   def set_activity
     @activity = Activity.find_by!(slug: params[:slug])
+  end
+
+  def find_quiz_attempt
+    attempt = QuizAttempt.find_by(id: session[:quiz_attempt_id]) if session[:quiz_attempt_id].present?
+    attempt ||= current_user&.quiz_attempts&.where(activity_id: @activity.id)&.order(created_at: :desc)&.first
+    attempt
   end
 
   def activity_params
