@@ -1,0 +1,143 @@
+<div id="question-<%= question.id %>" class="question-card">
+  <div class="question-header">
+    <div class="question-number">
+      <span>Questão <%= index + 1 %></span>
+      <span class="question-type-badge"><%= t("questions.types.#{question.question_type}") %></span>
+    </div>
+    <% if activity.teacher == current_user %>
+      <div class="btn-group-custom">
+        <button type="button" class="btn-icon edit"
+                data-bs-toggle="collapse"
+                data-bs-target="#edit-question-form-<%= question.id %>">
+          <i class="fas fa-edit"></i>
+        </button>
+        <%= button_to activity_question_path(activity, question),
+            method: :delete,
+            class: "btn-icon delete",
+            data: { confirm: t('questions.confirm_delete') } do %>
+          <i class="fas fa-trash"></i>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+
+  <div class="content-body">
+    <% if question.fill_in_blank? %>
+      <p class="mb-3 fs-5"><%= question.content.gsub('_____', '<span class="text-decoration-underline" style="width: 100px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>').html_safe %></p>
+    <% else %>
+      <p class="mb-3 fs-5"><%= question.content %></p>
+    <% end %>
+
+    <% if question.multiple_choice? && question.options.any? %>
+      <ul class="list-group mb-3">
+        <% question.options.each do |option| %>
+          <li class="list-group-item <%= question.correct_answer == option ? 'list-group-item-success' : '' %>">
+            <%= option %>
+          </li>
+        <% end %>
+      </ul>
+    <% end %>
+
+    <small class="text-success">
+      <i class="fas fa-check-circle"></i>
+      <%= t('questions.correct_answer') %>: <%= question.correct_answer %>
+    </small>
+  </div>
+</div>
+
+<% if activity.teacher == current_user %>
+  <div class="collapse form-collapse" id="edit-question-form-<%= question.id %>">
+    <div class="card-body">
+      <div data-controller="question-selector">
+        <%= form_with model: [question.activity, question], html: { id: "edit-form-#{question.id}" } do |form| %>
+          <div class="row mb-3">
+            <div class="col-md-12">
+              <%= form.label :question_type, t('questions.form.question_type') %>
+              <%= form.select :question_type,
+                  Question::QUESTION_TYPES.map { |type| [t("questions.types.#{type}"), type] },
+                  { selected: question.question_type || 'multiple_choice' },
+                  { class: "form-control",
+                    data: { question_selector_target: "selector",
+                            action: "change->question-selector#change" } } %>
+            </div>
+          </div>
+
+          <div class="row mb-3">
+            <div class="col-md-12">
+              <%= form.label :content, t('questions.form.question_content') %>
+              <%= form.text_area :content, class: "form-control", rows: 3 %>
+            </div>
+          </div>
+
+          <div class="row mb-3 fill-in-blank-help" data-question-selector-target="fillInBlank"
+               style="display: <%= question.fill_in_blank? ? 'block' : 'none' %>;">
+            <div class="col-md-12">
+              <div class="alert alert-info">
+                <%= t('questions.form.fill_in_blank_help_html') %>
+              </div>
+            </div>
+          </div>
+
+          <div class="row mb-3 multiple-choice-fields" data-question-selector-target="multipleChoice"
+               style="display: <%= question.multiple_choice? ? 'block' : 'none' %>;">
+            <div class="col-md-12">
+              <%= form.label :options, t('questions.form.options') %>
+              <%= form.text_area :options_text, value: question.options&.join(','), class: "form-control", rows: 3 %>
+              <small class="form-text text-muted"><%= t('questions.form.options_help') %></small>
+            </div>
+          </div>
+
+          <div class="row mb-3" data-question-selector-target="correctAnswer">
+            <div class="col-md-12">
+              <%= form.label :correct_answer, t('questions.form.correct_answer') %>
+              <%= form.text_field :correct_answer, class: "form-control" %>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-12">
+              <%= form.submit t('common.save'), class: "btn btn-primary" %>
+              <% if question.persisted? %>
+                <%= link_to t('common.delete'),
+                    activity_question_path(activity, question),
+                    data: { turbo_method: :delete, turbo_confirm: t('common.confirm_delete') },
+                    class: "btn btn-outline-danger ms-2" %>
+              <% end %>
+            </div>
+          </div>
+
+          <script>
+            document.addEventListener('DOMContentLoaded', function() {
+              const form = document.getElementById('edit-form-<%= question.id %>');
+              if (!form) return;
+              const select = form.querySelector('select[name="question[question_type]"]');
+              if (!select) return;
+
+              function updateEditFields() {
+                const type = select.value;
+                const multipleChoiceFields = form.querySelector('.multiple-choice-fields');
+                const fillInBlankHelp = form.querySelector('.fill-in-blank-help');
+                const correctAnswerField = form.querySelector('[data-question-selector-target="correctAnswer"]');
+                if (multipleChoiceFields) multipleChoiceFields.style.display = 'none';
+                if (fillInBlankHelp) fillInBlankHelp.style.display = 'none';
+                if (correctAnswerField) correctAnswerField.style.display = 'block';
+                switch (type) {
+                  case 'multiple_choice':
+                    if (multipleChoiceFields) multipleChoiceFields.style.display = 'block';
+                    break;
+                  case 'fill_in_blank':
+                    if (fillInBlankHelp) fillInBlankHelp.style.display = 'block';
+                    break;
+                }
+              }
+              select.addEventListener('change', updateEditFields);
+              const collapse = document.getElementById('edit-question-form-<%= question.id %>');
+              if (collapse) { collapse.addEventListener('shown.bs.collapse', updateEditFields); }
+              updateEditFields();
+            });
+          </script>
+        <% end %>
+      </div>
+    </div>
+  </div>
+<% end %>

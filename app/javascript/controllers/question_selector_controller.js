@@ -7,8 +7,6 @@ export default class extends Controller {
 
   // Conectar o controlador
   connect() {
-    console.log("QuestionSelectorController conectado")
-    
     // Configurar a visualização inicial com base no valor atual do seletor
     this.refreshFields()
     
@@ -20,13 +18,11 @@ export default class extends Controller {
   
   // Método chamado quando o seletor muda (via Stimulus)
   change() {
-    console.log("Método change chamado via Stimulus")
     this.refreshFields()
   }
-  
+
   // Método para lidar com mudanças via event listener padrão
   handleChange(event) {
-    console.log("Método handleChange chamado via listener")
     this.refreshFields()
   }
   
@@ -38,8 +34,7 @@ export default class extends Controller {
     }
     
     const type = this.selectorTarget.value
-    console.log("Tipo selecionado:", type)
-    
+
     // Esconder todos os campos
     this.hideAllFields()
     

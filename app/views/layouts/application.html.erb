@@ -57,9 +57,7 @@
       document.addEventListener('DOMContentLoaded', function() {
         if (typeof jQuery === 'undefined') {
           console.error('jQuery não foi carregado!');
-          // Não tenta carregar novamente para evitar duplicidade
         } else {
-          console.log('jQuery carregado com sucesso!');
           // Garantir que jQuery esteja disponível em ambas as variáveis
           window.$ = window.jQuery = jQuery;
         }

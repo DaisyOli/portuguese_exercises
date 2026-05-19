@@ -1,4 +1,6 @@
 class StudentsController < ApplicationController
+  include QuizManagement
+
   ACTIVITIES_PER_PAGE = 3
 
   def dashboard
@@ -57,19 +59,4 @@ class StudentsController < ApplicationController
     @activities = @pending_activities
   end
   
-  def load_completed_exercises
-    # Inicializar array de exercícios concluídos na sessão se não existir
-    session[:completed_quizzes] ||= []
-    
-    # Carregar todos os quiz_attempts do usuário atual
-    completed_activities = current_user.quiz_attempts
-                                      .select(:activity_id)
-                                      .distinct
-                                      .pluck(:activity_id)
-    
-    # Atualizar a sessão com os IDs de atividades concluídas
-    completed_activities.each do |activity_id|
-      session[:completed_quizzes] << activity_id unless session[:completed_quizzes].include?(activity_id)
-    end
-  end
 end

@@ -29,13 +29,7 @@ class QuizSubmissionService
     results = {}
     total_score = 0
     
-    # Obter todas as formas de respostas (mantendo exatamente como no controller)
-    raw_answers = @params[:answers_raw] || {}
-    alt_answers = @params[:answers_alt] || {}
-    order_values = @params[:answers_order] || {}
-    sentences_answers = @params[:answers_sentences] || {}
-    
-    # Processar cada questão (lógica exata do controller)
+    # Processar cada questão
     @questions.each do |question|
       # Obter a resposta dada pelo usuário
       given_answer = @params[:answers][question.id.to_s]
@@ -53,23 +47,13 @@ class QuizSubmissionService
           normalized_given = given_answer.to_s.strip.downcase.gsub(/\s+/, '')
           normalized_correct = correct_answer.to_s.strip.downcase.gsub(/\s+/, '')
           
-          # Remover acentos usando transliterate
           normalized_given = I18n.transliterate(normalized_given)
           normalized_correct = I18n.transliterate(normalized_correct)
-          
-          # Log dos valores normalizados
-          Rails.logger.info "RESPOSTA DEBUG: Normalizado dado='#{normalized_given}'"
-          Rails.logger.info "RESPOSTA DEBUG: Normalizado correto='#{normalized_correct}'"
-          Rails.logger.info "RESPOSTA DEBUG: São iguais? #{normalized_given == normalized_correct}"
-          
-          # Verificar se a resposta foi preenchida
+
           if given_answer.blank?
-            Rails.logger.info "RESPOSTA DEBUG: Resposta em branco!"
             is_correct = false
           else
-            # Comparar respostas normalizadas
             is_correct = normalized_given == normalized_correct
-            Rails.logger.info "RESPOSTA DEBUG: Resultado da comparação: #{is_correct}"
           end
         else
           # Processamento para outros tipos de questão - mantido idêntico
@@ -118,9 +102,6 @@ class QuizSubmissionService
       "submitted_at" => Time.current
     }
     
-    # Log resumo do processamento
-    Rails.logger.info "Processamento finalizado: #{total_score} corretas de #{@questions.count} questões (#{score}%)"
-    
     # Salvar tentativa e gerenciar sessão
     save_quiz_attempt(quiz_results_data, score)
   end
@@ -128,79 +109,45 @@ class QuizSubmissionService
   def save_quiz_attempt(quiz_results_data, score)
     if @user
       @quiz_attempt = QuizAttempt.find_or_initialize_by(
-        user_id: @user.id, 
+        user_id: @user.id,
         activity_id: @activity.id
       )
-      
-      @quiz_attempt.score = score
-      @quiz_attempt.results = quiz_results_data
-      @quiz_attempt.submitted_at = Time.current
-      
-      if @quiz_attempt.save
-        # Armazenar apenas o ID da tentativa na sessão, evitando o CookieOverflow
-        @session[:quiz_attempt_id] = @quiz_attempt.id
-        @session[:last_quiz_score] = score
-        
-        # Atualizar a lista de quizzes completados na sessão
-        @session[:completed_quizzes] ||= []
-        @session[:completed_quizzes] << @activity.id unless @session[:completed_quizzes].include?(@activity.id)
-        
-        # NOVA FUNCIONALIDADE: Retornar para resolve_quiz com dados do score
-        return {
-          success: true,
-          quiz_attempt: @quiz_attempt,
-          show_score: true,
-          score: score,
-          total_correct: quiz_results_data["total_correct"],
-          total_questions: quiz_results_data["total_questions"],
-          redirect_path: Rails.application.routes.url_helpers.solve_activity_path(@activity, locale: I18n.locale, show_score: true),
-          notice: nil # Removemos a notice para não mostrar alert
-        }
-      else
-        return {
-          success: false,
-          redirect_path: Rails.application.routes.url_helpers.solve_activity_path(@activity, locale: I18n.locale),
-          alert: I18n.t('quiz.error')
-        }
-      end
+      error_path = Rails.application.routes.url_helpers.solve_activity_path(@activity, locale: I18n.locale)
     else
-      # Para usuários não autenticados - criar uma tentativa temporária
-      # sem associação a um usuário
-      @quiz_attempt = QuizAttempt.new(
-        activity_id: @activity.id,
-        score: score,
-        results: quiz_results_data,
-        submitted_at: Time.current
-      )
-      
-      if @quiz_attempt.save
-        # Armazenar apenas o ID da tentativa na sessão
-        @session[:quiz_attempt_id] = @quiz_attempt.id
-        @session[:last_quiz_score] = score
-        
-        # Atualizar a lista de quizzes completados na sessão
-        @session[:completed_quizzes] ||= []
-        @session[:completed_quizzes] << @activity.id unless @session[:completed_quizzes].include?(@activity.id)
-        
-        # NOVA FUNCIONALIDADE: Retornar para resolve_quiz com dados do score
-        return {
-          success: true,
-          quiz_attempt: @quiz_attempt,
-          show_score: true,
-          score: score,
-          total_correct: quiz_results_data["total_correct"],
-          total_questions: quiz_results_data["total_questions"],
-          redirect_path: Rails.application.routes.url_helpers.solve_activity_path(@activity, locale: I18n.locale, show_score: true),
-          notice: nil # Removemos a notice para não mostrar alert
-        }
-      else
-        return {
-          success: false,
-          redirect_path: Rails.application.routes.url_helpers.activities_path,
-          alert: I18n.t('quiz.error')
-        }
-      end
+      @quiz_attempt = QuizAttempt.new(activity_id: @activity.id)
+      error_path = Rails.application.routes.url_helpers.activities_path
     end
+
+    @quiz_attempt.score = score
+    @quiz_attempt.results = quiz_results_data
+    @quiz_attempt.submitted_at = Time.current
+
+    if @quiz_attempt.save
+      update_session(score)
+      success_response(quiz_results_data, score)
+    else
+      { success: false, redirect_path: error_path, alert: I18n.t('quiz.error') }
+    end
+  end
+
+  def update_session(score)
+    @session[:quiz_attempt_id] = @quiz_attempt.id
+    @session[:last_quiz_score] = score
+    @session[:completed_quizzes] ||= []
+    @session[:completed_quizzes] << @activity.id unless @session[:completed_quizzes].include?(@activity.id)
+  end
+
+  def success_response(quiz_results_data, score)
+    {
+      success: true,
+      quiz_attempt: @quiz_attempt,
+      show_score: true,
+      score: score,
+      total_correct: quiz_results_data["total_correct"],
+      total_questions: quiz_results_data["total_questions"],
+      redirect_path: Rails.application.routes.url_helpers.solve_activity_path(@activity, locale: I18n.locale, show_score: true),
+      notice: nil
+    }
   end
 
   def handle_error(e)

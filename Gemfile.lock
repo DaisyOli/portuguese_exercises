@@ -127,6 +127,10 @@ GEM
       devise (>= 4.6)
     diff-lcs (1.6.2)
     docile (1.4.1)
+    dotenv (3.2.0)
+    dotenv-rails (3.2.0)
+      dotenv (= 3.2.0)
+      railties (>= 6.1)
     drb (2.2.1)
     erubi (1.13.0)
     execjs (2.10.0)
@@ -402,6 +406,7 @@ DEPENDENCIES
   debug
   devise
   devise_invitable
+  dotenv-rails
   factory_bot_rails
   faker
   http_accept_language

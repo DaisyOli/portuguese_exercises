@@ -1,0 +1,20 @@
+<% has_other_content = activity.statement.present? || activity.media_url.present? || activity.explanation_text.present? %>
+
+<% if activity.questions.any? %>
+  <div class="main-card" style="<%= has_other_content ? '' : 'margin-top: 2.5rem;' %>">
+    <div class="card-header-custom">
+      <i class="fas fa-list-ol"></i>
+      <span>Questões da Atividade</span>
+    </div>
+    <div class="card-body-custom">
+      <% activity.questions.each_with_index do |question, index| %>
+        <%= render 'question_card', question: question, activity: activity, index: index %>
+      <% end %>
+    </div>
+  </div>
+<% else %>
+  <div class="alert-custom alert-warning-custom" style="<%= has_other_content ? '' : 'margin-top: 2.5rem;' %>">
+    <i class="fas fa-exclamation-triangle"></i>
+    <span><%= t('activities.no_questions') %></span>
+  </div>
+<% end %>

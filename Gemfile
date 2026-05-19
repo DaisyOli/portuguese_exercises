@@ -64,6 +64,7 @@ gem 'terser'  # JavaScript compressor
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
   gem "debug", platforms: %i[ mri windows ]
+  gem "dotenv-rails"
   
   # Gems de teste (SEGURO - só para desenvolvimento e teste)
   gem 'rspec-rails', '~> 6.0'

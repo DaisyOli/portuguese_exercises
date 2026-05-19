@@ -1,0 +1,40 @@
+<div class="content-section" id="<%= section_id %>">
+  <div class="content-header">
+    <span><i class="fas <%= icon %>"></i> <%= title %></span>
+    <% if current_user.teacher? && activity.teacher == current_user %>
+      <div class="btn-group-custom">
+        <button type="button" class="btn-icon edit"
+                data-bs-toggle="collapse"
+                data-bs-target="#edit-<%= section_id %>-form">
+          <i class="fas fa-edit"></i>
+        </button>
+        <%= button_to delete_path,
+            method: delete_method,
+            data: { turbo_confirm: delete_confirm },
+            class: "btn-icon delete" do %>
+          <i class="fas fa-trash"></i>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+
+  <div class="content-body">
+    <%= simple_format(content) %>
+  </div>
+
+  <% if current_user.teacher? && activity.teacher == current_user %>
+    <div class="collapse form-collapse" id="edit-<%= section_id %>-form">
+      <div class="card-body">
+        <%= form_with(model: activity, local: true) do |f| %>
+          <div class="mb-3">
+            <%= f.label field_name, field_label, class: "form-label" %>
+            <%= f.text_area field_name, class: "form-control", rows: 5 %>
+          </div>
+          <div class="d-grid">
+            <%= f.submit t('common.save'), class: "btn btn-primary" %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+</div>

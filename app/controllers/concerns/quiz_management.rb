@@ -29,32 +29,16 @@ module QuizManagement
     end
   end
 
-  def log_quiz_debug_info(questions)
-    Rails.logger.debug "=== DIAGNÓSTICO DE EXIBIÇÃO DE QUESTÕES ==="
-    Rails.logger.debug "Atividade ID: #{@activity.id}, Título: #{@activity.title}"
-    Rails.logger.debug "Total de questões carregadas: #{questions.count}"
-    Rails.logger.debug "Cache utilizado: #{params[:skip_cache] != 'true'}"
-    questions.each_with_index do |q, i|
-      Rails.logger.debug "Questão #{i+1}: ID=#{q.id}, Tipo=#{q.question_type}, Conteúdo=#{q.content.truncate(50) if q.content.present?}"
-    end
-    Rails.logger.debug "=========================================="
-  end
-
   def load_completed_exercises
-    # Inicializar array de exercícios concluídos na sessão se não existir
     session[:completed_quizzes] ||= []
-    
-    # Buscar tentativas do usuário para as atividades do nível atual
-    if current_user && defined?(@activities) && @activities.any?
-      completed_activity_ids = current_user.quiz_attempts
-                                          .where(activity_id: @activities.map(&:id))
-                                          .pluck(:activity_id)
-                                          .uniq
-      
-      # Mesclar com a sessão
-      session[:completed_quizzes] = (session[:completed_quizzes] + completed_activity_ids).uniq
+
+    completed_activity_ids = current_user.quiz_attempts
+                                         .select(:activity_id)
+                                         .distinct
+                                         .pluck(:activity_id)
+
+    completed_activity_ids.each do |activity_id|
+      session[:completed_quizzes] << activity_id unless session[:completed_quizzes].include?(activity_id)
     end
-    
-    session[:completed_quizzes]
   end
 end 

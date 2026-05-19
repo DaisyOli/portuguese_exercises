@@ -1,0 +1,56 @@
+<div class="content-section" id="media">
+  <div class="content-header">
+    <span><i class="fas fa-photo-video"></i> Mídia</span>
+    <% if current_user.teacher? && activity.teacher == current_user %>
+      <div class="btn-group-custom">
+        <button type="button" class="btn-icon edit"
+                data-bs-toggle="collapse"
+                data-bs-target="#edit-media-form">
+          <i class="fas fa-edit"></i>
+        </button>
+        <%= button_to clear_media_activity_path(activity),
+            method: :post,
+            data: { turbo_confirm: t('activities.confirm_delete_media') },
+            class: "btn-icon delete" do %>
+          <i class="fas fa-trash"></i>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+
+  <div class="content-body">
+    <div class="media-container">
+      <% if activity.media_url.include?('youtube.com') || activity.media_url.include?('youtu.be') %>
+        <% youtube_id = activity.media_url.match(/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/) %>
+        <% if youtube_id && youtube_id[1] %>
+          <div class="ratio ratio-16x9 mb-3">
+            <iframe
+              src="https://www.youtube.com/embed/<%= youtube_id[1] %>"
+              allowfullscreen
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture">
+            </iframe>
+          </div>
+        <% end %>
+      <% else %>
+        <img src="<%= activity.media_url %>" alt="Imagem da atividade" class="img-fluid mb-3" style="border-radius: 8px;">
+      <% end %>
+    </div>
+  </div>
+
+  <% if current_user.teacher? && activity.teacher == current_user %>
+    <div class="collapse form-collapse" id="edit-media-form">
+      <div class="card-body">
+        <%= form_with(model: activity, local: true) do |f| %>
+          <div class="mb-3">
+            <%= f.label :media_url, t('activities.media_url_label'), class: "form-label" %>
+            <%= f.text_field :media_url, class: "form-control",
+                placeholder: t('activities.media_url_placeholder') %>
+          </div>
+          <div class="d-grid">
+            <%= f.submit t('common.save'), class: "btn btn-primary" %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+</div>

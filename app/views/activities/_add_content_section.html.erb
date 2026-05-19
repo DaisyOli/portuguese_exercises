@@ -1,0 +1,117 @@
+<% has_any_content = activity.statement.present? || activity.media_url.present? || activity.explanation_text.present? || activity.questions.any? %>
+
+<div class="add-content-section" data-controller="content-form" style="<%= has_any_content ? '' : 'margin-top: 2.5rem;' %>">
+  <div class="section-title">
+    <i class="fas fa-plus-circle"></i>
+    <span><%= t('activities.add_content') %></span>
+  </div>
+
+  <div class="action-buttons">
+    <button type="button" class="btn-action statement"
+            data-action="content-form#toggle"
+            data-bs-toggle="collapse"
+            data-bs-target="#new-statement-form">
+      <i class="fas fa-file-text"></i>
+      <span><%= t('activities.add_statement') %></span>
+    </button>
+
+    <button type="button" class="btn-action media"
+            data-action="content-form#toggle"
+            data-bs-toggle="collapse"
+            data-bs-target="#new-media-form">
+      <i class="fas fa-photo-video"></i>
+      <span><%= t('activities.add_media') %></span>
+    </button>
+
+    <button type="button" class="btn-action text"
+            data-action="content-form#toggle"
+            data-bs-toggle="collapse"
+            data-bs-target="#new-text-form">
+      <i class="fas fa-align-left"></i>
+      <span><%= t('activities.add_text') %></span>
+    </button>
+
+    <button type="button" class="btn-action question"
+            data-action="content-form#toggle"
+            data-bs-toggle="collapse"
+            data-bs-target="#new-question-form">
+      <i class="fas fa-question-circle"></i>
+      <span><%= t('activities.add_question') %></span>
+    </button>
+
+    <button type="button" class="btn-action suggestion"
+            data-action="content-form#toggle"
+            data-bs-toggle="collapse"
+            data-bs-target="#new-suggestion-form">
+      <i class="fas fa-lightbulb"></i>
+      <span><%= t('activities.add_suggestion') %></span>
+    </button>
+  </div>
+</div>
+
+<div class="collapse form-collapse" id="new-statement-form" data-content-form-target="form">
+  <div class="card-body">
+    <%= form_with(model: activity, local: true) do |f| %>
+      <div class="mb-3">
+        <%= f.label :statement, t('activities.statement_label'), class: "form-label" %>
+        <%= f.text_area :statement, class: "form-control", rows: 5,
+            placeholder: t('activities.statement_placeholder') %>
+      </div>
+      <div class="d-grid">
+        <%= f.submit t('activities.save_statement'), class: "btn btn-primary" %>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<div class="collapse form-collapse" id="new-media-form" data-content-form-target="form">
+  <div class="card-body">
+    <%= form_with(model: activity, local: true) do |f| %>
+      <div class="mb-3">
+        <%= f.label :media_url, t('activities.media_url_label'), class: "form-label" %>
+        <%= f.text_field :media_url, class: "form-control",
+            placeholder: t('activities.media_url_placeholder') %>
+      </div>
+      <div class="d-grid">
+        <%= f.submit t('activities.save_media'), class: "btn btn-primary" %>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<div class="collapse form-collapse" id="new-text-form" data-content-form-target="form">
+  <div class="card-body">
+    <%= form_with(model: activity, local: true) do |f| %>
+      <div class="mb-3">
+        <%= f.text_area :explanation_text, class: "form-control", rows: 5,
+            placeholder: t('activities.explanation_text_placeholder') %>
+      </div>
+      <div class="d-grid">
+        <%= f.submit t('activities.save_text'), class: "btn btn-primary" %>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<div class="collapse form-collapse" id="new-question-form" data-content-form-target="form">
+  <div class="card-body">
+    <div data-controller="question-form">
+      <%= render partial: "questions/form", locals: { question: activity.questions.build, activity: activity } %>
+    </div>
+  </div>
+</div>
+
+<div class="collapse form-collapse" id="new-suggestion-form" data-content-form-target="form">
+  <div class="card-body">
+    <%= form_with(model: [activity, Suggestion.new], local: true) do |f| %>
+      <div class="mb-3">
+        <%= f.label :content, t('activities.suggestion_label'), class: "form-label" %>
+        <%= f.text_area :content, class: "form-control", rows: 5,
+            placeholder: t('activities.suggestion_placeholder') %>
+      </div>
+      <div class="d-grid">
+        <%= f.submit t('activities.save_suggestion'), class: "btn btn-primary" %>
+      </div>
+    <% end %>
+  </div>
+</div>

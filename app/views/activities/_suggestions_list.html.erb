@@ -1,0 +1,29 @@
+<% if activity.suggestions.any? %>
+  <div class="main-card" id="suggestions-section">
+    <div class="card-header-custom">
+      <i class="fas fa-lightbulb"></i>
+      <span><%= t('activities.suggestions') %></span>
+    </div>
+    <div class="card-body-custom">
+      <% activity.suggestions.each do |suggestion| %>
+        <div id="suggestion-<%= suggestion.id %>" class="content-section">
+          <div class="content-body">
+            <div class="d-flex justify-content-between align-items-start">
+              <div>
+                <%= simple_format(suggestion.content) %>
+              </div>
+              <% if current_user.teacher? && activity.teacher == current_user %>
+                <%= button_to activity_suggestion_path(activity, suggestion),
+                    method: :delete,
+                    class: "btn-icon delete",
+                    data: { turbo_confirm: t('activities.confirm_delete_suggestion') } do %>
+                  <i class="fas fa-trash"></i>
+                <% end %>
+              <% end %>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+<% end %>

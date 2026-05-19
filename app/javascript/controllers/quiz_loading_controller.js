@@ -6,13 +6,10 @@ export default class extends Controller {
   static classes = ["loading"]
 
   connect() {
-    console.log("Quiz Loading controller connected")
   }
 
   // Método chamado quando o formulário é submetido
   submit(event) {
-    console.log("Quiz form submission started")
-    
     this.showLoading()
     this.disableForm()
     
@@ -86,8 +83,6 @@ export default class extends Controller {
     }
   }
 
-  // Cleanup quando o controller é desconectado
   disconnect() {
-    console.log("Quiz Loading controller disconnected")
   }
 } 

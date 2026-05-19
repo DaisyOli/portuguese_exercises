@@ -4,178 +4,8 @@
   <title><%= @activity.title %> - Resultados - Practice PT</title>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Kalam:wght@400;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <%= render 'quiz_shared_styles' %>
   <style>
-    :root {
-      --verde-destaque: #2e7d32;
-      --azul-acao: #1976d2;
-      --roxo-acao: #7b1fa2;
-      --fundo-papel: #fafafa;
-      --card-branco: #ffffff;
-      --texto-escuro: #37474f;
-    }
-
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    body {
-      background: linear-gradient(135deg, var(--fundo-papel) 0%, #f0f0f0 100%);
-      min-height: 100vh;
-      font-family: 'Inter', sans-serif;
-      color: var(--texto-escuro);
-      line-height: 1.6;
-      background-image: 
-        radial-gradient(circle at 2px 2px, rgba(0,0,0,0.015) 1px, transparent 0);
-      background-size: 30px 30px;
-    }
-
-    .results-container {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      flex-direction: column;
-      min-height: 100vh;
-      padding: 2rem 1rem;
-    }
-
-    /* Header elegante */
-    .results-header {
-      background: linear-gradient(145deg, #efebe9, #d7ccc8);
-      color: #333;
-      padding: 1.2rem 2rem;
-      border-radius: 12px 12px 0 0;
-      margin-bottom: 0;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-      border: 2px solid rgba(141, 110, 99, 0.3);
-      border-bottom: none;
-      position: relative;
-      text-align: center;
-      max-width: 900px;
-      width: 100%;
-    }
-
-    .results-header::before {
-      content: '';
-      position: absolute;
-      top: -4px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 40px;
-      height: 4px;
-      background: #8d6e63;
-      border-radius: 2px;
-      opacity: 0.6;
-    }
-
-    .results-title {
-      font-family: 'Kalam', cursive;
-      font-size: 2rem;
-      color: var(--verde-destaque);
-      margin: 0;
-    }
-
-    /* Card principal */
-    .results-paper {
-      background: var(--card-branco);
-      border-radius: 0 0 12px 12px;
-      box-shadow: 0 8px 32px rgba(0,0,0,0.12);
-      padding: 2.5rem;
-      max-width: 900px;
-      width: 100%;
-      position: relative;
-      border: 2px solid rgba(141, 110, 99, 0.3);
-      border-top: none;
-      background-image: 
-        linear-gradient(to right, transparent 0%, transparent 98%, rgba(0,0,0,0.02) 100%);
-    }
-
-    /* Score section - elegante */
-    .score-section {
-      background: linear-gradient(135deg, #e8f5e8, #f1f8e9);
-      border-radius: 12px;
-      border: 2px solid var(--verde-destaque);
-      padding: 2rem;
-      margin-bottom: 2rem;
-      position: relative;
-      overflow: hidden;
-      animation: fadeInUp 0.6s ease-out;
-    }
-
-    .score-section::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 4px;
-      background: linear-gradient(90deg, var(--verde-destaque), var(--azul-acao), var(--roxo-acao));
-    }
-
-    .score-title {
-      font-family: 'Kalam', cursive;
-      color: var(--verde-destaque);
-      text-align: center;
-      margin-bottom: 1.5rem;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.5rem;
-      font-size: 1.5rem;
-    }
-
-    .score-cards {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-      gap: 1rem;
-      margin-bottom: 2rem;
-    }
-
-    .score-card {
-      background: white;
-      border-radius: 12px;
-      padding: 1.2rem;
-      text-align: center;
-      box-shadow: 0 4px 16px rgba(0,0,0,0.08);
-      border: 1px solid rgba(46, 125, 50, 0.1);
-      transition: all 0.3s ease;
-    }
-
-    .score-card:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 24px rgba(0,0,0,0.12);
-    }
-
-    .score-number {
-      font-size: 1.8rem;
-      font-weight: 700;
-      margin-bottom: 0.25rem;
-    }
-
-    .score-label {
-      font-size: 0.85rem;
-      color: #666;
-      font-weight: 500;
-    }
-
-    /* Cards das questões */
-    .question-card {
-      background: white;
-      border: 1px solid #e0e0e0;
-      border-radius: 12px;
-      margin-bottom: 1.5rem;
-      overflow: hidden;
-      box-shadow: 0 2px 12px rgba(0,0,0,0.06);
-      transition: all 0.3s ease;
-      position: relative;
-    }
-
-    .question-card:hover {
-      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-      transform: translateY(-1px);
-    }
-
     .question-header {
       padding: 1rem 1.5rem;
       border-bottom: 1px solid rgba(0,0,0,0.08);
@@ -197,14 +27,8 @@
       border-left: 4px solid #ef5350;
     }
 
-    .question-body {
-      padding: 1.5rem;
-    }
-
     .question-text {
       font-weight: 600;
-      margin-bottom: 1rem;
-      color: var(--texto-escuro);
     }
 
     .question-type {
@@ -250,61 +74,6 @@
       margin-bottom: 0.25rem;
     }
 
-    /* Botões temáticos */
-    .btn-quiz-primary {
-      background: linear-gradient(145deg, var(--verde-destaque), #1b5e20);
-      color: white;
-      border: none;
-      padding: 0.8rem 2.5rem;
-      border-radius: 25px;
-      font-weight: 600;
-      font-size: 1.1rem;
-      cursor: pointer;
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      box-shadow: 0 6px 24px rgba(46, 125, 50, 0.25);
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.5rem;
-      font-family: 'Inter', sans-serif;
-      text-decoration: none;
-      margin: 0.5rem;
-    }
-
-    .btn-quiz-primary:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 32px rgba(46, 125, 50, 0.35);
-      background: linear-gradient(145deg, #4caf50, var(--verde-destaque));
-      color: white;
-      text-decoration: none;
-    }
-
-    .btn-quiz-secondary {
-      background: white;
-      color: #666;
-      border: 2px solid #e0e0e0;
-      padding: 0.8rem 2rem;
-      border-radius: 25px;
-      font-weight: 600;
-      font-size: 1rem;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      text-decoration: none;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      font-family: 'Inter', sans-serif;
-      margin: 0.5rem;
-    }
-
-    .btn-quiz-secondary:hover {
-      color: #666;
-      text-decoration: none;
-      border-color: var(--verde-destaque);
-      transform: translateY(-1px);
-      box-shadow: 0 4px 16px rgba(0,0,0,0.1);
-    }
-
     .action-buttons {
       text-align: center;
       margin-top: 2rem;
@@ -312,48 +81,14 @@
       border-top: 1px solid #e0e0e0;
     }
 
-    /* Animações */
-    @keyframes fadeInUp {
-      from {
-        opacity: 0;
-        transform: translateY(30px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
+    .btn-quiz-primary,
+    .btn-quiz-secondary {
+      margin: 0.5rem;
     }
 
-    .question-card {
-      animation: fadeInUp 0.6s ease-out;
-      animation-fill-mode: both;
-    }
-
-    .question-card:nth-child(1) { animation-delay: 0.1s; }
-    .question-card:nth-child(2) { animation-delay: 0.2s; }
-    .question-card:nth-child(3) { animation-delay: 0.3s; }
-    .question-card:nth-child(4) { animation-delay: 0.4s; }
-    .question-card:nth-child(5) { animation-delay: 0.5s; }
-
-    /* Responsive */
     @media (max-width: 768px) {
-      .results-container {
-        padding: 1rem 0.5rem;
-      }
-      
-      .results-paper {
-        padding: 1.5rem;
-      }
-      
-      .score-cards {
-        grid-template-columns: 1fr;
-      }
-      
-      .btn-quiz-primary,
-      .btn-quiz-secondary {
-        width: 100%;
-        margin: 0.5rem 0;
-      }
+      .score-cards { grid-template-columns: 1fr; }
+      .btn-quiz-primary, .btn-quiz-secondary { margin: 0.5rem 0; }
     }
   </style>
 </head>
@@ -402,11 +137,9 @@
           </div>
           
           <div class="question-body">
-            <% if result["question_type"] != "order_sentences" %>
-              <div class="question-text">
-                <%= result["question_text"].present? ? result["question_text"] : "N/A" %>
-              </div>
-            <% end %>
+            <div class="question-text">
+              <%= result["question_text"].present? ? result["question_text"] : "N/A" %>
+            </div>
             
             <div class="question-type">
               <%= result["question_type"].present? ? t("questions.types.#{result["question_type"]}") : "N/A" %>
@@ -457,49 +190,5 @@
     </div>
   </div>
 
-  <!-- Scripts para debug (mantidos da versão original) -->
-  <script>
-    console.log('Página de resultados do quiz carregada diretamente');
-    <% if @quiz_results && @quiz_results["results"] %>
-      console.log('Resultados disponíveis: <%= @quiz_results["total_correct"] %> de <%= @quiz_results["total_questions"] %>');
-      
-      <% @quiz_results["results"].each do |question_id, result| %>
-        console.log('Questão <%= question_id %>:',
-                    'Texto: <%= result["question_text"].to_s.gsub(/"/, '\"').truncate(30) if result["question_text"] %>',
-                    'Tipo: <%= result["question_type"] %>',
-                    'Resposta dada: <%= result["given_answer"].to_s.gsub(/"/, '\"').truncate(30) if result["given_answer"] %>',
-                    'Resposta correta: <%= result["correct_answer"].to_s.gsub(/"/, '\"').truncate(30) if result["correct_answer"] %>',
-                    'Correto: <%= result["is_correct"] %>');
-        
-        <% if result["question_type"] == "order_sentences" %>
-          console.log('DIAGNÓSTICO ORDEM - Questão <%= question_id %>:',
-                    'Texto completo da resposta: "<%= result["given_answer"] %>"',
-                    'Contém separador |: <%= result["given_answer"].to_s.include?("|") %>',
-                    'Começa com "Não respondida": <%= result["given_answer"].to_s.start_with?("Não respondida") %>');
-        <% end %>
-      <% end %>
-    <% else %>
-      console.error('Resultados não disponíveis ou formato incorreto');
-    <% end %>
-
-    <% if @debug_results_json.present? %>
-      try {
-        var resultsData = <%= raw @debug_results_json %>;
-        console.log('Total de questões:', resultsData.total_questions);
-        console.log('Acertos:', resultsData.total_correct);
-        
-        if (resultsData && resultsData.results) {
-          console.log('Número de resultados:', Object.keys(resultsData.results).length);
-          
-          Object.keys(resultsData.results).forEach(function(key) {
-            var result = resultsData.results[key];
-            console.log('Questão ' + key + ':', result.is_correct ? 'Correta' : 'Incorreta');
-          });
-        }
-      } catch (e) {
-        console.error('Erro ao processar dados:', e);
-      }
-    <% end %>
-  </script>
 </body>
 </html>

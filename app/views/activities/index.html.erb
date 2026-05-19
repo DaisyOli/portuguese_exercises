@@ -555,11 +555,11 @@
                 </span>
                 <span class="meta-item">
                   <i class="fas fa-users meta-icon"></i>
-                  <%= QuizAttempt.where(activity: activity).distinct.count('user_id') %> estudantes
+                  <%= activity.quiz_attempts.map(&:user_id).uniq.compact.size %> estudantes
                 </span>
                 <span class="meta-item">
                   <i class="fas fa-clipboard-check meta-icon"></i>
-                  <%= QuizAttempt.where(activity: activity).count %> tentativas
+                  <%= activity.quiz_attempts.size %> tentativas
                 </span>
               </div>
             </div>
@@ -583,11 +583,11 @@
               </div>
               <div class="meta-item">
                 <i class="fas fa-users meta-icon"></i>
-                <%= QuizAttempt.where(activity: activity).distinct.count('user_id') %> estudantes
+                <%= activity.quiz_attempts.map(&:user_id).uniq.compact.size %> estudantes
               </div>
               <div class="meta-item">
                 <i class="fas fa-clipboard-check meta-icon"></i>
-                <%= QuizAttempt.where(activity: activity).count %> tentativas
+                <%= activity.quiz_attempts.size %> tentativas
               </div>
             </div>
             <div class="atividade-actions">

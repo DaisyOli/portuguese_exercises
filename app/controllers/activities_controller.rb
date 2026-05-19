@@ -35,7 +35,6 @@ class ActivitiesController < ApplicationController
     # Carregar métricas para cada atividade
     @activities = @activities.includes(:quiz_attempts)
     
-    # REFATORADO: Usando service para organizar a lógica
     service_result = ActivitiesIndexService.new(params: params, current_user: current_user).call
     @activities = service_result[:activities]
     @current_level = service_result[:current_level]
@@ -60,7 +59,6 @@ class ActivitiesController < ApplicationController
   def resolve_quiz
     @questions = load_questions
     
-    # NOVA FUNCIONALIDADE: Verificar se devemos mostrar o score
     if params[:show_score] == 'true' && session[:quiz_attempt_id].present?
       @quiz_attempt = QuizAttempt.find_by(id: session[:quiz_attempt_id])
       if @quiz_attempt && @quiz_attempt.activity_id == @activity.id
@@ -70,13 +68,11 @@ class ActivitiesController < ApplicationController
         @total_questions = @quiz_attempt.results["total_questions"]
       end
     else
-      # MELHORIA: Limpar dados da sessão quando não está mostrando score (modo refazer)
       session.delete(:show_score_data) if session[:show_score_data]&.dig("activity_id") == @activity.id
     end
   end
 
   def submit_quiz
-    # REFATORADO: Usando service para processar submission
     result = QuizSubmissionService.new(
       activity: @activity,
       user: current_user,
@@ -84,7 +80,6 @@ class ActivitiesController < ApplicationController
       session: session
     ).call
 
-    # NOVA FUNCIONALIDADE: Armazenar dados do score na sessão para exibir na resolve_quiz
     if result[:success] && result[:show_score]
       session[:show_score_data] = {
         score: result[:score],
@@ -99,34 +94,6 @@ class ActivitiesController < ApplicationController
     else
       redirect_to result[:redirect_path], alert: result[:alert]
     end
-
-    # CÓDIGO ORIGINAL MANTIDO COMO BACKUP (comentado):
-    # begin
-    #   @activity = Activity.find(params[:id])
-    #   @questions = @activity.questions
-    #   
-    #   # Verificar se já existe uma tentativa recente para este quiz
-    #   recent_attempt = current_user&.quiz_attempts&.where(activity_id: @activity.id)&.where('created_at > ?', 30.minutes.ago)&.order(created_at: :desc)&.first
-    #
-    #   # Inicializar arrays para capturar questões e respostas
-    #   results = {}
-    #   total_score = 0
-    #   
-    #   # Obter todas as formas de respostas
-    #   raw_answers = params[:answers_raw] || {}
-    #   alt_answers = params[:answers_alt] || {}
-    #   order_values = params[:answers_order] || {}
-    #   
-    #   # Nova abordagem: processar frases separadas
-    #   sentences_answers = params[:answers_sentences] || {}
-    #   
-    #   # Processar cada questão
-    #   @questions.each do |question|
-    #     # [... resto da lógica original comentada ...]
-    #   end
-    # rescue => e
-    #   # [... resto do tratamento de erro original comentado ...]
-    # end
   end
 
   def quiz_results
@@ -136,27 +103,16 @@ class ActivitiesController < ApplicationController
       # Tentar obter a tentativa a partir do ID na sessão
       if session[:quiz_attempt_id].present?
         @quiz_attempt = QuizAttempt.find_by(id: session[:quiz_attempt_id])
-        Rails.logger.info "Recuperando tentativa pelo ID da sessão: #{session[:quiz_attempt_id]}"
       end
-      
-      # Se não encontrar pelo ID na sessão, buscar a última tentativa do usuário
+
       if @quiz_attempt.nil? && current_user
         @quiz_attempt = current_user.quiz_attempts.where(activity_id: @activity.id).order(created_at: :desc).first
-        Rails.logger.info "Recuperando última tentativa do usuário para atividade #{@activity.id}: #{@quiz_attempt&.id}"
       end
-      
+
       if @quiz_attempt.present?
-        # Log do formato original no banco de dados
-        Rails.logger.info "Formato dos resultados no banco de dados: #{@quiz_attempt.results.class.name}"
-        Rails.logger.info "Dados brutos: #{@quiz_attempt.results.inspect.truncate(500)}"
-        
-        # Usar os resultados do banco de dados
         @quiz_results = @quiz_attempt.results
-        
-        # Garantir que os dados têm o formato correto
+
         unless @quiz_results.key?("total_questions")
-          # Se os dados estiverem em formato antigo, converter para novo formato
-          Rails.logger.info "Convertendo formato antigo de resultados para novo formato"
           
           if @quiz_results.is_a?(Hash) && @quiz_results.values.any? { |v| v.is_a?(Hash) && v["is_correct"] }
             # Formato antigo com resultados individuais
@@ -303,12 +259,7 @@ class ActivitiesController < ApplicationController
 
   def clear_media
     if @activity.teacher == current_user
-      # Log para debug
-      Rails.logger.info "Executando clear_media para activity #{@activity.id}. Método HTTP: #{request.method}"
-      
-      # Limpar a media_url
       if @activity.update(media_url: nil)
-        Rails.logger.info "Media limpa com sucesso para activity #{@activity.id}"
         redirect_to activity_path(@activity, locale: I18n.locale, ultima_acao: 'conteudo_excluido'), notice: t('messages.media_deleted')
       else
         Rails.logger.error "Falha ao limpar media para activity #{@activity.id}: #{@activity.errors.full_messages.join(', ')}"
@@ -347,37 +298,6 @@ class ActivitiesController < ApplicationController
     redirect_to activities_url, notice: t('messages.activity_deleted')
   end
 
-  # Método para exibir os resultados após submissão do quiz
-  def result_quiz
-    @activity = Activity.find_by!(slug: params[:slug])
-    
-    # Tenta encontrar a tentativa pelo ID ou pegar a última do usuário atual
-    if params[:attempt_id].present?
-      @quiz_attempt = QuizAttempt.find_by(id: params[:attempt_id])
-    elsif current_user
-      @quiz_attempt = current_user.quiz_attempts.where(activity_id: @activity.id).order(created_at: :desc).first
-    end
-    
-    # Fallback para resultados da sessão se não houver tentativa salva
-    if @quiz_attempt
-      # Para tentativas salvas, redirecionar para a página de resultados existente
-      redirect_to quiz_results_activity_path(@activity, locale: I18n.locale)
-      return
-    elsif session[:quiz_results]
-      if session[:quiz_results][:activity_id].to_i == @activity.id.to_i
-        # Se temos resultados na sessão, redirecionar para a página de resultados
-        redirect_to quiz_results_activity_path(@activity, locale: I18n.locale)
-        return
-      else
-        redirect_to resolve_quiz_activity_path(@activity, locale: I18n.locale), alert: t('quiz.no_results')
-        return
-      end
-    else
-      redirect_to resolve_quiz_activity_path(@activity, locale: I18n.locale), alert: t('quiz.no_results')
-      return
-    end
-  end
-
   private
 
   def set_activity
@@ -388,22 +308,6 @@ class ActivitiesController < ApplicationController
     params.require(:activity).permit(:title, :description, :level, :media_url, :explanation_text, :statement)
   end
   
-  def load_completed_exercises
-    # Inicializar array de exercícios concluídos na sessão se não existir
-    session[:completed_quizzes] ||= []
-    
-    # Carregar todos os quiz_attempts do usuário atual
-    completed_activities = current_user.quiz_attempts
-                                     .select(:activity_id)
-                                     .distinct
-                                     .pluck(:activity_id)
-    
-    # Atualizar a sessão com os IDs de atividades concluídas
-    completed_activities.each do |activity_id|
-      session[:completed_quizzes] << activity_id unless session[:completed_quizzes].include?(activity_id)
-    end
-  end
-
   def authorize_teacher
     unless current_user&.teacher?
       redirect_to root_path, alert: "Acesso restrito a professores."

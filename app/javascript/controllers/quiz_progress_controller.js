@@ -9,7 +9,6 @@ export default class extends Controller {
   }
 
   connect() {
-    console.log("Quiz Progress controller connected")
     this.updateProgress()
     this.updateNavigation()
   }
@@ -197,6 +196,5 @@ export default class extends Controller {
   }
 
   disconnect() {
-    console.log("Quiz Progress controller disconnected")
   }
 } 

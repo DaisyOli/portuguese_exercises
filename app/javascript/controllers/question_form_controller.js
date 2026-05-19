@@ -13,13 +13,11 @@ export default class extends Controller {
 
   // Inicialização do controlador
   connect() {
-    console.log("QuestionFormController conectado");
     this.refreshFields();
   }
 
   // Método chamado quando o tipo de questão muda
   changeQuestionType() {
-    console.log("Método changeQuestionType chamado");
     this.refreshFields();
   }
 
@@ -31,7 +29,6 @@ export default class extends Controller {
     }
 
     const type = this.questionTypeTarget.value;
-    console.log("Tipo de questão:", type);
 
     // Esconder todos os campos
     this.hideAllFields();
@@ -63,8 +60,6 @@ export default class extends Controller {
   
   // Método para mostrar campos baseados no tipo
   showFieldsForType(type) {
-    console.log("Mostrando campos para tipo:", type);
-    
     switch (type) {
       case 'multiple_choice':
         this.showMultipleChoiceFields();
@@ -83,19 +78,13 @@ export default class extends Controller {
   // Métodos auxiliares para cada tipo de questão
   showMultipleChoiceFields() {
     if (this.hasMultipleChoiceFieldsTarget) {
-      console.log("Mostrando campos de múltipla escolha");
       this.multipleChoiceFieldsTarget.style.display = 'block';
-    } else {
-      console.error("Alvo multipleChoiceFields não encontrado");
     }
   }
-  
+
   showFillInBlankFields() {
     if (this.hasFillInBlankHelpTarget) {
-      console.log("Mostrando ajuda para lacunas");
       this.fillInBlankHelpTarget.style.display = 'block';
-    } else {
-      console.error("Alvo fillInBlankHelp não encontrado");
     }
   }
   
@@ -109,20 +98,12 @@ export default class extends Controller {
       { name: "correctAnswerField", has: this.hasCorrectAnswerFieldTarget }
     ];
     
-    console.log("Status dos targets:", targets);
-    
-    // Debug adicional - verificar elementos no DOM
     targets.forEach(target => {
-      if (!target.has) {
-        const elements = document.querySelectorAll(`[data-question-form-target="${target.name}"]`);
-        console.log(`Elementos para target ${target.name} no DOM:`, elements.length);
-      }
     });
   }
   
   // Manter updateFields como alias para compatibilidade
   updateFields() {
-    console.log("Método updateFields chamado (alias)");
     this.changeQuestionType();
   }
 }

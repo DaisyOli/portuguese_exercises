@@ -5,19 +5,13 @@ export default class extends Controller {
   static targets = ["form"]
 
   connect() {
-    console.log("ContentFormController connected")
-    
-    // Não inicializa os collapses automaticamente, deixa o Bootstrap fazer isso
-    console.log(`Encontrados ${this.formTargets.length} alvos de formulário`)
   }
 
   toggle(event) {
     event.preventDefault()
-    console.log("Toggle chamado", event.currentTarget)
-    
+
     // Usa data-bs-target no padrão Bootstrap 5
     const targetId = event.currentTarget.getAttribute('data-bs-target')
-    console.log("Target ID:", targetId)
     
     if (!targetId) {
       console.error("Atributo data-bs-target não encontrado no botão")

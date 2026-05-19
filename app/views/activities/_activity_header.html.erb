@@ -1,0 +1,16 @@
+<div class="header-atividade">
+  <h1><i class="fas fa-book-open"></i> <%= activity.title %></h1>
+  <p><%= activity.description %></p>
+
+  <div class="meta-info">
+    <div class="meta-item">
+      <i class="fas fa-signal"></i>
+      <span>Nível:</span>
+      <span class="nivel-badge <%= activity.level %>"><%= activity.level %></span>
+    </div>
+    <div class="meta-item">
+      <i class="fas fa-question-circle"></i>
+      <span>Questões: <%= activity.questions.count %></span>
+    </div>
+  </div>
+</div>

@@ -8,6 +8,8 @@ default: &default
   adapter: postgresql
   encoding: unicode
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 8 } %>
+  username: <%= ENV["DB_USERNAME"] %>
+  password: <%= ENV["DB_PASSWORD"] %>
   # Aumentar o timeout para evitar que conexões expirem durante requisições longas
   timeout: 10000
   connect_timeout: 2

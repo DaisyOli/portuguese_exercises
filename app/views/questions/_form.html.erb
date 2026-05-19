@@ -89,8 +89,7 @@
         
         function updateFields() {
           const type = select.value;
-          console.log("Script fallback: tipo alterado para", type);
-          
+
           // Esconder todos os campos
           const multipleChoiceFields = form.querySelector('.multiple-choice-fields');
           const fillInBlankHelp = form.querySelector('.fill-in-blank-help');
@@ -127,7 +126,6 @@
             form.action = form.action + '&destaque=true';
           }
           
-          console.log('Formulário enviado, adicionando destaque');
         });
       });
     </script>

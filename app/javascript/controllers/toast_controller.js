@@ -11,8 +11,6 @@ export default class extends Controller {
   }
 
   connect() {
-    console.log("Toast controller connected")
-    
     // Se existe mensagem nos values, mostra automaticamente
     if (this.hasMessageValue && this.messageValue) {
       this.show(this.messageValue, this.typeValue)
@@ -158,6 +156,5 @@ export default class extends Controller {
   }
 
   disconnect() {
-    console.log("Toast controller disconnected")
   }
 } 

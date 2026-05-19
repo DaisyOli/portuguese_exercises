@@ -24,12 +24,6 @@
                       label: "Password Confirmation", input_html: { class: "form-control", placeholder: "Confirm your password" } %>
         </div>
 
-        <!-- Campo de Role -->
-        <div class="mb-3">
-          <%= f.input :role, collection: User::ROLES, as: :select, include_blank: "Select Role", 
-                      label: "Role", input_html: { class: "form-select" } %>
-        </div>
-
         <!-- Botão de Sign Up -->
         <div class="d-grid">
           <%= f.button :submit, "Sign up", class: "btn btn-primary btn-block" %>

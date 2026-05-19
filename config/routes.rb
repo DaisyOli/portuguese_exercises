@@ -21,7 +21,6 @@ Rails.application.routes.draw do
       get :solve, action: :resolve_quiz  # /activities/:slug/solve
       post :submit, action: :submit_quiz # /activities/:slug/submit
       get :results, action: :quiz_results # /activities/:slug/results
-      get :result_quiz
       patch :clear_statement
       match :clear_media, via: [:patch, :post]
       patch :clear_explanation
