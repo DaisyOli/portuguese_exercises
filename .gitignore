@@ -34,3 +34,12 @@
 # Ignore master key for decrypting credentials and more.
 /config/master.key
 node_modules/
+
+# Test coverage reports
+/coverage
+
+# Backup files
+*.bak
+
+# Debug/temporary artifacts
+production_baseline.txt

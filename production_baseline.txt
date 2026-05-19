@@ -1,5 +1,0 @@
-=== ESTADO ATUAL DO APP - Tue Jun  3 04:34:07 PM CEST 2025 ===
-Usuários: 4
-Atividades: 3
-Questões: 7
-Tentativas de Quiz: 2
