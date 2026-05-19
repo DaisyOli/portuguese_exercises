@@ -4,10 +4,7 @@ class StudentsController < ApplicationController
   ACTIVITIES_PER_PAGE = 3
 
   def dashboard
-    # Carregar exercícios completados primeiro (necessário para lógica)
-    if current_user && current_user.student?
-      load_completed_exercises
-    end
+    load_completed_exercises if current_user.student?
 
     if params[:level].present?
       @current_level = params[:level]
@@ -19,7 +16,7 @@ class StudentsController < ApplicationController
   end
 
   def load_more
-    load_completed_exercises if current_user && current_user.student?
+    load_completed_exercises if current_user.student?
     
     level = params[:level]
     offset = params[:offset].to_i
@@ -45,17 +42,12 @@ class StudentsController < ApplicationController
   
   def load_level_activities
     completed_ids = session[:completed_quizzes] || []
-    
-    # Atividades pendentes (prioridade) - primeira página
-    @pending_activities = Activity.where(level: @current_level)
-                                 .where.not(id: completed_ids)
-                                 .limit(ACTIVITIES_PER_PAGE)
-    
-    # Estatísticas para UX
-    @total_pending = Activity.where(level: @current_level).where.not(id: completed_ids).count
-    @completed_activities = Activity.where(level: @current_level, id: completed_ids)
-    
-    # Manter compatibilidade com código existente
+
+    @pending_activities = Activity.by_level(@current_level)
+                                  .where.not(id: completed_ids)
+                                  .limit(ACTIVITIES_PER_PAGE)
+    @total_pending      = Activity.by_level(@current_level).where.not(id: completed_ids).count
+    @completed_activities = Activity.by_level(@current_level).where(id: completed_ids)
     @activities = @pending_activities
   end
   

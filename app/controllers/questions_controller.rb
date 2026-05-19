@@ -1,5 +1,4 @@
 class QuestionsController < ApplicationController
-  before_action :authenticate_user!
   before_action :set_activity
   before_action :set_question, only: [:edit, :update, :destroy]
   before_action :check_teacher_permission
@@ -45,14 +44,12 @@ class QuestionsController < ApplicationController
   end
 
   def question_params
-    permitted = params.require(:question).permit(:content, :correct_answer, :question_type, :options_text, options: [])
-    Rails.logger.debug "Parâmetros permitidos em question_params: #{permitted.inspect}"
-    permitted
+    params.require(:question).permit(:content, :correct_answer, :question_type, :options_text, options: [])
   end
 
   def check_teacher_permission
-    unless current_user.role == "teacher" && @activity.teacher == current_user
-      redirect_to activities_path, alert: t('messages.permission_denied')
+    unless current_user.teacher? && @activity.teacher == current_user
+      redirect_to activities_path, alert: t('messages.permission_denied') and return
     end
   end
 end

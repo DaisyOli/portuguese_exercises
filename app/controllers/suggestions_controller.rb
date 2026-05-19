@@ -1,5 +1,4 @@
 class SuggestionsController < ApplicationController
-  before_action :authenticate_user!
   before_action :set_activity
   before_action :authorize_teacher
   
@@ -28,7 +27,7 @@ class SuggestionsController < ApplicationController
   
   def authorize_teacher
     unless current_user.teacher? && @activity.teacher == current_user
-      redirect_to activities_path, alert: t('messages.permission_denied')
+      redirect_to activities_path, alert: t('messages.permission_denied') and return
     end
   end
   

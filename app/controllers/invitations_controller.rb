@@ -21,7 +21,7 @@ class InvitationsController < Devise::InvitationsController
 
   def require_teacher!
     unless current_user&.teacher?
-      redirect_to root_path, alert: t('messages.permission_denied')
+      redirect_to root_path, alert: t('messages.permission_denied') and return
     end
   end
 end

@@ -12,7 +12,6 @@ class LanguagesController < ApplicationController
         flash[:alert] = t('messages.language_update_failed')
       end
     else
-      Rails.logger.error "Invalid language requested: #{new_language}"
       flash[:alert] = t('messages.language_update_failed')
     end
 

@@ -6,10 +6,9 @@ class ApplicationController < ActionController::Base
   around_action :switch_locale
 
   def after_sign_in_path_for(resource)
-    case resource.role
-    when 'teacher'
+    if resource.teacher?
       teacher_dashboard_path
-    when 'student'
+    elsif resource.student?
       student_dashboard_path
     else
       root_path
@@ -33,8 +32,6 @@ class ApplicationController < ActionController::Base
                   else
                     params[:locale] || I18n.default_locale
                   end
-    Rails.logger.info "Locale set to: #{I18n.locale}"
-    Rails.logger.info "Available locales: #{I18n.available_locales.inspect}"
   end
 
   def extract_locale
