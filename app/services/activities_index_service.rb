@@ -8,11 +8,12 @@ class ActivitiesIndexService
   end
 
   def call
+    activities = fetch_activities
     {
-      activities: fetch_activities,
+      activities: activities,
       current_level: @params[:level],
       activities_by_level: fetch_activities_by_level,
-      best_attempts: fetch_best_attempts
+      best_attempts: fetch_best_attempts(activities.pluck(:id))
     }
   end
 
@@ -53,12 +54,12 @@ class ActivitiesIndexService
     end
   end
 
-  def fetch_best_attempts
+  def fetch_best_attempts(activity_ids)
     return {} unless @current_user.student?
 
     Rails.cache.fetch(["best_attempts", @current_user.id], expires_in: 30.minutes) do
       attempts = @current_user.quiz_attempts
-                            .where(activity_id: fetch_activities.map(&:id))
+                            .where(activity_id: activity_ids)
                             .group(:activity_id)
                             .select('activity_id, MAX(score) as max_score')
       

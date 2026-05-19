@@ -18,14 +18,15 @@
         <%= truncate(activity.description.presence || "Pratique português com exercícios interativos e divertidos!", length: 100) %>
       </p>
       
+      <% question_count = activity.questions.size %>
       <div class="card-meta">
         <span class="meta-item">
           <i class="fas fa-question-circle"></i>
-          <%= activity.questions.count %> questões
+          <%= question_count %> questões
         </span>
         <span class="meta-item">
           <i class="fas fa-clock"></i>
-          ~<%= (activity.questions.count * 1.5).round %> min
+          ~<%= (question_count * 1.5).round %> min
         </span>
         <span class="meta-item">
           <i class="fas fa-signal"></i>

@@ -93,6 +93,9 @@ GEM
       autoprefixer-rails (>= 9.1.0)
       popper_js (>= 2.11.8, < 3)
     builder (3.3.0)
+    bullet (8.1.1)
+      activesupport (>= 3.0.0)
+      uniform_notifier (~> 1.11)
     capybara (3.40.0)
       addressable
       matrix
@@ -365,6 +368,7 @@ GEM
       railties (>= 6.0.0)
     tzinfo (2.0.6)
       concurrent-ruby (~> 1.0)
+    uniform_notifier (1.18.0)
     warden (1.2.9)
       rack (>= 2.0.9)
     web-console (4.2.1)
@@ -399,6 +403,7 @@ PLATFORMS
 DEPENDENCIES
   bootsnap
   bootstrap
+  bullet
   capybara
   connection_pool
   dalli

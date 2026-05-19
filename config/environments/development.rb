@@ -89,4 +89,11 @@ Rails.application.configure do
 
   # Raise error when a before_action's only/except options reference missing actions
   config.action_controller.raise_on_missing_callback_actions = true
+
+  config.after_initialize do
+    Bullet.enable       = true
+    Bullet.alert        = true
+    Bullet.rails_logger = true
+    Bullet.add_footer   = true
+  end
 end
