@@ -4,11 +4,14 @@ class Activity < ApplicationRecord
   has_many :quiz_attempts, dependent: :destroy
   has_many :suggestions, dependent: :destroy
 
-  validates :title, presence: true
+  validates :title, presence: true, length: { minimum: 3, maximum: 100 }
   validates :description, presence: true
   validates :level, presence: true
   validates :slug, presence: true, uniqueness: true
   
+  scope :ordered, -> { order(created_at: :desc) }
+  scope :by_level, ->(level) { where(level: level) }
+
   before_validation :generate_slug, if: :should_generate_slug?
   after_commit :clear_cache
   
