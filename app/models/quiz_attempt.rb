@@ -12,10 +12,12 @@ class QuizAttempt < ApplicationRecord
     end
   end
   
+  scope :completed, -> { where.not(submitted_at: nil) }
+  scope :for_user, ->(user) { where(user: user) }
+
   before_create :set_submitted_at
   after_commit :clear_user_attempts_cache, if: :user_id?
-  
-  # Métodos de conveniência para acessar informações dos resultados
+
   def total_correct
     results["total_correct"] if results
   end
@@ -24,8 +26,8 @@ class QuizAttempt < ApplicationRecord
     results["total_questions"] if results
   end
   
-  def correct_percentage
-    score || 0
+  def passed?
+    score.to_i >= 60
   end
   
   def question_results
@@ -44,6 +46,6 @@ class QuizAttempt < ApplicationRecord
   end
   
   def clear_user_attempts_cache
-    Rails.cache.delete_matched("best_attempts/#{user_id}*") if user_id.present?
+    Rails.cache.delete("best_attempts/#{user_id}")
   end
 end

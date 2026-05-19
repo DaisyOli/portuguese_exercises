@@ -4,22 +4,19 @@ class Question < ApplicationRecord
   attr_accessor :options_text
 
   QUESTION_TYPES = ['multiple_choice', 'fill_in_blank']
+
+  scope :by_type, ->(type) { where(question_type: type) }
+
   validates :content, presence: true
-  
   validates :correct_answer, presence: true
-  
-  # Validação de tipo de questão
   validates :question_type, presence: true, inclusion: { in: QUESTION_TYPES }
-  
-  # Validações específicas para cada tipo de questão
   validates :options, presence: true, if: :multiple_choice?
   validate :correct_answer_in_options, if: :multiple_choice?
   validate :content_has_blank, if: :fill_in_blank?
-  
+
   before_validation :ensure_options_is_array
   before_validation :process_options_text
 
-  # Métodos auxiliares para verificar o tipo de questão
   def multiple_choice?
     question_type == 'multiple_choice'
   end

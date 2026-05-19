@@ -23,23 +23,6 @@ class Activity < ApplicationRecord
     C1: 'C1'
   }
 
-  def level_color_class
-    case level
-    when 'A1'
-      'bg-info'        # Azul claro
-    when 'A2'
-      'bg-primary'     # Azul
-    when 'B1'
-      'bg-success'     # Verde
-    when 'B2'
-      'bg-warning'     # Amarelo
-    when 'C1'
-      'bg-danger'      # Vermelho
-    else
-      'bg-secondary'   # Cinza (caso padrão)
-    end
-  end
-
   def to_param
     slug
   end
