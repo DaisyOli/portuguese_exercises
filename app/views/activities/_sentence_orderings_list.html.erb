@@ -1,0 +1,56 @@
+<% if activity.sentence_orderings.any? %>
+  <div class="sentence-orderings-section">
+    <h4 class="section-heading">
+      <i class="fas fa-sort-alpha-down"></i>
+      Organizar palavras (<%= activity.sentence_orderings.count %>)
+    </h4>
+
+    <% activity.sentence_orderings.order(:display_order, :created_at).each do |ordering| %>
+      <div class="sentence-ordering-card">
+        <div class="sentence-ordering-header">
+          <span class="sentence-preview">
+            <i class="fas fa-puzzle-piece"></i>
+            <%= ordering.sentence %>
+          </span>
+          <span class="word-count"><%= ordering.sentence_words.size %> palavras</span>
+        </div>
+
+        <% if ordering.instruction.present? %>
+          <p class="ordering-instruction"><em><%= ordering.instruction %></em></p>
+        <% end %>
+
+        <div class="sentence-ordering-actions">
+          <button type="button" class="btn-edit-small"
+                  data-bs-toggle="collapse"
+                  data-bs-target="#edit-ordering-<%= ordering.id %>">
+            <i class="fas fa-edit"></i> Editar
+          </button>
+
+          <%= button_to activity_sentence_ordering_path(activity, ordering),
+                method: :delete,
+                class: "btn-delete-small",
+                data: { turbo_confirm: "Remover este exercício?" } do %>
+            <i class="fas fa-trash"></i> Remover
+          <% end %>
+        </div>
+
+        <div class="collapse" id="edit-ordering-<%= ordering.id %>">
+          <div class="edit-form-body">
+            <%= form_with(model: [activity, ordering], local: true) do |f| %>
+              <div class="mb-3">
+                <%= f.label :sentence, "Frase completa", class: "form-label" %>
+                <%= f.text_area :sentence, class: "form-control", rows: 2 %>
+                <small class="form-text text-muted">Ao salvar, as palavras serão re-embaralhadas automaticamente.</small>
+              </div>
+              <div class="mb-3">
+                <%= f.label :instruction, "Instrução para o aluno (opcional)", class: "form-label" %>
+                <%= f.text_field :instruction, class: "form-control" %>
+              </div>
+              <%= f.submit "Salvar alterações", class: "btn btn-primary btn-sm" %>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  </div>
+<% end %>

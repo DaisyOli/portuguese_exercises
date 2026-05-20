@@ -332,6 +332,41 @@
           <% end %>
         <% end %>
 
+        <!-- Exercícios de ordenar palavras -->
+        <% @activity.sentence_orderings.order(:display_order, :created_at).each_with_index do |ordering, index| %>
+          <div class="question-card sentence-ordering-exercise"
+               data-controller="sentence-ordering">
+
+            <div class="question-header">
+              <i class="fas fa-sort-alpha-down"></i>
+              <%= t('sentence_orderings.title') %> <%= index + 1 %>
+            </div>
+
+            <div class="question-body">
+              <p class="ordering-instruction-text">
+                <%= ordering.instruction.present? ? ordering.instruction : t('sentence_orderings.instruction_default') %>
+              </p>
+
+              <div class="word-zones-container">
+                <% ordering.shuffled_words.each_with_index do |word, i| %>
+                  <div class="word-drop-zone" data-sentence-ordering-target="zone">
+                    <span class="draggable-word"
+                          data-sentence-ordering-target="word"
+                          data-word-id="<%= word.id %>">
+                      <%= word.word %>
+                    </span>
+                  </div>
+                <% end %>
+              </div>
+
+              <input type="hidden"
+                     name="sentence_ordering_answers[<%= ordering.id %>]"
+                     data-sentence-ordering-target="input"
+                     value="<%= ordering.shuffled_words.map(&:id).join(',') %>">
+            </div>
+          </div>
+        <% end %>
+
         <!-- Loading Indicator (inicialmente oculto) -->
         <div class="loading-section d-none" data-quiz-loading-target="indicator">
           <div class="spinner-border" role="status">

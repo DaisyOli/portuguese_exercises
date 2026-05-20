@@ -29,6 +29,7 @@ Rails.application.routes.draw do
 
     resources :questions
     resources :suggestions, only: [:create, :destroy]
+    resources :sentence_orderings, only: [:create, :update, :destroy]
   end
 
   # Health check para monitoramento

@@ -3,6 +3,7 @@ class Activity < ApplicationRecord
   has_many :questions, dependent: :destroy
   has_many :quiz_attempts, dependent: :destroy
   has_many :suggestions, dependent: :destroy
+  has_many :sentence_orderings, dependent: :destroy
 
   validates :title, presence: true, length: { minimum: 3, maximum: 100 }
   validates :description, presence: true

@@ -46,6 +46,14 @@
       <i class="fas fa-lightbulb"></i>
       <span><%= t('activities.add_suggestion') %></span>
     </button>
+
+    <button type="button" class="btn-action ordering"
+            data-action="content-form#toggle"
+            data-bs-toggle="collapse"
+            data-bs-target="#new-sentence-ordering-form">
+      <i class="fas fa-sort-alpha-down"></i>
+      <span>Organizar palavras</span>
+    </button>
   </div>
 </div>
 
@@ -98,6 +106,27 @@
     <div data-controller="question-form">
       <%= render partial: "questions/form", locals: { question: activity.questions.build, activity: activity } %>
     </div>
+  </div>
+</div>
+
+<div class="collapse form-collapse" id="new-sentence-ordering-form" data-content-form-target="form">
+  <div class="card-body">
+    <%= form_with(model: [activity, SentenceOrdering.new], local: true) do |f| %>
+      <div class="mb-3">
+        <%= f.label :sentence, "Frase completa", class: "form-label" %>
+        <%= f.text_area :sentence, class: "form-control", rows: 2,
+            placeholder: "Ex: O gato bebe leite fresco todos os dias" %>
+        <small class="form-text text-muted">As palavras serão embaralhadas automaticamente para o aluno.</small>
+      </div>
+      <div class="mb-3">
+        <%= f.label :instruction, "Instrução para o aluno (opcional)", class: "form-label" %>
+        <%= f.text_field :instruction, class: "form-control",
+            placeholder: "Ex: Coloque as palavras na ordem correta para formar a frase." %>
+      </div>
+      <div class="d-grid">
+        <%= f.submit "Criar exercício", class: "btn btn-primary" %>
+      </div>
+    <% end %>
   </div>
 </div>
 

@@ -133,37 +133,53 @@
         <div class="question-card">
           <div class="question-header <%= result["is_correct"] ? 'correct' : 'incorrect' %>">
             <i class="fas <%= result["is_correct"] ? 'fa-check-circle' : 'fa-times-circle' %>"></i>
-            <span>Questão <%= index + 1 %></span>
+            <span><%= t('questions.title') %> <%= index + 1 %></span>
           </div>
-          
+
           <div class="question-body">
-            <div class="question-text">
-              <%= result["question_text"].present? ? result["question_text"] : "N/A" %>
-            </div>
-            
-            <div class="question-type">
-              <%= result["question_type"].present? ? t("questions.types.#{result["question_type"]}") : "N/A" %>
-            </div>
-            
-            <div class="answer-section">
-              <div class="answer-item your-answer <%= result["is_correct"] ? 'correct' : '' %>">
-                <div class="answer-label">
-                  <i class="fas fa-user"></i>
-                  <%= t('quiz.your_answer') %>:
-                </div>
-                <%= !result["given_answer"].present? || result["given_answer"] == t('quiz.not_answered') || result["given_answer"] == "Não respondida" ? t('quiz.not_answered') : result["given_answer"] %>
+            <% if result["exercise_type"] == "sentence_ordering" %>
+              <div class="question-text">
+                <i class="fas fa-sort-alpha-down" style="color: var(--verde-destaque); margin-right: 0.4rem;"></i>
+                <%= t('sentence_orderings.result_label') %>
               </div>
-              
-              <% unless result["is_correct"] %>
-                <div class="answer-item correct-answer">
+              <div class="question-type"><%= result["sentence"] %></div>
+              <div class="answer-section">
+                <div class="answer-item your-answer <%= result["is_correct"] ? 'correct' : '' %>">
                   <div class="answer-label">
-                    <i class="fas fa-check"></i>
-                    <%= t('quiz.correct_answer') %>:
+                    <i class="fas <%= result["is_correct"] ? 'fa-check' : 'fa-times' %>"></i>
+                    <%= result["is_correct"] ? t('sentence_orderings.correct') : t('sentence_orderings.incorrect') %>
                   </div>
-                  <%= result["correct_answer"].present? ? result["correct_answer"] : "N/A" %>
                 </div>
-              <% end %>
-            </div>
+              </div>
+            <% else %>
+              <div class="question-text">
+                <%= result["question_text"].present? ? result["question_text"] : "N/A" %>
+              </div>
+
+              <div class="question-type">
+                <%= result["question_type"].present? ? t("questions.types.#{result["question_type"]}") : "N/A" %>
+              </div>
+
+              <div class="answer-section">
+                <div class="answer-item your-answer <%= result["is_correct"] ? 'correct' : '' %>">
+                  <div class="answer-label">
+                    <i class="fas fa-user"></i>
+                    <%= t('quiz.your_answer') %>:
+                  </div>
+                  <%= !result["given_answer"].present? || result["given_answer"] == t('quiz.not_answered') || result["given_answer"] == "Não respondida" ? t('quiz.not_answered') : result["given_answer"] %>
+                </div>
+
+                <% unless result["is_correct"] %>
+                  <div class="answer-item correct-answer">
+                    <div class="answer-label">
+                      <i class="fas fa-check"></i>
+                      <%= t('quiz.correct_answer') %>:
+                    </div>
+                    <%= result["correct_answer"].present? ? result["correct_answer"] : "N/A" %>
+                  </div>
+                <% end %>
+              </div>
+            <% end %>
           </div>
         </div>
       <% end %>

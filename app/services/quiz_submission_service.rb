@@ -21,18 +21,18 @@ class QuizSubmissionService
 
   def process_quiz_submission
     @questions = @activity.questions
-    
-    # Verificar se já existe uma tentativa recente para este quiz
-    recent_attempt = @user&.quiz_attempts&.where(activity_id: @activity.id)&.where('created_at > ?', 30.minutes.ago)&.order(created_at: :desc)&.first
+    @sentence_orderings = @activity.sentence_orderings.any? \
+      ? @activity.sentence_orderings.includes(:sentence_words).to_a \
+      : []
 
     # Inicializar arrays para capturar questões e respostas
     results = {}
     total_score = 0
-    
+
     # Processar cada questão
     @questions.each do |question|
       # Obter a resposta dada pelo usuário
-      given_answer = @params[:answers][question.id.to_s]
+      given_answer = @params.dig(:answers, question.id.to_s)
       
       # Obter resposta correta
       correct_answer = question.correct_answer
@@ -89,16 +89,31 @@ class QuizSubmissionService
       end
     end
     
+    # Processar exercícios de ordenar palavras
+    sentence_ordering_answers = @params[:sentence_ordering_answers] || {}
+    @sentence_orderings.each do |ordering|
+      given_ids = sentence_ordering_answers[ordering.id.to_s].to_s.split(",")
+      is_correct = ordering.check_order(given_ids)
+      total_score += 1 if is_correct
+
+      results["sentence_ordering_#{ordering.id}"] = {
+        "is_correct" => is_correct,
+        "exercise_type" => "sentence_ordering",
+        "sentence" => ordering.sentence
+      }
+    end
+
     # Calcular score
-    score = @questions.count.positive? ? ((total_score.to_f / @questions.count) * 100).round(2) : 0
-    
+    total_items = @questions.count + @sentence_orderings.size
+    score = total_items.positive? ? ((total_score.to_f / total_items) * 100).round(2) : 0
+
     # Hash simplificado de resultados
     quiz_results_data = {
       "activity_id" => @activity.id,
       "results" => results,
       "score" => score,
       "total_correct" => total_score,
-      "total_questions" => @questions.count,
+      "total_questions" => total_items,
       "submitted_at" => Time.current
     }
     

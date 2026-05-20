@@ -95,6 +95,17 @@ fr:
     activities: "Activités"
     profile: "Profil"
     sign_out: "Déconnexion"
+
+  # Sentence Orderings
+  sentence_orderings:
+    created: "Exercice créé avec succès !"
+    updated: "Exercice mis à jour avec succès !"
+    destroyed: "Exercice supprimé avec succès."
+    title: "Ordonner les mots"
+    instruction_default: "Mettez les mots dans le bon ordre pour former la phrase."
+    result_label: "Exercice d'ordonnancement"
+    correct: "Ordre correct !"
+    incorrect: "Ordre incorrect."
     language: "Langue"
   
   # Users

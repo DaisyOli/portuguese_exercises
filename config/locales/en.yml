@@ -133,6 +133,17 @@ en:
     activities: "Activities"
     profile: "Profile"
     sign_out: "Sign out"
+
+  # Sentence Orderings
+  sentence_orderings:
+    created: "Exercise created successfully!"
+    updated: "Exercise updated successfully!"
+    destroyed: "Exercise removed successfully."
+    title: "Word ordering"
+    instruction_default: "Put the words in the correct order to form the sentence."
+    result_label: "Word ordering exercise"
+    correct: "Correct order!"
+    incorrect: "Incorrect order."
     language: "Language"
     
   activities:

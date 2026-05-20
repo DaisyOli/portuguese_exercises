@@ -331,6 +331,17 @@ pt:
     #   messages:
     #     not_saved: "Não foi possível salvar"
         
+  # Sentence Orderings
+  sentence_orderings:
+    created: "Exercício criado com sucesso!"
+    updated: "Exercício atualizado com sucesso!"
+    destroyed: "Exercício removido com sucesso."
+    title: "Ordenar palavras"
+    instruction_default: "Coloque as palavras na ordem correta para formar a frase."
+    result_label: "Exercício de ordenação"
+    correct: "Ordem correta!"
+    incorrect: "Ordem incorreta."
+
   # Auth
   auth:
     sign_out: "Sair"

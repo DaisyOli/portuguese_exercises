@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_07_27_063138) do
+ActiveRecord::Schema[7.1].define(version: 2026_05_19_152248) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -51,6 +51,27 @@ ActiveRecord::Schema[7.1].define(version: 2025_07_27_063138) do
     t.datetime "updated_at", null: false
     t.index ["activity_id"], name: "index_quiz_attempts_on_activity_id"
     t.index ["user_id"], name: "index_quiz_attempts_on_user_id"
+  end
+
+  create_table "sentence_orderings", force: :cascade do |t|
+    t.bigint "activity_id", null: false
+    t.text "sentence"
+    t.text "instruction"
+    t.integer "display_order"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer "sentence_words_count"
+    t.index ["activity_id"], name: "index_sentence_orderings_on_activity_id"
+  end
+
+  create_table "sentence_words", force: :cascade do |t|
+    t.bigint "sentence_ordering_id", null: false
+    t.string "word"
+    t.integer "correct_position"
+    t.integer "display_position"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["sentence_ordering_id"], name: "index_sentence_words_on_sentence_ordering_id"
   end
 
   create_table "suggestions", force: :cascade do |t|
@@ -99,5 +120,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_07_27_063138) do
   add_foreign_key "questions", "activities"
   add_foreign_key "quiz_attempts", "activities"
   add_foreign_key "quiz_attempts", "users"
+  add_foreign_key "sentence_orderings", "activities"
+  add_foreign_key "sentence_words", "sentence_orderings"
   add_foreign_key "suggestions", "activities"
 end

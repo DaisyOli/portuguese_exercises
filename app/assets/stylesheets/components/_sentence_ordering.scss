@@ -1,0 +1,160 @@
+// Exercício: Organizar palavras
+
+.sentence-ordering-exercise {
+  .ordering-instruction-text {
+    color: #555;
+    font-style: italic;
+    margin-bottom: 1.2rem;
+    font-size: 0.95rem;
+  }
+
+  .word-zones-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    padding: 1rem;
+    background: #f8f9fa;
+    border-radius: 8px;
+    min-height: 60px;
+  }
+
+  .word-drop-zone {
+    min-width: 60px;
+    min-height: 40px;
+    border: 2px dashed #ccc;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    padding: 0.2rem;
+
+    &.drop-hover {
+      border-color: var(--azul-acao);
+      background: rgba(25, 118, 210, 0.08);
+      transform: scale(1.05);
+    }
+  }
+
+  .draggable-word {
+    background: white;
+    border: 2px solid var(--verde-destaque);
+    color: var(--verde-destaque);
+    border-radius: 6px;
+    padding: 0.35rem 0.75rem;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: grab;
+    user-select: none;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+
+    &:hover {
+      background: var(--verde-destaque);
+      color: white;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(46, 125, 50, 0.25);
+    }
+
+    &.dragging {
+      opacity: 0.5;
+      cursor: grabbing;
+    }
+  }
+}
+
+// Cards na view da professora
+.sentence-ordering-card {
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-left: 4px solid var(--verde-destaque);
+  border-radius: 8px;
+  padding: 1rem 1.2rem;
+  margin-bottom: 1rem;
+
+  .sentence-ordering-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+  }
+
+  .sentence-preview {
+    font-weight: 600;
+    color: #333;
+    font-size: 0.95rem;
+
+    i { color: var(--verde-destaque); margin-right: 0.4rem; }
+  }
+
+  .word-count {
+    font-size: 0.8rem;
+    color: #888;
+    background: #f5f5f5;
+    padding: 0.2rem 0.5rem;
+    border-radius: 12px;
+  }
+
+  .ordering-instruction {
+    font-size: 0.85rem;
+    color: #666;
+    margin-bottom: 0.5rem;
+  }
+
+  .sentence-ordering-actions {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+  }
+}
+
+.sentence-orderings-section {
+  margin-bottom: 2rem;
+
+  .section-heading {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #444;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid #f0f0f0;
+
+    i { color: var(--verde-destaque); margin-right: 0.4rem; }
+  }
+}
+
+.edit-form-body {
+  background: #f8f9fa;
+  border-radius: 6px;
+  padding: 1rem;
+  margin-top: 0.75rem;
+}
+
+.btn-edit-small {
+  background: transparent;
+  border: 1px solid #aaa;
+  color: #555;
+  border-radius: 4px;
+  padding: 0.2rem 0.6rem;
+  font-size: 0.8rem;
+  cursor: pointer;
+
+  &:hover { border-color: var(--azul-acao); color: var(--azul-acao); }
+}
+
+.btn-delete-small {
+  background: transparent;
+  border: 1px solid #e57373;
+  color: #e57373;
+  border-radius: 4px;
+  padding: 0.2rem 0.6rem;
+  font-size: 0.8rem;
+  cursor: pointer;
+
+  &:hover { background: #e57373; color: white; }
+}
+
+.btn-action.ordering {
+  background: linear-gradient(135deg, #4caf50, #2e7d32);
+  color: white;
+}
