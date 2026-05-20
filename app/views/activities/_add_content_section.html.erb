@@ -52,7 +52,23 @@
             data-bs-toggle="collapse"
             data-bs-target="#new-sentence-ordering-form">
       <i class="fas fa-sort-alpha-down"></i>
-      <span>Organizar palavras</span>
+      <span><%= t('sentence_orderings.title') %></span>
+    </button>
+
+    <button type="button" class="btn-action ordering"
+            data-action="content-form#toggle"
+            data-bs-toggle="collapse"
+            data-bs-target="#new-paragraph-ordering-form">
+      <i class="fas fa-list-ol"></i>
+      <span><%= t('paragraph_orderings.title') %></span>
+    </button>
+
+    <button type="button" class="btn-action ordering"
+            data-action="content-form#toggle"
+            data-bs-toggle="collapse"
+            data-bs-target="#new-column-matching-form">
+      <i class="fas fa-columns"></i>
+      <span><%= t('column_matchings.title') %></span>
     </button>
   </div>
 </div>
@@ -125,6 +141,142 @@
       </div>
       <div class="d-grid">
         <%= f.submit "Criar exercício", class: "btn btn-primary" %>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<div class="collapse form-collapse" id="new-paragraph-ordering-form" data-content-form-target="form">
+  <div class="card-body">
+    <%= form_with(model: [activity, ParagraphOrdering.new], local: true,
+          data: { controller: "dynamic-fields" }) do |f| %>
+      <div class="mb-3">
+        <%= f.label :title, "Título (opcional)", class: "form-label" %>
+        <%= f.text_field :title, class: "form-control",
+            placeholder: "Ex: Coloque o diálogo em ordem" %>
+      </div>
+      <div class="mb-3">
+        <%= f.label :instruction, "Instrução para o aluno (opcional)", class: "form-label" %>
+        <%= f.text_field :instruction, class: "form-control",
+            placeholder: t('paragraph_orderings.instruction_default') %>
+      </div>
+
+      <label class="form-label fw-semibold">Frases (na ordem correta)</label>
+      <small class="form-text text-muted d-block mb-2">Escreva cada frase na ordem correta — o aluno vai tentar reordenar.</small>
+
+      <div data-dynamic-fields-target="list">
+        <div data-field class="input-group mb-2">
+          <span class="input-group-text text-muted" style="font-size:0.8rem;">1</span>
+          <input type="text" name="sentences[1]" class="form-control"
+                 placeholder="Primeira frase...">
+        </div>
+        <div data-field class="input-group mb-2">
+          <span class="input-group-text text-muted" style="font-size:0.8rem;">2</span>
+          <input type="text" name="sentences[2]" class="form-control"
+                 placeholder="Segunda frase...">
+        </div>
+      </div>
+
+      <template data-dynamic-fields-target="template">
+        <div data-field class="input-group mb-2">
+          <span class="input-group-text text-muted" style="font-size:0.8rem;">+</span>
+          <input type="text" name="sentences[FIELD_INDEX]" class="form-control"
+                 placeholder="<%= t('paragraph_orderings.sentence_placeholder') %>">
+          <button type="button" class="btn btn-outline-secondary btn-sm"
+                  data-action="dynamic-fields#removeField">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+      </template>
+
+      <button type="button" class="btn btn-outline-success btn-sm mb-3"
+              data-action="dynamic-fields#addField">
+        <i class="fas fa-plus"></i> <%= t('paragraph_orderings.add_sentence') %>
+      </button>
+
+      <div class="d-grid">
+        <%= f.submit "Criar exercício", class: "btn btn-primary" %>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<div class="collapse form-collapse" id="new-column-matching-form" data-content-form-target="form">
+  <div class="card-body">
+    <%= form_with(model: [activity, ColumnMatching.new], local: true,
+          data: { controller: "dynamic-fields" }) do |f| %>
+      <div class="mb-3">
+        <%= f.label :title, t('column_matchings.title_label'), class: "form-label" %>
+        <%= f.text_field :title, class: "form-control",
+            placeholder: t('column_matchings.title_placeholder') %>
+      </div>
+      <div class="mb-3">
+        <%= f.label :instruction, t('column_matchings.instruction_label'), class: "form-label" %>
+        <%= f.text_field :instruction, class: "form-control",
+            placeholder: t('column_matchings.instruction_default') %>
+      </div>
+
+      <label class="form-label fw-semibold"><%= t('column_matchings.pairs_label') %></label>
+      <small class="form-text text-muted d-block mb-2"><%= t('column_matchings.pairs_hint') %></small>
+
+      <div class="row mb-1 px-1">
+        <div class="col-5"><small class="text-muted fw-semibold"><%= t('column_matchings.column_a') %></small></div>
+        <div class="col-2 text-center"><small class="text-muted">↔</small></div>
+        <div class="col-5"><small class="text-muted fw-semibold"><%= t('column_matchings.column_b') %></small></div>
+      </div>
+
+      <div data-dynamic-fields-target="list">
+        <div data-field class="row mb-2 align-items-center">
+          <div class="col-5">
+            <input type="text" name="pairs[1][left]" class="form-control form-control-sm"
+                   placeholder="<%= t('column_matchings.item_a_placeholder') %>">
+          </div>
+          <div class="col-2 text-center text-muted">↔</div>
+          <div class="col-5">
+            <input type="text" name="pairs[1][right]" class="form-control form-control-sm"
+                   placeholder="<%= t('column_matchings.item_b_placeholder') %>">
+          </div>
+        </div>
+        <div data-field class="row mb-2 align-items-center">
+          <div class="col-5">
+            <input type="text" name="pairs[2][left]" class="form-control form-control-sm"
+                   placeholder="<%= t('column_matchings.item_a_placeholder') %>">
+          </div>
+          <div class="col-2 text-center text-muted">↔</div>
+          <div class="col-5">
+            <input type="text" name="pairs[2][right]" class="form-control form-control-sm"
+                   placeholder="<%= t('column_matchings.item_b_placeholder') %>">
+          </div>
+        </div>
+      </div>
+
+      <template data-dynamic-fields-target="template">
+        <div data-field class="row mb-2 align-items-center">
+          <div class="col-5">
+            <input type="text" name="pairs[FIELD_INDEX][left]" class="form-control form-control-sm"
+                   placeholder="<%= t('column_matchings.item_a_placeholder') %>">
+          </div>
+          <div class="col-2 text-center text-muted">↔</div>
+          <div class="col-4">
+            <input type="text" name="pairs[FIELD_INDEX][right]" class="form-control form-control-sm"
+                   placeholder="<%= t('column_matchings.item_b_placeholder') %>">
+          </div>
+          <div class="col-1">
+            <button type="button" class="btn btn-outline-secondary btn-sm"
+                    data-action="dynamic-fields#removeField">
+              <i class="fas fa-times"></i>
+            </button>
+          </div>
+        </div>
+      </template>
+
+      <button type="button" class="btn btn-outline-success btn-sm mb-3"
+              data-action="dynamic-fields#addField">
+        <i class="fas fa-plus"></i> <%= t('column_matchings.add_pair') %>
+      </button>
+
+      <div class="d-grid">
+        <%= f.submit t('column_matchings.create_exercise'), class: "btn btn-primary" %>
       </div>
     <% end %>
   </div>

@@ -6,7 +6,7 @@
     </h4>
 
     <% activity.sentence_orderings.order(:display_order, :created_at).each do |ordering| %>
-      <div class="sentence-ordering-card">
+      <div class="sentence-ordering-card" id="sentence-ordering-<%= ordering.id %>">
         <div class="sentence-ordering-header">
           <span class="sentence-preview">
             <i class="fas fa-puzzle-piece"></i>

@@ -30,6 +30,12 @@ Rails.application.routes.draw do
     resources :questions
     resources :suggestions, only: [:create, :destroy]
     resources :sentence_orderings, only: [:create, :update, :destroy]
+    resources :paragraph_orderings, only: [:create, :update, :destroy] do
+      resources :paragraph_sentences, only: [:create, :destroy]
+    end
+    resources :column_matchings, only: [:create, :update, :destroy] do
+      resources :matching_pairs, only: [:create, :destroy]
+    end
   end
 
   # Health check para monitoramento

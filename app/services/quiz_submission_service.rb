@@ -24,6 +24,12 @@ class QuizSubmissionService
     @sentence_orderings = @activity.sentence_orderings.any? \
       ? @activity.sentence_orderings.includes(:sentence_words).to_a \
       : []
+    @paragraph_orderings = @activity.paragraph_orderings.any? \
+      ? @activity.paragraph_orderings.includes(:paragraph_sentences).to_a \
+      : []
+    @column_matchings = @activity.column_matchings.any? \
+      ? @activity.column_matchings.includes(:matching_pairs).to_a \
+      : []
 
     # Inicializar arrays para capturar questões e respostas
     results = {}
@@ -103,8 +109,44 @@ class QuizSubmissionService
       }
     end
 
+    # Processar exercícios de ordenar frases
+    paragraph_ordering_answers = @params[:paragraph_ordering_answers] || {}
+    @paragraph_orderings.each do |ordering|
+      given_ids = paragraph_ordering_answers[ordering.id.to_s].to_s.split(",")
+      is_correct = ordering.check_order(given_ids)
+      total_score += 1 if is_correct
+
+      correct_order = ordering.paragraph_sentences.to_a
+                             .sort_by(&:correct_position)
+                             .map(&:sentence)
+
+      results["paragraph_ordering_#{ordering.id}"] = {
+        "is_correct" => is_correct,
+        "exercise_type" => "paragraph_ordering",
+        "title" => ordering.title.presence || I18n.t('paragraph_orderings.title'),
+        "correct_order" => correct_order
+      }
+    end
+
+    # Processar exercícios de associar colunas
+    column_matching_answers = @params[:column_matching_answers] || {}
+    @column_matchings.each do |matching|
+      answer_string = column_matching_answers[matching.id.to_s].to_s
+      is_correct = matching.check_answer(answer_string)
+      total_score += 1 if is_correct
+
+      correct_pairs = matching.matching_pairs.order(:position).map { |p| [p.left_item, p.right_item] }
+
+      results["column_matching_#{matching.id}"] = {
+        "is_correct" => is_correct,
+        "exercise_type" => "column_matching",
+        "title" => matching.title.presence || I18n.t('column_matchings.title'),
+        "correct_pairs" => correct_pairs
+      }
+    end
+
     # Calcular score
-    total_items = @questions.count + @sentence_orderings.size
+    total_items = @questions.count + @sentence_orderings.size + @paragraph_orderings.size + @column_matchings.size
     score = total_items.positive? ? ((total_score.to_f / total_items) * 100).round(2) : 0
 
     # Hash simplificado de resultados

@@ -1,6 +1,4 @@
-<!DOCTYPE html>
-<html>
-<head>
+<% content_for :head do %>
   <title><%= @activity.title %> - Resultados - Practice PT</title>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Kalam:wght@400;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
@@ -91,9 +89,8 @@
       .btn-quiz-primary, .btn-quiz-secondary { margin: 0.5rem 0; }
     }
   </style>
-</head>
+<% end %>
 
-<body>
   <div class="results-container">
     <!-- Header elegante -->
     <div class="results-header">
@@ -137,19 +134,65 @@
           </div>
 
           <div class="question-body">
-            <% if result["exercise_type"] == "sentence_ordering" %>
+            <% if result["exercise_type"] == "column_matching" %>
               <div class="question-text">
-                <i class="fas fa-sort-alpha-down" style="color: var(--verde-destaque); margin-right: 0.4rem;"></i>
-                <%= t('sentence_orderings.result_label') %>
+                <i class="fas fa-columns" style="color: var(--verde-destaque); margin-right: 0.4rem;"></i>
+                <%= t('column_matchings.result_label') %>
               </div>
-              <div class="question-type"><%= result["sentence"] %></div>
+              <div class="question-type"><%= result["title"] %></div>
               <div class="answer-section">
                 <div class="answer-item your-answer <%= result["is_correct"] ? 'correct' : '' %>">
                   <div class="answer-label">
                     <i class="fas <%= result["is_correct"] ? 'fa-check' : 'fa-times' %>"></i>
-                    <%= result["is_correct"] ? t('sentence_orderings.correct') : t('sentence_orderings.incorrect') %>
+                    <%= result["is_correct"] ? t('column_matchings.correct') : t('column_matchings.incorrect') %>
                   </div>
                 </div>
+                <% if !result["is_correct"] && result["correct_pairs"].present? %>
+                  <div class="answer-item correct-answer">
+                    <div class="answer-label">
+                      <i class="fas fa-check"></i>
+                      <%= t('quiz.correct_answer') %>:
+                    </div>
+                    <div style="margin-top: 0.5rem;">
+                      <% result["correct_pairs"].each do |pair| %>
+                        <div style="font-size: 0.9rem; margin-bottom: 0.25rem;">
+                          <strong><%= pair[0] %></strong> ↔ <%= pair[1] %>
+                        </div>
+                      <% end %>
+                    </div>
+                  </div>
+                <% end %>
+              </div>
+            <% elsif result["exercise_type"] == "sentence_ordering" || result["exercise_type"] == "paragraph_ordering" %>
+              <% exercise_key = result["exercise_type"] %>
+              <% icon = exercise_key == "sentence_ordering" ? "fa-sort-alpha-down" : "fa-list-ol" %>
+              <div class="question-text">
+                <i class="fas <%= icon %>" style="color: var(--verde-destaque); margin-right: 0.4rem;"></i>
+                <%= t("#{exercise_key.pluralize}.result_label") %>
+              </div>
+              <div class="question-type">
+                <%= result["sentence"] || result["title"] %>
+              </div>
+              <div class="answer-section">
+                <div class="answer-item your-answer <%= result["is_correct"] ? 'correct' : '' %>">
+                  <div class="answer-label">
+                    <i class="fas <%= result["is_correct"] ? 'fa-check' : 'fa-times' %>"></i>
+                    <%= result["is_correct"] ? t("#{exercise_key.pluralize}.correct") : t("#{exercise_key.pluralize}.incorrect") %>
+                  </div>
+                </div>
+                <% if !result["is_correct"] && result["correct_order"].present? %>
+                  <div class="answer-item correct-answer">
+                    <div class="answer-label">
+                      <i class="fas fa-check"></i>
+                      <%= t('quiz.correct_answer') %>:
+                    </div>
+                    <ol style="margin: 0.5rem 0 0 1rem; padding: 0;">
+                      <% result["correct_order"].each do |sentence| %>
+                        <li style="margin-bottom: 0.3rem; font-size: 0.9rem;"><%= sentence %></li>
+                      <% end %>
+                    </ol>
+                  </div>
+                <% end %>
               </div>
             <% else %>
               <div class="question-text">
@@ -206,5 +249,3 @@
     </div>
   </div>
 
-</body>
-</html>

@@ -1,0 +1,120 @@
+// Column Matching exercise — student quiz view
+
+.column-matching-exercise {
+  .matching-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+    margin-top: 0.75rem;
+
+    @media (max-width: 380px) {
+      gap: 0.4rem;
+    }
+  }
+
+  .matching-column {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .matching-column-header {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #6c757d;
+    padding: 0 0.25rem 0.25rem;
+    border-bottom: 2px solid #dee2e6;
+    margin-bottom: 0.25rem;
+  }
+
+  .matching-item {
+    padding: 0.6rem 0.75rem;
+    border: 2px solid #dee2e6;
+    border-radius: 8px;
+    cursor: pointer;
+    min-height: 44px; // minimum touch target
+    display: flex;
+    align-items: center;
+    font-size: 0.9rem;
+    line-height: 1.3;
+    transition: border-color 0.15s ease, background-color 0.15s ease, box-shadow 0.15s ease;
+    word-break: break-word;
+    user-select: none;
+    -webkit-user-select: none;
+
+    @media (max-width: 380px) {
+      padding: 0.5rem;
+      font-size: 0.82rem;
+    }
+
+    &:hover {
+      border-color: #adb5bd;
+    }
+
+    &:active {
+      transform: scale(0.98);
+    }
+
+    &.matching-selected {
+      border-color: #1976d2;
+      background-color: #e3f2fd;
+      box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.25);
+      font-weight: 600;
+    }
+
+    &.matching-connected {
+      font-weight: 600;
+      border-width: 2px;
+    }
+  }
+
+  .left-item {
+    &::before {
+      content: '';
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background-color: #adb5bd;
+      margin-right: 0.5rem;
+      flex-shrink: 0;
+      transition: background-color 0.15s ease;
+    }
+
+    &.matching-selected::before,
+    &.matching-connected::before {
+      background-color: currentColor;
+    }
+  }
+
+  .matching-reset-row {
+    margin-top: 0.75rem;
+    display: flex;
+    justify-content: flex-end;
+  }
+}
+
+// Teacher view — pairs table in _column_matchings_list
+.matching-pairs-table {
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: 0.75rem;
+  font-size: 0.85rem;
+
+  .matching-pairs-header {
+    border-bottom: 1px solid #dee2e6;
+    padding-bottom: 0.25rem;
+    margin-bottom: 0.25rem;
+  }
+
+  .matching-pair-item {
+    display: inline-block;
+    padding: 0.15rem 0.4rem;
+    background: white;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    font-size: 0.82rem;
+  }
+}

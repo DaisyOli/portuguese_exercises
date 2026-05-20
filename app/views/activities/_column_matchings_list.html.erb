@@ -1,0 +1,107 @@
+<% if activity.column_matchings.any? %>
+  <div class="sentence-orderings-section">
+    <h4 class="section-heading">
+      <i class="fas fa-columns"></i>
+      <%= t('column_matchings.title') %> (<%= activity.column_matchings.count %>)
+    </h4>
+
+    <% activity.column_matchings.order(:display_order, :created_at).each do |matching| %>
+      <div class="sentence-ordering-card" id="column-matching-<%= matching.id %>">
+        <div class="sentence-ordering-header">
+          <span class="sentence-preview">
+            <i class="fas fa-columns"></i>
+            <%= matching.title.presence || t('column_matchings.title') %>
+          </span>
+          <span class="word-count"><%= matching.matching_pairs.count %> <%= t('column_matchings.pair_label') %>s</span>
+        </div>
+
+        <% if matching.instruction.present? %>
+          <p class="ordering-instruction"><em><%= matching.instruction %></em></p>
+        <% end %>
+
+        <!-- Lista de pares existentes -->
+        <% if matching.matching_pairs.any? %>
+          <div class="matching-pairs-table mt-2">
+            <div class="row matching-pairs-header mb-1">
+              <div class="col-5"><small class="text-muted fw-semibold"><%= t('column_matchings.column_a') %></small></div>
+              <div class="col-2 text-center"><small class="text-muted">↔</small></div>
+              <div class="col-4"><small class="text-muted fw-semibold"><%= t('column_matchings.column_b') %></small></div>
+            </div>
+            <% matching.matching_pairs.order(:position).each do |pair| %>
+              <div class="row align-items-center mb-1">
+                <div class="col-5">
+                  <span class="matching-pair-item"><%= pair.left_item %></span>
+                </div>
+                <div class="col-2 text-center text-muted">↔</div>
+                <div class="col-4">
+                  <span class="matching-pair-item"><%= pair.right_item %></span>
+                </div>
+                <div class="col-1">
+                  <%= button_to activity_column_matching_matching_pair_path(activity, matching, pair),
+                        method: :delete,
+                        class: "btn-delete-small",
+                        data: { turbo_confirm: t('column_matchings.confirm_remove_pair') } do %>
+                    <i class="fas fa-times"></i>
+                  <% end %>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        <% else %>
+          <p class="text-muted" style="font-size:0.85rem;"><%= t('column_matchings.no_pairs') %></p>
+        <% end %>
+
+        <!-- Formulário para adicionar par -->
+        <div class="add-sentence-form mt-2">
+          <%= form_with(model: [activity, matching, MatchingPair.new], local: true) do |f| %>
+            <div class="row g-1 align-items-center">
+              <div class="col-5">
+                <%= f.text_field :left_item, class: "form-control form-control-sm",
+                    placeholder: t('column_matchings.item_a_placeholder') %>
+              </div>
+              <div class="col-1 text-center text-muted">↔</div>
+              <div class="col-4">
+                <%= f.text_field :right_item, class: "form-control form-control-sm",
+                    placeholder: t('column_matchings.item_b_placeholder') %>
+              </div>
+              <div class="col-2">
+                <%= f.submit t('column_matchings.add_pair'), class: "btn btn-outline-success btn-sm w-100" %>
+              </div>
+            </div>
+          <% end %>
+        </div>
+
+        <div class="sentence-ordering-actions mt-2">
+          <button type="button" class="btn-edit-small"
+                  data-bs-toggle="collapse"
+                  data-bs-target="#edit-column-matching-<%= matching.id %>">
+            <i class="fas fa-edit"></i> <%= t('common.edit') %>
+          </button>
+
+          <%= button_to activity_column_matching_path(activity, matching),
+                method: :delete,
+                class: "btn-delete-small",
+                data: { turbo_confirm: t('column_matchings.confirm_destroy') } do %>
+            <i class="fas fa-trash"></i> <%= t('common.delete') %>
+          <% end %>
+        </div>
+
+        <div class="collapse" id="edit-column-matching-<%= matching.id %>">
+          <div class="edit-form-body">
+            <%= form_with(model: [activity, matching], local: true) do |f| %>
+              <div class="mb-2">
+                <%= f.label :title, t('column_matchings.title_label'), class: "form-label" %>
+                <%= f.text_field :title, class: "form-control form-control-sm" %>
+              </div>
+              <div class="mb-2">
+                <%= f.label :instruction, t('column_matchings.instruction_label'), class: "form-label" %>
+                <%= f.text_field :instruction, class: "form-control form-control-sm" %>
+              </div>
+              <%= f.submit t('common.save'), class: "btn btn-primary btn-sm" %>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  </div>
+<% end %>

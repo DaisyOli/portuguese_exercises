@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2026_05_19_152248) do
+ActiveRecord::Schema[7.1].define(version: 2026_05_20_063146) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -28,6 +28,48 @@ ActiveRecord::Schema[7.1].define(version: 2026_05_19_152248) do
     t.string "slug"
     t.index ["slug"], name: "index_activities_on_slug"
     t.index ["teacher_id"], name: "index_activities_on_teacher_id"
+  end
+
+  create_table "column_matchings", force: :cascade do |t|
+    t.bigint "activity_id", null: false
+    t.string "title"
+    t.string "instruction"
+    t.integer "display_order"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["activity_id"], name: "index_column_matchings_on_activity_id"
+  end
+
+  create_table "matching_pairs", force: :cascade do |t|
+    t.bigint "column_matching_id", null: false
+    t.string "left_item"
+    t.string "right_item"
+    t.integer "position"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["column_matching_id"], name: "index_matching_pairs_on_column_matching_id"
+  end
+
+  create_table "paragraph_orderings", force: :cascade do |t|
+    t.bigint "activity_id", null: false
+    t.string "title"
+    t.text "instruction"
+    t.integer "display_order"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer "paragraph_sentences_count"
+    t.index ["activity_id"], name: "index_paragraph_orderings_on_activity_id"
+  end
+
+  create_table "paragraph_sentences", force: :cascade do |t|
+    t.bigint "paragraph_ordering_id", null: false
+    t.text "sentence", null: false
+    t.integer "correct_position", null: false
+    t.integer "display_position", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["paragraph_ordering_id", "correct_position"], name: "index_paragraph_sentences_on_ordering_and_position", unique: true
+    t.index ["paragraph_ordering_id"], name: "index_paragraph_sentences_on_paragraph_ordering_id"
   end
 
   create_table "questions", force: :cascade do |t|
@@ -117,6 +159,10 @@ ActiveRecord::Schema[7.1].define(version: 2026_05_19_152248) do
   end
 
   add_foreign_key "activities", "users", column: "teacher_id"
+  add_foreign_key "column_matchings", "activities"
+  add_foreign_key "matching_pairs", "column_matchings"
+  add_foreign_key "paragraph_orderings", "activities"
+  add_foreign_key "paragraph_sentences", "paragraph_orderings"
   add_foreign_key "questions", "activities"
   add_foreign_key "quiz_attempts", "activities"
   add_foreign_key "quiz_attempts", "users"

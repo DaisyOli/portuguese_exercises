@@ -342,6 +342,51 @@ pt:
     correct: "Ordem correta!"
     incorrect: "Ordem incorreta."
 
+  # Paragraph Orderings
+  paragraph_orderings:
+    created: "Exercício criado com sucesso!"
+    updated: "Exercício atualizado com sucesso!"
+    destroyed: "Exercício removido com sucesso."
+    title: "Ordenar frases"
+    instruction_default: "Coloque as frases na ordem correta para formar o texto."
+    result_label: "Exercício de ordenação de frases"
+    correct: "Ordem correta!"
+    incorrect: "Ordem incorreta."
+    add_sentence: "Adicionar frase"
+    sentence_label: "Frase"
+    sentence_placeholder: "Escreva a frase aqui..."
+    no_sentences: "Nenhuma frase adicionada ainda."
+
+  # Column Matchings
+  column_matchings:
+    created: "Exercício criado com sucesso!"
+    updated: "Exercício atualizado com sucesso!"
+    destroyed: "Exercício removido com sucesso."
+    pair_added: "Par adicionado com sucesso!"
+    pair_removed: "Par removido."
+    pair_blank: "Preencha os dois lados do par."
+    title: "Associar colunas"
+    title_label: "Título (opcional)"
+    title_placeholder: "Ex: Animais em francês"
+    instruction_label: "Instrução para o aluno (opcional)"
+    instruction_default: "Associe cada item da coluna A ao seu correspondente na coluna B."
+    pairs_label: "Pares (Coluna A ↔ Coluna B)"
+    pairs_hint: "Escreva os pares corretos — o lado B será embaralhado para o aluno."
+    column_a: "Coluna A"
+    column_b: "Coluna B"
+    item_a_placeholder: "Item A..."
+    item_b_placeholder: "Item B..."
+    add_pair: "Adicionar par"
+    create_exercise: "Criar exercício"
+    pair_label: "Par"
+    no_pairs: "Nenhum par adicionado ainda."
+    confirm_remove_pair: "Remover este par?"
+    confirm_destroy: "Remover este exercício e todos os pares?"
+    result_label: "Exercício de associação"
+    correct: "Todas as associações corretas!"
+    incorrect: "Associações incorretas."
+    reset: "Recomeçar"
+
   # Auth
   auth:
     sign_out: "Sair"

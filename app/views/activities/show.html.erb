@@ -1,6 +1,4 @@
-<!DOCTYPE html>
-<html>
-<head>
+<% content_for :head do %>
   <title><%= @activity.title %> - Practice PT</title>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Kalam:wght@400;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
@@ -561,8 +559,7 @@
       display: flex;
     }
   </style>
-</head>
-<body>
+<% end %>
 
 <div class="atividade-container">
   <%= render 'activity_header', activity: @activity %>
@@ -602,6 +599,8 @@
   <% if current_user.teacher? %>
     <%= render 'questions_list', activity: @activity %>
     <%= render 'sentence_orderings_list', activity: @activity %>
+    <%= render 'paragraph_orderings_list', activity: @activity %>
+    <%= render 'column_matchings_list', activity: @activity %>
     <%= render 'suggestions_list', activity: @activity %>
     <%= render 'add_content_section', activity: @activity %>
 
@@ -710,5 +709,3 @@
   
 </script>
 
-</body>
-</html>

@@ -1,6 +1,4 @@
-<!DOCTYPE html>
-<html>
-<head>
+<% content_for :head do %>
   <title><%= @activity.title %> - Practice PT</title>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Kalam:wght@400;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
@@ -157,8 +155,7 @@
       .activity-meta { flex-direction: column; gap: 0.5rem; }
     }
   </style>
-</head>
-<body>
+<% end %>
 
   <div class="quiz-container">
     <% if params[:use_alternative] == "true" %>
@@ -367,6 +364,103 @@
           </div>
         <% end %>
 
+        <!-- Exercícios de ordenar frases -->
+        <% @activity.paragraph_orderings.order(:display_order, :created_at).each_with_index do |ordering, index| %>
+          <div class="question-card"
+               data-controller="paragraph-ordering">
+
+            <div class="question-header">
+              <i class="fas fa-list-ol"></i>
+              <%= t('paragraph_orderings.title') %> <%= index + 1 %>
+              <% if ordering.title.present? %>
+                <span style="font-weight:400; margin-left:0.5rem;">— <%= ordering.title %></span>
+              <% end %>
+            </div>
+
+            <div class="question-body">
+              <p class="ordering-instruction-text">
+                <%= ordering.instruction.present? ? ordering.instruction : t('paragraph_orderings.instruction_default') %>
+              </p>
+
+              <div class="sentence-zones-container">
+                <% ordering.shuffled_sentences.each do |ps| %>
+                  <div class="sentence-drop-zone" data-paragraph-ordering-target="zone">
+                    <div class="draggable-sentence"
+                         data-paragraph-ordering-target="sentence"
+                         data-sentence-id="<%= ps.id %>">
+                      <%= ps.sentence %>
+                    </div>
+                  </div>
+                <% end %>
+              </div>
+
+              <input type="hidden"
+                     name="paragraph_ordering_answers[<%= ordering.id %>]"
+                     data-paragraph-ordering-target="input"
+                     value="<%= ordering.shuffled_sentences.map(&:id).join(',') %>">
+            </div>
+          </div>
+        <% end %>
+
+        <!-- Exercícios de associar colunas -->
+        <% @activity.column_matchings.order(:display_order, :created_at).each_with_index do |matching, index| %>
+          <div class="question-card column-matching-exercise"
+               data-controller="column-matching">
+
+            <div class="question-header">
+              <i class="fas fa-columns"></i>
+              <%= t('column_matchings.title') %> <%= index + 1 %>
+              <% if matching.title.present? %>
+                <span style="font-weight:400; margin-left:0.5rem;">— <%= matching.title %></span>
+              <% end %>
+            </div>
+
+            <div class="question-body">
+              <p class="ordering-instruction-text">
+                <%= matching.instruction.present? ? matching.instruction : t('column_matchings.instruction_default') %>
+              </p>
+
+              <div class="matching-grid">
+                <div class="matching-column">
+                  <div class="matching-column-header"><%= t('column_matchings.column_a') %></div>
+                  <% matching.matching_pairs.order(:position).each do |pair| %>
+                    <div class="matching-item left-item"
+                         data-column-matching-target="leftItem"
+                         data-pair-id="<%= pair.id %>"
+                         data-action="click->column-matching#selectLeft">
+                      <%= pair.left_item %>
+                    </div>
+                  <% end %>
+                </div>
+
+                <div class="matching-column">
+                  <div class="matching-column-header"><%= t('column_matchings.column_b') %></div>
+                  <% matching.shuffled_pairs.each do |pair| %>
+                    <div class="matching-item right-item"
+                         data-column-matching-target="rightItem"
+                         data-pair-id="<%= pair.id %>"
+                         data-action="click->column-matching#selectRight">
+                      <%= pair.right_item %>
+                    </div>
+                  <% end %>
+                </div>
+              </div>
+
+              <div class="matching-reset-row">
+                <button type="button" class="btn btn-outline-secondary btn-sm"
+                        data-action="click->column-matching#reset">
+                  <i class="fas fa-undo"></i> <%= t('column_matchings.reset') %>
+                </button>
+              </div>
+
+              <input type="hidden"
+                     name="column_matching_answers[<%= matching.id %>]"
+                     data-column-matching-target="input"
+                     value="">
+            </div>
+          </div>
+        <% end %>
+
         <!-- Loading Indicator (inicialmente oculto) -->
         <div class="loading-section d-none" data-quiz-loading-target="indicator">
           <div class="spinner-border" role="status">
@@ -405,5 +499,4 @@
   });
 </script>
 
-</body>
-</html>
+
