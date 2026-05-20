@@ -23,6 +23,7 @@ Rails.application.routes.draw do
       get :results, action: :quiz_results # /activities/:slug/results
       patch :clear_statement
       match :clear_media, via: [:patch, :post]
+      match :clear_video, via: [:patch, :post]
       patch :clear_explanation
       delete :clear_attempt_history
     end

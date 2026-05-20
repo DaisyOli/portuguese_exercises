@@ -121,6 +121,8 @@ class ActivitiesController < ApplicationController
         ultimo_conteudo = 'statement'
       elsif params[:activity][:media_url].present?
         ultimo_conteudo = 'media'
+      elsif params[:activity][:video_url].present?
+        ultimo_conteudo = 'video'
       elsif params[:activity][:explanation_text].present?
         ultimo_conteudo = 'explanation'
       end
@@ -149,6 +151,15 @@ class ActivitiesController < ApplicationController
 
     @activity.update(media_url: nil)
     redirect_to activity_path(@activity, ultima_acao: 'conteudo_excluido'), notice: t('messages.media_deleted')
+  end
+
+  def clear_video
+    if @activity.teacher != current_user
+      redirect_to activities_path, alert: t('messages.permission_denied') and return
+    end
+
+    @activity.update(video_url: nil)
+    redirect_to activity_path(@activity, ultima_acao: 'conteudo_excluido'), notice: t('messages.video_deleted')
   end
 
   def clear_explanation
@@ -192,7 +203,7 @@ class ActivitiesController < ApplicationController
   end
 
   def activity_params
-    params.require(:activity).permit(:title, :description, :level, :media_url, :explanation_text, :statement)
+    params.require(:activity).permit(:title, :description, :level, :media_url, :video_url, :explanation_text, :statement)
   end
   
   def authorize_teacher

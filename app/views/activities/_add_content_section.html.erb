@@ -18,9 +18,17 @@
     <button type="button" class="btn-action media"
             data-action="content-form#toggle"
             data-bs-toggle="collapse"
-            data-bs-target="#new-media-form">
-      <i class="fas fa-photo-video"></i>
-      <span><%= t('activities.add_media') %></span>
+            data-bs-target="#new-image-form">
+      <i class="fas fa-image"></i>
+      <span><%= t('activities.add_image') %></span>
+    </button>
+
+    <button type="button" class="btn-action media"
+            data-action="content-form#toggle"
+            data-bs-toggle="collapse"
+            data-bs-target="#new-video-form">
+      <i class="fab fa-youtube"></i>
+      <span><%= t('activities.add_video') %></span>
     </button>
 
     <button type="button" class="btn-action text"
@@ -88,16 +96,32 @@
   </div>
 </div>
 
-<div class="collapse form-collapse" id="new-media-form" data-content-form-target="form">
+<div class="collapse form-collapse" id="new-image-form" data-content-form-target="form">
   <div class="card-body">
     <%= form_with(model: activity, local: true) do |f| %>
       <div class="mb-3">
-        <%= f.label :media_url, t('activities.media_url_label'), class: "form-label" %>
+        <%= f.label :media_url, t('activities.image_url_label'), class: "form-label" %>
         <%= f.text_field :media_url, class: "form-control",
-            placeholder: t('activities.media_url_placeholder') %>
+            placeholder: t('activities.image_url_placeholder') %>
       </div>
       <div class="d-grid">
-        <%= f.submit t('activities.save_media'), class: "btn btn-primary" %>
+        <%= f.submit t('activities.save_image'), class: "btn btn-primary" %>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<div class="collapse form-collapse" id="new-video-form" data-content-form-target="form">
+  <div class="card-body">
+    <%= form_with(model: activity, local: true) do |f| %>
+      <div class="mb-3">
+        <%= f.label :video_url, t('activities.video_url_label'), class: "form-label" %>
+        <%= f.text_field :video_url, class: "form-control",
+            placeholder: t('activities.video_url_placeholder') %>
+        <small class="form-text text-muted"><%= t('activities.video_url_hint') %></small>
+      </div>
+      <div class="d-grid">
+        <%= f.submit t('activities.save_video'), class: "btn btn-primary" %>
       </div>
     <% end %>
   </div>

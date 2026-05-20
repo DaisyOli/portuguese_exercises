@@ -222,16 +222,17 @@
            </div>
          <% end %>
          
-         <!-- Exibição da mídia -->
+         <!-- Exibição da imagem -->
          <% if @activity.media_url.present? %>
            <div class="content-section">
              <% if @activity.media_url.include?('youtube.com') || @activity.media_url.include?('youtu.be') %>
+               <%# Backwards-compat: YouTube links stored in media_url %>
                <% youtube_id = @activity.media_url.match(/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/) %>
                <% if youtube_id && youtube_id[1] %>
                  <div style="max-width: 560px; margin: 0 auto;">
                    <div class="ratio ratio-16x9">
-                     <iframe 
-                       src="https://www.youtube.com/embed/<%= youtube_id[1] %>" 
+                     <iframe
+                       src="https://www.youtube.com/embed/<%= youtube_id[1] %>"
                        allowfullscreen
                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                        style="border-radius: 8px;">
@@ -241,10 +242,29 @@
                <% end %>
              <% else %>
                <div style="text-align: center;">
-                 <img src="<%= @activity.media_url %>" alt="Imagem da atividade" class="img-fluid" style="border-radius: 8px; max-height: 400px;">
+                 <img src="<%= @activity.media_url %>" alt="<%= t('activities.image_label') %>" class="img-fluid" style="border-radius: 8px; max-height: 400px;">
                </div>
              <% end %>
            </div>
+         <% end %>
+
+         <!-- Exibição do vídeo -->
+         <% if @activity.video_url.present? %>
+           <% youtube_id = @activity.video_url.match(/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/) %>
+           <% if youtube_id && youtube_id[1] %>
+             <div class="content-section">
+               <div style="max-width: 560px; margin: 0 auto;">
+                 <div class="ratio ratio-16x9">
+                   <iframe
+                     src="https://www.youtube.com/embed/<%= youtube_id[1] %>"
+                     allowfullscreen
+                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                     style="border-radius: 8px;">
+                   </iframe>
+                 </div>
+               </div>
+             </div>
+           <% end %>
          <% end %>
 
          <!-- Exibição do texto explicativo -->

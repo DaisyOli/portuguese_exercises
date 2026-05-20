@@ -578,7 +578,7 @@
           field_label:    t('activities.statement_label') %>
   <% end %>
 
-  <% if @activity.media_url.present? %>
+  <% if @activity.media_url.present? || @activity.video_url.present? %>
     <%= render 'media_section', activity: @activity %>
   <% end %>
 
