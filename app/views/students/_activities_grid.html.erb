@@ -18,7 +18,7 @@
         <%= truncate(activity.description.presence || "Pratique português com exercícios interativos e divertidos!", length: 100) %>
       </p>
       
-      <% question_count = activity.questions.size %>
+      <% question_count = activity.questions_count.to_i %>
       <div class="card-meta">
         <span class="meta-item">
           <i class="fas fa-question-circle"></i>

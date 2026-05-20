@@ -2,7 +2,7 @@ class ActivitiesController < ApplicationController
   include QuizManagement
   
   before_action :authenticate_user!
-  before_action :set_activity, only: [:show, :edit, :update, :destroy, :resolve_quiz, :submit_quiz, :quiz_results, :clear_statement, :clear_media, :clear_explanation, :clear_attempt_history]
+  before_action :set_activity, only: [:show, :edit, :update, :destroy, :resolve_quiz, :submit_quiz, :quiz_results, :clear_statement, :clear_media, :clear_video, :clear_explanation, :clear_attempt_history]
   before_action :authorize_teacher, only: [:new, :create, :edit, :update, :destroy]
 
   def index

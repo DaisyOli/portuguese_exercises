@@ -1,4 +1,4 @@
-<% has_other_content = activity.statement.present? || activity.media_url.present? || activity.explanation_text.present? %>
+<% has_other_content = activity.statement.present? || activity.media_url.present? || activity.video_url.present? || activity.explanation_text.present? %>
 
 <% if activity.questions.any? %>
   <div class="main-card" style="<%= has_other_content ? '' : 'margin-top: 2.5rem;' %>">

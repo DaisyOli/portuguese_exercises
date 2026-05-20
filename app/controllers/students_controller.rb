@@ -24,7 +24,7 @@ class StudentsController < ApplicationController
     completed_ids = session[:completed_quizzes] || []
     activities = Activity.where(level: level)
                         .where.not(id: completed_ids)
-                        .includes(:questions)
+                        .with_questions_count
                         .limit(ACTIVITIES_PER_PAGE)
                         .offset(offset)
     
@@ -46,10 +46,10 @@ class StudentsController < ApplicationController
 
     @pending_activities = Activity.by_level(@current_level)
                                   .where.not(id: completed_ids)
-                                  .includes(:questions)
+                                  .with_questions_count
                                   .limit(ACTIVITIES_PER_PAGE)
     @total_pending        = Activity.by_level(@current_level).where.not(id: completed_ids).count
-    @completed_activities = Activity.by_level(@current_level).where(id: completed_ids).includes(:questions)
+    @completed_activities = Activity.by_level(@current_level).where(id: completed_ids).with_questions_count
     @activities = @pending_activities
   end
   

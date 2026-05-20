@@ -14,6 +14,11 @@ class Activity < ApplicationRecord
   
   scope :ordered, -> { order(created_at: :desc) }
   scope :by_level, ->(level) { where(level: level) }
+  scope :with_questions_count, -> {
+    left_outer_joins(:questions)
+      .group(:id)
+      .select('activities.*, COUNT(questions.id) AS questions_count')
+  }
 
   before_validation :generate_slug, if: :should_generate_slug?
   after_commit :clear_cache
