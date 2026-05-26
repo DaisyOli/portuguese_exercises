@@ -9,11 +9,13 @@ class ActivitiesIndexService
 
   def call
     activities = fetch_activities
+    activity_ids = activities.pluck(:id)
     {
-      activities: activities,
-      current_level: @params[:level],
+      activities:          activities,
+      current_level:       @params[:level],
       activities_by_level: fetch_activities_by_level,
-      best_attempts: fetch_best_attempts(activities.pluck(:id))
+      best_attempts:       fetch_best_attempts(activity_ids),
+      attempt_stats:       fetch_attempt_stats(activity_ids)
     }
   end
 
@@ -27,10 +29,7 @@ class ActivitiesIndexService
     activities = activities.where("title ILIKE ?", "%#{@params[:search]}%") if @params[:search].present?
 
     # Aplicar ordenação
-    activities = apply_sorting(activities)
-
-    # Carregar métricas
-    activities.includes(:quiz_attempts)
+    apply_sorting(activities).page(@params[:page]).per(9)
   end
 
   def apply_sorting(activities)
@@ -52,6 +51,22 @@ class ActivitiesIndexService
     Rails.cache.fetch(["activities_by_level"], expires_in: 1.hour) do
       Activity.all.group_by(&:level)
     end
+  end
+
+  def fetch_attempt_stats(activity_ids)
+    return { counts: {}, unique_users: {} } if activity_ids.empty?
+
+    counts = QuizAttempt.where(activity_id: activity_ids)
+                        .group(:activity_id)
+                        .count
+
+    unique_users = QuizAttempt.where(activity_id: activity_ids)
+                              .where.not(user_id: nil)
+                              .group(:activity_id)
+                              .distinct
+                              .count(:user_id)
+
+    { counts: counts, unique_users: unique_users }
   end
 
   def fetch_best_attempts(activity_ids)

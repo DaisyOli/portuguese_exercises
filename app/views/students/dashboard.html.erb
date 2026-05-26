@@ -1,473 +1,286 @@
 <% content_for :head do %>
-  <title><%= t('student_dashboard.welcome') %> - Practice PT</title>
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Kalam:wght@400;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-  
-  <style>
-    /* 🎨 BACKGROUND MIGRADO PARA _student_components.scss */
-
-    /* 📐 GRIDS MIGRADOS PARA _student_components.scss */
-
-    /* 🏆 LEVEL BADGES MIGRADOS PARA _student_components.scss */
-
-    /* ✨ ANIMAÇÕES MIGRADAS PARA _student_components.scss */
-
-    /* 🚨 CORREÇÕES DE CONTAINER E ALERTAS MIGRADAS PARA _student_components.scss */
-
-    /* ANIMAÇÕES E INDICADOR MIGRADOS PARA _student_components.scss */
-
-    /* 🇧🇷 SISTEMA DE STREAKS BRASILEIRO MIGRADO PARA _student_components.scss */
-
-    /* ⚡ CARREGAMENTO PROGRESSIVO E ATIVIDADES COMPLETADAS MIGRADOS PARA _student_components.scss */
-    
-    /* post-it.verde h3 MIGRADO PARA _student_components.scss */
-    
-     /* ANIMAÇÕES DUPLICADAS REMOVIDAS */
-
-     /* Smooth scroll behavior - mais agressivo */
-     html {
-       scroll-behavior: smooth;
-     }
-     
-     * {
-       scroll-behavior: smooth;
-     }
-
-     #activities,
-     #levels {
-       scroll-margin-top: 20px; /* Offset para não ficar grudado no topo */
-     }
-    /* BADGES BRASILEIROS ADICIONAIS MIGRADOS PARA _student_components.scss */
-
-    /* Animação sutil para o ícone do badge atual */
-    .streak-card .metrica-icon {
-      animation: gentlePulse 3s ease-in-out infinite;
-    }
-
-         @keyframes gentlePulse {
-       0%, 100% { transform: scale(1); }
-       50% { transform: scale(1.05); }
-     }
-
-     /* 🎖️ GALERIA DE CONQUISTAS */
-     .badges-gallery {
-       display: grid;
-       grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-       gap: var(--spacing-md);
-       margin: var(--spacing-lg) 0;
-     }
-
-     .achievement-badge {
-       background: rgba(255,255,255,0.9);
-       border-radius: var(--border-radius-md);
-       padding: var(--spacing-sm);
-       border: 2px solid #ddd;
-       transition: all 0.3s ease;
-       text-align: center;
-     }
-
-     .achievement-badge:hover {
-       transform: translateY(-2px);
-       box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-     }
-
-     .badge-icon {
-       font-size: 2rem;
-       margin-bottom: var(--spacing-xs);
-     }
-
-     .badge-title {
-       font-weight: 600;
-       font-size: 0.9rem;
-       color: var(--texto-escuro);
-       margin-bottom: 2px;
-     }
-
-     .badge-days {
-       font-size: 0.8rem;
-       color: #666;
-       margin-bottom: var(--spacing-xs);
-     }
-
-     .badge-quote {
-       font-size: 0.75rem;
-       font-style: italic;
-       color: #888;
-       line-height: 1.3;
-     }
-
-     .next-challenge {
-       margin-top: var(--spacing-md);
-       padding: var(--spacing-sm);
-       background: rgba(255,255,255,0.5);
-       border-radius: var(--border-radius-sm);
-       border: 1px dashed #ccc;
-     }
-
-     .streak-motivation {
-       color: #666;
-       font-weight: 500;
-       background: rgba(255,255,255,0.3);
-       padding: var(--spacing-xs);
-       border-radius: var(--border-radius-sm);
-       margin-top: var(--spacing-sm);
-     }
-
-    /* @keyframes pulse MIGRADO PARA _student_components.scss */
-
-    /* Barra de progresso personalizada */
-    .progress-bar-custom {
-      background: #e0e0e0;
-      height: 8px;
-      border-radius: 4px;
-      overflow: hidden;
-      margin-top: var(--spacing-sm);
-    }
-
-    .progress-fill {
-      height: 100%;
-      background: linear-gradient(90deg, var(--verde-destaque), #4caf50);
-      border-radius: 4px;
-      transition: width 1s ease;
-    }
-  </style>
+  <title>Dashboard · Practice-BR</title>
 <% end %>
-  <div class="student-dashboard-page">
-    <div class="student-container">
-    
-    <!-- ✅ Header personalizado para estudante -->
-    <div class="header-custom azul">
-      <div class="professor-info text-center">
-        <h1><i class="fas fa-graduation-cap"></i> 
-          <% if current_user.greeting_name %>
-            <%= t('student_dashboard.welcome_with_name', name: current_user.greeting_name) %>
-          <% else %>
-            <%= t('student_dashboard.welcome') %>
-          <% end %>
-        </h1>
-        <p>
-          <% if current_user.greeting_name %>
-            <%= t('student_dashboard.welcome_back_with_name', name: current_user.greeting_name) %>
-          <% else %>
-            <%= t('student_dashboard.welcome_back') %>
-          <% end %>
-          🚀
-        </p>
-      </div>
-    </div>
 
-    <!-- ✅ Métricas pessoais do estudante -->
-    <div class="metrics-grid">
-      
-      <!-- Atividades Concluídas -->
-      <div class="card-metrica hover-scale">
-        <div class="metrica-icon">
-          <i class="fas fa-check-circle"></i>
-        </div>
-        <div class="metrica-numero">
-          <%= session[:completed_quizzes]&.length || 0 %>
-        </div>
-        <div class="metrica-label"><%= t('student_dashboard.metrics.completed_activities') %></div>
-      </div>
-      
-      <!-- Sistema de Streaks Brasileiro -->
-      <% current_streak = session[:current_streak] || 0 %>
-      <% current_badge = get_current_badge(current_streak) %>
-      <% next_badge = get_next_badge(current_streak) %>
-      <% days_to_next = get_days_to_next_badge(current_streak) %>
-      
-      <div class="card-metrica hover-scale streak-card <%= current_badge[:class] %>">
-        <div class="metrica-icon">
-          <%= current_badge[:icon] %>
-        </div>
-        <div class="metrica-numero">
-          <%= current_streak %>
-        </div>
-        <div class="metrica-label"><%= t('student_dashboard.metrics.streak_days') %></div>
-        
-        <!-- Badge Atual -->
-        <% if current_streak > 0 %>
-          <div class="current-badge">
-            <span class="badge-name"><%= current_badge[:name] %></span>
-            <span class="badge-phrase">"<%= current_badge[:phrase] %>"</span>
-          </div>
-        <% end %>
-        
-        <!-- Próximo Marco -->
-        <% if next_badge && days_to_next %>
-          <div class="next-milestone">
-            <div class="next-badge-info">
-              <%= next_badge[:icon] %> <%= next_badge[:name] %>
-            </div>
-                         <div class="days-remaining">
-               <%= days_to_next == 1 ? t('student_dashboard.messages.tomorrow') : "#{t('student_dashboard.messages.in_days')} #{days_to_next} #{t('student_dashboard.messages.days')}" %>
-             </div>
-            
-            <!-- Barra de progresso entre marcos -->
-            <div class="milestone-progress">
-              <div class="milestone-progress-bar" style="width: <%= get_streak_progress_percentage(current_streak) %>%"></div>
-            </div>
-          </div>
-        <% end %>
-      </div>
-      
-      <!-- Progresso Geral -->
-      <div class="card-metrica hover-scale">
-        <div class="metrica-icon">
-          <i class="fas fa-chart-line"></i>
-        </div>
-        <div class="metrica-numero">
-          <%= session[:completed_quizzes]&.length.to_i > 0 && @activities.count > 0 ? ((session[:completed_quizzes].length.to_f / @activities.count) * 100).round : 0 %>%
-        </div>
-        <div class="metrica-label"><%= t('student_dashboard.metrics.total_progress') %></div>
-      </div>
-      
-      <!-- Última Pontuação -->
-      <div class="card-metrica hover-scale">
-        <div class="metrica-icon">
-          <i class="fas fa-star"></i>
-        </div>
-        <div class="metrica-numero">
-          <%= session[:last_quiz_score] || '--' %>
-        </div>
-        <div class="metrica-label"><%= t('student_dashboard.metrics.last_score') %></div>
-      </div>
-      
-    </div>
+<%
+  completed_ids   = session[:completed_quizzes] || []
+  current_streak  = session[:current_streak].to_i
+  last_score      = session[:last_quiz_score]
+  total_count     = @activities.count
+  completed_count = completed_ids.length
+  progress_pct    = total_count > 0 ? ((completed_count.to_f / total_count) * 100).round : 0
 
-    <% if params[:level].present? %>
-      <!-- ✅ Vista de nível específico -->
-      <div class="post-it azul-gelo" id="activities">
-        <h2>
-          <i class="fas fa-layer-group"></i>
-          Nível <%= @current_level %>
-          <span class="level-badge <%= @current_level %>"><%= @current_level %></span>
-        </h2>
-        <p>Explore todas as atividades deste nível e domine o português!</p>
-        <div class="text-center mt-3">
-          <%= link_to student_dashboard_path + "#levels", class: "btn-mini ver back-to-levels-btn" do %>
-            <i class="fas fa-arrow-left"></i> <%= t('activities.back_to_all') %>
-          <% end %>
-        </div>
+  cefr_colors = {
+    'A1' => { bg:'#E8F5EE', text:'#0F3826', border:'#2A9B6F', bar:'#2A9B6F', label:'Iniciante' },
+    'A2' => { bg:'#EBF2FC', text:'#1A4A8A', border:'#2563EB', bar:'#2563EB', label:'Básico' },
+    'B1' => { bg:'#F5F3FF', text:'#4C1D95', border:'#7C3AED', bar:'#7C3AED', label:'Intermediário' },
+    'B2' => { bg:'#FFF7ED', text:'#7C2D12', border:'#EA580C', bar:'#EA580C', label:'Avançado' },
+    'C1' => { bg:'#F3F4F6', text:'#1C1917', border:'#374151', bar:'#374151', label:'Fluente' },
+  }
+%>
+
+<div style="max-width:1000px; margin:0 auto; padding:2rem 1.5rem;">
+
+<% if params[:level].present? %>
+
+  <%# ══════════════════════════════════════════════ %>
+  <%# VISTA DE NÍVEL ESPECÍFICO                      %>
+  <%# ══════════════════════════════════════════════ %>
+
+  <%# — Breadcrumb / back — %>
+  <div style="display:flex; align-items:center; gap:10px; margin-bottom:1.5rem;">
+    <%= link_to student_dashboard_path,
+          style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.85rem; color:#5C5853; text-decoration:none; display:flex; align-items:center; gap:4px;" do %>
+      ← Todos os níveis
+    <% end %>
+    <% if @current_level %>
+      <% c = cefr_colors[@current_level] || cefr_colors['A1'] %>
+      <span style="font-family:'DM Mono',monospace; font-size:0.72rem; font-weight:700;
+                   background:<%= c[:bg] %>; color:<%= c[:text] %>; border:1.5px solid <%= c[:border] %>;
+                   padding:3px 10px; border-radius:20px;">
+        <%= @current_level %>
+      </span>
+    <% end %>
+  </div>
+
+  <% if @current_level.present? %>
+
+    <% if @pending_activities.any? %>
+      <h2 style="font-family:'Raleway',sans-serif; font-size:1.1rem; font-weight:700; color:#1C1917; margin-bottom:1rem;">
+        Atividades disponíveis
+      </h2>
+      <div class="activities-grid" id="activities-container">
+        <%= render 'activities_grid', activities: @pending_activities %>
       </div>
 
-      <!-- ✅ Atividades do nível específico com carregamento progressivo -->
-      <% if @current_level.present? %>
-        <!-- Seção de atividades pendentes -->
-        <% if @pending_activities.any? %>
-          <div class="activities-section">
-            <div class="activities-grid" id="activities-container">
-              <%= render 'activities_grid', activities: @pending_activities %>
-            </div>
-            
-            <!-- Botão "Carregar Mais" -->
-            <% if @total_pending > 3 %>
-              <div class="load-more-section text-center mt-4">
-                <button class="btn-giz secondary load-more-btn" 
-                        data-level="<%= @current_level %>" 
-                        data-offset="3"
-                        data-total="<%= @total_pending %>">
-                  <i class="fas fa-plus"></i>
-                  <%= t('student_dashboard.actions.load_more') %> 
-                  (<%= [@total_pending - 3, 0].max %> <%= t('student_dashboard.messages.remaining') %>)
-                </button>
-                <div class="loading-spinner d-none">
-                  <i class="fas fa-spinner fa-spin"></i>
-                  <%= t('student_dashboard.messages.loading') %>...
-                </div>
-              </div>
-            <% end %>
-          </div>
-          
-          <!-- Seção de atividades completadas (colapsável) -->
-          <% if @completed_activities.any? %>
-            <div class="completed-activities-section mt-4">
-              <button class="btn-toggle-completed btn-giz secondary" data-bs-toggle="collapse" data-bs-target="#completed-activities">
-                <i class="fas fa-check-circle"></i>
-                <%= t('student_dashboard.actions.show_completed') %> (<%= @completed_activities.count %>)
-                <i class="fas fa-chevron-down toggle-icon"></i>
-              </button>
-              
-              <div class="collapse mt-3" id="completed-activities">
-                <div class="activities-grid">
-                  <%= render 'activities_grid', activities: @completed_activities %>
-                </div>
-              </div>
-            </div>
-          <% end %>
-        <% else %>
-          <!-- Todas as atividades deste nível foram completadas -->
-          <div class="post-it verde text-center">
-            <h3><i class="fas fa-trophy"></i> <%= t('student_dashboard.messages.level_completed') %></h3>
-            <p><%= t('student_dashboard.messages.level_completed_desc', level: @current_level) %></p>
-            <% if @completed_activities.any? %>
-              <button class="btn-giz mt-2" data-bs-toggle="collapse" data-bs-target="#completed-activities">
-                <i class="fas fa-redo"></i>
-                <%= t('student_dashboard.actions.review_activities') %>
-              </button>
-              
-              <div class="collapse mt-3" id="completed-activities">
-                <div class="activities-grid">
-                  <%= render 'activities_grid', activities: @completed_activities %>
-                </div>
-              </div>
-            <% end %>
-          </div>
-        <% end %>
-      <% elsif @activities.any? %>
-        <!-- Vista geral (manter compatibilidade) -->
-        <div class="activities-grid">
-          <%= render 'activities_grid', activities: @activities %>
+      <% if @total_pending > 3 %>
+        <div class="text-center mt-4">
+          <button class="btn-giz secondary load-more-btn"
+                  data-level="<%= @current_level %>"
+                  data-offset="3"
+                  data-total="<%= @total_pending %>">
+            + Carregar mais (<%= [@total_pending - 3, 0].max %> restantes)
+          </button>
+          <div class="loading-spinner d-none">Carregando...</div>
         </div>
-      <% else %>
-        <!-- Nenhuma atividade neste nível -->
-        <div class="post-it pessego text-center">
-          <h3><i class="fas fa-info-circle"></i> Oops!</h3>
-          <p><%= t('student_dashboard.messages.no_activities_level') %> <%= @current_level %>.</p>
-          <p><%= t('student_dashboard.messages.try_other_levels') %></p>
-                     <%= link_to student_dashboard_path + "#levels", class: "btn-giz mt-2 back-to-levels-btn" do %>
-             <i class="fas fa-search"></i> <%= t('student_dashboard.actions.explore_levels') %>
-           <% end %>
+      <% end %>
+
+      <% if @completed_activities.any? %>
+        <div class="mt-4">
+          <button style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.85rem; font-weight:600;
+                         color:#5C5853; background:transparent; border:1.5px solid #DDD9D2;
+                         padding:8px 18px; border-radius:10px; cursor:pointer;"
+                  data-bs-toggle="collapse" data-bs-target="#completed-activities">
+            ✓ Ver atividades concluídas (<%= @completed_activities.count %>)
+          </button>
+          <div class="collapse mt-3" id="completed-activities">
+            <div class="activities-grid">
+              <%= render 'activities_grid', activities: @completed_activities %>
+            </div>
+          </div>
         </div>
       <% end %>
 
     <% else %>
-      <!-- ✅ Vista geral - escolha de níveis -->
-      <div class="post-it menta" id="levels">
-        <h2><i class="fas fa-rocket"></i> <%= t('student_dashboard.choose_level') %></h2>
-        <p><%= t('student_dashboard.choose_level_description') %></p>
-        
-        <!-- Barra de progresso geral -->
-        <div class="progress-bar-custom mt-3">
-          <div class="progress-fill" style="width: <%= session[:completed_quizzes]&.length.to_i > 0 && @activities.count > 0 ? ((session[:completed_quizzes].length.to_f / @activities.count) * 100).round : 0 %>%"></div>
-        </div>
-                           <div class="text-center mt-2 text-small">
-            <%= t('student_dashboard.messages.general_progress') %>: <%= session[:completed_quizzes]&.length || 0 %>/<%= @activities.count %> <%= t('student_dashboard.messages.activities_text') %>
-          </div>
-         <div class="text-center mt-2 text-small streak-motivation">
-           <%= get_motivational_message(session[:current_streak] || 0) %>
-         </div>
-      </div>
+      <%# Nível completado %>
+      <div style="background:#E8F5EE; border:1.5px solid #2A9B6F; border-radius:16px; padding:32px; text-align:center; margin-bottom:1.5rem;">
+        <div style="font-size:2.5rem; margin-bottom:12px;">🏆</div>
+        <h2 style="font-family:'Raleway',sans-serif; font-size:1.2rem; font-weight:700; color:#0F3826; margin-bottom:8px;">
+          Nível <%= @current_level %> completo!
+        </h2>
+        <p style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.9rem; color:#1A6B4A;">
+          Você concluiu todas as atividades deste nível. Parabéns!
+        </p>
 
-      <div class="levels-grid">
-        <% Activity.levels.keys.each do |level| %>
-          <% level_activities = @activities_by_level[level] || [] %>
-          <% completed_in_level = (session[:completed_quizzes] || []) & level_activities.map(&:id) %>
-          
-          <div class="card-atividade hover-lift">
-            <div class="card-header text-center">
-              <span class="level-badge <%= level %>"><%= level %></span>
-                             <h3 class="card-title mt-2">
-                 <%= case level
-                     when 'A1' then t('student_dashboard.levels.beginner')
-                     when 'A2' then t('student_dashboard.levels.basic')
-                     when 'B1' then t('student_dashboard.levels.intermediate') 
-                     when 'B2' then t('student_dashboard.levels.advanced')
-                     when 'C1' then t('student_dashboard.levels.expert')
-                     end %>
-               </h3>
-            </div>
-            
-            <div class="card-content text-center">
-                             <p class="card-description">
-                 <%= case level
-                     when 'A1' then t('student_dashboard.level_descriptions.a1')
-                     when 'A2' then t('student_dashboard.level_descriptions.a2')
-                     when 'B1' then t('student_dashboard.level_descriptions.b1')
-                     when 'B2' then t('student_dashboard.level_descriptions.b2')
-                     when 'C1' then t('student_dashboard.level_descriptions.c1')
-                     end %>
-               </p>
-              
-              <div class="card-meta">
-                <span class="meta-item">
-                  <i class="fas fa-clipboard-list"></i>
-                  <%= level_activities.count %> atividades
-                </span>
-                <span class="meta-item">
-                  <i class="fas fa-check-circle text-verde"></i>
-                  <%= completed_in_level.length %> concluídas
-                </span>
-              </div>
-              
-              <!-- Progress bar do nível -->
-              <div class="progress-bar-custom mt-3">
-                <div class="progress-fill" 
-                     style="width: <%= level_activities.count > 0 ? ((completed_in_level.length.to_f / level_activities.count) * 100).round : 0 %>%">
-                </div>
-              </div>
-              <div class="text-small mt-1">
-                <%= level_activities.count > 0 ? ((completed_in_level.length.to_f / level_activities.count) * 100).round : 0 %>% completo
-              </div>
-            </div>
-            
-            <div class="card-actions">
-              <%= link_to student_dashboard_path(level: level) + "#activities", 
-                    class: "btn-giz #{level_activities.empty? ? 'secondary' : ''} level-link", 
-                    data: { level: level } do %>
-                <% if level_activities.empty? %>
-                  <i class="fas fa-clock"></i>
-                  Em Breve
-                <% else %>
-                  <i class="fas fa-arrow-right"></i>
-                  <%= t('activities.view_level') %>
-                <% end %>
-              <% end %>
+        <% if @completed_activities.any? %>
+          <button style="margin-top:16px; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.85rem;
+                         font-weight:600; color:#0F3826; background:transparent; border:1.5px solid #2A9B6F;
+                         padding:8px 20px; border-radius:10px; cursor:pointer;"
+                  data-bs-toggle="collapse" data-bs-target="#completed-activities">
+            Revisar atividades →
+          </button>
+          <div class="collapse mt-3" id="completed-activities">
+            <div class="activities-grid">
+              <%= render 'activities_grid', activities: @completed_activities %>
             </div>
           </div>
         <% end %>
       </div>
     <% end %>
 
-    <!-- ✅ Galeria de Conquistas Brasileiras -->
-    <% current_streak = session[:current_streak] || 0 %>
-    <% achieved_badges = get_all_achieved_badges(current_streak) %>
-    
-    <% if achieved_badges.any? %>
-             <div class="post-it menta text-center mt-4">
-         <h3><i class="fas fa-trophy"></i> <%= t('student_dashboard.achievements') %></h3>
-         <p><%= t('student_dashboard.achievements_description') %></p>
-        
-        <div class="badges-gallery">
-          <% achieved_badges.each do |badge| %>
-            <div class="achievement-badge <%= badge[:class] %>">
-              <div class="badge-icon"><%= badge[:icon] %></div>
-              <div class="badge-details">
-                <div class="badge-title"><%= badge[:name] %></div>
-                <div class="badge-days"><%= badge[:days] %> dias</div>
-                <div class="badge-quote">"<%= badge[:phrase] %>"</div>
-              </div>
-            </div>
-          <% end %>
+  <% else %>
+    <%# Nível sem atividades %>
+    <div style="background:#fff; border:1px solid #DDD9D2; border-radius:16px; padding:32px; text-align:center;">
+      <div style="font-size:2rem; margin-bottom:12px;">🔍</div>
+      <p style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.9rem; color:#5C5853; margin-bottom:16px;">
+        Nenhuma atividade disponível neste nível ainda.
+      </p>
+      <%= link_to "← Explorar outros níveis", student_dashboard_path,
+            style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.85rem; font-weight:600;
+                    color:#2563EB; text-decoration:none;" %>
+    </div>
+  <% end %>
+
+<% else %>
+
+  <%# ══════════════════════════════════════════════ %>
+  <%# VISTA PRINCIPAL — seletor de níveis            %>
+  <%# ══════════════════════════════════════════════ %>
+
+  <%# — Saudação — %>
+  <div style="margin-bottom:2rem;">
+    <h1 style="font-family:'Raleway',sans-serif; font-size:1.75rem; font-weight:700; color:#1C1917; margin-bottom:4px;">
+      Olá<% if current_user.greeting_name %>, <%= current_user.greeting_name %><% end %>! 👋
+    </h1>
+    <p style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.95rem; color:#5C5853;">
+      Continue praticando — você está no caminho certo.
+    </p>
+  </div>
+
+  <%# — 4 Cards de Métricas — %>
+  <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:1rem; margin-bottom:2rem;">
+
+    <div style="background:#fff; border:1px solid #DDD9D2; border-radius:14px; padding:20px 22px;">
+      <div style="font-family:'DM Mono',monospace; font-size:0.68rem; color:#9C9892; letter-spacing:0.08em; text-transform:uppercase; margin-bottom:8px;">Concluídas</div>
+      <div style="font-family:'Raleway',sans-serif; font-size:2rem; font-weight:800; color:#2A9B6F; line-height:1;"><%= completed_count %></div>
+      <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.78rem; color:#5C5853; margin-top:6px;">atividades feitas</div>
+    </div>
+
+    <div style="background:#FBF3E0; border:1px solid #E8C97A; border-radius:14px; padding:20px 22px;">
+      <div style="font-family:'DM Mono',monospace; font-size:0.68rem; color:#9C7A30; letter-spacing:0.08em; text-transform:uppercase; margin-bottom:8px;">Sequência</div>
+      <div style="display:flex; align-items:baseline; gap:6px;">
+        <div style="font-family:'Raleway',sans-serif; font-size:2rem; font-weight:800; color:#C9952A; line-height:1;"><%= current_streak %></div>
+        <div style="font-size:1.1rem;">🔥</div>
+      </div>
+      <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.78rem; color:#8B6914; margin-top:6px;">dias seguidos</div>
+    </div>
+
+    <div style="background:#fff; border:1px solid #DDD9D2; border-radius:14px; padding:20px 22px;">
+      <div style="font-family:'DM Mono',monospace; font-size:0.68rem; color:#9C9892; letter-spacing:0.08em; text-transform:uppercase; margin-bottom:8px;">Progresso</div>
+      <div style="font-family:'Raleway',sans-serif; font-size:2rem; font-weight:800; color:#2563EB; line-height:1;"><%= progress_pct %>%</div>
+      <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.78rem; color:#5C5853; margin-top:6px;">do total de atividades</div>
+    </div>
+
+    <div style="background:#fff; border:1px solid #DDD9D2; border-radius:14px; padding:20px 22px;">
+      <div style="font-family:'DM Mono',monospace; font-size:0.68rem; color:#9C9892; letter-spacing:0.08em; text-transform:uppercase; margin-bottom:8px;">Última nota</div>
+      <div style="font-family:'Raleway',sans-serif; font-size:2rem; font-weight:800; color:#7C3AED; line-height:1;"><%= last_score || '--' %></div>
+      <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.78rem; color:#5C5853; margin-top:6px;">no último exercício</div>
+    </div>
+
+  </div>
+
+  <%# — Cabeçalho do grid de níveis — %>
+  <div style="display:flex; align-items:baseline; justify-content:space-between; margin-bottom:0.75rem;">
+    <h2 style="font-family:'Raleway',sans-serif; font-size:1.1rem; font-weight:700; color:#1C1917;">Escolha um Nível</h2>
+    <span style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; color:#9C9892;">
+      <%= completed_count %>/<%= total_count %> atividades concluídas
+    </span>
+  </div>
+
+  <%# — Grid de Níveis — %>
+  <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:1rem; margin-bottom:2rem;">
+    <% Activity.levels.keys.each do |level| %>
+      <% level_activities   = @activities_by_level[level] || [] %>
+      <% completed_in_level = completed_ids & level_activities.map(&:id) %>
+      <% level_count        = level_activities.count %>
+      <% level_done         = completed_in_level.length %>
+      <% level_pct          = level_count > 0 ? ((level_done.to_f / level_count) * 100).round : 0 %>
+      <% c = cefr_colors[level] %>
+      <% empty = level_activities.empty? %>
+
+      <div style="background:#fff; border:1px solid #DDD9D2; border-radius:16px; padding:24px; opacity:<%= empty ? '0.55' : '1' %>;">
+
+        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:14px;">
+          <span style="font-family:'DM Mono',monospace; font-size:0.75rem; font-weight:700;
+                       background:<%= c[:bg] %>; color:<%= c[:text] %>; border:1.5px solid <%= c[:border] %>;
+                       padding:4px 12px; border-radius:20px;">
+            <%= level %>
+          </span>
+          <span style="font-family:'DM Mono',monospace; font-size:0.72rem; color:<%= empty ? '#9C9892' : (level_done > 0 ? c[:bar] : '#9C9892') %>; font-weight:600;">
+            <% if empty %>em breve<% else %><%= level_done %>/<%= level_count %> ✓<% end %>
+          </span>
         </div>
-        
+
+        <div style="font-family:'Raleway',sans-serif; font-size:1rem; font-weight:700; color:#1C1917; margin-bottom:4px;">
+          <%= c[:label] %>
+        </div>
+        <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.8rem; color:#5C5853; margin-bottom:16px; line-height:1.45;">
+          <%= case level
+              when 'A1' then t('student_dashboard.level_descriptions.a1')
+              when 'A2' then t('student_dashboard.level_descriptions.a2')
+              when 'B1' then t('student_dashboard.level_descriptions.b1')
+              when 'B2' then t('student_dashboard.level_descriptions.b2')
+              when 'C1' then t('student_dashboard.level_descriptions.c1')
+              end %>
+        </div>
+
+        <div style="background:#F0EDE8; border-radius:99px; height:6px; overflow:hidden; margin-bottom:6px;">
+          <div style="width:<%= level_pct %>%; height:100%; border-radius:99px; background:<%= c[:bar] %>;"></div>
+        </div>
+        <div style="font-family:'DM Mono',monospace; font-size:0.7rem; color:#9C9892; margin-bottom:16px;">
+          <%= level_pct %>% completo
+        </div>
+
+        <% if empty %>
+          <div style="display:block; text-align:center; background:#DDD9D2; color:#9C9892;
+                      font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; font-weight:700;
+                      padding:9px; border-radius:10px; cursor:not-allowed;">
+            Em breve
+          </div>
+        <% else %>
+          <%= link_to student_dashboard_path(level: level),
+                style: "display:block; text-align:center; background:#0F3826; color:#fff;
+                        font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; font-weight:700;
+                        padding:9px; border-radius:10px; text-decoration:none;" do %>
+            <%= level_done > 0 ? 'Continuar →' : 'Explorar →' %>
+          <% end %>
+        <% end %>
+
+      </div>
+    <% end %>
+  </div>
+
+  <%# — Conquistas (só se tiver badges) — %>
+  <% achieved_badges = get_all_achieved_badges(current_streak) %>
+  <% if achieved_badges.any? %>
+    <div style="background:#fff; border:1px solid #DDD9D2; border-radius:16px; padding:24px; margin-bottom:2rem;">
+      <h2 style="font-family:'Raleway',sans-serif; font-size:1.1rem; font-weight:700; color:#1C1917; margin-bottom:16px;">
+        🏆 Conquistas
+      </h2>
+      <div style="display:flex; gap:12px; flex-wrap:wrap;">
+        <% achieved_badges.each do |badge| %>
+          <div style="background:#FBF3E0; border:1.5px solid #E8C97A; border-radius:12px; padding:14px 18px; text-align:center; min-width:110px;">
+            <div style="font-size:1.8rem; margin-bottom:6px;"><%= badge[:icon] %></div>
+            <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.8rem; font-weight:700; color:#1C1917; margin-bottom:2px;"><%= badge[:name] %></div>
+            <div style="font-family:'DM Mono',monospace; font-size:0.68rem; color:#9C7A30;"><%= badge[:days] %> dias</div>
+          </div>
+        <% end %>
+
         <% next_badge = get_next_badge(current_streak) %>
         <% if next_badge %>
-                     <div class="next-challenge">
-             <p><strong><%= t('student_dashboard.messages.next_challenge') %>:</strong> <%= next_badge[:icon] %> <%= next_badge[:name] %> <%= t('student_dashboard.messages.in_days') %> <%= get_days_to_next_badge(current_streak) %> <%= t('student_dashboard.messages.days') %>!</p>
-           </div>
-        <% end %>
-      </div>
-    <% end %>
-
-
-
-    <!-- ✅ Ações do estudante -->
-    <div class="post-it lavanda text-center mt-4">
-      <h3><i class="fas fa-user-graduate"></i> <%= t('student_dashboard.your_profile') %></h3>
-      <p><%= t('student_dashboard.connected_as') %>: <strong><%= current_user.display_name %></strong></p>
-      
-      <div class="d-flex justify-center gap-2 mt-3">
-        <%= button_to destroy_user_session_path, method: :delete, 
-              class: "btn-form secondary", 
-              data: { turbo: false } do %>
-          <i class="fas fa-sign-out-alt"></i>
-          <%= t('auth.sign_out') %>
+          <% days_left = get_days_to_next_badge(current_streak) %>
+          <div style="background:#F7F5F0; border:1.5px dashed #DDD9D2; border-radius:12px; padding:14px 18px; text-align:center; min-width:110px; opacity:0.5;">
+            <div style="font-size:1.8rem; margin-bottom:6px;"><%= next_badge[:icon] %></div>
+            <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.8rem; font-weight:700; color:#1C1917; margin-bottom:2px;"><%= next_badge[:name] %></div>
+            <div style="font-family:'DM Mono',monospace; font-size:0.68rem; color:#9C9892;"><%= days_left %> dias restantes</div>
+          </div>
         <% end %>
       </div>
     </div>
-  </div>
+  <% end %>
+
+<% end %>
+
+  <%# ── CTA Footer ── %>
+  <% if params[:level].blank? %>
+    <div style="display:flex; justify-content:center; padding-bottom:2rem;">
+      <%= link_to activities_path,
+            style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.9rem; font-weight:700;
+                    background:#1A6B4A; color:#fff; padding:13px 32px; border-radius:12px;
+                    text-decoration:none; display:inline-flex; align-items:center; gap:8px;" do %>
+        Ver Todas as Atividades →
+      <% end %>
+    </div>
+  <% end %>
+
 </div>
-
-  <!-- ✅ JavaScript movido para app/javascript/student_dashboard.js -->
-

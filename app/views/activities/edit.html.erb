@@ -1,151 +1,103 @@
 <% content_for :head do %>
-  <title><%= t('activities.edit') %> - Practice PT</title>
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Kalam:wght@400;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-  
+  <title>Editar Atividade · Practice-BR</title>
   <style>
-    /* 🎨 Estilos específicos da página de edição */
-    body {
-      background: linear-gradient(135deg, var(--fundo-neutro) 0%, #e3f2fd 100%);
-      min-height: 100vh;
-      font-family: var(--font-primary);
-      color: var(--texto-escuro);
-      line-height: 1.6;
-    }
+    .pb-input:focus { border-color:#1A6B4A !important; box-shadow:0 0 0 3px rgba(26,107,74,0.1) !important; outline:none !important; }
   </style>
 <% end %>
 
-  <!-- ✅ Container usando nosso sistema -->
-  <div class="form-container">
-    
-    <!-- ✅ Header usando componente .header-atividade -->
-    <div class="header-atividade form">
-      <h1><i class="fas fa-edit"></i> <%= t('activities.edit') %></h1>
-      <p>Atualize as informações da sua atividade</p>
-    </div>
+<div style="max-width:680px; margin:1.5rem auto 3rem; padding:0 1.5rem;">
 
-    <!-- ✅ Card principal usando .form-card -->
-    <div class="form-card">
-      
-      <!-- ✅ Título do formulário -->
-      <h2 class="form-title">
-        <i class="fas fa-clipboard-list"></i>
-        Informações da Atividade
-      </h2>
-
-      <%= simple_form_for(@activity) do |f| %>
-        
-        <!-- ✅ Seção do formulário -->
-        <div class="form-section">
-          <h3 class="section-title">
-            <i class="fas fa-info-circle"></i>
-            Dados Básicos
-          </h3>
-          
-          <!-- ✅ Campo Título usando .form-group -->
-          <div class="form-group animate">
-            <%= f.label :title, t('forms.title'), class: "form-label" %>
-            <span class="required">*</span>
-            <%= f.input_field :title, 
-                            class: "form-input #{'error' if @activity.errors[:title].any?}",
-                            placeholder: t('activities.title_placeholder') %>
-            <% if @activity.errors[:title].any? %>
-              <div class="form-error">
-                <i class="fas fa-exclamation-circle"></i>
-                <%= @activity.errors[:title].first %>
-              </div>
-            <% end %>
-          </div>
-
-          <!-- ✅ Campo Descrição usando .form-textarea -->
-          <div class="form-group animate">
-            <%= f.label :description, t('forms.description'), class: "form-label" %>
-            <span class="optional">(opcional)</span>
-            <%= f.input_field :description, 
-                            as: :text,
-                            class: "form-textarea #{'error' if @activity.errors[:description].any?}",
-                            placeholder: t('activities.description_placeholder'),
-                            rows: 4 %>
-            <div class="form-help">
-              <i class="fas fa-lightbulb"></i>
-              Descreva brevemente o objetivo da atividade
-            </div>
-            <% if @activity.errors[:description].any? %>
-              <div class="form-error">
-                <i class="fas fa-exclamation-circle"></i>
-                <%= @activity.errors[:description].first %>
-              </div>
-            <% end %>
-          </div>
-
-          <!-- ✅ Campo Nível usando .form-select -->
-          <div class="form-group animate">
-            <%= f.label :level, t('forms.level'), class: "form-label" %>
-            <span class="required">*</span>
-            <%= f.input_field :level,
-                            collection: [['A1', 'A1'], ['A2', 'A2'], ['B1', 'B1'], ['B2', 'B2'], ['C1', 'C1']],
-                            class: "form-select #{'error' if @activity.errors[:level].any?}",
-                            prompt: "Selecione o nível..." %>
-            <div class="form-help">
-              <i class="fas fa-graduation-cap"></i>
-              Escolha o nível de dificuldade apropriado
-            </div>
-            <% if @activity.errors[:level].any? %>
-              <div class="form-error">
-                <i class="fas fa-exclamation-circle"></i>
-                <%= @activity.errors[:level].first %>
-              </div>
-            <% end %>
-          </div>
-        </div>
-
-        <!-- ✅ Ações do formulário usando .form-actions -->
-        <div class="form-actions">
-          <%= link_to activity_path(@activity), class: "btn-form secondary" do %>
-            <i class="fas fa-arrow-left"></i>
-            <%= t('activities.back_to_activities') %>
-          <% end %>
-          
-          <%= f.button :submit, class: "btn-form primary" do %>
-            <i class="fas fa-save"></i>
-            <%= t('forms.update_activity') %>
-          <% end %>
-        </div>
-
-      <% end %>
-    </div>
+  <%# Cabeçalho %>
+  <div style="display:flex; align-items:center; gap:12px; margin-bottom:1.25rem; flex-wrap:wrap;">
+    <%= link_to activity_path(@activity),
+          style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; font-weight:600; color:#5C5853; padding:7px 14px; border:1.5px solid #DDD9D2; border-radius:8px; text-decoration:none; background:#fff; white-space:nowrap;" do %>
+      ← Voltar
+    <% end %>
+    <span style="font-family:'Raleway',sans-serif; font-size:1.2rem; font-weight:700; color:#1C1917;">
+      Editar — <span style="font-weight:500; color:#5C5853;"><%= @activity.title %></span>
+    </span>
   </div>
 
-  <!-- ✅ Script para animações dos form-groups -->
-  <script>
-    document.addEventListener('DOMContentLoaded', function() {
-      // Ativa animações dos grupos de formulário
-      const formGroups = document.querySelectorAll('.form-group.animate');
-      
-      const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-          if (entry.isIntersecting) {
-            entry.target.style.opacity = '1';
-            entry.target.style.transform = 'translateY(0)';
-          }
-        });
-      });
-      
-      formGroups.forEach(group => {
-        observer.observe(group);
-      });
-      
-      // Melhora o focus dos inputs
-      const inputs = document.querySelectorAll('.form-input, .form-textarea, .form-select');
-      inputs.forEach(input => {
-        input.addEventListener('focus', function() {
-          this.parentElement.classList.add('focused');
-        });
-        
-        input.addEventListener('blur', function() {
-          this.parentElement.classList.remove('focused');
-        });
-      });
-    });
-  </script>
+  <div style="background:#fff; border:1px solid #DDD9D2; border-radius:20px; padding:32px 36px;">
+
+    <%= form_with model: @activity, local: true do |f| %>
+
+      <%# Erros %>
+      <% if @activity.errors.any? %>
+        <div style="background:#FEF2F2; border:1.5px solid #FCA5A5; border-radius:10px; padding:14px 16px; margin-bottom:24px;">
+          <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; font-weight:600; color:#991B1B; margin-bottom:6px;">Corrija os erros abaixo:</div>
+          <ul style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; color:#B91C1C; margin:0; padding-left:18px;">
+            <% @activity.errors.full_messages.each do |msg| %>
+              <li><%= msg %></li>
+            <% end %>
+          </ul>
+        </div>
+      <% end %>
+
+      <%# Título %>
+      <div style="margin-bottom:22px;">
+        <%= f.label :title, style: "display:block; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; font-weight:600; color:#1C1917; margin-bottom:6px;" do %>
+          Título <span style="color:#EA580C;">*</span>
+        <% end %>
+        <%= f.text_field :title,
+              class: "pb-input",
+              style: "width:100%; padding:11px 14px; border:1.5px solid #DDD9D2; border-radius:10px; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.9rem; color:#1C1917; background:#fff; box-sizing:border-box;" %>
+      </div>
+
+      <%# Descrição %>
+      <div style="margin-bottom:22px;">
+        <%= f.label :description, style: "display:block; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; font-weight:600; color:#1C1917; margin-bottom:6px;" do %>
+          Descrição <span style="color:#EA580C;">*</span>
+        <% end %>
+        <%= f.text_area :description,
+              class: "pb-input",
+              rows: 3,
+              style: "width:100%; padding:11px 14px; border:1.5px solid #DDD9D2; border-radius:10px; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.9rem; color:#1C1917; background:#fff; resize:vertical; min-height:90px; box-sizing:border-box;" %>
+      </div>
+
+      <%# Nível CEFR %>
+      <%
+        cefr_opts = {
+          'A1' => { bg:'#E8F5EE', text:'#0F3826', border:'#2A9B6F', ring:'rgba(42,155,111,0.15)' },
+          'A2' => { bg:'#EBF2FC', text:'#1A4A8A', border:'#2563EB', ring:'rgba(37,99,235,0.12)' },
+          'B1' => { bg:'#F5F3FF', text:'#4C1D95', border:'#7C3AED', ring:'rgba(124,58,237,0.12)' },
+          'B2' => { bg:'#FFF7ED', text:'#7C2D12', border:'#EA580C', ring:'rgba(234,88,12,0.12)' },
+          'C1' => { bg:'#F3F4F6', text:'#1C1917', border:'#374151', ring:'rgba(55,65,81,0.12)' },
+        }
+      %>
+      <div style="margin-bottom:0;">
+        <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; font-weight:600; color:#1C1917; margin-bottom:8px;">
+          Nível CEFR <span style="color:#EA580C;">*</span>
+        </div>
+        <div data-controller="level-picker" style="display:flex; gap:8px; flex-wrap:wrap;">
+          <% cefr_opts.each do |lvl, c| %>
+            <label class="level-pill"
+                   data-level-picker-target="pill"
+                   data-action="click->level-picker#select"
+                   data-border="<%= c[:border] %>"
+                   data-ring="<%= c[:ring] %>"
+                   style="display:inline-block; cursor:pointer; font-family:'DM Mono',monospace; font-size:0.8rem; font-weight:700; padding:7px 18px; border-radius:20px; background:<%= c[:bg] %>; color:<%= c[:text] %>; border:1.5px solid #DDD9D2; transition:all 0.12s;">
+              <%= f.radio_button :level, lvl,
+                    class: "level-radio",
+                    data: { "level-picker-target": "radio" },
+                    style: "display:none;" %>
+              <%= lvl %>
+            </label>
+          <% end %>
+        </div>
+      </div>
+
+      <hr style="border:none; border-top:1px solid #F0EDE8; margin:28px 0;">
+
+      <div style="display:flex; align-items:center; justify-content:space-between;">
+        <%= link_to "Cancelar", activity_path(@activity),
+              style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.85rem; color:#9C9892; text-decoration:none; padding:8px 4px;" %>
+        <%= f.submit "Salvar Alterações →",
+              style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.9rem; font-weight:700; color:#fff; background:#C9952A; padding:12px 32px; border-radius:12px; border:none; cursor:pointer;" %>
+      </div>
+
+    <% end %>
+  </div>
+</div>
+
 

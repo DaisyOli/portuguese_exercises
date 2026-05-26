@@ -15,9 +15,9 @@ fr:
         submit_button: 'Définir mon mot de passe'
     mailer:
       invitation_instructions:
-        subject: 'Bienvenue à PracticePT - Votre invitation'
+        subject: 'Bienvenue à Practice-BR - Votre invitation'
         hello: 'Bonjour %{email}'
-        someone_invited_you: 'Vous avez été invité à rejoindre PracticePT, une plateforme pour les activités éducatives et les quiz. Vous pouvez accepter cette invitation via le lien ci-dessous.'
+        someone_invited_you: 'Vous avez été invité à rejoindre Practice-BR, une plateforme pour les activités éducatives et les quiz. Vous pouvez accepter cette invitation via le lien ci-dessous.'
         accept: 'Accepter l''invitation'
         accept_until: 'Cette invitation sera valable jusqu''au %{due_date}.'
         ignore: "Si vous ne souhaitez pas accepter l'invitation, veuillez ignorer cet e-mail. Votre compte ne sera pas créé tant que vous n'aurez pas accédé au lien ci-dessus et défini votre mot de passe." 

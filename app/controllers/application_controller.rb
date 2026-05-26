@@ -2,7 +2,6 @@ class ApplicationController < ActionController::Base
   # Autenticação padrão
   before_action :authenticate_user!
   before_action :configure_permitted_parameters, if: :devise_controller?
-  before_action :set_locale, if: :user_signed_in?
   around_action :switch_locale
 
   def after_sign_in_path_for(resource)
@@ -26,31 +25,8 @@ class ApplicationController < ActionController::Base
 
   private
 
-  def set_locale
-    I18n.locale = if user_signed_in? && current_user
-                    current_user.language.to_sym
-                  else
-                    params[:locale] || I18n.default_locale
-                  end
-  end
-
-  def extract_locale
-    locale = if user_signed_in? && current_user
-               current_user.language
-             else
-               params[:locale] || http_accept_language.compatible_language_from(I18n.available_locales)
-             end
-    
-    locale.presence || I18n.default_locale
-  end
-
   def switch_locale(&action)
-    locale = extract_locale
-    I18n.with_locale(locale, &action)
-  end
-
-  def default_url_options
-    { locale: I18n.locale }
+    I18n.with_locale(I18n.default_locale, &action)
   end
 end
 

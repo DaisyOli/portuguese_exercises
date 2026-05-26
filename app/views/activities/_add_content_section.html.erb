@@ -1,148 +1,150 @@
-<% has_any_content = activity.statement.present? || activity.media_url.present? || activity.explanation_text.present? || activity.questions.any? %>
+<%
+  pill = "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.8rem; font-weight:600; padding:6px 13px; border-radius:20px; border:1.5px solid; cursor:pointer; white-space:nowrap; display:inline-flex; align-items:center; gap:5px;"
+  neutral  = pill + "background:#F0EDE8; color:#5C5853; border-color:#DDD9D2;"
+  questao  = pill + "background:#EBF2FC; color:#1A4A8A; border-color:#BFDBFE;"
+  palavras = pill + "background:#E8F5EE; color:#0F3826; border-color:#BBF7D0;"
+  paras    = pill + "background:#ECFDF5; color:#065F46; border-color:#A7F3D0;"
+  colunas  = pill + "background:#FFF7ED; color:#7C2D12; border-color:#FED7AA;"
 
-<div class="add-content-section" data-controller="content-form" style="<%= has_any_content ? '' : 'margin-top: 2.5rem;' %>">
-  <div class="section-title">
-    <i class="fas fa-plus-circle"></i>
-    <span><%= t('activities.add_content') %></span>
+  label_s  = "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; font-weight:600; color:#5C5853; display:block; margin-bottom:6px;"
+  input_s  = "width:100%; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.88rem; padding:9px 12px; border:1.5px solid #DDD9D2; border-radius:8px; color:#1C1917; background:#fff; box-sizing:border-box;"
+  hint_s   = "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.78rem; color:#9C9892; margin-top:5px; display:block;"
+  field_s  = "margin-bottom:16px;"
+  wrap_s   = "padding:20px 22px; background:#fff; border:1px solid #DDD9D2; border-radius:14px; margin-bottom:14px;"
+  submit_content  = "background:#C9952A; color:#fff; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.88rem; font-weight:700; border:none; border-radius:10px; padding:10px 24px; cursor:pointer; width:100%; margin-top:4px;"
+  submit_exercise = "background:#1A6B4A; color:#fff; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.88rem; font-weight:700; border:none; border-radius:10px; padding:10px 24px; cursor:pointer; width:100%; margin-top:4px;"
+  btn_add  = "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.8rem; font-weight:600; color:#0F3826; padding:6px 12px; border:1.5px solid #BBF7D0; border-radius:20px; background:#E8F5EE; cursor:pointer; display:inline-flex; align-items:center; gap:5px;"
+  btn_rm   = "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.72rem; font-weight:600; color:#B91C1C; padding:4px 8px; border:1.5px solid #FECACA; border-radius:6px; background:#FEF2F2; cursor:pointer;"
+%>
+
+<div data-controller="content-form" style="background:#fff; border:1px solid #DDD9D2; border-radius:16px; padding:20px 24px; margin-bottom:16px;">
+  <div style="font-family:'DM Mono',monospace; font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.1em; color:#5C5853; margin-bottom:12px;">
+    + <%= t('activities.add_content') %>
   </div>
 
-  <div class="action-buttons">
-    <button type="button" class="btn-action statement"
+  <%# Grupo: Material de estudo %>
+  <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.67rem; font-weight:700; text-transform:uppercase; letter-spacing:0.07em; color:#C9952A; margin-bottom:6px;">
+    Material de estudo
+  </div>
+  <div style="display:flex; gap:7px; flex-wrap:wrap; margin-bottom:14px;">
+    <button type="button" style="<%= neutral %>"
             data-action="content-form#toggle"
             data-bs-toggle="collapse"
             data-bs-target="#new-statement-form">
-      <i class="fas fa-file-text"></i>
-      <span><%= t('activities.add_statement') %></span>
+      <i class="bi bi-file-text"></i> <%= t('activities.add_statement') %>
     </button>
-
-    <button type="button" class="btn-action media"
+    <button type="button" style="<%= neutral %>"
             data-action="content-form#toggle"
             data-bs-toggle="collapse"
             data-bs-target="#new-image-form">
-      <i class="fas fa-image"></i>
-      <span><%= t('activities.add_image') %></span>
+      <i class="bi bi-image"></i> <%= t('activities.add_image') %>
     </button>
-
-    <button type="button" class="btn-action media"
+    <button type="button" style="<%= neutral %>"
             data-action="content-form#toggle"
             data-bs-toggle="collapse"
             data-bs-target="#new-video-form">
-      <i class="fab fa-youtube"></i>
-      <span><%= t('activities.add_video') %></span>
+      <i class="bi bi-play-circle"></i> <%= t('activities.add_video') %>
     </button>
-
-    <button type="button" class="btn-action text"
+    <button type="button" style="<%= neutral %>"
             data-action="content-form#toggle"
             data-bs-toggle="collapse"
             data-bs-target="#new-text-form">
-      <i class="fas fa-align-left"></i>
-      <span><%= t('activities.add_text') %></span>
+      <i class="bi bi-align-left"></i> <%= t('activities.add_text') %>
     </button>
-
-    <button type="button" class="btn-action question"
-            data-action="content-form#toggle"
-            data-bs-toggle="collapse"
-            data-bs-target="#new-question-form">
-      <i class="fas fa-question-circle"></i>
-      <span><%= t('activities.add_question') %></span>
-    </button>
-
-    <button type="button" class="btn-action suggestion"
+    <button type="button" style="<%= neutral %>"
             data-action="content-form#toggle"
             data-bs-toggle="collapse"
             data-bs-target="#new-suggestion-form">
-      <i class="fas fa-lightbulb"></i>
-      <span><%= t('activities.add_suggestion') %></span>
+      <i class="bi bi-lightbulb"></i> <%= t('activities.add_suggestion') %>
     </button>
+  </div>
 
-    <button type="button" class="btn-action ordering"
+  <%# Grupo: Exercícios %>
+  <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.67rem; font-weight:700; text-transform:uppercase; letter-spacing:0.07em; color:#1A6B4A; margin-bottom:6px;">
+    Exercícios
+  </div>
+  <div style="display:flex; gap:7px; flex-wrap:wrap;">
+    <button type="button" style="<%= questao %>"
+            data-action="content-form#toggle"
+            data-bs-toggle="collapse"
+            data-bs-target="#new-question-form">
+      <i class="bi bi-check2-square"></i> <%= t('activities.add_question') %>
+    </button>
+    <button type="button" style="<%= palavras %>"
             data-action="content-form#toggle"
             data-bs-toggle="collapse"
             data-bs-target="#new-sentence-ordering-form">
-      <i class="fas fa-sort-alpha-down"></i>
-      <span><%= t('sentence_orderings.title') %></span>
+      <i class="bi bi-sort-alpha-down"></i> <%= t('sentence_orderings.title') %>
     </button>
-
-    <button type="button" class="btn-action ordering"
+    <button type="button" style="<%= paras %>"
             data-action="content-form#toggle"
             data-bs-toggle="collapse"
             data-bs-target="#new-paragraph-ordering-form">
-      <i class="fas fa-list-ol"></i>
-      <span><%= t('paragraph_orderings.title') %></span>
+      <i class="bi bi-list-ol"></i> <%= t('paragraph_orderings.title') %>
     </button>
-
-    <button type="button" class="btn-action ordering"
+    <button type="button" style="<%= colunas %>"
             data-action="content-form#toggle"
             data-bs-toggle="collapse"
             data-bs-target="#new-column-matching-form">
-      <i class="fas fa-columns"></i>
-      <span><%= t('column_matchings.title') %></span>
+      <i class="bi bi-arrow-left-right"></i> <%= t('column_matchings.title') %>
     </button>
   </div>
 </div>
 
 <div class="collapse form-collapse" id="new-statement-form" data-content-form-target="form">
-  <div class="card-body">
+  <div style="<%= wrap_s %>">
     <%= form_with(model: activity, local: true) do |f| %>
-      <div class="mb-3">
-        <%= f.label :statement, t('activities.statement_label'), class: "form-label" %>
-        <%= f.text_area :statement, class: "form-control", rows: 5,
+      <div style="<%= field_s %>">
+        <%= f.label :statement, t('activities.statement_label'), style: label_s %>
+        <%= f.text_area :statement, style: input_s, rows: 5,
             placeholder: t('activities.statement_placeholder') %>
       </div>
-      <div class="d-grid">
-        <%= f.submit t('activities.save_statement'), class: "btn btn-primary" %>
-      </div>
+      <%= f.submit t('activities.save_statement'), style: submit_content %>
     <% end %>
   </div>
 </div>
 
 <div class="collapse form-collapse" id="new-image-form" data-content-form-target="form">
-  <div class="card-body">
+  <div style="<%= wrap_s %>">
     <%= form_with(model: activity, local: true) do |f| %>
-      <div class="mb-3">
-        <%= f.label :media_url, t('activities.image_url_label'), class: "form-label" %>
-        <%= f.text_field :media_url, class: "form-control",
+      <div style="<%= field_s %>">
+        <%= f.label :media_url, t('activities.image_url_label'), style: label_s %>
+        <%= f.text_field :media_url, style: input_s,
             placeholder: t('activities.image_url_placeholder') %>
       </div>
-      <div class="d-grid">
-        <%= f.submit t('activities.save_image'), class: "btn btn-primary" %>
-      </div>
+      <%= f.submit t('activities.save_image'), style: submit_content %>
     <% end %>
   </div>
 </div>
 
 <div class="collapse form-collapse" id="new-video-form" data-content-form-target="form">
-  <div class="card-body">
+  <div style="<%= wrap_s %>">
     <%= form_with(model: activity, local: true) do |f| %>
-      <div class="mb-3">
-        <%= f.label :video_url, t('activities.video_url_label'), class: "form-label" %>
-        <%= f.text_field :video_url, class: "form-control",
+      <div style="<%= field_s %>">
+        <%= f.label :video_url, t('activities.video_url_label'), style: label_s %>
+        <%= f.text_field :video_url, style: input_s,
             placeholder: t('activities.video_url_placeholder') %>
-        <small class="form-text text-muted"><%= t('activities.video_url_hint') %></small>
+        <small style="<%= hint_s %>"><%= t('activities.video_url_hint') %></small>
       </div>
-      <div class="d-grid">
-        <%= f.submit t('activities.save_video'), class: "btn btn-primary" %>
-      </div>
+      <%= f.submit t('activities.save_video'), style: submit_content %>
     <% end %>
   </div>
 </div>
 
 <div class="collapse form-collapse" id="new-text-form" data-content-form-target="form">
-  <div class="card-body">
+  <div style="<%= wrap_s %>">
     <%= form_with(model: activity, local: true) do |f| %>
-      <div class="mb-3">
-        <%= f.text_area :explanation_text, class: "form-control", rows: 5,
+      <div style="<%= field_s %>">
+        <%= f.text_area :explanation_text, style: input_s, rows: 5,
             placeholder: t('activities.explanation_text_placeholder') %>
       </div>
-      <div class="d-grid">
-        <%= f.submit t('activities.save_text'), class: "btn btn-primary" %>
-      </div>
+      <%= f.submit t('activities.save_text'), style: submit_content %>
     <% end %>
   </div>
 </div>
 
 <div class="collapse form-collapse" id="new-question-form" data-content-form-target="form">
-  <div class="card-body">
+  <div style="<%= wrap_s %>">
     <div data-controller="question-form">
       <%= render partial: "questions/form", locals: { question: activity.questions.build, activity: activity } %>
     </div>
@@ -150,173 +152,152 @@
 </div>
 
 <div class="collapse form-collapse" id="new-sentence-ordering-form" data-content-form-target="form">
-  <div class="card-body">
+  <div style="<%= wrap_s %>">
     <%= form_with(model: [activity, SentenceOrdering.new], local: true) do |f| %>
-      <div class="mb-3">
-        <%= f.label :sentence, "Frase completa", class: "form-label" %>
-        <%= f.text_area :sentence, class: "form-control", rows: 2,
+      <div style="<%= field_s %>">
+        <%= f.label :sentence, "Frase completa", style: label_s %>
+        <%= f.text_area :sentence, style: input_s, rows: 2,
             placeholder: "Ex: O gato bebe leite fresco todos os dias" %>
-        <small class="form-text text-muted">As palavras serão embaralhadas automaticamente para o aluno.</small>
+        <small style="<%= hint_s %>">As palavras serão embaralhadas automaticamente para o aluno.</small>
       </div>
-      <div class="mb-3">
-        <%= f.label :instruction, "Instrução para o aluno (opcional)", class: "form-label" %>
-        <%= f.text_field :instruction, class: "form-control",
+      <div style="<%= field_s %>">
+        <%= f.label :instruction, "Instrução para o aluno (opcional)", style: label_s %>
+        <%= f.text_field :instruction, style: input_s,
             placeholder: "Ex: Coloque as palavras na ordem correta para formar a frase." %>
       </div>
-      <div class="d-grid">
-        <%= f.submit "Criar exercício", class: "btn btn-primary" %>
-      </div>
+      <%= f.submit "Criar exercício", style: submit_exercise %>
     <% end %>
   </div>
 </div>
 
 <div class="collapse form-collapse" id="new-paragraph-ordering-form" data-content-form-target="form">
-  <div class="card-body">
+  <div style="<%= wrap_s %>">
     <%= form_with(model: [activity, ParagraphOrdering.new], local: true,
           data: { controller: "dynamic-fields" }) do |f| %>
-      <div class="mb-3">
-        <%= f.label :title, "Título (opcional)", class: "form-label" %>
-        <%= f.text_field :title, class: "form-control",
+      <div style="<%= field_s %>">
+        <%= f.label :title, "Título (opcional)", style: label_s %>
+        <%= f.text_field :title, style: input_s,
             placeholder: "Ex: Coloque o diálogo em ordem" %>
       </div>
-      <div class="mb-3">
-        <%= f.label :instruction, "Instrução para o aluno (opcional)", class: "form-label" %>
-        <%= f.text_field :instruction, class: "form-control",
+      <div style="<%= field_s %>">
+        <%= f.label :instruction, "Instrução para o aluno (opcional)", style: label_s %>
+        <%= f.text_field :instruction, style: input_s,
             placeholder: t('paragraph_orderings.instruction_default') %>
       </div>
 
-      <label class="form-label fw-semibold">Frases (na ordem correta)</label>
-      <small class="form-text text-muted d-block mb-2">Escreva cada frase na ordem correta — o aluno vai tentar reordenar.</small>
+      <div style="<%= field_s %>">
+        <span style="<%= label_s %>">Frases (na ordem correta)</span>
+        <small style="<%= hint_s %> margin-top:0; margin-bottom:10px;">Escreva cada frase na ordem correta — o aluno vai tentar reordenar.</small>
 
-      <div data-dynamic-fields-target="list">
-        <div data-field class="input-group mb-2">
-          <span class="input-group-text text-muted" style="font-size:0.8rem;">1</span>
-          <input type="text" name="sentences[1]" class="form-control"
-                 placeholder="Primeira frase...">
+        <div data-dynamic-fields-target="list">
+          <div data-field style="display:flex; align-items:center; gap:6px; margin-bottom:8px;">
+            <span style="font-family:'DM Mono',monospace; font-size:0.8rem; font-weight:700; color:#9C9892; min-width:20px;">1</span>
+            <input type="text" name="sentences[1]" style="<%= input_s %>"
+                   placeholder="Primeira frase...">
+          </div>
+          <div data-field style="display:flex; align-items:center; gap:6px; margin-bottom:8px;">
+            <span style="font-family:'DM Mono',monospace; font-size:0.8rem; font-weight:700; color:#9C9892; min-width:20px;">2</span>
+            <input type="text" name="sentences[2]" style="<%= input_s %>"
+                   placeholder="Segunda frase...">
+          </div>
         </div>
-        <div data-field class="input-group mb-2">
-          <span class="input-group-text text-muted" style="font-size:0.8rem;">2</span>
-          <input type="text" name="sentences[2]" class="form-control"
-                 placeholder="Segunda frase...">
-        </div>
+
+        <template data-dynamic-fields-target="template">
+          <div data-field style="display:flex; align-items:center; gap:6px; margin-bottom:8px;">
+            <span style="font-family:'DM Mono',monospace; font-size:0.8rem; font-weight:700; color:#9C9892; min-width:20px;">+</span>
+            <input type="text" name="sentences[FIELD_INDEX]" style="<%= input_s %>"
+                   placeholder="<%= t('paragraph_orderings.sentence_placeholder') %>">
+            <button type="button" style="<%= btn_rm %>"
+                    data-action="dynamic-fields#removeField">✕</button>
+          </div>
+        </template>
+
+        <button type="button" style="<%= btn_add %>" data-action="dynamic-fields#addField">
+          <i class="bi bi-plus"></i> <%= t('paragraph_orderings.add_sentence') %>
+        </button>
       </div>
 
-      <template data-dynamic-fields-target="template">
-        <div data-field class="input-group mb-2">
-          <span class="input-group-text text-muted" style="font-size:0.8rem;">+</span>
-          <input type="text" name="sentences[FIELD_INDEX]" class="form-control"
-                 placeholder="<%= t('paragraph_orderings.sentence_placeholder') %>">
-          <button type="button" class="btn btn-outline-secondary btn-sm"
-                  data-action="dynamic-fields#removeField">
-            <i class="fas fa-times"></i>
-          </button>
-        </div>
-      </template>
-
-      <button type="button" class="btn btn-outline-success btn-sm mb-3"
-              data-action="dynamic-fields#addField">
-        <i class="fas fa-plus"></i> <%= t('paragraph_orderings.add_sentence') %>
-      </button>
-
-      <div class="d-grid">
-        <%= f.submit "Criar exercício", class: "btn btn-primary" %>
-      </div>
+      <%= f.submit "Criar exercício", style: submit_exercise %>
     <% end %>
   </div>
 </div>
 
 <div class="collapse form-collapse" id="new-column-matching-form" data-content-form-target="form">
-  <div class="card-body">
+  <div style="<%= wrap_s %>">
     <%= form_with(model: [activity, ColumnMatching.new], local: true,
           data: { controller: "dynamic-fields" }) do |f| %>
-      <div class="mb-3">
-        <%= f.label :title, t('column_matchings.title_label'), class: "form-label" %>
-        <%= f.text_field :title, class: "form-control",
+      <div style="<%= field_s %>">
+        <%= f.label :title, t('column_matchings.title_label'), style: label_s %>
+        <%= f.text_field :title, style: input_s,
             placeholder: t('column_matchings.title_placeholder') %>
       </div>
-      <div class="mb-3">
-        <%= f.label :instruction, t('column_matchings.instruction_label'), class: "form-label" %>
-        <%= f.text_field :instruction, class: "form-control",
+      <div style="<%= field_s %>">
+        <%= f.label :instruction, t('column_matchings.instruction_label'), style: label_s %>
+        <%= f.text_field :instruction, style: input_s,
             placeholder: t('column_matchings.instruction_default') %>
       </div>
 
-      <label class="form-label fw-semibold"><%= t('column_matchings.pairs_label') %></label>
-      <small class="form-text text-muted d-block mb-2"><%= t('column_matchings.pairs_hint') %></small>
+      <div style="<%= field_s %>">
+        <span style="<%= label_s %>"><%= t('column_matchings.pairs_label') %></span>
+        <small style="<%= hint_s %> margin-top:0; margin-bottom:10px;"><%= t('column_matchings.pairs_hint') %></small>
 
-      <div class="row mb-1 px-1">
-        <div class="col-5"><small class="text-muted fw-semibold"><%= t('column_matchings.column_a') %></small></div>
-        <div class="col-2 text-center"><small class="text-muted">↔</small></div>
-        <div class="col-5"><small class="text-muted fw-semibold"><%= t('column_matchings.column_b') %></small></div>
-      </div>
+        <div style="display:flex; gap:8px; margin-bottom:6px; padding:0 2px;">
+          <span style="flex:5; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.72rem; font-weight:700; color:#9C9892; text-transform:uppercase; letter-spacing:0.05em;"><%= t('column_matchings.column_a') %></span>
+          <span style="width:24px; text-align:center; font-size:0.8rem; color:#9C9892;">↔</span>
+          <span style="flex:5; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.72rem; font-weight:700; color:#9C9892; text-transform:uppercase; letter-spacing:0.05em;"><%= t('column_matchings.column_b') %></span>
+          <span style="width:28px;"></span>
+        </div>
 
-      <div data-dynamic-fields-target="list">
-        <div data-field class="row mb-2 align-items-center">
-          <div class="col-5">
-            <input type="text" name="pairs[1][left]" class="form-control form-control-sm"
+        <div data-dynamic-fields-target="list">
+          <div data-field style="display:flex; align-items:center; gap:6px; margin-bottom:8px;">
+            <input type="text" name="pairs[1][left]" style="flex:5; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.85rem; padding:7px 10px; border:1.5px solid #DDD9D2; border-radius:8px; color:#1C1917; background:#fff;"
                    placeholder="<%= t('column_matchings.item_a_placeholder') %>">
-          </div>
-          <div class="col-2 text-center text-muted">↔</div>
-          <div class="col-5">
-            <input type="text" name="pairs[1][right]" class="form-control form-control-sm"
+            <span style="color:#9C9892; font-size:0.9rem; flex-shrink:0;">↔</span>
+            <input type="text" name="pairs[1][right]" style="flex:5; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.85rem; padding:7px 10px; border:1.5px solid #DDD9D2; border-radius:8px; color:#1C1917; background:#fff;"
                    placeholder="<%= t('column_matchings.item_b_placeholder') %>">
+            <span style="width:28px;"></span>
+          </div>
+          <div data-field style="display:flex; align-items:center; gap:6px; margin-bottom:8px;">
+            <input type="text" name="pairs[2][left]" style="flex:5; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.85rem; padding:7px 10px; border:1.5px solid #DDD9D2; border-radius:8px; color:#1C1917; background:#fff;"
+                   placeholder="<%= t('column_matchings.item_a_placeholder') %>">
+            <span style="color:#9C9892; font-size:0.9rem; flex-shrink:0;">↔</span>
+            <input type="text" name="pairs[2][right]" style="flex:5; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.85rem; padding:7px 10px; border:1.5px solid #DDD9D2; border-radius:8px; color:#1C1917; background:#fff;"
+                   placeholder="<%= t('column_matchings.item_b_placeholder') %>">
+            <span style="width:28px;"></span>
           </div>
         </div>
-        <div data-field class="row mb-2 align-items-center">
-          <div class="col-5">
-            <input type="text" name="pairs[2][left]" class="form-control form-control-sm"
+
+        <template data-dynamic-fields-target="template">
+          <div data-field style="display:flex; align-items:center; gap:6px; margin-bottom:8px;">
+            <input type="text" name="pairs[FIELD_INDEX][left]" style="flex:5; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.85rem; padding:7px 10px; border:1.5px solid #DDD9D2; border-radius:8px; color:#1C1917; background:#fff;"
                    placeholder="<%= t('column_matchings.item_a_placeholder') %>">
-          </div>
-          <div class="col-2 text-center text-muted">↔</div>
-          <div class="col-5">
-            <input type="text" name="pairs[2][right]" class="form-control form-control-sm"
+            <span style="color:#9C9892; font-size:0.9rem; flex-shrink:0;">↔</span>
+            <input type="text" name="pairs[FIELD_INDEX][right]" style="flex:5; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.85rem; padding:7px 10px; border:1.5px solid #DDD9D2; border-radius:8px; color:#1C1917; background:#fff;"
                    placeholder="<%= t('column_matchings.item_b_placeholder') %>">
+            <button type="button" style="<%= btn_rm %>"
+                    data-action="dynamic-fields#removeField">✕</button>
           </div>
-        </div>
+        </template>
+
+        <button type="button" style="<%= btn_add %>" data-action="dynamic-fields#addField">
+          <i class="bi bi-plus"></i> <%= t('column_matchings.add_pair') %>
+        </button>
       </div>
 
-      <template data-dynamic-fields-target="template">
-        <div data-field class="row mb-2 align-items-center">
-          <div class="col-5">
-            <input type="text" name="pairs[FIELD_INDEX][left]" class="form-control form-control-sm"
-                   placeholder="<%= t('column_matchings.item_a_placeholder') %>">
-          </div>
-          <div class="col-2 text-center text-muted">↔</div>
-          <div class="col-4">
-            <input type="text" name="pairs[FIELD_INDEX][right]" class="form-control form-control-sm"
-                   placeholder="<%= t('column_matchings.item_b_placeholder') %>">
-          </div>
-          <div class="col-1">
-            <button type="button" class="btn btn-outline-secondary btn-sm"
-                    data-action="dynamic-fields#removeField">
-              <i class="fas fa-times"></i>
-            </button>
-          </div>
-        </div>
-      </template>
-
-      <button type="button" class="btn btn-outline-success btn-sm mb-3"
-              data-action="dynamic-fields#addField">
-        <i class="fas fa-plus"></i> <%= t('column_matchings.add_pair') %>
-      </button>
-
-      <div class="d-grid">
-        <%= f.submit t('column_matchings.create_exercise'), class: "btn btn-primary" %>
-      </div>
+      <%= f.submit t('column_matchings.create_exercise'), style: submit_exercise %>
     <% end %>
   </div>
 </div>
 
 <div class="collapse form-collapse" id="new-suggestion-form" data-content-form-target="form">
-  <div class="card-body">
+  <div style="<%= wrap_s %>">
     <%= form_with(model: [activity, Suggestion.new], local: true) do |f| %>
-      <div class="mb-3">
-        <%= f.label :content, t('activities.suggestion_label'), class: "form-label" %>
-        <%= f.text_area :content, class: "form-control", rows: 5,
+      <div style="<%= field_s %>">
+        <%= f.label :content, t('activities.suggestion_label'), style: label_s %>
+        <%= f.text_area :content, style: input_s, rows: 5,
             placeholder: t('activities.suggestion_placeholder') %>
       </div>
-      <div class="d-grid">
-        <%= f.submit t('activities.save_suggestion'), class: "btn btn-primary" %>
-      </div>
+      <%= f.submit t('activities.save_suggestion'), style: submit_content %>
     <% end %>
   </div>
 </div>

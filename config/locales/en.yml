@@ -29,8 +29,8 @@
 
 en:
   hello: "Hello"
-  app_name: "Practice PT"
-  welcome: "Welcome to Practice PT"
+  app_name: "Practice-BR"
+  welcome: "Welcome to Practice-BR"
   
   # Common - Buttons and common text
   common:
@@ -44,7 +44,7 @@ en:
   
   # Home page
   home:
-    welcome_message: "Welcome to the Practice PT!"
+    welcome_message: "Welcome to the Practice-BR!"
     login_prompt: "Please sign up or log in to continue."
     logged_in_as: "You are logged in as"
     go_to_teacher_dashboard: "Go to Teacher Dashboard"
@@ -206,7 +206,7 @@ en:
     description_required: "Description is required"
     level_required: "Level is required"
     no_questions: "No questions have been added to this activity yet."
-    add_question: "Add New Question"
+    add_question: "New Question"
     view: "View"
     edit_btn: "Edit"
     edit_description_btn: "Edit activity description"
@@ -226,13 +226,13 @@ en:
     back_to_all: "Back to all levels"
     level_activities: "Activities"
     no_activities_for_level: "There are no activities available for level %{level}."
-    add_statement: "Add Statement"
+    add_statement: "Statement"
     statement_label: "Statement Label"
     statement_placeholder: "Enter the activity statement or a question for the student to answer in their notebook"
     save_statement: "Save Statement"
     add_media: "Add image or video"
-    add_image: "Add image"
-    add_video: "Add video"
+    add_image: "Image"
+    add_video: "Video"
     image_label: "Image"
     video_label: "Video"
     image_url_label: "Image URL"
@@ -248,7 +248,7 @@ en:
     save_video: "Save video"
     confirm_delete_video: "Are you sure you want to delete the video?"
     invalid_video_url: "Invalid video URL. Please use a YouTube link."
-    add_text: "Add text"
+    add_text: "Text"
     explanation_text_label: "Explanatory text"
     explanation_text_placeholder: "Add explanatory text for this activity"
     save_text: "Save text"
@@ -258,7 +258,7 @@ en:
     add_content: "Add content"
     main_actions: "Main actions"
     other_actions: "Other actions"
-    add_suggestion: "Add Suggestion"
+    add_suggestion: "Suggestion"
     suggestion_label: "Suggestion for activity"
     suggestion_placeholder: "Type a suggestion or comment for this activity"
     save_suggestion: "Save suggestion"

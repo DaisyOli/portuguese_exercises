@@ -1,12 +1,9 @@
 <% if resource.errors.any? %>
-  <div id="error_explanation" data-turbo-cache="false">
-    <h2>
-      <%= I18n.t("errors.messages.not_saved",
-                 count: resource.errors.count,
-                 resource: resource.class.model_name.human.downcase)
-       %>
-    </h2>
-    <ul>
+  <div style="background:#FEF2F2; border:1.5px solid #FCA5A5; border-radius:10px; padding:14px 16px; margin-bottom:20px;" data-turbo-cache="false">
+    <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; font-weight:600; color:#991B1B; margin-bottom:6px;">
+      Corrija os erros abaixo:
+    </div>
+    <ul style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; color:#B91C1C; margin:0; padding-left:18px;">
       <% resource.errors.full_messages.each do |message| %>
         <li><%= message %></li>
       <% end %>

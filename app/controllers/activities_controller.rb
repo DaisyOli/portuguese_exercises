@@ -7,11 +7,11 @@ class ActivitiesController < ApplicationController
 
   def index
     service_result = ActivitiesIndexService.new(params: params, current_user: current_user).call
-    @activities = service_result[:activities]
-    @current_level = service_result[:current_level]
+    @activities        = service_result[:activities]
+    @current_level     = service_result[:current_level]
     @activities_by_level = service_result[:activities_by_level]
-    
-    # Para estudantes, carregar dados específicos
+    @attempt_stats     = service_result[:attempt_stats]
+
     if current_user.student?
       @best_attempts = service_result[:best_attempts]
       load_completed_exercises

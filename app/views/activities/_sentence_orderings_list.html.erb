@@ -1,56 +1,69 @@
 <% if activity.sentence_orderings.any? %>
-  <div class="sentence-orderings-section">
-    <h4 class="section-heading">
-      <i class="fas fa-sort-alpha-down"></i>
-      Organizar palavras (<%= activity.sentence_orderings.count %>)
-    </h4>
+  <div style="background:#F0FAF5; border:1px solid #BBF7D0; border-left:4px solid #1A6B4A; border-radius:14px; margin-bottom:14px; overflow:hidden;">
 
-    <% activity.sentence_orderings.order(:display_order, :created_at).each do |ordering| %>
-      <div class="sentence-ordering-card" id="sentence-ordering-<%= ordering.id %>">
-        <div class="sentence-ordering-header">
-          <span class="sentence-preview">
-            <i class="fas fa-puzzle-piece"></i>
-            <%= ordering.sentence %>
-          </span>
-          <span class="word-count"><%= ordering.sentence_words.size %> palavras</span>
-        </div>
+    <div style="display:flex; align-items:center; padding:12px 18px; border-bottom:1px solid #BBF7D0; background:rgba(26,107,74,0.06);">
+      <span style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; color:#1A6B4A; display:flex; align-items:center; gap:6px;">
+        <i class="bi bi-sort-alpha-down"></i> Organizar palavras (<%= activity.sentence_orderings.count %>)
+      </span>
+    </div>
 
-        <% if ordering.instruction.present? %>
-          <p class="ordering-instruction"><em><%= ordering.instruction %></em></p>
-        <% end %>
+    <div style="padding:14px 16px; display:flex; flex-direction:column; gap:10px;">
+      <% activity.sentence_orderings.order(:display_order, :created_at).each_with_index do |ordering, index| %>
 
-        <div class="sentence-ordering-actions">
-          <button type="button" class="btn-edit-small"
-                  data-bs-toggle="collapse"
-                  data-bs-target="#edit-ordering-<%= ordering.id %>">
-            <i class="fas fa-edit"></i> Editar
-          </button>
+        <div id="sentence-ordering-<%= ordering.id %>" style="border:1px solid #D1EAD9; border-radius:10px; overflow:hidden; background:#fff;">
 
-          <%= button_to activity_sentence_ordering_path(activity, ordering),
-                method: :delete,
-                class: "btn-delete-small",
-                data: { turbo_confirm: "Remover este exercício?" } do %>
-            <i class="fas fa-trash"></i> Remover
-          <% end %>
-        </div>
-
-        <div class="collapse" id="edit-ordering-<%= ordering.id %>">
-          <div class="edit-form-body">
-            <%= form_with(model: [activity, ordering], local: true) do |f| %>
-              <div class="mb-3">
-                <%= f.label :sentence, "Frase completa", class: "form-label" %>
-                <%= f.text_area :sentence, class: "form-control", rows: 2 %>
-                <small class="form-text text-muted">Ao salvar, as palavras serão re-embaralhadas automaticamente.</small>
-              </div>
-              <div class="mb-3">
-                <%= f.label :instruction, "Instrução para o aluno (opcional)", class: "form-label" %>
-                <%= f.text_field :instruction, class: "form-control" %>
-              </div>
-              <%= f.submit "Salvar alterações", class: "btn btn-primary btn-sm" %>
-            <% end %>
+          <div style="display:flex; align-items:center; justify-content:space-between; padding:9px 14px; background:#E8F5EE; border-bottom:1px solid #D1EAD9;">
+            <div style="display:flex; align-items:center; gap:8px;">
+              <span style="font-family:'DM Mono',monospace; font-size:0.7rem; font-weight:700; color:#1A6B4A;"><%= "%02d" % (index + 1) %></span>
+              <span style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.7rem; font-weight:700; padding:3px 9px; border:1px solid #BBF7D0; border-radius:6px; background:#E8F5EE; color:#0F3826;">
+                <i class="bi bi-sort-alpha-down"></i> Ordenar palavras
+              </span>
+            </div>
+            <div style="display:flex; gap:6px;">
+              <button type="button"
+                      data-bs-toggle="collapse"
+                      data-bs-target="#edit-ordering-<%= ordering.id %>"
+                      style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.72rem; font-weight:600; color:#5C5853; padding:4px 9px; border:1.5px solid #DDD9D2; border-radius:6px; background:#fff; cursor:pointer;">
+                Editar
+              </button>
+              <%= button_to activity_sentence_ordering_path(activity, ordering),
+                    method: :delete,
+                    data: { turbo_confirm: "Remover este exercício?" },
+                    style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.72rem; font-weight:600; color:#B91C1C; padding:4px 9px; border:1.5px solid #FECACA; border-radius:6px; background:#FEF2F2; cursor:pointer;" do %>
+                Remover
+              <% end %>
+            </div>
           </div>
+
+          <div style="padding:12px 14px; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.88rem; color:#5C5853; line-height:1.5;">
+            <span style="font-weight:600; color:#0F3826;">Frase:</span> <%= ordering.sentence %>
+            <% if ordering.instruction.present? %>
+              <div style="margin-top:4px; font-size:0.82rem; color:#9C9892; font-style:italic;"><%= ordering.instruction %></div>
+            <% end %>
+            <div style="margin-top:4px; font-size:0.77rem; color:#9C9892;"><%= ordering.sentence_words.size %> palavras · embaralhadas para o aluno</div>
+          </div>
+
+          <div class="collapse" id="edit-ordering-<%= ordering.id %>">
+            <div style="padding:16px; border-top:1px solid #D1EAD9; background:#FAFAF9;">
+              <%= form_with(model: [activity, ordering], local: true) do |f| %>
+                <div class="mb-3">
+                  <%= f.label :sentence, "Frase completa", class: "form-label" %>
+                  <%= f.text_area :sentence, class: "form-control", rows: 2 %>
+                  <small class="form-text text-muted">Ao salvar, as palavras serão re-embaralhadas automaticamente.</small>
+                </div>
+                <div class="mb-3">
+                  <%= f.label :instruction, "Instrução para o aluno (opcional)", class: "form-label" %>
+                  <%= f.text_field :instruction, class: "form-control" %>
+                </div>
+                <%= f.submit "Salvar alterações", class: "btn btn-primary btn-sm" %>
+              <% end %>
+            </div>
+          </div>
+
         </div>
-      </div>
-    <% end %>
+
+      <% end %>
+    </div>
+
   </div>
 <% end %>

@@ -1,29 +1,29 @@
 <% if activity.suggestions.any? %>
-  <div class="main-card" id="suggestions-section">
-    <div class="card-header-custom">
-      <i class="fas fa-lightbulb"></i>
-      <span><%= t('activities.suggestions') %></span>
+  <div id="suggestions-section" style="background:#EBF2FC; border:1px solid #BFDBFE; border-left:4px solid #2563EB; border-radius:14px; margin-bottom:14px; overflow:hidden;">
+
+    <div style="display:flex; align-items:center; padding:12px 18px; border-bottom:1px solid #BFDBFE; background:rgba(37,99,235,0.06);">
+      <span style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; color:#2563EB; display:flex; align-items:center; gap:6px;">
+        <i class="bi bi-lightbulb"></i> <%= t('activities.suggestions') %> (<%= activity.suggestions.count %>)
+      </span>
     </div>
-    <div class="card-body-custom">
+
+    <div style="padding:14px 16px; display:flex; flex-direction:column; gap:8px; background:rgba(255,255,255,0.5);">
       <% activity.suggestions.each do |suggestion| %>
-        <div id="suggestion-<%= suggestion.id %>" class="content-section">
-          <div class="content-body">
-            <div class="d-flex justify-content-between align-items-start">
-              <div>
-                <%= simple_format(suggestion.content) %>
-              </div>
-              <% if current_user.teacher? && activity.teacher == current_user %>
-                <%= button_to activity_suggestion_path(activity, suggestion),
-                    method: :delete,
-                    class: "btn-icon delete",
-                    data: { turbo_confirm: t('activities.confirm_delete_suggestion') } do %>
-                  <i class="fas fa-trash"></i>
-                <% end %>
-              <% end %>
-            </div>
+        <div id="suggestion-<%= suggestion.id %>" style="display:flex; justify-content:space-between; align-items:flex-start; gap:12px; padding:12px 14px; border:1px solid #BFDBFE; border-radius:10px; background:#fff;">
+          <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.9rem; color:#1C1917; line-height:1.6;">
+            <%= simple_format(suggestion.content) %>
           </div>
+          <% if current_user.teacher? && activity.teacher == current_user %>
+            <%= button_to activity_suggestion_path(activity, suggestion),
+                method: :delete,
+                data: { turbo_confirm: t('activities.confirm_delete_suggestion') },
+                style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.72rem; font-weight:600; color:#B91C1C; padding:4px 9px; border:1.5px solid #FECACA; border-radius:6px; background:#FEF2F2; cursor:pointer; flex-shrink:0;" do %>
+              Remover
+            <% end %>
+          <% end %>
         </div>
       <% end %>
     </div>
+
   </div>
 <% end %>

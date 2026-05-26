@@ -6,7 +6,7 @@ class SentenceOrderingsController < ApplicationController
   def create
     @sentence_ordering = @activity.sentence_orderings.build(sentence_ordering_params)
     if @sentence_ordering.save
-      redirect_to activity_path(@activity), notice: t('sentence_orderings.created')
+      redirect_to activity_path(@activity, ultimo_conteudo: "sentence-ordering-#{@sentence_ordering.id}"), notice: t('sentence_orderings.created')
     else
       redirect_to activity_path(@activity), alert: @sentence_ordering.errors.full_messages.join(", ")
     end

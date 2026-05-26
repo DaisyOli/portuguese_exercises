@@ -1,0 +1,97 @@
+<nav id="main-navbar"
+     data-turbo-permanent
+     class="navbar px-4"
+     style="position:fixed; top:0; left:0; right:0; z-index:100; background:#0F3826; min-height:56px;">
+
+  <%# Logo — leva ao dashboard correspondente %>
+  <div class="navbar-start">
+    <%= link_to (current_user.teacher? ? teacher_dashboard_path : student_dashboard_path) do %>
+      <%= image_tag "practice-br-logo-horizontal-mono-light.svg",
+            alt: "Practice-BR",
+            class: "hidden sm:block",
+            style: "height:28px;" %>
+      <%= image_tag "practice-br-logo-mark-mono-light.svg",
+            alt: "Practice-BR",
+            class: "block sm:hidden",
+            style: "height:28px;" %>
+    <% end %>
+  </div>
+
+  <%# Ações — lado direito %>
+  <div class="navbar-end gap-2 sm:gap-4">
+
+    <%# Botões da professora — visíveis só em desktop %>
+    <% if current_user.teacher? %>
+      <%= link_to "+ Nova Atividade", new_activity_path,
+            class: "hidden sm:inline-flex items-center whitespace-nowrap px-4 py-1.5 rounded-lg text-sm font-semibold text-white no-underline",
+            style: "background:#C9952A; font-family:'Plus Jakarta Sans',sans-serif; text-decoration:none;" %>
+
+      <%= link_to "Convidar", new_user_invitation_path,
+            class: "hidden sm:inline-flex items-center whitespace-nowrap px-4 py-1.5 rounded-lg text-sm font-semibold text-white no-underline",
+            style: "background:#2A9B6F; font-family:'Plus Jakarta Sans',sans-serif; text-decoration:none;" %>
+    <% end %>
+
+    <%# Streak pill — sempre visível para alunos, só se > 0 para professoras %>
+    <% streak = session[:current_streak].to_i %>
+    <% if current_user.student? || streak > 0 %>
+      <div class="hidden sm:flex items-center gap-1 px-3 py-1 rounded-full"
+           style="background:rgba(255,255,255,0.12); border:1px solid rgba(255,255,255,0.2); font-family:'DM Mono',monospace; font-size:0.8rem; color:#E6B65C;">
+        🔥 <%= streak %>
+      </div>
+    <% end %>
+
+    <%# Avatar + dropdown %>
+    <div class="dropdown dropdown-end">
+      <label tabindex="0" class="btn btn-ghost btn-circle" style="width:36px; height:36px; min-height:0; padding:0;">
+        <div class="rounded-full flex items-center justify-center text-sm font-bold"
+             style="width:32px; height:32px;
+                    background: linear-gradient(135deg, <%= current_user.teacher? ? '#C9952A, #E6B65C' : '#2563EB, #1A4A8A' %>);
+                    color:#fff; font-family:'Plus Jakarta Sans',sans-serif;">
+          <%= current_user.display_name.first.upcase %>
+        </div>
+      </label>
+
+      <ul tabindex="0"
+          class="dropdown-content menu menu-sm shadow-lg z-50 mt-2 p-2 rounded-xl"
+          style="background:#fff; border:1px solid #DDD9D2; min-width:210px;">
+
+        <%# Cabeçalho do dropdown %>
+        <li class="px-3 pt-1 pb-0 pointer-events-none">
+          <span style="font-family:'DM Mono',monospace; font-size:0.68rem; color:#9C9892; letter-spacing:0.08em;">
+            <%= current_user.teacher? ? 'PROFESSORA' : 'ALUNO' %>
+          </span>
+        </li>
+        <li class="px-3 pb-2 pointer-events-none">
+          <span style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.875rem; font-weight:600; color:#1C1917;">
+            <%= current_user.display_name %>
+          </span>
+        </li>
+        <div style="height:1px; background:#DDD9D2; margin:2px 8px 6px;"></div>
+
+        <%# Links da professora — só aparecem no mobile %>
+        <% if current_user.teacher? %>
+          <li class="sm:hidden">
+            <%= link_to new_activity_path,
+                  style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.875rem; font-weight:600; color:#C9952A;" do %>
+              + Nova Atividade
+            <% end %>
+          </li>
+          <li class="sm:hidden">
+            <%= link_to new_user_invitation_path,
+                  style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.875rem; color:#1C1917;" do %>
+              Convidar aluno
+            <% end %>
+          </li>
+          <div class="sm:hidden" style="height:1px; background:#DDD9D2; margin:6px 8px;"></div>
+        <% end %>
+
+        <%# Sair %>
+        <li>
+          <%= link_to t('auth.sign_out'), destroy_user_session_path,
+                data: { turbo_method: :delete },
+                style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.875rem; color:#C0392B;" %>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>

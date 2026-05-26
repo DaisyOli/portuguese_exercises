@@ -1,85 +1,103 @@
 <% if activity.paragraph_orderings.any? %>
-  <div class="sentence-orderings-section">
-    <h4 class="section-heading">
-      <i class="fas fa-list-ol"></i>
-      <%= t('paragraph_orderings.title') %> (<%= activity.paragraph_orderings.count %>)
-    </h4>
+  <div style="background:#F0FAF5; border:1px solid #BBF7D0; border-left:4px solid #1A6B4A; border-radius:14px; margin-bottom:14px; overflow:hidden;">
 
-    <% activity.paragraph_orderings.order(:display_order, :created_at).each do |ordering| %>
-      <div class="sentence-ordering-card" id="paragraph-ordering-<%= ordering.id %>">
-        <div class="sentence-ordering-header">
-          <span class="sentence-preview">
-            <i class="fas fa-list-ol"></i>
-            <%= ordering.title.presence || t('paragraph_orderings.title') %>
-          </span>
-          <span class="word-count"><%= ordering.paragraph_sentences_count %> <%= t('paragraph_orderings.sentence_label').downcase %>s</span>
-        </div>
+    <div style="display:flex; align-items:center; padding:12px 18px; border-bottom:1px solid #BBF7D0; background:rgba(26,107,74,0.06);">
+      <span style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; color:#1A6B4A; display:flex; align-items:center; gap:6px;">
+        <i class="bi bi-list-ol"></i> <%= t('paragraph_orderings.title') %> (<%= activity.paragraph_orderings.count %>)
+      </span>
+    </div>
 
-        <% if ordering.instruction.present? %>
-          <p class="ordering-instruction"><em><%= ordering.instruction %></em></p>
-        <% end %>
+    <div style="padding:14px 16px; display:flex; flex-direction:column; gap:10px;">
+      <% activity.paragraph_orderings.order(:display_order, :created_at).each_with_index do |ordering, index| %>
 
-        <!-- Lista de frases existentes -->
-        <% if ordering.paragraph_sentences.any? %>
-          <ol class="sentences-preview-list">
-            <% ordering.paragraph_sentences.order(:correct_position).each do |ps| %>
-              <li>
-                <%= ps.sentence %>
-                <%= button_to activity_paragraph_ordering_paragraph_sentence_path(activity, ordering, ps),
-                      method: :delete,
-                      class: "btn-delete-small",
-                      data: { turbo_confirm: "Remover esta frase?" } do %>
-                  <i class="fas fa-times"></i>
-                <% end %>
-              </li>
-            <% end %>
-          </ol>
-        <% else %>
-          <p class="text-muted" style="font-size:0.85rem;"><%= t('paragraph_orderings.no_sentences') %></p>
-        <% end %>
+        <div id="paragraph-ordering-<%= ordering.id %>" style="border:1px solid #D1EAD9; border-radius:10px; overflow:hidden; background:#fff;">
 
-        <!-- Formulário para adicionar frase -->
-        <div class="add-sentence-form mt-2">
-          <%= form_with(model: [activity, ordering, ParagraphSentence.new], local: true) do |f| %>
-            <div class="input-group input-group-sm">
-              <%= f.text_field :sentence, class: "form-control",
-                  placeholder: t('paragraph_orderings.sentence_placeholder') %>
-              <%= f.submit t('paragraph_orderings.add_sentence'), class: "btn btn-outline-success btn-sm" %>
+          <div style="display:flex; align-items:center; justify-content:space-between; padding:9px 14px; background:#E8F5EE; border-bottom:1px solid #D1EAD9;">
+            <div style="display:flex; align-items:center; gap:8px;">
+              <span style="font-family:'DM Mono',monospace; font-size:0.7rem; font-weight:700; color:#1A6B4A;"><%= "%02d" % (index + 1) %></span>
+              <span style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.7rem; font-weight:700; padding:3px 9px; border:1px solid #A7F3D0; border-radius:6px; background:#ECFDF5; color:#065F46;">
+                <i class="bi bi-list-ol"></i> Ordenar parágrafos
+              </span>
             </div>
-          <% end %>
-        </div>
-
-        <div class="sentence-ordering-actions mt-2">
-          <button type="button" class="btn-edit-small"
-                  data-bs-toggle="collapse"
-                  data-bs-target="#edit-paragraph-<%= ordering.id %>">
-            <i class="fas fa-edit"></i> <%= t('common.edit') %>
-          </button>
-
-          <%= button_to activity_paragraph_ordering_path(activity, ordering),
-                method: :delete,
-                class: "btn-delete-small",
-                data: { turbo_confirm: "Remover este exercício e todas as frases?" } do %>
-            <i class="fas fa-trash"></i> <%= t('common.delete') %>
-          <% end %>
-        </div>
-
-        <div class="collapse" id="edit-paragraph-<%= ordering.id %>">
-          <div class="edit-form-body">
-            <%= form_with(model: [activity, ordering], local: true) do |f| %>
-              <div class="mb-2">
-                <%= f.label :title, "Título (opcional)", class: "form-label" %>
-                <%= f.text_field :title, class: "form-control form-control-sm" %>
-              </div>
-              <div class="mb-2">
-                <%= f.label :instruction, "Instrução para o aluno (opcional)", class: "form-label" %>
-                <%= f.text_field :instruction, class: "form-control form-control-sm" %>
-              </div>
-              <%= f.submit t('common.save'), class: "btn btn-primary btn-sm" %>
-            <% end %>
+            <div style="display:flex; gap:6px;">
+              <button type="button"
+                      data-bs-toggle="collapse"
+                      data-bs-target="#edit-paragraph-<%= ordering.id %>"
+                      style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.72rem; font-weight:600; color:#5C5853; padding:4px 9px; border:1.5px solid #DDD9D2; border-radius:6px; background:#fff; cursor:pointer;">
+                <%= t('common.edit') %>
+              </button>
+              <%= button_to activity_paragraph_ordering_path(activity, ordering),
+                    method: :delete,
+                    data: { turbo_confirm: "Remover este exercício e todas as frases?" },
+                    style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.72rem; font-weight:600; color:#B91C1C; padding:4px 9px; border:1.5px solid #FECACA; border-radius:6px; background:#FEF2F2; cursor:pointer;" do %>
+                <%= t('common.delete') %>
+              <% end %>
+            </div>
           </div>
+
+          <div style="padding:12px 14px;">
+            <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.88rem; font-weight:600; color:#0F3826; margin-bottom:6px;">
+              <%= ordering.title.presence || t('paragraph_orderings.title') %>
+              <span style="font-family:'DM Mono',monospace; font-size:0.72rem; font-weight:400; color:#9C9892; margin-left:8px;">
+                <%= ordering.paragraph_sentences_count %> <%= t('paragraph_orderings.sentence_label').downcase %>s
+              </span>
+            </div>
+
+            <% if ordering.instruction.present? %>
+              <p style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; color:#9C9892; font-style:italic; margin-bottom:8px;"><%= ordering.instruction %></p>
+            <% end %>
+
+            <% if ordering.paragraph_sentences.any? %>
+              <ol style="padding-left:1.2rem; margin:0 0 10px 0; display:flex; flex-direction:column; gap:4px;">
+                <% ordering.paragraph_sentences.order(:correct_position).each do |ps| %>
+                  <li style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.85rem; color:#1C1917; display:flex; align-items:center; justify-content:space-between; gap:8px;">
+                    <span><%= ps.sentence %></span>
+                    <%= button_to activity_paragraph_ordering_paragraph_sentence_path(activity, ordering, ps),
+                          method: :delete,
+                          data: { turbo_confirm: "Remover esta frase?" },
+                          style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.7rem; color:#B91C1C; padding:2px 6px; border:1px solid #FECACA; border-radius:5px; background:#FEF2F2; cursor:pointer; flex-shrink:0;" do %>
+                      ✕
+                    <% end %>
+                  </li>
+                <% end %>
+              </ol>
+            <% else %>
+              <p style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.85rem; color:#9C9892; margin-bottom:8px;"><%= t('paragraph_orderings.no_sentences') %></p>
+            <% end %>
+
+            <div style="display:flex; gap:6px; margin-top:8px;">
+              <%= form_with(model: [activity, ordering, ParagraphSentence.new], local: true) do |f| %>
+                <div style="display:flex; gap:6px; width:100%;">
+                  <%= f.text_field :sentence,
+                        placeholder: t('paragraph_orderings.sentence_placeholder'),
+                        style: "flex:1; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; padding:6px 10px; border:1.5px solid #DDD9D2; border-radius:7px; color:#1C1917;" %>
+                  <%= f.submit t('paragraph_orderings.add_sentence'),
+                        style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.78rem; font-weight:600; color:#0F3826; padding:6px 12px; border:1.5px solid #BBF7D0; border-radius:7px; background:#E8F5EE; cursor:pointer; white-space:nowrap;" %>
+                </div>
+              <% end %>
+            </div>
+          </div>
+
+          <div class="collapse" id="edit-paragraph-<%= ordering.id %>">
+            <div style="padding:16px; border-top:1px solid #D1EAD9; background:#FAFAF9;">
+              <%= form_with(model: [activity, ordering], local: true) do |f| %>
+                <div class="mb-2">
+                  <%= f.label :title, "Título (opcional)", class: "form-label" %>
+                  <%= f.text_field :title, class: "form-control form-control-sm" %>
+                </div>
+                <div class="mb-2">
+                  <%= f.label :instruction, "Instrução para o aluno (opcional)", class: "form-label" %>
+                  <%= f.text_field :instruction, class: "form-control form-control-sm" %>
+                </div>
+                <%= f.submit t('common.save'), class: "btn btn-primary btn-sm" %>
+              <% end %>
+            </div>
+          </div>
+
         </div>
-      </div>
-    <% end %>
+
+      <% end %>
+    </div>
+
   </div>
 <% end %>

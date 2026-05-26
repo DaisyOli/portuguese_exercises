@@ -43,3 +43,12 @@ node_modules/
 
 # Debug/temporary artifacts
 production_baseline.txt
+
+/app/assets/builds/*
+!/app/assets/builds/.keep
+
+# Windows metadata files (WSL)
+*.Zone.Identifier
+
+# Test runner output
+/test-results/

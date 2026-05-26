@@ -1,105 +1,103 @@
+<%
+  label_s  = "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; font-weight:600; color:#5C5853; display:block; margin-bottom:6px;"
+  input_s  = "width:100%; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.88rem; padding:9px 12px; border:1.5px solid #DDD9D2; border-radius:8px; color:#1C1917; background:#fff; box-sizing:border-box;"
+  hint_s   = "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.78rem; color:#9C9892; margin-top:5px; display:block;"
+  field_s  = "margin-bottom:16px;"
+  alert_s  = "background:#EBF2FC; border:1px solid #BFDBFE; border-radius:8px; padding:12px 14px; font-size:0.85rem; color:#1A4A8A; font-family:'Plus Jakarta Sans',sans-serif;"
+  submit_s = "background:#1A6B4A; color:#fff; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.88rem; font-weight:700; border:none; border-radius:10px; padding:10px 24px; cursor:pointer; width:100%; margin-top:4px;"
+  delete_s = "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; font-weight:600; color:#B91C1C; padding:8px 14px; border:1.5px solid #FECACA; border-radius:10px; background:#FEF2F2; cursor:pointer; text-decoration:none; display:inline-block; margin-top:8px; width:100%; text-align:center;"
+%>
+
 <div data-controller="question-selector">
-  <%= form_with model: [activity, question], html: { 
+  <%= form_with model: [activity, question], html: {
       class: "question-form",
       id: "question-form-#{question.id || 'new'}",
       data: { turbo: false }
     } do |form| %>
 
-    <div class="row mb-3">
-      <div class="col-md-12">
-        <%= form.label :question_type, t('questions.form.question_type') %>
-        <%= form.select :question_type, 
-            Question::QUESTION_TYPES.map { |type| [t("questions.types.#{type}"), type] }, 
-            { selected: question.question_type || 'multiple_choice' }, 
-            { 
-              class: "form-control question-type-select", 
-              data: { 
-                question_selector_target: "selector",
-                action: "change->question-selector#change"
-              }
-            } 
-        %>
-      </div>
+    <div style="<%= field_s %>">
+      <%= form.label :question_type, t('questions.form.question_type'), style: label_s %>
+      <%= form.select :question_type,
+          Question::QUESTION_TYPES.map { |type| [t("questions.types.#{type}"), type] },
+          { selected: question.question_type || 'multiple_choice' },
+          {
+            style: input_s,
+            class: "question-type-select",
+            data: {
+              question_selector_target: "selector",
+              action: "change->question-selector#change"
+            }
+          }
+      %>
     </div>
-    
-    <div class="row mb-3">
-      <div class="col-md-12">
-        <%= form.label :content, t('questions.form.question_content') %>
-        <%= form.text_area :content, 
-            class: "form-control", 
-            rows: 3,
-            placeholder: (question.fill_in_blank? ? 
-                        t('questions.form.fill_in_blank_placeholder') : 
-                        (question.multiple_choice? ? 
-                          t('questions.form.multiple_choice_placeholder') : 
-                          t('questions.form.content_placeholder'))) %>
+
+    <div style="<%= field_s %>">
+      <%= form.label :content, t('questions.form.question_content'), style: label_s %>
+      <%= form.text_area :content,
+          style: input_s,
+          rows: 3,
+          placeholder: (question.fill_in_blank? ?
+                      t('questions.form.fill_in_blank_placeholder') :
+                      (question.multiple_choice? ?
+                        t('questions.form.multiple_choice_placeholder') :
+                        t('questions.form.content_placeholder'))) %>
+    </div>
+
+    <div style="<%= field_s %> display:<%= question.fill_in_blank? ? 'block' : 'none' %>;"
+         class="fill-in-blank-help"
+         data-question-selector-target="fillInBlank">
+      <div style="<%= alert_s %>">
+        <%= t('questions.form.fill_in_blank_help_html') %>
       </div>
     </div>
 
-    <div class="row mb-3 fill-in-blank-help" style="display: <%= question.fill_in_blank? ? 'block' : 'none' %>;" data-question-selector-target="fillInBlank">
-      <div class="col-md-12">
-        <div class="alert alert-info">
-          <%= t('questions.form.fill_in_blank_help_html') %>
-        </div>
-      </div>
-    </div>
-    
-    <div class="row mb-3 multiple-choice-fields" style="display: <%= question.multiple_choice? ? 'block' : 'none' %>;" data-question-selector-target="multipleChoice">
-      <div class="col-md-12">
-        <%= form.label :options_text, t('questions.form.options') %>
-        <%= form.text_area :options_text, 
-            value: question.options&.join(","), 
-            class: "form-control", 
-            rows: 3,
-            placeholder: t('questions.form.options_placeholder') %>
-        <small class="form-text text-muted"><%= t('questions.form.options_help') %></small>
-      </div>
-    </div>
-    
-    <div class="row mb-3" data-question-selector-target="correctAnswer">
-      <div class="col-md-12">
-        <%= form.label :correct_answer, t('questions.form.correct_answer') %>
-        <%= form.text_field :correct_answer, 
-            class: "form-control",
-            placeholder: t('questions.form.correct_answer_placeholder') %>
-        <small class="form-text text-muted"><%= t('questions.form.correct_answer_help') %></small>
-      </div>
+    <div style="<%= field_s %> display:<%= question.multiple_choice? ? 'block' : 'none' %>;"
+         class="multiple-choice-fields"
+         data-question-selector-target="multipleChoice">
+      <%= form.label :options_text, t('questions.form.options'), style: label_s %>
+      <%= form.text_area :options_text,
+          value: question.options&.join(","),
+          style: input_s,
+          rows: 3,
+          placeholder: t('questions.form.options_placeholder') %>
+      <small style="<%= hint_s %>"><%= t('questions.form.options_help') %></small>
     </div>
 
-    <div class="row">
-      <div class="col-md-12">
-        <%= form.submit t('common.save'), class: "btn btn-primary" %>
-        <% if question.persisted? %>
-          <%= link_to t('common.delete'), 
-                    activity_question_path(activity, question), 
-                    data: { turbo_method: :delete, turbo_confirm: t('common.confirm_delete') },
-                    class: "btn btn-outline-danger ms-2" %>
-        <% end %>
-      </div>
+    <div style="<%= field_s %>" data-question-selector-target="correctAnswer">
+      <%= form.label :correct_answer, t('questions.form.correct_answer'), style: label_s %>
+      <%= form.text_field :correct_answer,
+          style: input_s,
+          placeholder: t('questions.form.correct_answer_placeholder') %>
+      <small style="<%= hint_s %>"><%= t('questions.form.correct_answer_help') %></small>
     </div>
 
-    <!-- Script de fallback se o Stimulus falhar -->
+    <%= form.submit t('common.save'), style: submit_s %>
+    <% if question.persisted? %>
+      <%= link_to t('common.delete'),
+                activity_question_path(activity, question),
+                data: { turbo_method: :delete, turbo_confirm: t('common.confirm_delete') },
+                style: delete_s %>
+    <% end %>
+
     <script>
       document.addEventListener('DOMContentLoaded', function() {
         const form = document.getElementById('question-form-<%= question.id || "new" %>');
         if (!form) return;
-        
+
         const select = form.querySelector('select[name="question[question_type]"]');
         if (!select) return;
-        
+
         function updateFields() {
           const type = select.value;
 
-          // Esconder todos os campos
           const multipleChoiceFields = form.querySelector('.multiple-choice-fields');
           const fillInBlankHelp = form.querySelector('.fill-in-blank-help');
           const correctAnswerField = form.querySelector('[data-question-selector-target="correctAnswer"]');
-          
+
           if (multipleChoiceFields) multipleChoiceFields.style.display = 'none';
           if (fillInBlankHelp) fillInBlankHelp.style.display = 'none';
           if (correctAnswerField) correctAnswerField.style.display = 'block';
-          
-          // Mostrar campos para o tipo selecionado
+
           switch (type) {
             case 'multiple_choice':
               if (multipleChoiceFields) multipleChoiceFields.style.display = 'block';
@@ -109,26 +107,18 @@
               break;
           }
         }
-        
-        // Adicionar listener para o select
+
         select.addEventListener('change', updateFields);
-        
-        // Inicializar no carregamento
         updateFields();
-        
-        // Adicionar o efeito visual fofo ao formulário quando for enviado
+
         form.addEventListener('submit', function(event) {
-          // Os dados serão enviados normalmente, mas preparamos o highlight para quando a página recarregar
-          // O ID da questão será passado como parâmetro na URL e capturado pelo script em show.html.erb
           if (!form.action.includes('?')) {
             form.action = form.action + '?destaque=true';
           } else {
             form.action = form.action + '&destaque=true';
           }
-          
         });
       });
     </script>
   <% end %>
 </div>
-

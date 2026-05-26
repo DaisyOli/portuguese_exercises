@@ -1,37 +1,56 @@
-<div class="container d-flex justify-content-center align-items-center vh-100">
-  <div class="card shadow-lg p-4" style="width: 100%; max-width: 500px;">
-    <div class="card-body">
-      <h2 class="card-title text-center mb-4"><%= t("devise.invitations.edit.header") %></h2>
+<% content_for :head do %>
+  <title>Criar conta · Practice-BR</title>
+  <style>
+    .auth-input:focus { border-color:#2A9B6F !important; box-shadow:0 0 0 3px rgba(42,155,111,0.12) !important; outline:none !important; }
+  </style>
+<% end %>
 
-      <%= form_for(resource, as: resource_name, url: invitation_path(resource_name), html: { method: :put, class: 'needs-validation' }) do |f| %>
-        <%= render "devise/shared/error_messages", resource: resource %>
-        <%= f.hidden_field :invitation_token, value: resource.invitation_token %>
+<div style="min-height:100vh; display:flex; align-items:center; justify-content:center; padding:24px 16px;">
+  <div style="background:#fff; border:1px solid #DDD9D2; border-radius:20px; padding:40px 36px; width:100%; max-width:400px; box-shadow:0 4px 32px rgba(0,0,0,0.07);">
 
-        <% if f.object.class.require_password_on_accepting %>
-          <div class="mb-3">
-            <%= f.label :password, class: "form-label" %><br />
-            <%= f.password_field :password, class: "form-control", required: true %>
-            <% if @minimum_password_length %>
-              <div class="form-text text-muted">
-                <%= t("devise.registrations.new.minimum_password", min: @minimum_password_length) %>
-              </div>
-            <% end %>
-          </div>
+    <%# Cabeçalho de boas-vindas %>
+    <div style="text-align:center; margin-bottom:28px;">
+      <div style="width:52px; height:52px; background:#E8F5EE; border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 14px; font-size:1.6rem;">🎉</div>
+      <h1 style="font-family:'Raleway',sans-serif; font-size:1.3rem; font-weight:700; color:#1C1917; margin-bottom:6px;">
+        Bem-vindo ao Practice-BR!
+      </h1>
+      <p style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.85rem; color:#5C5853; margin:0;">
+        Crie sua senha para acessar a plataforma.
+      </p>
+    </div>
 
-          <div class="mb-3">
-            <%= f.label :password_confirmation, class: "form-label" %><br />
-            <%= f.password_field :password_confirmation, class: "form-control", required: true %>
-          </div>
-        <% end %>
+    <%= form_for(resource, as: resource_name, url: invitation_path(resource_name), html: { method: :put }) do |f| %>
+      <%= render "devise/shared/error_messages", resource: resource %>
+      <%= f.hidden_field :invitation_token, value: resource.invitation_token %>
 
-        <div class="d-grid">
-          <%= f.submit t("devise.invitations.edit.submit_button"), class: "btn btn-primary btn-block" %>
+      <% if f.object.class.require_password_on_accepting %>
+        <div style="margin-bottom:16px;">
+          <%= f.label :password, "Nova senha",
+                style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; font-weight:600; color:#1C1917; display:block; margin-bottom:6px;" %>
+          <%= f.password_field :password, autocomplete: "new-password",
+                placeholder: "Mínimo 6 caracteres",
+                class: "auth-input",
+                style: "width:100%; padding:11px 14px; border:1.5px solid #DDD9D2; border-radius:10px; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.9rem; color:#1C1917; background:#fff; box-sizing:border-box;" %>
+          <% if @minimum_password_length %>
+            <div style="font-family:'DM Mono',monospace; font-size:0.68rem; color:#9C9892; margin-top:4px;">
+              mínimo <%= @minimum_password_length %> caracteres
+            </div>
+          <% end %>
+        </div>
+
+        <div style="margin-bottom:28px;">
+          <%= f.label :password_confirmation, "Confirmar senha",
+                style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; font-weight:600; color:#1C1917; display:block; margin-bottom:6px;" %>
+          <%= f.password_field :password_confirmation, autocomplete: "new-password",
+                placeholder: "Repita a senha",
+                class: "auth-input",
+                style: "width:100%; padding:11px 14px; border:1.5px solid #DDD9D2; border-radius:10px; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.9rem; color:#1C1917; background:#fff; box-sizing:border-box;" %>
         </div>
       <% end %>
 
-      <div class="mt-3 text-center">
-        <%= link_to t('common.back'), root_path, class: "text-decoration-none" %>
-      </div>
-    </div>
+      <%= f.submit "Criar minha conta",
+            style: "width:100%; background:#0F3826; color:#fff; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.9rem; font-weight:700; padding:12px; border:none; border-radius:12px; cursor:pointer; display:block;" %>
+    <% end %>
+
   </div>
 </div>

@@ -1,52 +1,54 @@
 <% if activity.media_url.present? %>
-  <div class="content-section" id="media">
-    <div class="content-header">
-      <span><i class="fas fa-image"></i> <%= t('activities.image_label') %></span>
+  <div id="media" style="background:#FBF3E0; border:1px solid #E8C97A; border-left:4px solid #C9952A; border-radius:14px; margin-bottom:14px; overflow:hidden;">
+
+    <div style="display:flex; align-items:center; justify-content:space-between; padding:12px 18px; border-bottom:1px solid #E8C97A; background:rgba(201,149,42,0.07);">
+      <span style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; color:#C9952A;">
+        <i class="bi bi-image" style="margin-right:5px;"></i><%= t('activities.image_label') %>
+      </span>
       <% if current_user.teacher? && activity.teacher == current_user %>
-        <div class="btn-group-custom">
-          <button type="button" class="btn-icon edit"
+        <div style="display:flex; gap:6px;">
+          <button type="button"
                   data-bs-toggle="collapse"
-                  data-bs-target="#edit-image-form">
-            <i class="fas fa-edit"></i>
+                  data-bs-target="#edit-image-form"
+                  style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.75rem; font-weight:600; color:#5C5853; padding:5px 10px; border:1.5px solid #DDD9D2; border-radius:7px; background:#fff; cursor:pointer;">
+            Editar
           </button>
           <%= button_to clear_media_activity_path(activity),
               method: :post,
               data: { turbo_confirm: t('activities.confirm_delete_media') },
-              class: "btn-icon delete" do %>
-            <i class="fas fa-trash"></i>
+              style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.75rem; font-weight:600; color:#B91C1C; padding:5px 10px; border:1.5px solid #FECACA; border-radius:7px; background:#FEF2F2; cursor:pointer;" do %>
+            Remover
           <% end %>
         </div>
       <% end %>
     </div>
 
-    <div class="content-body">
-      <div class="media-container">
-        <% if activity.media_url.include?('youtube.com') || activity.media_url.include?('youtu.be') %>
-          <%# Backwards-compat: YouTube links stored in media_url still render as video %>
-          <% youtube_id = activity.media_url.match(/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/) %>
-          <% if youtube_id && youtube_id[1] %>
-            <div class="ratio ratio-16x9 mb-3">
-              <iframe
-                src="https://www.youtube.com/embed/<%= youtube_id[1] %>"
-                allowfullscreen
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture">
-              </iframe>
-            </div>
-          <% end %>
-        <% else %>
-          <img src="<%= activity.media_url %>" alt="<%= t('activities.image_label') %>" class="img-fluid mb-3" style="border-radius: 8px;">
+    <div style="padding:18px 20px; background:rgba(255,255,255,0.6);">
+      <% if activity.media_url.include?('youtube.com') || activity.media_url.include?('youtu.be') %>
+        <% youtube_id = activity.media_url.match(/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/) %>
+        <% if youtube_id && youtube_id[1] %>
+          <div style="position:relative; padding-bottom:56.25%; height:0; overflow:hidden; border-radius:10px;">
+            <iframe src="https://www.youtube.com/embed/<%= youtube_id[1] %>"
+                    style="position:absolute; top:0; left:0; width:100%; height:100%; border:0;"
+                    allowfullscreen
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture">
+            </iframe>
+          </div>
         <% end %>
-      </div>
+      <% else %>
+        <img src="<%= activity.media_url %>"
+             alt="<%= t('activities.image_label') %>"
+             style="max-width:100%; border-radius:10px; display:block; margin:0 auto;">
+      <% end %>
     </div>
 
     <% if current_user.teacher? && activity.teacher == current_user %>
-      <div class="collapse form-collapse" id="edit-image-form">
-        <div class="card-body">
+      <div class="collapse" id="edit-image-form">
+        <div style="padding:20px; border-top:1px solid #E8C97A; background:#FAFAF9;">
           <%= form_with(model: activity, local: true) do |f| %>
             <div class="mb-3">
               <%= f.label :media_url, t('activities.image_url_label'), class: "form-label" %>
-              <%= f.text_field :media_url, class: "form-control",
-                  placeholder: t('activities.image_url_placeholder') %>
+              <%= f.text_field :media_url, class: "form-control", placeholder: t('activities.image_url_placeholder') %>
             </div>
             <div class="d-grid">
               <%= f.submit t('common.save'), class: "btn btn-primary" %>
@@ -55,53 +57,59 @@
         </div>
       </div>
     <% end %>
+
   </div>
 <% end %>
 
 <% if activity.video_url.present? %>
-  <div class="content-section" id="video">
-    <div class="content-header">
-      <span><i class="fab fa-youtube"></i> <%= t('activities.video_label') %></span>
+  <div id="video" style="background:#FBF3E0; border:1px solid #E8C97A; border-left:4px solid #C9952A; border-radius:14px; margin-bottom:14px; overflow:hidden;">
+
+    <div style="display:flex; align-items:center; justify-content:space-between; padding:12px 18px; border-bottom:1px solid #E8C97A; background:rgba(201,149,42,0.07);">
+      <span style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; color:#C9952A;">
+        <i class="bi bi-play-circle" style="margin-right:5px;"></i><%= t('activities.video_label') %>
+      </span>
       <% if current_user.teacher? && activity.teacher == current_user %>
-        <div class="btn-group-custom">
-          <button type="button" class="btn-icon edit"
+        <div style="display:flex; gap:6px;">
+          <button type="button"
                   data-bs-toggle="collapse"
-                  data-bs-target="#edit-video-form">
-            <i class="fas fa-edit"></i>
+                  data-bs-target="#edit-video-form"
+                  style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.75rem; font-weight:600; color:#5C5853; padding:5px 10px; border:1.5px solid #DDD9D2; border-radius:7px; background:#fff; cursor:pointer;">
+            Editar
           </button>
           <%= button_to clear_video_activity_path(activity),
               method: :post,
               data: { turbo_confirm: t('activities.confirm_delete_video') },
-              class: "btn-icon delete" do %>
-            <i class="fas fa-trash"></i>
+              style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.75rem; font-weight:600; color:#B91C1C; padding:5px 10px; border:1.5px solid #FECACA; border-radius:7px; background:#FEF2F2; cursor:pointer;" do %>
+            Remover
           <% end %>
         </div>
       <% end %>
     </div>
 
-    <div class="content-body">
+    <div style="padding:18px 20px; background:rgba(255,255,255,0.6);">
       <% youtube_id = activity.video_url.match(/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/) %>
       <% if youtube_id && youtube_id[1] %>
-        <div class="ratio ratio-16x9">
-          <iframe
-            src="https://www.youtube.com/embed/<%= youtube_id[1] %>"
-            allowfullscreen
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture">
+        <div style="position:relative; padding-bottom:56.25%; height:0; overflow:hidden; border-radius:10px;">
+          <iframe src="https://www.youtube.com/embed/<%= youtube_id[1] %>"
+                  style="position:absolute; top:0; left:0; width:100%; height:100%; border:0;"
+                  allowfullscreen
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture">
           </iframe>
         </div>
       <% else %>
-        <p class="text-muted"><%= t('activities.invalid_video_url') %></p>
+        <p style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.88rem; color:#9C9892;">
+          <%= t('activities.invalid_video_url') %>
+        </p>
       <% end %>
     </div>
 
     <% if current_user.teacher? && activity.teacher == current_user %>
-      <div class="collapse form-collapse" id="edit-video-form">
-        <div class="card-body">
+      <div class="collapse" id="edit-video-form">
+        <div style="padding:20px; border-top:1px solid #E8C97A; background:#FAFAF9;">
           <%= form_with(model: activity, local: true) do |f| %>
             <div class="mb-3">
               <%= f.label :video_url, t('activities.video_url_label'), class: "form-label" %>
-              <%= f.text_field :video_url, class: "form-control",
-                  placeholder: t('activities.video_url_placeholder') %>
+              <%= f.text_field :video_url, class: "form-control", placeholder: t('activities.video_url_placeholder') %>
             </div>
             <div class="d-grid">
               <%= f.submit t('common.save'), class: "btn btn-primary" %>
@@ -110,5 +118,6 @@
         </div>
       </div>
     <% end %>
+
   </div>
 <% end %>

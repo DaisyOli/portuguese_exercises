@@ -1,596 +1,160 @@
 <% content_for :head do %>
-  <title>Meu Espaço - Practice PT</title>
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Kalam:wght@400;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-  <style>
-    :root {
-      --quadro-verde: #1e3a2e;
-      --giz-branco: #f8f9fa;
-      --post-it-creme: #fff3e0;
-      --post-it-lavanda: #e8eaf6;
-      --post-it-menta: #e0f2f1;
-      --post-it-pessego: #fce4ec;
-      --post-it-azul-gelo: #e3f2fd;
-      --madeira-clara: #efebe9;
-      --sombra-giz: rgba(248, 249, 250, 0.4);
-      --verde-destaque: #2e7d32;
-      --azul-acao: #1976d2;
-      --roxo-acao: #7b1fa2;
-    }
-
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-         body {
-       background: linear-gradient(135deg, var(--quadro-verde) 0%, #0d2818 100%);
-       min-height: 100vh;
-       font-family: 'Inter', sans-serif;
-       color: var(--giz-branco);
-       position: relative;
-       overflow-x: hidden;
-     }
-
-         /* Textura do quadro */
-     body::before {
-       content: '';
-       position: fixed;
-       top: 0;
-       left: 0;
-       width: 100%;
-       height: 100%;
-       background-image: 
-         repeating-linear-gradient(
-           90deg,
-           transparent,
-           transparent 49px,
-           rgba(255,255,255,0.015) 50px
-         ),
-         repeating-linear-gradient(
-           0deg,
-           transparent,
-           transparent 49px,
-           rgba(255,255,255,0.015) 50px
-         );
-       pointer-events: none;
-       z-index: 1;
-     }
-
-    .quadro-container {
-      position: relative;
-      z-index: 2;
-      max-width: 1400px;
-      margin: 0 auto;
-      padding: 2rem;
-      min-height: 100vh;
-    }
-
-    /* Cabeçalho estilo quadro */
-    .header-quadro {
-      background: var(--madeira-clara);
-      color: #333;
-      padding: 1.5rem 2rem;
-      border-radius: 15px 15px 5px 5px;
-      margin-bottom: 2rem;
-      box-shadow: 0 8px 25px rgba(0,0,0,0.3);
-      border: 4px solid #8d6e63;
-      position: relative;
-    }
-
-    .header-quadro::before {
-      content: '';
-      position: absolute;
-      top: -8px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 80px;
-      height: 8px;
-      background: #5d4037;
-      border-radius: 4px;
-    }
-
-         .professor-info h1 {
-       font-family: 'Kalam', cursive;
-       font-size: 2.2rem;
-       color: var(--verde-destaque);
-       margin-bottom: 0.5rem;
-       text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
-     }
-
-    .professor-info p {
-      font-size: 1.1rem;
-      color: #555;
-      opacity: 0.8;
-    }
-
-    .action-buttons {
-      display: flex;
-      gap: 1rem;
-      align-items: center;
-    }
-
-         .btn-giz {
-       background: linear-gradient(145deg, var(--azul-acao), #1565c0);
-       border: none;
-       padding: 0.75rem 1.5rem;
-       border-radius: 25px;
-       color: white;
-       text-decoration: none;
-       font-weight: 600;
-       font-size: 0.95rem;
-       display: flex;
-       align-items: center;
-       gap: 0.5rem;
-       box-shadow: 0 6px 24px rgba(25, 118, 210, 0.3);
-       transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-       position: relative;
-       overflow: hidden;
-     }
-
-     .btn-giz::before {
-       content: '';
-       position: absolute;
-       top: 0;
-       left: -100%;
-       width: 100%;
-       height: 100%;
-       background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-       transition: left 0.5s;
-     }
-
-     .btn-giz:hover::before {
-       left: 100%;
-     }
-
-           .btn-giz:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 24px rgba(25, 118, 210, 0.25);
-        background: linear-gradient(145deg, #2196f3, var(--azul-acao));
-      }
-
-      .btn-giz.purple {
-        background: linear-gradient(145deg, var(--roxo-acao), #6a1b9a);
-        box-shadow: 0 6px 24px rgba(123, 31, 162, 0.3);
-      }
-
-      .btn-giz.purple:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 24px rgba(123, 31, 162, 0.25);
-        background: linear-gradient(145deg, #9c27b0, var(--roxo-acao));
-      }
-
-         /* Grid principal */
-     .quadro-grid {
-       display: grid;
-       grid-template-columns: 1fr 1fr 1fr;
-       gap: 1.5rem;
-       margin-bottom: 2rem;
-     }
-
-         /* Post-its (cards) */
-     .post-it {
-       background: var(--post-it-creme);
-       padding: 1.2rem;
-       border-radius: 12px;
-       box-shadow: 0 6px 24px rgba(0,0,0,0.1);
-       position: relative;
-       transform: rotate(-1deg);
-       transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-       color: #37474f;
-       margin-bottom: 1.2rem;
-       border: 1px solid rgba(0,0,0,0.08);
-       height: fit-content;
-     }
-
-     .post-it::before {
-       content: '';
-       position: absolute;
-       top: 0;
-       left: 0;
-       width: 100%;
-       height: 6px;
-       background: linear-gradient(90deg, rgba(0,0,0,0.08), rgba(0,0,0,0.04));
-       border-radius: 12px 12px 0 0;
-     }
-
-           .post-it:hover {
-        transform: rotate(0deg) scale(1.01);
-        box-shadow: 0 12px 32px rgba(0,0,0,0.12);
-        z-index: 10;
-      }
-
-     .post-it.lavanda {
-       background: var(--post-it-lavanda);
-       transform: rotate(1deg);
-     }
-
-     .post-it.menta {
-       background: var(--post-it-menta);
-       transform: rotate(-0.5deg);
-     }
-
-     .post-it.pessego {
-       background: var(--post-it-pessego);
-       transform: rotate(1.5deg);
-     }
-
-     .post-it.azul-gelo {
-       background: var(--post-it-azul-gelo);
-       transform: rotate(-2deg);
-     }
-
-                   .post-it h2 {
-        font-family: 'Kalam', cursive;
-        font-size: 1.4rem;
-        margin-bottom: 1rem;
-        color: var(--verde-destaque);
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        text-shadow: 1px 1px 2px rgba(255,255,255,0.8);
-      }
-
-    /* Atividades recentes */
-    .atividade-item {
-      background: rgba(255,255,255,0.9);
-      padding: 1rem;
-      border-radius: 8px;
-      margin-bottom: 0.8rem;
-             border-left: 4px solid var(--azul-acao);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      transition: all 0.3s ease;
-    }
-
-         .atividade-item:hover {
-       background: rgba(255,255,255,1);
-       transform: translateX(3px);
-       box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-     }
-
-         .atividade-info h3 {
-       font-size: 1rem;
-       margin-bottom: 0.3rem;
-       color: var(--verde-destaque);
-     }
-
-    .atividade-meta {
-      display: flex;
-      gap: 1rem;
-      font-size: 0.85rem;
-      color: #666;
-    }
-
-    .atividade-meta span {
-      display: flex;
-      align-items: center;
-      gap: 0.3rem;
-    }
-
-    .atividade-actions {
-      display: flex;
-      gap: 0.5rem;
-    }
-
-    .btn-mini {
-      padding: 0.4rem 0.8rem;
-      border-radius: 15px;
-      font-size: 0.8rem;
-      text-decoration: none;
-      font-weight: 500;
-      transition: all 0.3s ease;
-    }
-
-         .btn-mini.ver {
-       background: var(--azul-acao);
-       color: white;
-     }
-
-    .btn-mini.editar {
-      background: #fff;
-      color: #666;
-      border: 2px solid #e0e0e0;
-    }
-
-         .btn-mini:hover {
-       transform: scale(1.05);
-     }
-
-     .btn-mini.ver:hover {
-       background: #2196f3;
-       box-shadow: 0 4px 12px rgba(33, 150, 243, 0.3);
-     }
-
-         /* Métricas estilo quadro */
-     .metrica-quadro {
-       display: flex;
-       align-items: center;
-       justify-content: center;
-       flex-direction: column;
-       padding: 1.5rem;
-       text-align: center;
-       background: rgba(255,255,255,0.9);
-       border-radius: 15px;
-       border: 3px dashed var(--verde-destaque);
-       margin-bottom: 1rem;
-       transition: all 0.3s ease;
-       box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-     }
-
-           .metrica-quadro:hover {
-        background: rgba(255,255,255,0.95);
-        border-color: var(--azul-acao);
-        transform: scale(1.02);
-        box-shadow: 0 6px 20px rgba(0,0,0,0.12);
-      }
-
-         .metrica-icon {
-       font-size: 2.5rem;
-       margin-bottom: 0.5rem;
-       color: var(--verde-destaque);
-       filter: drop-shadow(1px 1px 2px rgba(0,0,0,0.1));
-     }
-
-         .metrica-numero {
-       font-family: 'Kalam', cursive;
-       font-size: 2.5rem;
-       font-weight: 700;
-       color: #2c3e50;
-       text-shadow: 1px 1px 2px rgba(255,255,255,0.8);
-     }
-
-         .metrica-label {
-       font-size: 0.9rem;
-       color: #546e7a;
-       margin-top: 0.3rem;
-       font-weight: 500;
-     }
-
-         /* Ações rápidas */
-     .acao-rapida {
-       background: rgba(255,255,255,0.9);
-       padding: 1rem;
-       border-radius: 10px;
-       margin-bottom: 0.8rem;
-       border: 2px solid var(--verde-destaque);
-       transition: all 0.3s ease;
-       display: flex;
-       align-items: center;
-       gap: 1rem;
-       text-decoration: none;
-       color: #37474f;
-       box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-     }
-
-           .acao-rapida:hover {
-        background: rgba(255,255,255,1);
-        border-color: var(--azul-acao);
-        transform: translateX(3px);
-        box-shadow: 0 4px 16px rgba(0,0,0,0.12);
-      }
-
-         .acao-icon {
-       font-size: 1.5rem;
-       color: var(--verde-destaque);
-     }
-
-         /* Rodapé estilo quadro */
-     .footer-quadro {
-       text-align: center;
-       margin-top: 3rem;
-       padding: 1rem;
-       border-top: 3px dashed rgba(255,255,255,0.6);
-     }
-
-         .btn-todas-atividades {
-       background: linear-gradient(145deg, var(--verde-destaque), #1b5e20);
-       color: white;
-       padding: 1rem 2rem;
-       border-radius: 25px;
-       text-decoration: none;
-       font-weight: 600;
-       font-size: 1.1rem;
-       display: inline-flex;
-       align-items: center;
-       gap: 0.8rem;
-       box-shadow: 0 8px 32px rgba(46, 125, 50, 0.3);
-       transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-     }
-
-           .btn-todas-atividades:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 10px 32px rgba(46, 125, 50, 0.25);
-        background: linear-gradient(145deg, #4caf50, var(--verde-destaque));
-      }
-
-         /* Responsividade */
-     @media (max-width: 1024px) {
-       .quadro-grid {
-         grid-template-columns: 1fr 1fr;
-       }
-     }
-     
-     @media (max-width: 768px) {
-       .quadro-grid {
-         grid-template-columns: 1fr;
-       }
-       
-       .header-quadro {
-         flex-direction: column;
-         gap: 1rem;
-       }
-       
-       .action-buttons {
-         justify-content: center;
-       }
-     }
-
-    /* Animação de entrada */
-    .post-it {
-      animation: slideInPostIt 0.6s ease-out forwards;
-      opacity: 0;
-    }
-
-    .post-it:nth-child(1) { animation-delay: 0.1s; }
-    .post-it:nth-child(2) { animation-delay: 0.2s; }
-    .post-it:nth-child(3) { animation-delay: 0.3s; }
-    .post-it:nth-child(4) { animation-delay: 0.4s; }
-
-    @keyframes slideInPostIt {
-      from {
-        opacity: 0;
-        transform: translateY(30px) rotate(-10deg);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0) rotate(-1deg);
-      }
-    }
-  </style>
+  <title>Dashboard · Practice-BR</title>
 <% end %>
 
+<%
+  user_activities     = Activity.where(teacher_id: current_user.id)
+  activities_by_level = user_activities.group(:level).count
+  total_activities    = user_activities.count
+  unique_students     = QuizAttempt.joins(:activity).where(activities: { teacher_id: current_user.id }).distinct.count('user_id')
+  total_attempts      = QuizAttempt.joins(:activity).where(activities: { teacher_id: current_user.id }).count
+  recent_activities   = user_activities.order(created_at: :desc).limit(5)
+  max_count           = activities_by_level.values.max || 1
 
-<div class="quadro-container">
-  <!-- Cabeçalho estilo madeira -->
-  <div class="header-quadro" style="display: flex; justify-content: space-between; align-items: center;">
-    <div class="professor-info">
-             <h1><i class="fas fa-chalkboard-teacher"></i> Meu Espaço</h1>
-      <p>Olá, Prof. <strong><%= current_user.email.split('@').first.capitalize %></strong> 👋</p>
+  cefr_colors = {
+    'A1' => { bg: '#E8F5EE', text: '#0F3826', border: '#2A9B6F', bar: '#2A9B6F' },
+    'A2' => { bg: '#EBF2FC', text: '#1A4A8A', border: '#2563EB', bar: '#2563EB' },
+    'B1' => { bg: '#F5F3FF', text: '#4C1D95', border: '#7C3AED', bar: '#7C3AED' },
+    'B2' => { bg: '#FFF7ED', text: '#7C2D12', border: '#EA580C', bar: '#EA580C' },
+    'C1' => { bg: '#F3F4F6', text: '#1C1917', border: '#374151', bar: '#374151' },
+  }
+
+  type_labels = {
+    'multiple_choice'  => 'Múltipla escolha',
+    'fill_in_blank'    => 'Completar lacunas',
+    'sentence_ordering'=> 'Ordenar frases',
+    'paragraph_ordering'=> 'Ordenar parágrafos',
+    'column_matching'  => 'Associar colunas',
+  }
+%>
+
+<div style="max-width:1100px; margin:0 auto; padding:2rem 1.5rem;">
+
+  <%# ── Saudação ── %>
+  <div style="margin-bottom:2rem;">
+    <h1 style="font-family:'Raleway',sans-serif; font-size:1.75rem; font-weight:700; color:#1C1917; margin-bottom:4px;">
+      Olá, <%= current_user.display_name %> 👋
+    </h1>
+    <p style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.95rem; color:#5C5853;">
+      Aqui está o resumo das suas atividades.
+    </p>
+  </div>
+
+  <%# ── 4 Cards de Métricas ── %>
+  <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:1rem; margin-bottom:2rem;">
+
+    <div style="background:#fff; border:1px solid #DDD9D2; border-radius:14px; padding:20px 22px;">
+      <div style="font-family:'DM Mono',monospace; font-size:0.68rem; color:#9C9892; letter-spacing:0.08em; margin-bottom:8px; text-transform:uppercase;">Atividades</div>
+      <div style="font-family:'Raleway',sans-serif; font-size:2rem; font-weight:800; color:#0F3826; line-height:1;"><%= total_activities %></div>
+      <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.78rem; color:#5C5853; margin-top:6px;">criadas por você</div>
     </div>
-    <div class="action-buttons">
-      <%= link_to new_activity_path, class: "btn-giz" do %>
-        <i class="fas fa-plus-circle"></i>
-        <span>Nova Atividade</span>
-      <% end %>
-      
-      <%= link_to new_user_invitation_path, class: "btn-giz purple" do %>
-        <i class="fas fa-user-plus"></i>
-        <span>Convidar Usuário</span>
+
+    <div style="background:#fff; border:1px solid #DDD9D2; border-radius:14px; padding:20px 22px;">
+      <div style="font-family:'DM Mono',monospace; font-size:0.68rem; color:#9C9892; letter-spacing:0.08em; margin-bottom:8px; text-transform:uppercase;">Estudantes</div>
+      <div style="font-family:'Raleway',sans-serif; font-size:2rem; font-weight:800; color:#2563EB; line-height:1;"><%= unique_students %></div>
+      <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.78rem; color:#5C5853; margin-top:6px;">únicos participantes</div>
+    </div>
+
+    <div style="background:#fff; border:1px solid #DDD9D2; border-radius:14px; padding:20px 22px;">
+      <div style="font-family:'DM Mono',monospace; font-size:0.68rem; color:#9C9892; letter-spacing:0.08em; margin-bottom:8px; text-transform:uppercase;">Tentativas</div>
+      <div style="font-family:'Raleway',sans-serif; font-size:2rem; font-weight:800; color:#C9952A; line-height:1;"><%= total_attempts %></div>
+      <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.78rem; color:#5C5853; margin-top:6px;">respostas enviadas</div>
+    </div>
+
+    <div style="background:#fff; border:1.5px dashed #DDD9D2; border-radius:14px; padding:20px 22px; display:flex; flex-direction:column; justify-content:center;">
+      <div style="font-family:'DM Mono',monospace; font-size:0.68rem; color:#9C9892; letter-spacing:0.08em; margin-bottom:8px; text-transform:uppercase;">Avaliações</div>
+      <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.88rem; font-weight:600; color:#5C5853; margin-bottom:4px;">Feedback dos alunos</div>
+      <div style="font-family:'DM Mono',monospace; font-size:0.72rem; color:#9C9892;">em breve...</div>
+    </div>
+
+  </div>
+
+  <%# ── Atividades por Nível ── %>
+  <div style="background:#fff; border:1px solid #DDD9D2; border-radius:16px; padding:28px; margin-bottom:1.5rem;">
+
+    <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:1.5rem;">
+      <h2 style="font-family:'Raleway',sans-serif; font-size:1.1rem; font-weight:700; color:#1C1917;">Atividades por Nível</h2>
+      <%= link_to "Ver todas →", activities_path,
+            style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.8rem; color:#C9952A; font-weight:600; text-decoration:none;" %>
+    </div>
+
+    <div style="display:flex; flex-direction:column; gap:12px;">
+      <% ['A1', 'A2', 'B1', 'B2', 'C1'].each do |lvl| %>
+        <% count = activities_by_level[lvl] || 0 %>
+        <% width = (count.to_f / max_count * 100).round %>
+        <% c = cefr_colors[lvl] %>
+        <div style="display:flex; align-items:center; gap:16px;">
+          <span style="font-family:'DM Mono',monospace; font-size:0.72rem; font-weight:700;
+                       background:<%= c[:bg] %>; color:<%= c[:text] %>; border:1.5px solid <%= c[:border] %>;
+                       padding:3px 10px; border-radius:20px; min-width:38px; text-align:center; flex-shrink:0;">
+            <%= lvl %>
+          </span>
+          <div style="flex:1; background:#F7F5F0; border-radius:99px; height:8px; overflow:hidden;">
+            <div style="width:<%= count > 0 ? [width, 4].max : 0 %>%; height:100%; border-radius:99px; background:<%= c[:bar] %>; transition:width 0.4s ease;"></div>
+          </div>
+          <span style="font-family:'DM Mono',monospace; font-size:0.8rem; color:<%= count > 0 ? '#5C5853' : '#9C9892' %>; min-width:24px; text-align:right;">
+            <%= count %>
+          </span>
+        </div>
       <% end %>
     </div>
   </div>
 
-     <!-- Grid principal -->
-   <div class="quadro-grid">
-     <!-- Card 1: Atividades por Nível -->
-     <div class="post-it creme">
-       <h2>
-         <i class="fas fa-layer-group"></i>
-         Atividades por Nível
-       </h2>
-       
-       <% user_activities = Activity.where(teacher_id: current_user.id) %>
-       <% activities_by_level = user_activities.group(:level).count %>
-       
-       <div style="display: grid; gap: 0.8rem;">
-         <% ['A1', 'A2', 'B1', 'B2', 'C1'].each do |level| %>
-           <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.5rem; background: rgba(255,255,255,0.6); border-radius: 6px;">
-             <span style="font-weight: 600; color: var(--verde-destaque);">Nível <%= level %></span>
-             <span style="background: var(--azul-acao); color: white; padding: 0.2rem 0.6rem; border-radius: 12px; font-size: 0.85rem; font-weight: 600;">
-               <%= activities_by_level[level] || 0 %>
-             </span>
-           </div>
-         <% end %>
-       </div>
-       
-       <% if user_activities.empty? %>
-         <p style="text-align: center; color: #666; font-style: italic; padding: 1rem; margin-top: 1rem;">
-           <i class="fas fa-lightbulb" style="color: #ff9800; margin-right: 0.5rem;"></i>
-           Crie sua primeira atividade!
-         </p>
-       <% end %>
-     </div>
+  <%# ── Atividades Recentes ── %>
+  <div style="background:#fff; border:1px solid #DDD9D2; border-radius:16px; padding:28px; margin-bottom:2rem;">
 
-     <!-- Card 2: Painel de Controle (Reduzido) -->
-     <div class="post-it lavanda">
-       <h2>
-         <i class="fas fa-chart-line"></i>
-         Métricas Gerais
-       </h2>
-       
-       <div class="metrica-quadro" style="margin-bottom: 0.8rem;">
-         <div class="metrica-icon">
-           <i class="fas fa-graduation-cap"></i>
-         </div>
-         <div class="metrica-numero">
-           <%= QuizAttempt.joins(:activity).where(activities: { teacher_id: current_user.id }).distinct.count('user_id') %>
-         </div>
-         <div class="metrica-label">Estudantes Únicos</div>
-       </div>
-       
-       <div class="metrica-quadro">
-         <div class="metrica-icon">
-           <i class="fas fa-pencil-alt"></i>
-         </div>
-         <div class="metrica-numero">
-           <%= QuizAttempt.joins(:activity).where(activities: { teacher_id: current_user.id }).count %>
-         </div>
-         <div class="metrica-label">Tentativas Totais</div>
-       </div>
-     </div>
+    <h2 style="font-family:'Raleway',sans-serif; font-size:1.1rem; font-weight:700; color:#1C1917; margin-bottom:1.5rem;">
+      Atividades Recentes
+    </h2>
 
-     <!-- Card 3: Resumo + Ações -->
-     <div class="post-it menta">
-       <h2>
-         <i class="fas fa-tasks"></i>
-         Resumo & Ações
-       </h2>
-       
-       <div class="metrica-quadro" style="margin-bottom: 1rem;">
-         <div class="metrica-icon">
-           <i class="fas fa-book-open"></i>
-         </div>
-         <div class="metrica-numero">
-           <%= Activity.where(teacher_id: current_user.id).count %>
-         </div>
-         <div class="metrica-label">Total de Atividades</div>
-       </div>
-
-       <!-- Preparado para avaliações futuras -->
-       <div style="background: rgba(255,255,255,0.7); padding: 0.8rem; border-radius: 8px; margin-bottom: 1rem; border: 2px dashed #ccc;">
-         <div style="text-align: center; color: #999; font-size: 0.85rem;">
-           <i class="fas fa-star-half-alt" style="margin-bottom: 0.3rem; display: block;"></i>
-           <strong>Avaliações dos Alunos</strong>
-           <div style="font-size: 0.75rem; margin-top: 0.2rem;">Em breve...</div>
-         </div>
-       </div>
-
-       <!-- Ações rápidas compactas -->
-       <div style="display: grid; gap: 0.6rem;">
-         <%= link_to activities_path, style: "background: rgba(255,255,255,0.8); padding: 0.6rem; border-radius: 6px; text-decoration: none; color: #37474f; display: flex; align-items: center; gap: 0.5rem; border: 1px solid var(--verde-destaque); font-size: 0.85rem;" do %>
-           <i class="fas fa-list-alt" style="color: var(--verde-destaque);"></i>
-           <span>Gerenciar Atividades</span>
-         <% end %>
-         
-         <%= button_to destroy_user_session_path, method: :delete, 
-             style: "background: rgba(255, 235, 238, 0.8); padding: 0.6rem; border-radius: 6px; color: #c62828; border: 1px solid #f44336; display: flex; align-items: center; gap: 0.5rem; font-size: 0.85rem; cursor: pointer;",
-             data: { turbo: false } do %>
-           <i class="fas fa-sign-out-alt" style="color: #f44336;"></i>
-           <span>Sair</span>
-         <% end %>
-       </div>
-     </div>
-   </div>
-
-  <!-- Rodapé -->
-  <div class="footer-quadro">
-    <%= link_to activities_path, class: "btn-todas-atividades" do %>
-      <i class="fas fa-chalkboard"></i>
-             <span>Ver Todas as Atividades</span>
+    <% if recent_activities.empty? %>
+      <div style="text-align:center; padding:40px 20px; color:#9C9892;">
+        <div style="font-size:2.5rem; margin-bottom:12px;">📝</div>
+        <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.9rem; font-weight:600; color:#5C5853; margin-bottom:6px;">Nenhuma atividade ainda</div>
+        <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem;">Clique em "+ Nova Atividade" para começar.</div>
+      </div>
+    <% else %>
+      <% recent_activities.each_with_index do |activity, i| %>
+        <% c = cefr_colors[activity.level] || cefr_colors['A1'] %>
+        <div style="display:flex; align-items:center; gap:16px; padding:14px 0; <%= i < recent_activities.size - 1 ? 'border-bottom:1px solid #F0EDE8;' : '' %>">
+          <span style="font-family:'DM Mono',monospace; font-size:0.72rem; font-weight:700;
+                       background:<%= c[:bg] %>; color:<%= c[:text] %>; border:1.5px solid <%= c[:border] %>;
+                       padding:3px 10px; border-radius:20px; flex-shrink:0;">
+            <%= activity.level %>
+          </span>
+          <div style="flex:1; min-width:0;">
+            <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.9rem; font-weight:600; color:#1C1917; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
+              <%= activity.title %>
+            </div>
+            <% if activity.content_type.present? %>
+              <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.78rem; color:#9C9892; margin-top:2px;">
+                <%= type_labels[activity.content_type] || activity.content_type.humanize %>
+              </div>
+            <% end %>
+          </div>
+          <div style="display:flex; align-items:center; gap:8px; flex-shrink:0;">
+            <%= link_to "Ver", activity_path(activity),
+                  style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.78rem; font-weight:600;
+                          color:#2563EB; padding:5px 12px; border:1.5px solid #BFDBFE; border-radius:8px;
+                          text-decoration:none; background:#EBF2FC;" %>
+            <%= link_to "Editar", edit_activity_path(activity),
+                  style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.78rem; font-weight:500;
+                          color:#5C5853; padding:5px 12px; border:1.5px solid #DDD9D2; border-radius:8px;
+                          text-decoration:none;" %>
+          </div>
+        </div>
+      <% end %>
     <% end %>
   </div>
+
+  <%# ── CTA Footer ── %>
+  <div style="display:flex; justify-content:center; padding-bottom:2rem;">
+    <%= link_to activities_path,
+          style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.9rem; font-weight:700;
+                  background:#1A6B4A; color:#fff; padding:13px 32px; border-radius:12px;
+                  text-decoration:none; display:inline-flex; align-items:center; gap:8px;" do %>
+      Ver Todas as Atividades →
+    <% end %>
+  </div>
+
 </div>
-
-<script>
-// Pequena animação de entrada para os post-its
-document.addEventListener('DOMContentLoaded', function() {
-  const postIts = document.querySelectorAll('.post-it');
-  postIts.forEach((postIt, index) => {
-    postIt.style.animationDelay = `${index * 0.1}s`;
-  });
-});
-</script>
-

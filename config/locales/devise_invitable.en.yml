@@ -15,9 +15,9 @@ en:
         submit_button: 'Set my password'
     mailer:
       invitation_instructions:
-        subject: 'Welcome to PracticePT - Your Invitation'
+        subject: 'Welcome to Practice-BR - Your Invitation'
         hello: 'Hello %{email}'
-        someone_invited_you: 'You have been invited to join PracticePT, a platform for educational activities and quizzes. You can accept this invitation through the link below.'
+        someone_invited_you: 'You have been invited to join Practice-BR, a platform for educational activities and quizzes. You can accept this invitation through the link below.'
         accept: 'Accept invitation'
         accept_until: 'This invitation will be due in %{due_date}.'
         ignore: "If you don't want to accept the invitation, please ignore this email. Your account won't be created until you access the link above and set your password." 
