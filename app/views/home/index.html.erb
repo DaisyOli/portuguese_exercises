@@ -1,27 +1,47 @@
-<div class="container d-flex justify-content-center align-items-center vh-100">
-  <div class="card shadow-lg p-4 text-center" style="width: 100%; max-width: 400px;">
-    <div class="card-body">
-      <h1 class="card-title"><%= t('home.welcome_message') %></h1>
-      <p class="card-text"><%= t('home.login_prompt') %></p>
+<% content_for :head do %>
+  <title>Practice-BR</title>
+<% end %>
 
-      <% if user_signed_in? %>
-        <p><%= t('home.logged_in_as') %> <strong><%= current_user.email %></strong>.</p>
+<div style="min-height:100vh; display:flex; align-items:center; justify-content:center; padding:24px 16px;">
+  <div style="background:#fff; border:1px solid #DDD9D2; border-radius:20px; padding:40px 36px; width:100%; max-width:400px; box-shadow:0 4px 32px rgba(0,0,0,0.07); text-align:center;">
 
-        <!-- Botão de Log Out -->
-        <%= button_to t('auth.sign_out'), destroy_user_session_path, method: :delete, class: "btn btn-danger", data: { turbo: false } %>
-        
-        <!-- Links para os Dashboards -->
-        <% if current_user.role == "teacher" %>
-          <%= link_to t('home.go_to_teacher_dashboard'), teacher_dashboard_path, class: "btn btn-primary mb-2" %>
-        <% elsif current_user.role == "student" %>
-          <%= link_to t('home.go_to_student_dashboard'), student_dashboard_path, class: "btn btn-primary mb-2" %>
-        <% end %>
-      <% else %>
-        <!-- Formulário de Sign Up -->
-        <h2 class="mt-3"><%= t('home.sign_up_title') %></h2>
-        <%= render 'devise/registrations/new' %>
-      <% end %>
+    <%# Logo %>
+    <div style="display:inline-flex; align-items:center; gap:10px; margin-bottom:28px;">
+      <%= image_tag "practice-br-logo-mark-color.svg", alt:"Practice-BR", style:"height:38px;" %>
+      <div style="text-align:left;">
+        <div style="font-family:'Raleway',sans-serif; font-size:1.2rem; font-weight:800; color:#0F3826; line-height:1.1;">Practice-BR</div>
+        <div style="font-family:'DM Mono',monospace; font-size:0.58rem; color:#9C9892; letter-spacing:0.06em;">PORTUGUÊS PARA ESTRANGEIROS</div>
+      </div>
     </div>
+
+    <% if user_signed_in? %>
+      <p style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.88rem; color:#5C5853; margin:0 0 6px 0;">
+        <%= t('home.logged_in_as') %>
+      </p>
+      <p style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.95rem; font-weight:700; color:#1C1917; margin:0 0 28px 0;">
+        <%= current_user.email %>
+      </p>
+
+      <% if current_user.teacher? %>
+        <%= link_to t('home.go_to_teacher_dashboard'), teacher_dashboard_path,
+              style: "display:block; width:100%; background:#1A6B4A; color:#fff; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.9rem; font-weight:700; padding:12px; border:none; border-radius:12px; cursor:pointer; text-decoration:none; margin-bottom:12px; box-sizing:border-box;" %>
+      <% elsif current_user.student? %>
+        <%= link_to t('home.go_to_student_dashboard'), student_dashboard_path,
+              style: "display:block; width:100%; background:#1A6B4A; color:#fff; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.9rem; font-weight:700; padding:12px; border:none; border-radius:12px; cursor:pointer; text-decoration:none; margin-bottom:12px; box-sizing:border-box;" %>
+      <% end %>
+
+      <%= button_to t('auth.sign_out'), destroy_user_session_path,
+            method: :delete,
+            data: { turbo: false },
+            style: "display:block; width:100%; background:#FEF2F2; color:#B91C1C; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.88rem; font-weight:600; padding:10px; border:1.5px solid #FECACA; border-radius:12px; cursor:pointer; box-sizing:border-box;" %>
+
+    <% else %>
+      <p style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.88rem; color:#5C5853; margin:0 0 28px 0;">
+        <%= t('home.login_prompt') %>
+      </p>
+      <%= link_to t('devise.sessions.sign_in'), new_user_session_path,
+            style: "display:block; width:100%; background:#C9952A; color:#fff; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.9rem; font-weight:700; padding:12px; border:none; border-radius:12px; cursor:pointer; text-decoration:none; margin-bottom:12px; box-sizing:border-box;" %>
+    <% end %>
+
   </div>
 </div>
-

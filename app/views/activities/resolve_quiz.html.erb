@@ -1,521 +1,400 @@
 <% content_for :head do %>
   <title><%= @activity.title %> - Practice PT</title>
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
   <%= render 'quiz_shared_styles' %>
-  <style>
-    .activity-meta {
-      display: flex;
-      justify-content: center;
-      gap: 1.5rem;
-      flex-wrap: wrap;
-      font-size: 0.9rem;
-      color: #666;
-      margin-bottom: 2rem;
-      padding-bottom: 1.5rem;
-      border-bottom: 1px solid #e0e0e0;
-    }
-
-    .meta-item {
-      display: flex;
-      align-items: center;
-      gap: 0.4rem;
-    }
-
-    .nivel-badge {
-      background: var(--azul-acao);
-      color: white;
-      padding: 0.2rem 0.6rem;
-      border-radius: 12px;
-      font-size: 0.8rem;
-      font-weight: 600;
-    }
-
-    .content-section {
-      background: #f8f9fa;
-      border-radius: 8px;
-      padding: 1.5rem;
-      margin-bottom: 2rem;
-      border-left: 3px solid var(--verde-destaque);
-    }
-
-    .question-card::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 4px;
-      height: 100%;
-      background: linear-gradient(180deg, var(--verde-destaque), var(--azul-acao));
-    }
-
-    .question-header {
-      background: linear-gradient(135deg, #f8f9fa, #e8f5e8);
-      padding: 0.9rem 1.5rem 0.9rem 2rem;
-      border-bottom: 1px solid rgba(46, 125, 50, 0.1);
-      font-family: 'Kalam', cursive;
-      font-weight: 600;
-      color: var(--verde-destaque);
-      font-size: 1rem;
-      position: relative;
-    }
-
-    .question-header::after {
-      content: '?';
-      position: absolute;
-      right: 1.5rem;
-      top: 50%;
-      transform: translateY(-50%);
-      width: 24px;
-      height: 24px;
-      background: var(--verde-destaque);
-      color: white;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 0.8rem;
-      font-weight: 700;
-    }
-
-    .options-list {
-      padding-left: 1.5rem;
-    }
-
-    .form-check {
-      margin-bottom: 0.8rem;
-      padding: 0.6rem 0.8rem;
-      border-radius: 8px;
-      transition: all 0.3s ease;
-      border: 1px solid transparent;
-      background: #fafafa;
-    }
-
-    .form-check:hover {
-      background: rgba(46, 125, 50, 0.05);
-      border-color: rgba(46, 125, 50, 0.2);
-      transform: translateX(3px);
-    }
-
-    .form-check-input {
-      margin-top: 0.25rem;
-      border: 2px solid var(--verde-destaque);
-    }
-
-    .form-check-input:checked {
-      background-color: var(--verde-destaque);
-      border-color: var(--verde-destaque);
-    }
-
-    .form-check-label {
-      margin-left: 0.5rem;
-      cursor: pointer;
-      font-size: 0.95rem;
-      font-weight: 500;
-    }
-
-    .form-control.d-inline-block {
-      border: 2px solid var(--verde-destaque);
-      border-radius: 8px;
-      padding: 0.5rem 1rem;
-      font-weight: 600;
-      margin: 0 0.5rem;
-      transition: all 0.3s ease;
-      background: #f8f9fa;
-    }
-
-    .form-control.d-inline-block:focus {
-      outline: none;
-      box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.2);
-      border-color: var(--azul-acao);
-      background: white;
-      transform: scale(1.02);
-    }
-
-    .loading-section {
-      text-align: center;
-      margin: 2rem 0;
-    }
-
-    .spinner-border {
-      color: var(--azul-acao) !important;
-    }
-
-    .alert-quiz {
-      background: rgba(25, 118, 210, 0.1);
-      border: 1px solid var(--azul-acao);
-      border-radius: 8px;
-      padding: 1rem;
-      margin-bottom: 1.5rem;
-      color: var(--azul-acao);
-    }
-
-    @media (max-width: 768px) {
-      .quiz-title { font-size: 1.5rem; }
-      .activity-meta { flex-direction: column; gap: 0.5rem; }
-    }
-  </style>
 <% end %>
 
-  <div class="quiz-container">
-    <% if params[:use_alternative] == "true" %>
-      <div class="alert-quiz w-100 text-center" style="max-width: 900px; margin-bottom: 20px;">
-        <strong>MODO DE TESTE:</strong> Usando implementação alternativa com select boxes
-        <a href="<%= solve_activity_path(@activity, locale: params[:locale]) %>" class="btn btn-sm btn-outline-primary ms-3">Voltar para versão padrão</a>
-      </div>
+<%
+  total_exercises = @questions.size +
+                    @activity.sentence_orderings.size +
+                    @activity.paragraph_orderings.size +
+                    @activity.column_matchings.size
+
+  has_material = @activity.statement.present? ||
+                 @activity.media_url.present? ||
+                 @activity.video_url.present? ||
+                 @activity.explanation_text.present?
+%>
+
+<div class="quiz-outer">
+
+  <div class="quiz-page-header">
+    <h1 class="quiz-title"><%= @activity.title %></h1>
+    <% if @activity.level.present? %>
+      <span style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.75rem; font-weight:700; background:#E8F5EE; color:#1A6B4A; padding:3px 12px; border-radius:20px; letter-spacing:0.05em;">
+        <%= @activity.level %>
+      </span>
     <% end %>
-    
-         <!-- Header elegante -->
-     <div class="quiz-header">
-       <h1 class="quiz-title"><%= @activity.title %></h1>
-       <div class="activity-meta">
-         <div class="meta-item">
-           <span><%= @activity.description %></span>
-         </div>
-         <div class="meta-item">
-           <span>Nível:</span>
-           <span class="nivel-badge"><%= @activity.level %></span>
-         </div>
-       </div>
-     </div>
-     
-     <!-- Folha principal -->
-     <div class="quiz-paper">
-    <% if @show_score %>
-      <!-- Seção de Score -->
-      <div class="score-section" id="score-section">
-                 <h3 class="score-title">
-           <i class="fas fa-trophy"></i>
-           <%= t('quiz.completed') %>
-         </h3>
-        
+  </div>
+
+  <% if @show_score %>
+    <div class="quiz-paper" style="max-width:720px;">
+      <div class="score-section">
+        <h3 class="score-title">
+          <i class="bi bi-trophy"></i>
+          <%= t('quiz.completed') %>
+        </h3>
         <div class="score-cards">
           <div class="score-card">
-            <div class="score-number" style="color: var(--azul-acao);"><%= @score %>%</div>
+            <div class="score-number" style="color:#2563EB;"><%= @score %>%</div>
             <div class="score-label"><%= t('quiz.score') %></div>
           </div>
           <div class="score-card">
-            <div class="score-number" style="color: var(--verde-destaque);"><%= @total_correct %></div>
+            <div class="score-number" style="color:#1A6B4A;"><%= @total_correct %></div>
             <div class="score-label"><%= t('activities.correct_answers') %></div>
           </div>
           <div class="score-card">
-            <div class="score-number" style="color: var(--roxo-acao);"><%= @total_questions %></div>
+            <div class="score-number" style="color:#C9952A;"><%= @total_questions %></div>
             <div class="score-label"><%= t('activities.total_questions') %></div>
           </div>
         </div>
-        
-                 <div class="d-grid gap-2 d-md-flex justify-content-md-center">
-           <%= link_to results_activity_path(@activity), class: "btn-quiz-primary me-md-2" do %>
-             <i class="fas fa-chart-line"></i><%= t('quiz.see_detailed_results') %>
-           <% end %>
-           <%= link_to solve_activity_path(@activity), class: "btn-quiz-secondary" do %>
-             <i class="fas fa-refresh"></i><%= t('quiz.try_again') %>
-           <% end %>
-         </div>
+        <%= link_to results_activity_path(@activity), class: "btn-quiz-primary" do %>
+          <i class="bi bi-bar-chart-line"></i> <%= t('quiz.see_detailed_results') %>
+        <% end %>
+        <%= link_to solve_activity_path(@activity), class: "btn-quiz-secondary" do %>
+          <i class="bi bi-arrow-clockwise"></i> <%= t('quiz.try_again') %>
+        <% end %>
       </div>
-    <% else %>
-      <!-- Conteúdo da atividade -->
-      <% cache [@activity, "header", I18n.locale] do %>
-                 <% if @activity.statement.present? %>
-           <div class="content-section">
-             <%= simple_format(@activity.statement) %>
-           </div>
-         <% end %>
-         
-         <!-- Exibição da imagem -->
-         <% if @activity.media_url.present? %>
-           <div class="content-section">
-             <% if @activity.media_url.include?('youtube.com') || @activity.media_url.include?('youtu.be') %>
-               <%# Backwards-compat: YouTube links stored in media_url %>
-               <% youtube_id = @activity.media_url.match(/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/) %>
-               <% if youtube_id && youtube_id[1] %>
-                 <div style="max-width: 560px; margin: 0 auto;">
-                   <div class="ratio ratio-16x9">
-                     <iframe
-                       src="https://www.youtube.com/embed/<%= youtube_id[1] %>"
-                       allowfullscreen
-                       allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                       style="border-radius: 8px;">
-                     </iframe>
-                   </div>
-                 </div>
-               <% end %>
-             <% else %>
-               <div style="text-align: center;">
-                 <img src="<%= @activity.media_url %>" alt="<%= t('activities.image_label') %>" class="img-fluid" style="border-radius: 8px; max-height: 400px;">
-               </div>
-             <% end %>
-           </div>
-         <% end %>
+    </div>
 
-         <!-- Exibição do vídeo -->
-         <% if @activity.video_url.present? %>
-           <% youtube_id = @activity.video_url.match(/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/) %>
-           <% if youtube_id && youtube_id[1] %>
-             <div class="content-section">
-               <div style="max-width: 560px; margin: 0 auto;">
-                 <div class="ratio ratio-16x9">
-                   <iframe
-                     src="https://www.youtube.com/embed/<%= youtube_id[1] %>"
-                     allowfullscreen
-                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                     style="border-radius: 8px;">
-                   </iframe>
-                 </div>
-               </div>
-             </div>
-           <% end %>
-         <% end %>
+  <% else %>
 
-         <!-- Exibição do texto explicativo -->
-         <% if @activity.explanation_text.present? %>
-           <div class="content-section">
-             <%= simple_format(@activity.explanation_text) %>
-           </div>
-         <% end %>
-      <% end %>
-      
-      <%= form_with(url: submit_activity_path(@activity), method: :post, 
-          data: { 
+    <%# Capture the form so it can be placed in either layout (two-col or single-col) %>
+    <% exercise_index = 0 %>
+    <% form_html = capture do %>
+      <%= form_with(url: submit_activity_path(@activity), method: :post,
+          style: "display:flex; flex-direction:column; flex:1; min-height:0; overflow:hidden;",
+          data: {
             turbo: false,
             controller: "quiz-loading toast",
             action: "submit->quiz-loading#submit"
           }) do |f| %>
-        <!-- Debug de questões - remover após resolver o problema -->
-        <% if params[:debug_questions] == "true" %>
-          <div class="alert-quiz">
-            <h5>Informações de Debug</h5>
-            <p>Total de questões: <%= @questions.size %></p>
-            <p>IDs: <%= @questions.map(&:id).join(", ") %></p>
-          </div>
-        <% end %>
-        
-        <% @questions.each_with_index do |question, index| %>
-                     <% # Versão alternativa sem cache
-              if params[:skip_cache] == "true" %>
-             <div class="question-card">
-               <div class="question-header">
-                 <%= t('questions.title') %> <%= index + 1 %>
-              </div>
-              <div class="question-body">
-                <div class="question-text">
-                  <% if question.fill_in_blank? %>
-                    <%= question.content.gsub('_____', text_field_tag("answers[#{question.id}]", nil, class: 'form-control d-inline-block', style: 'width: 150px;')).html_safe %>
-                  <% else %>
-                    <%= question.content %>
-                  <% end %>
-                </div>
 
-                <% if question.multiple_choice? && question.options.any? %>
-                  <div class="options-list">
-                    <% question.options.each do |option| %>
-                      <div class="form-check">
-                        <%= radio_button_tag "answers[#{question.id}]", option, false, class: 'form-check-input' %>
-                        <%= label_tag "answers_#{question.id}_#{option.parameterize}", option, class: 'form-check-label' %>
-                      </div>
-                    <% end %>
-                  </div>
-                <% end %>
-              </div>
-            </div>
-          <% else %>
-                         <% cache [question, index, I18n.locale] do %>
-               <div class="question-card">
-                 <div class="question-header">
-                   <%= t('questions.title') %> <%= index + 1 %>
+        <%# Progress: counter + thin bar %>
+        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:6px;">
+          <span style="font-family:'DM Mono',monospace; font-weight:700; font-size:0.72rem; color:#9C9892;"
+                data-quiz-progress-target="counter">1 de <%= total_exercises %></span>
+        </div>
+        <div class="quiz-progress-bar-track">
+          <div class="quiz-progress-bar-fill"
+               data-quiz-progress-target="bar"
+               style="width:<%= total_exercises > 0 ? (100.0 / total_exercises).round : 100 %>%;"></div>
+        </div>
+
+        <%# All exercise cards stacked — height fixed to tallest card (no layout shift) %>
+        <div class="quiz-questions-stack">
+
+        <%# Questions (multiple choice + fill in blank) %>
+        <% @questions.each_with_index do |question, index| %>
+          <div data-quiz-progress-target="question"
+               style="<%= exercise_index == 0 ? '' : 'display:none;' %>">
+            <% cache [question, index, I18n.locale] do %>
+              <div class="question-card">
+                <div class="question-header">
+                  <span style="font-family:'DM Mono',monospace; font-weight:700; font-size:0.75rem; color:#9C9892;"><%= "%02d" % (index + 1) %></span>
+                  <% if question.fill_in_blank? %>
+                    <span style="font-size:0.72rem; font-weight:600; color:#9C9892; font-family:'Plus Jakarta Sans',sans-serif;">
+                      <i class="bi bi-input-cursor-text"></i> <%= t('questions.types.fill_in_blank') %>
+                    </span>
+                  <% elsif question.multiple_choice? %>
+                    <span style="font-size:0.72rem; font-weight:600; color:#9C9892; font-family:'Plus Jakarta Sans',sans-serif;">
+                      <i class="bi bi-list-ul"></i> <%= t('questions.types.multiple_choice') %>
+                    </span>
+                  <% end %>
                 </div>
                 <div class="question-body">
                   <div class="question-text">
                     <% if question.fill_in_blank? %>
-                      <%= question.content.gsub('_____', text_field_tag("answers[#{question.id}]", nil, class: 'form-control d-inline-block', style: 'width: 150px;')).html_safe %>
+                      <% safe_c = sanitize(question.content.to_s, tags: %w[p br strong em u], attributes: []) %>
+                      <%= safe_c.gsub('_____',
+                            text_field_tag("answers[#{question.id}]", nil,
+                              style: "display:inline-block; width:140px; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.92rem; padding:4px 10px; border:2px solid #1A6B4A; border-radius:6px; color:#1C1917; background:#F0FAF5; margin:0 4px;")
+                          ).html_safe %>
                     <% else %>
-                      <%= question.content %>
+                      <%= sanitize(question.content.to_s, tags: %w[p br strong em u], attributes: []) %>
                     <% end %>
                   </div>
 
                   <% if question.multiple_choice? && question.options.any? %>
-                    <div class="options-list">
+                    <div style="display:flex; flex-direction:column; gap:8px; margin-top:4px;">
                       <% question.options.each do |option| %>
-                        <div class="form-check">
-                          <%= radio_button_tag "answers[#{question.id}]", option, false, class: 'form-check-input' %>
-                          <%= label_tag "answers_#{question.id}_#{option.parameterize}", option, class: 'form-check-label' %>
-                        </div>
+                        <label style="display:flex; align-items:center; gap:10px; padding:10px 14px; border:1.5px solid #DDD9D2; border-radius:8px; cursor:pointer; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.92rem; color:#1C1917; transition:border-color 0.15s;">
+                          <%= radio_button_tag "answers[#{question.id}]", option, false,
+                                style: "width:16px; height:16px; accent-color:#1A6B4A; flex-shrink:0; cursor:pointer;" %>
+                          <%= option %>
+                        </label>
                       <% end %>
                     </div>
                   <% end %>
                 </div>
               </div>
             <% end %>
-          <% end %>
+          </div>
+          <% exercise_index += 1 %>
         <% end %>
 
-        <!-- Exercícios de ordenar palavras -->
+        <%# Sentence ordering exercises %>
         <% @activity.sentence_orderings.order(:display_order, :created_at).each_with_index do |ordering, index| %>
-          <div class="question-card sentence-ordering-exercise"
-               data-controller="sentence-ordering">
-
-            <div class="question-header">
-              <i class="fas fa-sort-alpha-down"></i>
-              <%= t('sentence_orderings.title') %> <%= index + 1 %>
-            </div>
-
-            <div class="question-body">
-              <p class="ordering-instruction-text">
-                <%= ordering.instruction.present? ? ordering.instruction : t('sentence_orderings.instruction_default') %>
-              </p>
-
-              <div class="word-zones-container">
-                <% ordering.shuffled_words.each_with_index do |word, i| %>
-                  <div class="word-drop-zone" data-sentence-ordering-target="zone">
-                    <span class="draggable-word"
-                          data-sentence-ordering-target="word"
-                          data-word-id="<%= word.id %>">
-                      <%= word.word %>
-                    </span>
-                  </div>
-                <% end %>
+          <div data-quiz-progress-target="question"
+               style="<%= exercise_index == 0 ? '' : 'display:none;' %>">
+            <div class="question-card sentence-ordering-exercise" data-controller="sentence-ordering">
+              <div class="question-header">
+                <span style="font-family:'DM Mono',monospace; font-weight:700; font-size:0.75rem; color:#9C9892;"><%= "%02d" % (index + 1) %></span>
+                <span style="font-size:0.72rem; font-weight:600; color:#9C9892; font-family:'Plus Jakarta Sans',sans-serif;">
+                  <i class="bi bi-sort-alpha-down"></i> <%= t('sentence_orderings.title') %>
+                </span>
               </div>
-
-              <input type="hidden"
-                     name="sentence_ordering_answers[<%= ordering.id %>]"
-                     data-sentence-ordering-target="input"
-                     value="<%= ordering.shuffled_words.map(&:id).join(',') %>">
+              <div class="question-body">
+                <p class="ordering-instruction-text">
+                  <%= ordering.instruction.present? ? ordering.instruction : t('sentence_orderings.instruction_default') %>
+                </p>
+                <div class="word-zones-container">
+                  <% ordering.shuffled_words.each_with_index do |word, i| %>
+                    <div class="word-drop-zone" data-sentence-ordering-target="zone">
+                      <span class="draggable-word"
+                            data-sentence-ordering-target="word"
+                            data-word-id="<%= word.id %>">
+                        <%= word.word %>
+                      </span>
+                    </div>
+                  <% end %>
+                </div>
+                <input type="hidden"
+                       name="sentence_ordering_answers[<%= ordering.id %>]"
+                       data-sentence-ordering-target="input"
+                       value="<%= ordering.shuffled_words.map(&:id).join(',') %>">
+              </div>
             </div>
           </div>
+          <% exercise_index += 1 %>
         <% end %>
 
-        <!-- Exercícios de ordenar frases -->
+        <%# Paragraph ordering exercises %>
         <% @activity.paragraph_orderings.order(:display_order, :created_at).each_with_index do |ordering, index| %>
-          <div class="question-card"
-               data-controller="paragraph-ordering">
-
-            <div class="question-header">
-              <i class="fas fa-list-ol"></i>
-              <%= t('paragraph_orderings.title') %> <%= index + 1 %>
-              <% if ordering.title.present? %>
-                <span style="font-weight:400; margin-left:0.5rem;">— <%= ordering.title %></span>
-              <% end %>
-            </div>
-
-            <div class="question-body">
-              <p class="ordering-instruction-text">
-                <%= ordering.instruction.present? ? ordering.instruction : t('paragraph_orderings.instruction_default') %>
-              </p>
-
-              <div class="sentence-zones-container">
-                <% ordering.shuffled_sentences.each do |ps| %>
-                  <div class="sentence-drop-zone" data-paragraph-ordering-target="zone">
-                    <div class="draggable-sentence"
-                         data-paragraph-ordering-target="sentence"
-                         data-sentence-id="<%= ps.id %>">
-                      <%= ps.sentence %>
-                    </div>
-                  </div>
+          <div data-quiz-progress-target="question"
+               style="<%= exercise_index == 0 ? '' : 'display:none;' %>">
+            <div class="question-card" data-controller="paragraph-ordering">
+              <div class="question-header">
+                <span style="font-family:'DM Mono',monospace; font-weight:700; font-size:0.75rem; color:#9C9892;"><%= "%02d" % (index + 1) %></span>
+                <span style="font-size:0.72rem; font-weight:600; color:#9C9892; font-family:'Plus Jakarta Sans',sans-serif;">
+                  <i class="bi bi-list-ol"></i> <%= t('paragraph_orderings.title') %>
+                </span>
+                <% if ordering.title.present? %>
+                  <span style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.78rem; font-weight:400; color:#9C9892;">— <%= ordering.title %></span>
                 <% end %>
               </div>
-
-              <input type="hidden"
-                     name="paragraph_ordering_answers[<%= ordering.id %>]"
-                     data-paragraph-ordering-target="input"
-                     value="<%= ordering.shuffled_sentences.map(&:id).join(',') %>">
+              <div class="question-body">
+                <p class="ordering-instruction-text">
+                  <%= ordering.instruction.present? ? ordering.instruction : t('paragraph_orderings.instruction_default') %>
+                </p>
+                <div class="sentence-zones-container">
+                  <% ordering.shuffled_sentences.each do |ps| %>
+                    <div class="sentence-drop-zone" data-paragraph-ordering-target="zone">
+                      <div class="draggable-sentence"
+                           data-paragraph-ordering-target="sentence"
+                           data-sentence-id="<%= ps.id %>">
+                        <%= ps.sentence %>
+                      </div>
+                    </div>
+                  <% end %>
+                </div>
+                <input type="hidden"
+                       name="paragraph_ordering_answers[<%= ordering.id %>]"
+                       data-paragraph-ordering-target="input"
+                       value="<%= ordering.shuffled_sentences.map(&:id).join(',') %>">
+              </div>
             </div>
           </div>
+          <% exercise_index += 1 %>
         <% end %>
 
-        <!-- Exercícios de associar colunas -->
+        <%# Column matching exercises %>
         <% @activity.column_matchings.order(:display_order, :created_at).each_with_index do |matching, index| %>
-          <div class="question-card column-matching-exercise"
-               data-controller="column-matching">
-
-            <div class="question-header">
-              <i class="fas fa-columns"></i>
-              <%= t('column_matchings.title') %> <%= index + 1 %>
-              <% if matching.title.present? %>
-                <span style="font-weight:400; margin-left:0.5rem;">— <%= matching.title %></span>
-              <% end %>
-            </div>
-
-            <div class="question-body">
-              <p class="ordering-instruction-text">
-                <%= matching.instruction.present? ? matching.instruction : t('column_matchings.instruction_default') %>
-              </p>
-
-              <div class="matching-grid">
-                <div class="matching-column">
-                  <div class="matching-column-header"><%= t('column_matchings.column_a') %></div>
-                  <% matching.matching_pairs.order(:position).each do |pair| %>
-                    <div class="matching-item left-item"
-                         data-column-matching-target="leftItem"
-                         data-pair-id="<%= pair.id %>"
-                         data-action="click->column-matching#selectLeft">
-                      <%= pair.left_item %>
-                    </div>
-                  <% end %>
+          <div data-quiz-progress-target="question"
+               style="<%= exercise_index == 0 ? '' : 'display:none;' %>">
+            <div class="question-card column-matching-exercise" data-controller="column-matching">
+              <div class="question-header">
+                <span style="font-family:'DM Mono',monospace; font-weight:700; font-size:0.75rem; color:#9C9892;"><%= "%02d" % (index + 1) %></span>
+                <span style="font-size:0.72rem; font-weight:600; color:#9C9892; font-family:'Plus Jakarta Sans',sans-serif;">
+                  <i class="bi bi-arrow-left-right"></i> <%= t('column_matchings.title') %>
+                </span>
+                <% if matching.title.present? %>
+                  <span style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.78rem; font-weight:400; color:#9C9892;">— <%= matching.title %></span>
+                <% end %>
+              </div>
+              <div class="question-body">
+                <p class="ordering-instruction-text">
+                  <%= t('column_matchings.instruction_default') %>
+                </p>
+                <div class="matching-grid">
+                  <div class="matching-column">
+                    <% matching.matching_pairs.order(:position).each do |pair| %>
+                      <div class="matching-item left-item"
+                           data-column-matching-target="leftItem"
+                           data-pair-id="<%= pair.id %>"
+                           data-action="click->column-matching#selectLeft">
+                        <%= pair.left_item %>
+                      </div>
+                    <% end %>
+                  </div>
+                  <div class="matching-column">
+                    <% matching.shuffled_pairs.each do |pair| %>
+                      <div class="matching-item right-item"
+                           data-column-matching-target="rightItem"
+                           data-pair-id="<%= pair.id %>"
+                           data-action="click->column-matching#selectRight">
+                        <%= pair.right_item %>
+                      </div>
+                    <% end %>
+                  </div>
                 </div>
 
-                <div class="matching-column">
-                  <div class="matching-column-header"><%= t('column_matchings.column_b') %></div>
-                  <% matching.shuffled_pairs.each do |pair| %>
-                    <div class="matching-item right-item"
-                         data-column-matching-target="rightItem"
-                         data-pair-id="<%= pair.id %>"
-                         data-action="click->column-matching#selectRight">
-                      <%= pair.right_item %>
-                    </div>
-                  <% end %>
-                </div>
+                <input type="hidden"
+                       name="column_matching_answers[<%= matching.id %>]"
+                       data-column-matching-target="input"
+                       value="">
               </div>
-
-              <div class="matching-reset-row">
-                <button type="button" class="btn btn-outline-secondary btn-sm"
-                        data-action="click->column-matching#reset">
-                  <i class="fas fa-undo"></i> <%= t('column_matchings.reset') %>
-                </button>
-              </div>
-
-              <input type="hidden"
-                     name="column_matching_answers[<%= matching.id %>]"
-                     data-column-matching-target="input"
-                     value="">
             </div>
           </div>
+          <% exercise_index += 1 %>
         <% end %>
 
-        <!-- Loading Indicator (inicialmente oculto) -->
-        <div class="loading-section d-none" data-quiz-loading-target="indicator">
-          <div class="spinner-border" role="status">
-            <span class="visually-hidden">Processando respostas...</span>
-          </div>
-          <p class="mt-2 text-muted">Avaliando suas respostas...</p>
+        </div><%# /quiz-questions-stack %>
+
+        <%# Loading indicator %>
+        <div class="loading-section" style="display:none;" data-quiz-loading-target="indicator">
+          <div class="loading-spinner"></div>
+          <span>Avaliando suas respostas...</span>
         </div>
 
-        <div class="d-grid gap-2" data-quiz-loading-target="form">
-          <%= f.submit t('quiz.submit'), 
-                class: "btn-quiz-primary mb-3", 
-                data: { 
-                  "quiz-loading-target": "submit",
-                  disable_with: t('quiz.submitting') 
-                } %>
-          
-          <% if current_user.teacher? %>
-            <%= link_to activities_path, class: "btn-quiz-secondary" do %>
-              <i class="fas fa-arrow-left"></i><%= t('activities.back_to_activities') %>
-            <% end %>
-          <% else %>
-            <%= link_to student_dashboard_path, class: "btn-quiz-secondary" do %>
-              <i class="fas fa-graduation-cap"></i>Voltar ao Meu Painel
-            <% end %>
+        <%# Navigation: Voltar (1ª questão) / Anterior / Próxima / Enviar %>
+        <div class="quiz-nav-row">
+          <%# Back link — shown only on first exercise %>
+          <% back_path = current_user.teacher? ? activities_path : student_dashboard_path %>
+          <%= link_to back_path,
+                data: { "quiz-progress-target": "backBtn" },
+                style: "flex:1; display:flex; align-items:center; justify-content:center; gap:5px; padding:7px 12px; background:#fff; border:1.5px solid #DDD9D2; border-radius:9px; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.8rem; font-weight:600; color:#5C5853; text-decoration:none;" do %>
+            <i class="bi bi-arrow-left"></i> <%= t('quiz.back') %>
           <% end %>
+
+          <%# Previous button — shown from 2nd exercise onward %>
+          <button type="button"
+                  data-quiz-progress-target="prevBtn"
+                  data-action="click->quiz-progress#previous"
+                  style="flex:1; display:none; align-items:center; justify-content:center; gap:5px; padding:7px 12px; background:#fff; border:1.5px solid #DDD9D2; border-radius:9px; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.8rem; font-weight:600; color:#5C5853; cursor:pointer;">
+            <i class="bi bi-arrow-left"></i> <%= t('quiz.previous') %>
+          </button>
+
+          <%# Next button — hidden on last exercise %>
+          <button type="button"
+                  data-quiz-progress-target="nextBtn"
+                  data-action="click->quiz-progress#next"
+                  style="flex:2; display:<%= total_exercises > 1 ? 'flex' : 'none' %>; align-items:center; justify-content:center; gap:5px; padding:7px 12px; background:#1A6B4A; border:none; border-radius:9px; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.8rem; font-weight:700; color:#fff; cursor:pointer;">
+            <%= t('quiz.next') %> <i class="bi bi-arrow-right"></i>
+          </button>
+
+          <%# Submit button — shown only on last exercise, replaces Próxima %>
+          <%= f.submit t('quiz.submit'),
+                data: {
+                  "quiz-progress-target": "submitBtn",
+                  "quiz-loading-target": "submit",
+                  disable_with: t('quiz.submitting')
+                },
+                style: "flex:2; display:#{total_exercises <= 1 ? 'block' : 'none'}; text-align:center; padding:7px 12px; background:#1A6B4A; border:none; border-radius:9px; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.8rem; font-weight:700; color:#fff; cursor:pointer;" %>
         </div>
+
       <% end %>
     <% end %>
-  </div>
+
+    <%# quiz-progress controller wraps material panel + form so it can reach all targets %>
+    <div data-controller="quiz-progress"
+         data-quiz-progress-total-value="<%= total_exercises %>"
+         style="flex:1; min-height:0; display:flex; flex-direction:column; width:100%; max-width:1100px; overflow:hidden;">
+
+      <% if has_material %>
+        <button type="button"
+                class="quiz-mobile-toggle"
+                data-quiz-progress-target="materialToggle"
+                data-action="click->quiz-progress#toggleMaterial">
+          <i class="bi bi-book"></i> <%= t('quiz.see_material') %>
+        </button>
+
+        <div class="quiz-two-col">
+
+          <%# Left column: material (sticky) %>
+          <div class="quiz-material-col" data-quiz-progress-target="materialPanel">
+            <% cache [@activity, @activity.suggestions.cache_key_with_version, "quiz_material", I18n.locale] do %>
+
+              <% if @activity.statement.present? %>
+                <div class="quiz-statement-block">
+                  <%= simple_format(@activity.statement) %>
+                </div>
+              <% end %>
+
+              <% if @activity.media_url.present? %>
+                <% if @activity.media_url.include?('youtube.com') || @activity.media_url.include?('youtu.be') %>
+                  <% youtube_id = @activity.media_url.match(/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/) %>
+                  <% if youtube_id && youtube_id[1] %>
+                    <div style="position:relative; padding-bottom:56.25%; height:0;">
+                      <iframe src="https://www.youtube.com/embed/<%= youtube_id[1] %>"
+                              style="position:absolute; top:0; left:0; width:100%; height:100%; border-radius:8px; border:none;"
+                              allowfullscreen
+                              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture">
+                      </iframe>
+                    </div>
+                  <% end %>
+                <% else %>
+                  <div>
+                    <img src="<%= @activity.media_url %>" alt="<%= t('activities.image_label') %>"
+                         style="max-width:100%; border-radius:8px;">
+                  </div>
+                <% end %>
+              <% end %>
+
+              <% if @activity.video_url.present? %>
+                <% youtube_id = @activity.video_url.match(/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/) %>
+                <% if youtube_id && youtube_id[1] %>
+                  <div style="position:relative; padding-bottom:56.25%; height:0;">
+                    <iframe src="https://www.youtube.com/embed/<%= youtube_id[1] %>"
+                            style="position:absolute; top:0; left:0; width:100%; height:100%; border-radius:8px; border:none;"
+                            allowfullscreen
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture">
+                    </iframe>
+                  </div>
+                <% end %>
+              <% end %>
+
+              <% if @activity.explanation_text.present? %>
+                <div class="quiz-statement-block">
+                  <%= @activity.explanation_text.include?('<') ? sanitize(@activity.explanation_text, tags: %w[p br strong em u ol ul li], attributes: []) : simple_format(@activity.explanation_text) %>
+                </div>
+              <% end %>
+
+              <% @activity.suggestions.each do |suggestion| %>
+                <div class="quiz-suggestion-block">
+                  <span class="dica-label"><i class="bi bi-lightbulb-fill"></i> <%= t('quiz.tip') %></span>
+                  <%= simple_format(suggestion.content) %>
+                </div>
+              <% end %>
+
+            <% end %>
+          </div>
+
+          <%# Right column: exercises %>
+          <div class="quiz-exercise-col">
+            <%= form_html %>
+          </div>
+
+        </div>
+
+      <% else %>
+        <%# No material: single-column layout %>
+        <div class="quiz-paper" style="max-width:720px; display:flex; flex-direction:column; flex:1; min-height:0;">
+          <%= form_html %>
+        </div>
+      <% end %>
+
+    </div>
+
+  <% end %>
+
 </div>
-
-<!-- Script para implementação com select boxes -->
-<script>
-  document.addEventListener('DOMContentLoaded', function() {
-    // Script foi removido para simplificar
-  });
-</script>
-
-

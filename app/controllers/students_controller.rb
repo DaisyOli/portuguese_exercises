@@ -10,7 +10,6 @@ class StudentsController < ApplicationController
       @current_level = params[:level]
       load_level_activities
     else
-      @activities = Activity.all
       @activities_by_level = Activity.all.group_by(&:level)
     end
   end

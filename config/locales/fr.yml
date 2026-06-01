@@ -318,6 +318,11 @@ fr:
     completed: "Quiz Terminé !"
     total_questions: "Total des Questions"
     see_detailed_results: "Voir les Résultats Détaillés"
+    back: "Retour"
+    previous: "Précédente"
+    next: "Suivante"
+    tip: "Conseil"
+    see_material: "Voir le matériel ▼"
 
   # Forms
   forms:

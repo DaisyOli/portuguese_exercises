@@ -317,7 +317,12 @@ en:
     completed: "Quiz Completed!"
     total_questions: "Total Questions"
     see_detailed_results: "See Detailed Results"
-    
+    back: "Back"
+    previous: "Previous"
+    next: "Next"
+    tip: "Tip"
+    see_material: "See material ▼"
+
   forms:
     save: "Save"
     cancel: "Cancel"

@@ -1,21 +1,52 @@
 <% content_for :head do %>
   <title>Dashboard · Practice-BR</title>
+  <style>
+    .level-card-link { text-decoration:none; display:block; }
+    .level-card-link:hover .level-card-inner { border-color:#2A9B6F; transform:translateY(-2px); transition:all .15s ease; }
+    .level-card-inner { transition:all .15s ease; }
+  </style>
 <% end %>
 
 <%
   completed_ids   = session[:completed_quizzes] || []
   current_streak  = session[:current_streak].to_i
   last_score      = session[:last_quiz_score]
-  total_count     = @activities.count
-  completed_count = completed_ids.length
-  progress_pct    = total_count > 0 ? ((completed_count.to_f / total_count) * 100).round : 0
 
-  cefr_colors = {
-    'A1' => { bg:'#E8F5EE', text:'#0F3826', border:'#2A9B6F', bar:'#2A9B6F', label:'Iniciante' },
-    'A2' => { bg:'#EBF2FC', text:'#1A4A8A', border:'#2563EB', bar:'#2563EB', label:'Básico' },
-    'B1' => { bg:'#F5F3FF', text:'#4C1D95', border:'#7C3AED', bar:'#7C3AED', label:'Intermediário' },
-    'B2' => { bg:'#FFF7ED', text:'#7C2D12', border:'#EA580C', bar:'#EA580C', label:'Avançado' },
-    'C1' => { bg:'#F3F4F6', text:'#1C1917', border:'#374151', bar:'#374151', label:'Fluente' },
+  cefr_levels = Activity.levels.keys
+
+  # per-level stats
+  levels_data = cefr_levels.map do |lvl|
+    acts  = @activities_by_level[lvl] || [] rescue []
+    done  = (completed_ids & acts.map(&:id)).length
+    total = acts.count
+    pct   = total > 0 ? ((done.to_f / total) * 100).round : 0
+    { level: lvl, acts: acts, done: done, total: total, pct: pct, empty: acts.empty? }
+  end
+
+  total_acts      = levels_data.sum { |d| d[:total] }
+  total_completed = levels_data.sum { |d| d[:done] }
+  overall_pct     = total_acts > 0 ? ((total_completed.to_f / total_acts) * 100).round : 0
+
+  # current level = first non-empty level that isn't 100% complete, or last non-empty
+  current_level_data = levels_data.find { |d| !d[:empty] && d[:pct] < 100 } ||
+                       levels_data.reverse.find { |d| !d[:empty] }
+
+  # first pending activity for "continue studying"
+  all_pending = levels_data.flat_map { |d| d[:acts].reject { |a| completed_ids.include?(a.id) } }
+  continue_activity = all_pending.first
+
+  # last completed activity (for when nothing is pending)
+  last_completed_activity = if continue_activity.nil? && completed_ids.any?
+    last_attempt = QuizAttempt.where(user: current_user).order(submitted_at: :desc).first
+    last_attempt&.activity
+  end
+
+  level_descriptions = {
+    'A1' => t('student_dashboard.level_descriptions.a1'),
+    'A2' => t('student_dashboard.level_descriptions.a2'),
+    'B1' => t('student_dashboard.level_descriptions.b1'),
+    'B2' => t('student_dashboard.level_descriptions.b2'),
+    'C1' => t('student_dashboard.level_descriptions.c1'),
   }
 %>
 
@@ -27,16 +58,16 @@
   <%# VISTA DE NÍVEL ESPECÍFICO                      %>
   <%# ══════════════════════════════════════════════ %>
 
-  <%# — Breadcrumb / back — %>
+  <% lvl_meta = cefr_colors(@current_level) %>
+
   <div style="display:flex; align-items:center; gap:10px; margin-bottom:1.5rem;">
     <%= link_to student_dashboard_path,
           style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.85rem; color:#5C5853; text-decoration:none; display:flex; align-items:center; gap:4px;" do %>
       ← Todos os níveis
     <% end %>
     <% if @current_level %>
-      <% c = cefr_colors[@current_level] || cefr_colors['A1'] %>
       <span style="font-family:'DM Mono',monospace; font-size:0.72rem; font-weight:700;
-                   background:<%= c[:bg] %>; color:<%= c[:text] %>; border:1.5px solid <%= c[:border] %>;
+                   background:<%= lvl_meta[:bg] %>; color:<%= lvl_meta[:text] %>; border:1.5px solid <%= lvl_meta[:border] %>;
                    padding:3px 10px; border-radius:20px;">
         <%= @current_level %>
       </span>
@@ -44,7 +75,6 @@
   </div>
 
   <% if @current_level.present? %>
-
     <% if @pending_activities.any? %>
       <h2 style="font-family:'Raleway',sans-serif; font-size:1.1rem; font-weight:700; color:#1C1917; margin-bottom:1rem;">
         Atividades disponíveis
@@ -71,7 +101,7 @@
                          color:#5C5853; background:transparent; border:1.5px solid #DDD9D2;
                          padding:8px 18px; border-radius:10px; cursor:pointer;"
                   data-bs-toggle="collapse" data-bs-target="#completed-activities">
-            ✓ Ver atividades concluídas (<%= @completed_activities.count %>)
+            ✓ Ver atividades concluídas (<%= @completed_activities.length %>)
           </button>
           <div class="collapse mt-3" id="completed-activities">
             <div class="activities-grid">
@@ -82,7 +112,6 @@
       <% end %>
 
     <% else %>
-      <%# Nível completado %>
       <div style="background:#E8F5EE; border:1.5px solid #2A9B6F; border-radius:16px; padding:32px; text-align:center; margin-bottom:1.5rem;">
         <div style="font-size:2.5rem; margin-bottom:12px;">🏆</div>
         <h2 style="font-family:'Raleway',sans-serif; font-size:1.2rem; font-weight:700; color:#0F3826; margin-bottom:8px;">
@@ -91,7 +120,6 @@
         <p style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.9rem; color:#1A6B4A;">
           Você concluiu todas as atividades deste nível. Parabéns!
         </p>
-
         <% if @completed_activities.any? %>
           <button style="margin-top:16px; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.85rem;
                          font-weight:600; color:#0F3826; background:transparent; border:1.5px solid #2A9B6F;
@@ -109,7 +137,6 @@
     <% end %>
 
   <% else %>
-    <%# Nível sem atividades %>
     <div style="background:#fff; border:1px solid #DDD9D2; border-radius:16px; padding:32px; text-align:center;">
       <div style="font-size:2rem; margin-bottom:12px;">🔍</div>
       <p style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.9rem; color:#5C5853; margin-bottom:16px;">
@@ -124,145 +151,241 @@
 <% else %>
 
   <%# ══════════════════════════════════════════════ %>
-  <%# VISTA PRINCIPAL — seletor de níveis            %>
+  <%# VISTA PRINCIPAL                                %>
   <%# ══════════════════════════════════════════════ %>
 
   <%# — Saudação — %>
-  <div style="margin-bottom:2rem;">
-    <h1 style="font-family:'Raleway',sans-serif; font-size:1.75rem; font-weight:700; color:#1C1917; margin-bottom:4px;">
+  <div style="margin-bottom:1.75rem;">
+    <h1 style="font-family:'Raleway',sans-serif; font-size:1.75rem; font-weight:800; color:#0F3826; margin-bottom:4px;">
       Olá<% if current_user.greeting_name %>, <%= current_user.greeting_name %><% end %>! 👋
     </h1>
-    <p style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.95rem; color:#5C5853;">
-      Continue praticando — você está no caminho certo.
+    <p style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.95rem; color:#5C5853; margin:0;">
+      Que bom ter você aqui! Continue firme no seu aprendizado.
     </p>
   </div>
 
   <%# — 4 Cards de Métricas — %>
-  <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:1rem; margin-bottom:2rem;">
+  <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:1rem; margin-bottom:1.5rem;">
 
-    <div style="background:#fff; border:1px solid #DDD9D2; border-radius:14px; padding:20px 22px;">
-      <div style="font-family:'DM Mono',monospace; font-size:0.68rem; color:#9C9892; letter-spacing:0.08em; text-transform:uppercase; margin-bottom:8px;">Concluídas</div>
-      <div style="font-family:'Raleway',sans-serif; font-size:2rem; font-weight:800; color:#2A9B6F; line-height:1;"><%= completed_count %></div>
+    <div style="background:#fff; border:1px solid #DDD9D2; border-radius:14px; padding:18px 20px;">
+      <div style="font-family:'DM Mono',monospace; font-size:0.67rem; color:#9C9892; letter-spacing:0.08em; text-transform:uppercase; margin-bottom:10px;">Sequência</div>
+      <div style="display:flex; align-items:baseline; gap:5px;">
+        <span style="font-family:'Raleway',sans-serif; font-size:2rem; font-weight:800; color:#C9952A; line-height:1;"><%= current_streak %></span>
+        <span style="font-size:1.1rem; line-height:1;">🔥</span>
+      </div>
+      <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.78rem; color:#5C5853; margin-top:6px;">dias seguidos</div>
+    </div>
+
+    <div style="background:#fff; border:1px solid #DDD9D2; border-radius:14px; padding:18px 20px;">
+      <div style="font-family:'DM Mono',monospace; font-size:0.67rem; color:#9C9892; letter-spacing:0.08em; text-transform:uppercase; margin-bottom:10px;">Concluídas</div>
+      <div style="font-family:'Raleway',sans-serif; font-size:2rem; font-weight:800; color:#1A6B4A; line-height:1;"><%= total_completed %></div>
       <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.78rem; color:#5C5853; margin-top:6px;">atividades feitas</div>
     </div>
 
-    <div style="background:#FBF3E0; border:1px solid #E8C97A; border-radius:14px; padding:20px 22px;">
-      <div style="font-family:'DM Mono',monospace; font-size:0.68rem; color:#9C7A30; letter-spacing:0.08em; text-transform:uppercase; margin-bottom:8px;">Sequência</div>
-      <div style="display:flex; align-items:baseline; gap:6px;">
-        <div style="font-family:'Raleway',sans-serif; font-size:2rem; font-weight:800; color:#C9952A; line-height:1;"><%= current_streak %></div>
-        <div style="font-size:1.1rem;">🔥</div>
-      </div>
-      <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.78rem; color:#8B6914; margin-top:6px;">dias seguidos</div>
+    <div style="background:#fff; border:1px solid #DDD9D2; border-radius:14px; padding:18px 20px;">
+      <div style="font-family:'DM Mono',monospace; font-size:0.67rem; color:#9C9892; letter-spacing:0.08em; text-transform:uppercase; margin-bottom:10px;">Progresso geral</div>
+      <div style="font-family:'Raleway',sans-serif; font-size:2rem; font-weight:800; color:#2563EB; line-height:1;"><%= overall_pct %>%</div>
+      <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.78rem; color:#5C5853; margin-top:6px;">do total</div>
     </div>
 
-    <div style="background:#fff; border:1px solid #DDD9D2; border-radius:14px; padding:20px 22px;">
-      <div style="font-family:'DM Mono',monospace; font-size:0.68rem; color:#9C9892; letter-spacing:0.08em; text-transform:uppercase; margin-bottom:8px;">Progresso</div>
-      <div style="font-family:'Raleway',sans-serif; font-size:2rem; font-weight:800; color:#2563EB; line-height:1;"><%= progress_pct %>%</div>
-      <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.78rem; color:#5C5853; margin-top:6px;">do total de atividades</div>
-    </div>
-
-    <div style="background:#fff; border:1px solid #DDD9D2; border-radius:14px; padding:20px 22px;">
-      <div style="font-family:'DM Mono',monospace; font-size:0.68rem; color:#9C9892; letter-spacing:0.08em; text-transform:uppercase; margin-bottom:8px;">Última nota</div>
+    <div style="background:#fff; border:1px solid #DDD9D2; border-radius:14px; padding:18px 20px;">
+      <div style="font-family:'DM Mono',monospace; font-size:0.67rem; color:#9C9892; letter-spacing:0.08em; text-transform:uppercase; margin-bottom:10px;">Última nota</div>
       <div style="font-family:'Raleway',sans-serif; font-size:2rem; font-weight:800; color:#7C3AED; line-height:1;"><%= last_score || '--' %></div>
       <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.78rem; color:#5C5853; margin-top:6px;">no último exercício</div>
     </div>
 
   </div>
 
-  <%# — Cabeçalho do grid de níveis — %>
-  <div style="display:flex; align-items:baseline; justify-content:space-between; margin-bottom:0.75rem;">
-    <h2 style="font-family:'Raleway',sans-serif; font-size:1.1rem; font-weight:700; color:#1C1917;">Escolha um Nível</h2>
-    <span style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; color:#9C9892;">
-      <%= completed_count %>/<%= total_count %> atividades concluídas
-    </span>
+  <%# — Dois cards médios: Continue estudando + Progresso geral — %>
+  <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-bottom:1.5rem;">
+
+    <%# Continue estudando %>
+    <div style="background:#fff; border:1px solid #DDD9D2; border-radius:16px; padding:22px;">
+      <h2 style="font-family:'Raleway',sans-serif; font-size:1rem; font-weight:700; color:#1C1917; margin:0 0 16px 0;">
+        Continue estudando
+      </h2>
+      <% if continue_activity %>
+        <% cont_meta = cefr_colors(continue_activity.level) %>
+        <div style="display:flex; gap:14px; align-items:flex-start; margin-bottom:16px;">
+          <%# Placeholder visual com cor do nível %>
+          <div style="width:70px; height:56px; border-radius:10px; background:<%= cont_meta[:bg] %>; border:1.5px solid <%= cont_meta[:border] %>; flex-shrink:0; display:flex; align-items:center; justify-content:center;">
+            <span style="font-family:'DM Mono',monospace; font-size:1.1rem; font-weight:800; color:<%= cont_meta[:text] %>;">
+              <%= continue_activity.level %>
+            </span>
+          </div>
+          <div style="flex:1; min-width:0;">
+            <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.72rem; color:#9C9892; margin-bottom:4px;">
+              <% q_count = continue_activity.try(:questions_count).to_i %>
+              <%= q_count > 0 ? "#{q_count} #{'questão'.then { |w| q_count == 1 ? w : 'questões' }}" : cont_meta[:label] %>
+            </div>
+            <div style="font-family:'Raleway',sans-serif; font-size:0.95rem; font-weight:700; color:#1C1917; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
+              <%= continue_activity.title %>
+            </div>
+          </div>
+        </div>
+
+        <%# progress bar da atividade atual (se parcialmente feita mostraria %, por ora placeholder) %>
+        <% cont_level_data = levels_data.find { |d| d[:level] == continue_activity.level } %>
+        <% if cont_level_data && cont_level_data[:total] > 0 %>
+          <div style="margin-bottom:4px;">
+            <div style="background:#F0EDE8; border-radius:99px; height:6px; overflow:hidden; margin-bottom:4px;">
+              <div style="width:<%= cont_level_data[:pct] %>%; height:100%; border-radius:99px; background:<%= cont_meta[:bar] %>;"></div>
+            </div>
+            <div style="font-family:'DM Mono',monospace; font-size:0.68rem; color:#9C9892;">
+              <%= cont_level_data[:pct] %>% concluído no nível <%= continue_activity.level %>
+            </div>
+          </div>
+        <% end %>
+
+        <%= link_to solve_activity_path(continue_activity),
+              style: "margin-top:14px; display:inline-block; background:#0F3826; color:#fff; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.85rem; font-weight:700; padding:9px 20px; border-radius:10px; text-decoration:none;" do %>
+          Continuar atividade
+        <% end %>
+      <% else %>
+        <% if last_completed_activity %>
+          <% lc_meta = cefr_colors(last_completed_activity.level) %>
+          <div style="background:#E8F5EE; border:1px solid #2A9B6F; border-radius:10px; padding:10px 12px; margin-bottom:14px; display:flex; align-items:center; gap:8px;">
+            <span style="font-size:1rem;">🏆</span>
+            <span style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; font-weight:600; color:#0F3826;">
+              Você concluiu todas as atividades disponíveis!
+            </span>
+          </div>
+          <div style="display:flex; gap:14px; align-items:flex-start; margin-bottom:16px;">
+            <div style="width:70px; height:56px; border-radius:10px; background:<%= lc_meta[:bg] %>; border:1.5px solid <%= lc_meta[:border] %>; flex-shrink:0; display:flex; align-items:center; justify-content:center;">
+              <span style="font-family:'DM Mono',monospace; font-size:1.1rem; font-weight:800; color:<%= lc_meta[:text] %>;">
+                <%= last_completed_activity.level %>
+              </span>
+            </div>
+            <div style="flex:1; min-width:0;">
+              <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.72rem; color:#9C9892; margin-bottom:4px;">Última atividade feita</div>
+              <div style="font-family:'Raleway',sans-serif; font-size:0.95rem; font-weight:700; color:#1C1917; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
+                <%= last_completed_activity.title %>
+              </div>
+            </div>
+          </div>
+          <%= link_to solve_activity_path(last_completed_activity),
+                style: "display:inline-block; background:#F7F5F0; color:#5C5853; border:1.5px solid #DDD9D2; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.85rem; font-weight:700; padding:9px 20px; border-radius:10px; text-decoration:none;" do %>
+            ↺ Refazer
+          <% end %>
+        <% else %>
+          <div style="text-align:center; padding:20px 0;">
+            <div style="font-size:2rem; margin-bottom:8px;">📚</div>
+            <p style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.88rem; color:#5C5853;">
+              Nenhuma atividade disponível ainda.
+            </p>
+          </div>
+        <% end %>
+      <% end %>
+    </div>
+
+    <%# Seu progresso geral %>
+    <div style="background:#fff; border:1px solid #DDD9D2; border-radius:16px; padding:22px;">
+      <h2 style="font-family:'Raleway',sans-serif; font-size:1rem; font-weight:700; color:#1C1917; margin:0 0 16px 0;">
+        Seu progresso geral
+      </h2>
+      <div style="display:flex; align-items:center; gap:20px;">
+        <%# Donut chart — CSS conic-gradient %>
+        <% donut_color = current_level_data ? cefr_colors(current_level_data[:level])[:bar] : '#2A9B6F' %>
+        <% donut_pct   = current_level_data ? current_level_data[:pct] : overall_pct %>
+        <div style="
+          width:100px; height:100px; border-radius:50%; flex-shrink:0;
+          background: conic-gradient(<%= donut_color %> <%= donut_pct %>%, #E8E5DF 0%);
+          display:flex; align-items:center; justify-content:center;
+        ">
+          <div style="
+            width:66px; height:66px; background:#fff; border-radius:50%;
+            display:flex; flex-direction:column; align-items:center; justify-content:center;
+          ">
+            <% if current_level_data %>
+              <span style="font-family:'DM Mono',monospace; font-size:1rem; font-weight:800; color:<%= donut_color %>; line-height:1.1;"><%= current_level_data[:level] %></span>
+            <% else %>
+              <span style="font-family:'DM Mono',monospace; font-size:0.9rem; font-weight:800; color:<%= donut_color %>; line-height:1.1;"><%= overall_pct %>%</span>
+            <% end %>
+          </div>
+        </div>
+
+        <div>
+          <% if current_level_data %>
+            <% cl_meta = cefr_colors(current_level_data[:level]) %>
+            <div style="font-family:'Raleway',sans-serif; font-size:1.1rem; font-weight:700; color:#1C1917; margin-bottom:4px;">
+              <%= cl_meta[:label] %>
+            </div>
+            <div style="font-family:'Raleway',sans-serif; font-size:1.5rem; font-weight:800; color:<%= donut_color %>; line-height:1; margin-bottom:6px;">
+              <%= current_level_data[:pct] %>%
+            </div>
+            <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.8rem; color:#5C5853;">
+              <%= current_level_data[:done] %> de <%= current_level_data[:total] %> atividades
+            </div>
+          <% else %>
+            <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.88rem; color:#5C5853;">
+              Nenhuma atividade disponível ainda.
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+
   </div>
 
-  <%# — Grid de Níveis — %>
-  <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:1rem; margin-bottom:2rem;">
-    <% Activity.levels.keys.each do |level| %>
-      <% level_activities   = @activities_by_level[level] || [] %>
-      <% completed_in_level = completed_ids & level_activities.map(&:id) %>
-      <% level_count        = level_activities.count %>
-      <% level_done         = completed_in_level.length %>
-      <% level_pct          = level_count > 0 ? ((level_done.to_f / level_count) * 100).round : 0 %>
-      <% c = cefr_colors[level] %>
-      <% empty = level_activities.empty? %>
-
-      <div style="background:#fff; border:1px solid #DDD9D2; border-radius:16px; padding:24px; opacity:<%= empty ? '0.55' : '1' %>;">
-
-        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:14px;">
-          <span style="font-family:'DM Mono',monospace; font-size:0.75rem; font-weight:700;
-                       background:<%= c[:bg] %>; color:<%= c[:text] %>; border:1.5px solid <%= c[:border] %>;
-                       padding:4px 12px; border-radius:20px;">
-            <%= level %>
-          </span>
-          <span style="font-family:'DM Mono',monospace; font-size:0.72rem; color:<%= empty ? '#9C9892' : (level_done > 0 ? c[:bar] : '#9C9892') %>; font-weight:600;">
-            <% if empty %>em breve<% else %><%= level_done %>/<%= level_count %> ✓<% end %>
-          </span>
-        </div>
-
-        <div style="font-family:'Raleway',sans-serif; font-size:1rem; font-weight:700; color:#1C1917; margin-bottom:4px;">
-          <%= c[:label] %>
-        </div>
-        <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.8rem; color:#5C5853; margin-bottom:16px; line-height:1.45;">
-          <%= case level
-              when 'A1' then t('student_dashboard.level_descriptions.a1')
-              when 'A2' then t('student_dashboard.level_descriptions.a2')
-              when 'B1' then t('student_dashboard.level_descriptions.b1')
-              when 'B2' then t('student_dashboard.level_descriptions.b2')
-              when 'C1' then t('student_dashboard.level_descriptions.c1')
-              end %>
-        </div>
-
-        <div style="background:#F0EDE8; border-radius:99px; height:6px; overflow:hidden; margin-bottom:6px;">
-          <div style="width:<%= level_pct %>%; height:100%; border-radius:99px; background:<%= c[:bar] %>;"></div>
-        </div>
-        <div style="font-family:'DM Mono',monospace; font-size:0.7rem; color:#9C9892; margin-bottom:16px;">
-          <%= level_pct %>% completo
-        </div>
-
-        <% if empty %>
-          <div style="display:block; text-align:center; background:#DDD9D2; color:#9C9892;
-                      font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; font-weight:700;
-                      padding:9px; border-radius:10px; cursor:not-allowed;">
-            Em breve
+  <%# — Seus Níveis (5 cards compactos) — %>
+  <div style="background:#fff; border:1px solid #DDD9D2; border-radius:16px; padding:22px; margin-bottom:1.5rem;">
+    <h2 style="font-family:'Raleway',sans-serif; font-size:1rem; font-weight:700; color:#1C1917; margin:0 0 16px 0;">
+      Seus níveis
+    </h2>
+    <div style="display:grid; grid-template-columns:repeat(5,1fr); gap:10px;">
+      <% levels_data.each do |ld| %>
+        <% m = cefr_colors(ld[:level]) %>
+        <% if ld[:empty] %>
+          <div style="text-align:center; border:1.5px solid #F0EDE8; border-radius:12px; padding:12px 8px; opacity:0.45; cursor:not-allowed;">
+            <div style="background:<%= m[:bg] %>; color:<%= m[:text] %>; border:1.5px solid <%= m[:border] %>; font-family:'DM Mono',monospace; font-size:0.85rem; font-weight:800; width:44px; height:44px; border-radius:10px; display:flex; align-items:center; justify-content:center; margin:0 auto 8px;">
+              <%= ld[:level] %>
+            </div>
+            <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.75rem; font-weight:600; color:#1C1917; margin-bottom:8px;"><%= m[:label] %></div>
+            <div style="background:#F0EDE8; border-radius:99px; height:5px; overflow:hidden; margin-bottom:4px;">
+              <div style="width:0%; height:100%; border-radius:99px;"></div>
+            </div>
+            <div style="font-family:'DM Mono',monospace; font-size:0.65rem; color:#9C9892;">em breve</div>
           </div>
         <% else %>
-          <%= link_to student_dashboard_path(level: level),
-                style: "display:block; text-align:center; background:#0F3826; color:#fff;
-                        font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; font-weight:700;
-                        padding:9px; border-radius:10px; text-decoration:none;" do %>
-            <%= level_done > 0 ? 'Continuar →' : 'Explorar →' %>
+          <%= link_to student_dashboard_path(level: ld[:level]), class: "level-card-link" do %>
+            <div class="level-card-inner" style="text-align:center; border:1.5px solid #F0EDE8; border-radius:12px; padding:12px 8px;">
+              <div style="background:<%= m[:bg] %>; color:<%= m[:text] %>; border:1.5px solid <%= m[:border] %>; font-family:'DM Mono',monospace; font-size:0.85rem; font-weight:800; width:44px; height:44px; border-radius:10px; display:flex; align-items:center; justify-content:center; margin:0 auto 8px;">
+                <%= ld[:level] %>
+              </div>
+              <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.75rem; font-weight:600; color:#1C1917; margin-bottom:8px;"><%= m[:label] %></div>
+              <div style="background:#F0EDE8; border-radius:99px; height:5px; overflow:hidden; margin-bottom:4px;">
+                <div style="width:<%= ld[:pct] %>%; height:100%; border-radius:99px; background:<%= m[:bar] %>;"></div>
+              </div>
+              <div style="font-family:'DM Mono',monospace; font-size:0.65rem; color:#9C9892;"><%= ld[:pct] %>%</div>
+            </div>
           <% end %>
         <% end %>
-
-      </div>
-    <% end %>
+      <% end %>
+    </div>
   </div>
 
-  <%# — Conquistas (só se tiver badges) — %>
+  <%# — Conquistas (só se tiver) — %>
   <% achieved_badges = get_all_achieved_badges(current_streak) %>
   <% if achieved_badges.any? %>
-    <div style="background:#fff; border:1px solid #DDD9D2; border-radius:16px; padding:24px; margin-bottom:2rem;">
-      <h2 style="font-family:'Raleway',sans-serif; font-size:1.1rem; font-weight:700; color:#1C1917; margin-bottom:16px;">
+    <div style="background:#fff; border:1px solid #DDD9D2; border-radius:16px; padding:22px; margin-bottom:1.5rem;">
+      <h2 style="font-family:'Raleway',sans-serif; font-size:1rem; font-weight:700; color:#1C1917; margin:0 0 16px 0;">
         🏆 Conquistas
       </h2>
-      <div style="display:flex; gap:12px; flex-wrap:wrap;">
+      <div style="display:flex; gap:10px; flex-wrap:wrap;">
         <% achieved_badges.each do |badge| %>
-          <div style="background:#FBF3E0; border:1.5px solid #E8C97A; border-radius:12px; padding:14px 18px; text-align:center; min-width:110px;">
-            <div style="font-size:1.8rem; margin-bottom:6px;"><%= badge[:icon] %></div>
-            <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.8rem; font-weight:700; color:#1C1917; margin-bottom:2px;"><%= badge[:name] %></div>
-            <div style="font-family:'DM Mono',monospace; font-size:0.68rem; color:#9C7A30;"><%= badge[:days] %> dias</div>
+          <div style="background:#FBF3E0; border:1.5px solid #E8C97A; border-radius:12px; padding:12px 16px; text-align:center; min-width:100px;">
+            <div style="font-size:1.6rem; margin-bottom:5px;"><%= badge[:icon] %></div>
+            <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.78rem; font-weight:700; color:#1C1917; margin-bottom:2px;"><%= badge[:name] %></div>
+            <div style="font-family:'DM Mono',monospace; font-size:0.65rem; color:#9C7A30;"><%= badge[:days] %> dias</div>
           </div>
         <% end %>
-
         <% next_badge = get_next_badge(current_streak) %>
         <% if next_badge %>
           <% days_left = get_days_to_next_badge(current_streak) %>
-          <div style="background:#F7F5F0; border:1.5px dashed #DDD9D2; border-radius:12px; padding:14px 18px; text-align:center; min-width:110px; opacity:0.5;">
-            <div style="font-size:1.8rem; margin-bottom:6px;"><%= next_badge[:icon] %></div>
-            <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.8rem; font-weight:700; color:#1C1917; margin-bottom:2px;"><%= next_badge[:name] %></div>
-            <div style="font-family:'DM Mono',monospace; font-size:0.68rem; color:#9C9892;"><%= days_left %> dias restantes</div>
+          <div style="background:#F7F5F0; border:1.5px dashed #DDD9D2; border-radius:12px; padding:12px 16px; text-align:center; min-width:100px; opacity:0.5;">
+            <div style="font-size:1.6rem; margin-bottom:5px;"><%= next_badge[:icon] %></div>
+            <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.78rem; font-weight:700; color:#1C1917; margin-bottom:2px;"><%= next_badge[:name] %></div>
+            <div style="font-family:'DM Mono',monospace; font-size:0.65rem; color:#9C9892;"><%= days_left %> dias restantes</div>
           </div>
         <% end %>
       </div>
@@ -270,17 +393,5 @@
   <% end %>
 
 <% end %>
-
-  <%# ── CTA Footer ── %>
-  <% if params[:level].blank? %>
-    <div style="display:flex; justify-content:center; padding-bottom:2rem;">
-      <%= link_to activities_path,
-            style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.9rem; font-weight:700;
-                    background:#1A6B4A; color:#fff; padding:13px 32px; border-radius:12px;
-                    text-decoration:none; display:inline-flex; align-items:center; gap:8px;" do %>
-        Ver Todas as Atividades →
-      <% end %>
-    </div>
-  <% end %>
 
 </div>

@@ -11,13 +11,7 @@
   recent_activities   = user_activities.order(created_at: :desc).limit(5)
   max_count           = activities_by_level.values.max || 1
 
-  cefr_colors = {
-    'A1' => { bg: '#E8F5EE', text: '#0F3826', border: '#2A9B6F', bar: '#2A9B6F' },
-    'A2' => { bg: '#EBF2FC', text: '#1A4A8A', border: '#2563EB', bar: '#2563EB' },
-    'B1' => { bg: '#F5F3FF', text: '#4C1D95', border: '#7C3AED', bar: '#7C3AED' },
-    'B2' => { bg: '#FFF7ED', text: '#7C2D12', border: '#EA580C', bar: '#EA580C' },
-    'C1' => { bg: '#F3F4F6', text: '#1C1917', border: '#374151', bar: '#374151' },
-  }
+  # cefr_colors(level) available from ApplicationHelper::CEFR_COLORS
 
   type_labels = {
     'multiple_choice'  => 'Múltipla escolha',
@@ -82,7 +76,7 @@
       <% ['A1', 'A2', 'B1', 'B2', 'C1'].each do |lvl| %>
         <% count = activities_by_level[lvl] || 0 %>
         <% width = (count.to_f / max_count * 100).round %>
-        <% c = cefr_colors[lvl] %>
+        <% c = cefr_colors(lvl) %>
         <div style="display:flex; align-items:center; gap:16px;">
           <span style="font-family:'DM Mono',monospace; font-size:0.72rem; font-weight:700;
                        background:<%= c[:bg] %>; color:<%= c[:text] %>; border:1.5px solid <%= c[:border] %>;
@@ -115,7 +109,7 @@
       </div>
     <% else %>
       <% recent_activities.each_with_index do |activity, i| %>
-        <% c = cefr_colors[activity.level] || cefr_colors['A1'] %>
+        <% c = cefr_colors(activity.level) %>
         <div style="display:flex; align-items:center; gap:16px; padding:14px 0; <%= i < recent_activities.size - 1 ? 'border-bottom:1px solid #F0EDE8;' : '' %>">
           <span style="font-family:'DM Mono',monospace; font-size:0.72rem; font-weight:700;
                        background:<%= c[:bg] %>; color:<%= c[:text] %>; border:1.5px solid <%= c[:border] %>;

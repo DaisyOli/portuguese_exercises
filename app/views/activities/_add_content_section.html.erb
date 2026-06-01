@@ -1,3 +1,20 @@
+<% unless @quill_loaded %>
+  <% @quill_loaded = true %>
+  <% content_for :head do %>
+    <link href="https://cdn.quilljs.com/1.3.7/quill.snow.css" rel="stylesheet">
+    <script src="https://cdn.quilljs.com/1.3.7/quill.min.js"></script>
+    <style>
+      .ql-toolbar.ql-snow { border-radius: 8px 8px 0 0; border-color: #DDD9D2; font-family: 'Plus Jakarta Sans', sans-serif; padding: 3px 8px; }
+      .ql-toolbar.ql-snow button { padding: 2px; width: 22px; height: 20px; }
+      .ql-toolbar.ql-snow .ql-formats { margin-right: 8px; line-height: 1; }
+      .ql-container.ql-snow { border-radius: 0 0 8px 8px; border-color: #DDD9D2; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 0.9rem; }
+      .ql-editor { min-height: 80px; padding: 6px 10px 4px; line-height: 1.65; color: #1C1917; }
+      .quill-tall .ql-editor { min-height: 140px; padding: 12px 15px 6px; }
+      .ql-editor.ql-blank::before { color: #9C9892; font-style: normal; }
+    </style>
+  <% end %>
+<% end %>
+
 <%
   pill = "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.8rem; font-weight:600; padding:6px 13px; border-radius:20px; border:1.5px solid; cursor:pointer; white-space:nowrap; display:inline-flex; align-items:center; gap:5px;"
   neutral  = pill + "background:#F0EDE8; color:#5C5853; border-color:#DDD9D2;"
@@ -96,13 +113,49 @@
     <%= form_with(model: activity, local: true) do |f| %>
       <div style="<%= field_s %>">
         <%= f.label :statement, t('activities.statement_label'), style: label_s %>
-        <%= f.text_area :statement, style: input_s, rows: 5,
-            placeholder: t('activities.statement_placeholder') %>
+        <div id="quill-editor-statement"></div>
+        <%= f.hidden_field :statement, id: "quill-input-statement", value: activity.statement %>
       </div>
       <%= f.submit t('activities.save_statement'), style: submit_content %>
     <% end %>
   </div>
 </div>
+
+<script>
+  (function() {
+    function initStatementQuill() {
+      var editorEl = document.getElementById('quill-editor-statement');
+      if (!editorEl || editorEl.dataset.quillInit) return;
+      editorEl.dataset.quillInit = '1';
+
+      var quill = new Quill(editorEl, {
+        theme: 'snow',
+        modules: { toolbar: [['bold', 'italic', 'underline']] },
+        placeholder: '<%= j(t("activities.statement_placeholder")) %>'
+      });
+
+      var existing = <%= raw json_escape((activity.statement || '').to_json) %>;
+      if (existing && existing.trim().length > 0) {
+        quill.clipboard.dangerouslyPasteHTML(
+          existing.charAt(0) === '<' ? existing : existing.replace(/\n/g, '<br>')
+        );
+      }
+
+      var hiddenInput = document.getElementById('quill-input-statement');
+      quill.on('text-change', function() { hiddenInput.value = quill.root.innerHTML; });
+
+      var form = document.querySelector('#new-statement-form form');
+      if (form) form.addEventListener('submit', function() { hiddenInput.value = quill.root.innerHTML; });
+    }
+
+    var collapseEl = document.getElementById('new-statement-form');
+    if (collapseEl) {
+      new MutationObserver(function() {
+        if (collapseEl.classList.contains('show')) initStatementQuill();
+      }).observe(collapseEl, { attributes: true, attributeFilter: ['class'] });
+    }
+  })();
+</script>
 
 <div class="collapse form-collapse" id="new-image-form" data-content-form-target="form">
   <div style="<%= wrap_s %>">
@@ -135,13 +188,50 @@
   <div style="<%= wrap_s %>">
     <%= form_with(model: activity, local: true) do |f| %>
       <div style="<%= field_s %>">
-        <%= f.text_area :explanation_text, style: input_s, rows: 5,
-            placeholder: t('activities.explanation_text_placeholder') %>
+        <%= f.label :explanation_text, t('activities.explanation_text_label', default: t('activities.add_text')), style: label_s %>
+        <div class="quill-tall" id="quill-editor-text"></div>
+        <%= f.hidden_field :explanation_text, id: "quill-input-text", value: activity.explanation_text %>
       </div>
       <%= f.submit t('activities.save_text'), style: submit_content %>
     <% end %>
   </div>
 </div>
+
+<script>
+  (function() {
+    function initTextQuill() {
+      var editorEl = document.getElementById('quill-editor-text');
+      if (!editorEl || editorEl.dataset.quillInit) return;
+      editorEl.dataset.quillInit = '1';
+
+      var quill = new Quill(editorEl, {
+        theme: 'snow',
+        modules: { toolbar: [['bold', 'italic', 'underline']] },
+        placeholder: '<%= j(t("activities.explanation_text_placeholder")) %>'
+      });
+
+      var existing = <%= raw json_escape((activity.explanation_text || '').to_json) %>;
+      if (existing && existing.trim().length > 0) {
+        quill.clipboard.dangerouslyPasteHTML(
+          existing.charAt(0) === '<' ? existing : existing.replace(/\n/g, '<br>')
+        );
+      }
+
+      var hiddenInput = document.getElementById('quill-input-text');
+      quill.on('text-change', function() { hiddenInput.value = quill.root.innerHTML; });
+
+      var form = document.querySelector('#new-text-form form');
+      if (form) form.addEventListener('submit', function() { hiddenInput.value = quill.root.innerHTML; });
+    }
+
+    var collapseEl = document.getElementById('new-text-form');
+    if (collapseEl) {
+      new MutationObserver(function() {
+        if (collapseEl.classList.contains('show')) initTextQuill();
+      }).observe(collapseEl, { attributes: true, attributeFilter: ['class'] });
+    }
+  })();
+</script>
 
 <div class="collapse form-collapse" id="new-question-form" data-content-form-target="form">
   <div style="<%= wrap_s %>">

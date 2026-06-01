@@ -271,6 +271,11 @@ pt:
     completed: "Quiz Concluído!"
     total_questions: "Total de Questões"
     see_detailed_results: "Ver Resultados Detalhados"
+    back: "Voltar"
+    previous: "Anterior"
+    next: "Próxima"
+    tip: "Dica"
+    see_material: "Ver material ▼"
 
   # Formulários
   forms:

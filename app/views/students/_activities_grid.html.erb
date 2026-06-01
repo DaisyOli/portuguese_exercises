@@ -1,56 +1,67 @@
-<% activities.each_with_index do |activity, index| %>
-  <div class="card-atividade activity-card-animated">
-    
-    <!-- Indicador de conclusão -->
-    <% if session[:completed_quizzes]&.include?(activity.id) %>
-      <div class="completed-indicator">
-        <i class="fas fa-check"></i>
+<% activities.each do |activity| %>
+  <% completed = session[:completed_quizzes]&.include?(activity.id) %>
+  <% m = cefr_colors(activity.level) %>
+  <% question_count = activity.questions_count.to_i %>
+
+  <div style="background:#fff; border:1px solid #DDD9D2; border-radius:14px; overflow:hidden; position:relative; transition:box-shadow .15s ease, transform .15s ease;"
+       onmouseover="this.style.boxShadow='0 6px 24px rgba(0,0,0,0.09)'; this.style.transform='translateY(-2px)'"
+       onmouseout="this.style.boxShadow='none'; this.style.transform='translateY(0)'">
+
+    <%# Borda superior colorida por nível %>
+    <div style="height:4px; background:<%= m[:border] %>; width:100%;"></div>
+
+    <div style="padding:18px 20px;">
+
+      <%# Header: título + badge + check %>
+      <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:10px; margin-bottom:10px;">
+        <h3 style="font-family:'Raleway',sans-serif; font-size:1rem; font-weight:700; color:#1C1917; margin:0; line-height:1.35; flex:1;">
+          <%= activity.title %>
+        </h3>
+        <div style="display:flex; align-items:center; gap:6px; flex-shrink:0;">
+          <% if completed %>
+            <span style="font-size:0.7rem; background:#E8F5EE; color:#1A6B4A; border:1px solid #2A9B6F; border-radius:99px; padding:2px 8px; font-family:'Plus Jakarta Sans',sans-serif; font-weight:700;">
+              ✓ Feita
+            </span>
+          <% end %>
+          <span style="font-family:'DM Mono',monospace; font-size:0.72rem; font-weight:700; background:<%= m[:bg] %>; color:<%= m[:text] %>; border:1.5px solid <%= m[:border] %>; padding:3px 9px; border-radius:20px;">
+            <%= activity.level %>
+          </span>
+        </div>
       </div>
-    <% end %>
-    
-    <div class="card-header">
-      <h3 class="card-title"><%= activity.title %></h3>
-      <span class="card-level level-badge <%= activity.level %>"><%= activity.level %></span>
-    </div>
-    
-    <div class="card-content">
-      <p class="card-description">
-        <%= truncate(activity.description.presence || "Pratique português com exercícios interativos e divertidos!", length: 100) %>
+
+      <%# Descrição %>
+      <p style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.85rem; color:#5C5853; margin:0 0 14px 0; line-height:1.5;">
+        <%= truncate(activity.description.presence || "Pratique português com exercícios interativos.", length: 90) %>
       </p>
-      
-      <% question_count = activity.questions_count.to_i %>
-      <div class="card-meta">
-        <span class="meta-item">
-          <i class="fas fa-question-circle"></i>
-          <%= question_count %> questões
+
+      <%# Meta info %>
+      <div style="display:flex; gap:14px; flex-wrap:wrap; margin-bottom:16px;">
+        <span style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.78rem; color:#9C9892; display:flex; align-items:center; gap:4px;">
+          <i class="bi bi-patch-question" style="color:<%= m[:border] %>;"></i>
+          <%= question_count %> <%= question_count == 1 ? 'questão' : 'questões' %>
         </span>
-        <span class="meta-item">
-          <i class="fas fa-clock"></i>
-          ~<%= (question_count * 1.5).round %> min
+        <span style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.78rem; color:#9C9892; display:flex; align-items:center; gap:4px;">
+          <i class="bi bi-clock" style="color:<%= m[:border] %>;"></i>
+          ~<%= [1, (question_count * 1.5).round].max %> min
         </span>
-        <span class="meta-item">
-          <i class="fas fa-signal"></i>
-          <%= case activity.level
-              when 'A1' then t('student_dashboard.levels.beginner')
-              when 'A2' then t('student_dashboard.levels.basic')  
-              when 'B1' then t('student_dashboard.levels.intermediate')
-              when 'B2' then t('student_dashboard.levels.advanced')
-              when 'C1' then t('student_dashboard.levels.expert')
-              end %>
+        <span style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.78rem; color:#9C9892; display:flex; align-items:center; gap:4px;">
+          <i class="bi bi-bar-chart-line" style="color:<%= m[:border] %>;"></i>
+          <%= m[:label] %>
         </span>
       </div>
-    </div>
-    
-    <div class="card-actions">
-      <%= link_to solve_activity_path(activity), class: "btn-giz #{session[:completed_quizzes]&.include?(activity.id) ? 'secondary' : ''}" do %>
-        <% if session[:completed_quizzes]&.include?(activity.id) %>
-          <i class="fas fa-redo"></i>
-          <%= t('student_dashboard.actions.retry_quiz') %>
-        <% else %>
-          <i class="fas fa-play"></i>
-          <%= t('activities.solve_quiz') %>
+
+      <%# Botão de ação %>
+      <div style="display:flex; justify-content:flex-end; padding-top:12px; border-top:1px solid #F0EDE8;">
+        <%= link_to solve_activity_path(activity),
+              style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.85rem; font-weight:700; padding:9px 20px; border-radius:10px; text-decoration:none; display:inline-flex; align-items:center; gap:6px; #{completed ? 'background:#F7F5F0; color:#5C5853; border:1.5px solid #DDD9D2;' : "background:#{m[:border]}; color:#fff;"}" do %>
+          <% if completed %>
+            <i class="bi bi-arrow-clockwise"></i> <%= t('student_dashboard.actions.retry_quiz') %>
+          <% else %>
+            <i class="bi bi-play-fill"></i> <%= t('activities.solve_quiz') %>
+          <% end %>
         <% end %>
-      <% end %>
+      </div>
+
     </div>
   </div>
-<% end %> 
+<% end %>

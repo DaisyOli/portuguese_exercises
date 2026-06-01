@@ -1,14 +1,14 @@
 import { Controller } from "@hotwired/stimulus"
 
 const PAIR_COLORS = [
-  { bg: '#e3f2fd', border: '#1976d2' },
-  { bg: '#f3e5f5', border: '#7b1fa2' },
-  { bg: '#e8f5e9', border: '#2e7d32' },
-  { bg: '#fff3e0', border: '#f57c00' },
-  { bg: '#fce4ec', border: '#c2185b' },
-  { bg: '#e0f7fa', border: '#00838f' },
-  { bg: '#fff9c4', border: '#f9a825' },
-  { bg: '#ede7f6', border: '#512da8' },
+  { bg: '#EBF2FC', border: '#2563EB' },
+  { bg: '#E8F5EE', border: '#1A6B4A' },
+  { bg: '#FFF7ED', border: '#C9952A' },
+  { bg: '#F5F3FF', border: '#7C3AED' },
+  { bg: '#FEF2F2', border: '#B91C1C' },
+  { bg: '#ECFDF5', border: '#065F46' },
+  { bg: '#FFF9C4', border: '#D97706' },
+  { bg: '#EDE9FE', border: '#6D28D9' },
 ]
 
 export default class extends Controller {

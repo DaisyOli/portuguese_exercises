@@ -34,6 +34,13 @@
                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture">
             </iframe>
           </div>
+          <div style="margin-top:8px; text-align:right;">
+            <%= link_to activity.media_url,
+                  target: "_blank", rel: "noopener noreferrer",
+                  style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.78rem; color:#C9952A; text-decoration:none; display:inline-flex; align-items:center; gap:4px;" do %>
+              <i class="bi bi-box-arrow-up-right"></i> Assistir no YouTube
+            <% end %>
+          </div>
         <% end %>
       <% else %>
         <img src="<%= activity.media_url %>"
@@ -95,6 +102,13 @@
                   allowfullscreen
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture">
           </iframe>
+        </div>
+        <div style="margin-top:8px; text-align:right;">
+          <%= link_to activity.video_url,
+                target: "_blank", rel: "noopener noreferrer",
+                style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.78rem; color:#C9952A; text-decoration:none; display:inline-flex; align-items:center; gap:4px;" do %>
+            <i class="bi bi-box-arrow-up-right"></i> Assistir no YouTube
+          <% end %>
         </div>
       <% else %>
         <p style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.88rem; color:#9C9892;">

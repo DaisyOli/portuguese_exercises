@@ -4,14 +4,32 @@
   hint_s   = "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.78rem; color:#9C9892; margin-top:5px; display:block;"
   field_s  = "margin-bottom:16px;"
   alert_s  = "background:#EBF2FC; border:1px solid #BFDBFE; border-radius:8px; padding:12px 14px; font-size:0.85rem; color:#1A4A8A; font-family:'Plus Jakarta Sans',sans-serif;"
-  submit_s = "background:#1A6B4A; color:#fff; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.88rem; font-weight:700; border:none; border-radius:10px; padding:10px 24px; cursor:pointer; width:100%; margin-top:4px;"
+  submit_s = "background:#1A4A8A; color:#fff; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.88rem; font-weight:700; border:none; border-radius:12px; padding:9px 24px; cursor:pointer; width:100%; margin-top:4px;"
   delete_s = "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; font-weight:600; color:#B91C1C; padding:8px 14px; border:1.5px solid #FECACA; border-radius:10px; background:#FEF2F2; cursor:pointer; text-decoration:none; display:inline-block; margin-top:8px; width:100%; text-align:center;"
+  form_uid = question.id || 'new'
 %>
+
+<% unless @quill_loaded %>
+  <% @quill_loaded = true %>
+  <% content_for :head do %>
+    <link href="https://cdn.quilljs.com/1.3.7/quill.snow.css" rel="stylesheet">
+    <script src="https://cdn.quilljs.com/1.3.7/quill.min.js"></script>
+    <style>
+      .ql-toolbar.ql-snow { border-radius: 8px 8px 0 0; border-color: #DDD9D2; font-family: 'Plus Jakarta Sans', sans-serif; padding: 3px 8px; }
+      .ql-toolbar.ql-snow button { padding: 2px; width: 22px; height: 20px; }
+      .ql-toolbar.ql-snow .ql-formats { margin-right: 8px; line-height: 1; }
+      .ql-container.ql-snow { border-radius: 0 0 8px 8px; border-color: #DDD9D2; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 0.9rem; }
+      .ql-editor { min-height: 80px; padding: 6px 10px 4px; line-height: 1.65; color: #1C1917; }
+      .quill-tall .ql-editor { min-height: 140px; padding: 12px 15px 6px; }
+      .ql-editor.ql-blank::before { color: #9C9892; font-style: normal; }
+    </style>
+  <% end %>
+<% end %>
 
 <div data-controller="question-selector">
   <%= form_with model: [activity, question], html: {
       class: "question-form",
-      id: "question-form-#{question.id || 'new'}",
+      id: "question-form-#{form_uid}",
       data: { turbo: false }
     } do |form| %>
 
@@ -33,14 +51,8 @@
 
     <div style="<%= field_s %>">
       <%= form.label :content, t('questions.form.question_content'), style: label_s %>
-      <%= form.text_area :content,
-          style: input_s,
-          rows: 3,
-          placeholder: (question.fill_in_blank? ?
-                      t('questions.form.fill_in_blank_placeholder') :
-                      (question.multiple_choice? ?
-                        t('questions.form.multiple_choice_placeholder') :
-                        t('questions.form.content_placeholder'))) %>
+      <div id="quill-editor-<%= form_uid %>"></div>
+      <%= form.hidden_field :content, id: "quill-content-#{form_uid}", value: question.content %>
     </div>
 
     <div style="<%= field_s %> display:<%= question.fill_in_blank? ? 'block' : 'none' %>;"
@@ -80,24 +92,52 @@
     <% end %>
 
     <script>
-      document.addEventListener('DOMContentLoaded', function() {
-        const form = document.getElementById('question-form-<%= question.id || "new" %>');
-        if (!form) return;
+      (function() {
+        var formId = '<%= form_uid %>';
 
-        const select = form.querySelector('select[name="question[question_type]"]');
-        if (!select) return;
+        function initQuill() {
+          var editorEl = document.getElementById('quill-editor-' + formId);
+          if (!editorEl || editorEl.dataset.quillInit) return;
+          editorEl.dataset.quillInit = '1';
+
+          var quill = new Quill(editorEl, {
+            theme: 'snow',
+            modules: { toolbar: [['bold', 'italic', 'underline']] },
+            placeholder: '<%= j(t("questions.form.multiple_choice_placeholder")) %>'
+          });
+
+          var existing = <%= raw json_escape((question.content || '').to_json) %>;
+          if (existing && existing.trim()) {
+            quill.clipboard.dangerouslyPasteHTML(
+              existing.charAt(0) === '<' ? existing : existing.replace(/\n/g, '<br>')
+            );
+          }
+
+          var hiddenInput = document.getElementById('quill-content-' + formId);
+          quill.on('text-change', function() {
+            hiddenInput.value = quill.root.innerHTML;
+          });
+
+          var formEl = document.getElementById('question-form-' + formId);
+          if (formEl) {
+            formEl.addEventListener('submit', function() {
+              hiddenInput.value = quill.root.innerHTML;
+            }, { once: false });
+          }
+        }
 
         function updateFields() {
+          const form = document.getElementById('question-form-' + formId);
+          if (!form) return;
+          const select = form.querySelector('select[name="question[question_type]"]');
+          if (!select) return;
           const type = select.value;
-
           const multipleChoiceFields = form.querySelector('.multiple-choice-fields');
           const fillInBlankHelp = form.querySelector('.fill-in-blank-help');
           const correctAnswerField = form.querySelector('[data-question-selector-target="correctAnswer"]');
-
           if (multipleChoiceFields) multipleChoiceFields.style.display = 'none';
           if (fillInBlankHelp) fillInBlankHelp.style.display = 'none';
           if (correctAnswerField) correctAnswerField.style.display = 'block';
-
           switch (type) {
             case 'multiple_choice':
               if (multipleChoiceFields) multipleChoiceFields.style.display = 'block';
@@ -108,17 +148,37 @@
           }
         }
 
-        select.addEventListener('change', updateFields);
-        updateFields();
+        function init() {
+          const form = document.getElementById('question-form-' + formId);
+          if (!form) return;
+          const select = form.querySelector('select[name="question[question_type]"]');
+          if (select) select.addEventListener('change', updateFields);
+          updateFields();
 
-        form.addEventListener('submit', function(event) {
-          if (!form.action.includes('?')) {
-            form.action = form.action + '?destaque=true';
+          const parentCollapse = form.closest('.collapse');
+          if (parentCollapse) {
+            new MutationObserver(function() {
+              if (parentCollapse.classList.contains('show')) initQuill();
+            }).observe(parentCollapse, { attributes: true, attributeFilter: ['class'] });
           } else {
-            form.action = form.action + '&destaque=true';
+            initQuill();
           }
-        });
-      });
+
+          form.addEventListener('submit', function(event) {
+            if (!form.action.includes('?')) {
+              form.action = form.action + '?destaque=true';
+            } else {
+              form.action = form.action + '&destaque=true';
+            }
+          });
+        }
+
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', init);
+        } else {
+          init();
+        }
+      })();
     </script>
   <% end %>
 </div>

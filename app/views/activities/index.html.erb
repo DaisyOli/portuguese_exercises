@@ -3,13 +3,7 @@
 <% end %>
 
 <%
-  cefr_colors = {
-    'A1' => { bg:'#E8F5EE', text:'#0F3826', border:'#2A9B6F' },
-    'A2' => { bg:'#EBF2FC', text:'#1A4A8A', border:'#2563EB' },
-    'B1' => { bg:'#F5F3FF', text:'#4C1D95', border:'#7C3AED' },
-    'B2' => { bg:'#FFF7ED', text:'#7C2D12', border:'#EA580C' },
-    'C1' => { bg:'#F3F4F6', text:'#1C1917', border:'#374151' },
-  }
+  # cefr_colors(level) available from ApplicationHelper::CEFR_COLORS
 
   type_labels = {
     'multiple_choice'   => 'Múltipla escolha',
@@ -112,7 +106,7 @@
         </div>
 
         <% @activities.each_with_index do |activity, i| %>
-          <% c = cefr_colors[activity.level] || cefr_colors['A1'] %>
+          <% c = cefr_colors(activity.level) %>
           <% last = i == @activities.size - 1 %>
           <div style="display:grid; grid-template-columns:48px 1fr 100px 80px 120px; gap:16px; align-items:center; padding:14px 20px; <%= last ? '' : 'border-bottom:1px solid #F0EDE8;' %> transition:background 0.15s;"
                onmouseover="this.style.background='#FAFAF8'" onmouseout="this.style.background=''">
@@ -160,7 +154,7 @@
       <%# VISTA EM GRID %>
       <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:1rem; margin-bottom:2rem;">
         <% @activities.each do |activity| %>
-          <% c = cefr_colors[activity.level] || cefr_colors['A1'] %>
+          <% c = cefr_colors(activity.level) %>
           <div style="background:#fff; border:1px solid #DDD9D2; border-radius:14px; padding:20px;">
 
             <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:12px;">
