@@ -19,21 +19,30 @@
   }
 
   .word-drop-zone {
-    min-width: 60px;
-    min-height: 40px;
+    position: relative;
+    min-width: 52px;
+    min-height: 52px;
     border: 2px dashed #ccc;
     border-radius: 6px;
     display: flex;
     align-items: center;
     justify-content: center;
     transition: all 0.2s ease;
-    padding: 0.2rem;
+    padding: 0.6rem 0.5rem 0.3rem;
+    cursor: pointer;
+    outline: none;
+  }
 
-    &.drop-hover {
-      border-color: var(--azul-acao);
-      background: rgba(25, 118, 210, 0.08);
-      transform: scale(1.05);
-    }
+  .word-drop-zone:hover,
+  .word-drop-zone:focus-visible {
+    border-color: var(--azul-acao);
+    background: rgba(25, 118, 210, 0.08);
+  }
+
+  .word-drop-zone.drop-hover {
+    border-color: var(--azul-acao);
+    background: rgba(25, 118, 210, 0.08);
+    transform: scale(1.03);
   }
 
   .draggable-word {
@@ -41,8 +50,8 @@
     border: 2px solid var(--verde-destaque);
     color: var(--verde-destaque);
     border-radius: 6px;
-    padding: 0.35rem 0.75rem;
-    font-size: 0.95rem;
+    padding: 0.3rem 0.55rem;
+    font-size: 0.9rem;
     font-weight: 600;
     cursor: grab;
     user-select: none;
@@ -60,6 +69,166 @@
       opacity: 0.5;
       cursor: grabbing;
     }
+  }
+}
+
+.ordering-hint-text {
+  color: #2f4f4f;
+  font-size: 0.92rem;
+  margin-bottom: 1rem;
+  padding: 0.85rem 1rem;
+  background: rgba(255, 255, 255, 0.85);
+  border: 1px solid #d1e7dd;
+  border-radius: 8px;
+}
+
+.ordering-controls {
+  display: flex;
+  gap: 0.8rem;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-bottom: 0.75rem;
+}
+
+.sentence-zones-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  background: #f8f9fa;
+  border-radius: 8px;
+}
+
+.sentence-drop-zone {
+  position: relative;
+  overflow: visible;
+  border: 2px dashed #ccc;
+  border-radius: 10px;
+  padding: 1rem 1rem 0.7rem;
+  transition: all 0.2s ease;
+  background: white;
+  touch-action: manipulation;
+  cursor: pointer;
+  outline: none;
+}
+
+.sentence-drop-zone:hover,
+.sentence-drop-zone:focus-visible {
+  border-color: var(--azul-acao);
+  background: rgba(25, 118, 210, 0.08);
+}
+
+.sentence-drop-zone.drop-hover {
+  border-color: var(--azul-acao);
+  background: rgba(25, 118, 210, 0.08);
+  transform: scale(1.01);
+}
+
+.draggable-sentence {
+    width: 100%;
+    border: 2px solid var(--verde-destaque);
+    color: var(--verde-destaque);
+    border-radius: 8px;
+    padding: 0.9rem 1rem;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    user-select: none;
+    transition: all 0.2s ease;
+  }
+
+  .slot-number {
+    position: absolute;
+    top: -0.85rem;
+    left: -0.85rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.85rem;
+    height: 1.85rem;
+    border-radius: 50%;
+    background: white;
+    color: var(--verde-destaque);
+    font-size: 0.78rem;
+    font-weight: 700;
+    border: 2px solid var(--verde-destaque);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+    z-index: 2;
+  }
+
+.draggable-sentence:hover {
+  background: var(--verde-destaque);
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(46, 125, 50, 0.25);
+}
+
+.word-drop-zone.selected-zone,
+.sentence-drop-zone.selected-zone {
+  border-color: var(--azul-acao);
+  background: transparent;
+  box-shadow: none;
+}
+
+.draggable-word.selected,
+.draggable-sentence.selected {
+  border-color: var(--verde-destaque);
+  background: rgba(46, 125, 50, 0.12);
+  color: var(--verde-destaque);
+  transform: scale(1.02);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.08);
+}
+
+.word-drop-zone,
+.draggable-word,
+.sentence-drop-zone,
+.draggable-sentence {
+  touch-action: manipulation;
+}
+
+@media (max-width: 768px) {
+  .word-zones-container {
+    gap: 0.35rem;
+    padding: 0.4rem;
+  }
+
+  .word-drop-zone {
+    min-width: 48px;
+    min-height: 38px;
+    padding: 0.12rem 0.18rem;
+  }
+
+  .draggable-word {
+    padding: 0.2rem 0.4rem;
+    font-size: 0.82rem;
+  }
+
+  .ordering-hint-text {
+    font-size: 0.84rem;
+    padding: 0.35rem 0.5rem;
+  }
+
+  .sentence-zones-container {
+    gap: 0.6rem;
+    padding: 0.6rem;
+  }
+
+  .sentence-drop-zone {
+    padding: 0.6rem;
+  }
+
+  .draggable-sentence {
+    font-size: 0.9rem;
+    padding: 0.6rem 0.8rem;
+  }
+
+  .slot-number {
+    width: 1.1rem;
+    height: 1.1rem;
+    top: -0.45rem;
+    left: -0.45rem;
+    font-size: 0.64rem;
+    border-width: 1px;
   }
 }
 

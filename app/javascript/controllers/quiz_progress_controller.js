@@ -9,6 +9,12 @@ export default class extends Controller {
   }
 
   connect() {
+    // Mobile: manter o material visível por padrão para alunos de língua
+    if (window.innerWidth < 768 && this.hasMaterialPanelTarget) {
+      this.materialPanelTarget.classList.remove('collapsed')
+      this.updateToggleLabel()
+    }
+
     this.sizeStack()
     this.boundSizeStack = this.sizeStack.bind(this)
     window.addEventListener('resize', this.boundSizeStack)
@@ -18,6 +24,9 @@ export default class extends Controller {
   }
 
   sizeStack() {
+    // No mobile a página rola naturalmente — sem altura fixa no stack
+    if (window.innerWidth < 768) return
+
     const outer = document.querySelector('.quiz-outer')
     const stack = this.element.querySelector('.quiz-questions-stack')
     if (!outer || !stack) return
@@ -103,6 +112,17 @@ export default class extends Controller {
   }
 
   scrollToTop() {
+    if (window.innerWidth < 768) {
+      // No mobile, não rolar para o topo. Em vez disso, garantir que a questão ativa esteja visível.
+      if (this.hasQuestionTarget) {
+        const active = this.questionTargets[this.currentValue - 1]
+        if (active) {
+          active.scrollIntoView({ behavior: 'smooth', block: 'center' })
+          return
+        }
+      }
+      return
+    }
     const stack = this.element.querySelector('.quiz-questions-stack')
     if (stack) stack.scrollTo({ top: 0, behavior: 'smooth' })
     else window.scrollTo({ top: 0, behavior: 'smooth' })
@@ -110,13 +130,21 @@ export default class extends Controller {
 
   toggleMaterial() {
     if (this.hasMaterialPanelTarget) {
-      const collapsed = this.materialPanelTarget.classList.toggle('collapsed')
-      if (this.hasMaterialToggleTarget) {
-        this.materialToggleTarget.textContent = collapsed
-          ? '📖 Ver material ▼'
-          : '📖 Ocultar material ▲'
-      }
+      this.materialPanelTarget.classList.toggle('collapsed')
+      this.updateToggleLabel()
     }
+  }
+
+  updateToggleLabel() {
+    if (!this.hasMaterialToggleTarget) return
+    const isCollapsed = this.hasMaterialPanelTarget &&
+                        this.materialPanelTarget.classList.contains('collapsed')
+    const btn = this.materialToggleTarget
+    const showText = btn.dataset.textShow || 'Ver material de apoio'
+    const hideText = btn.dataset.textHide || 'Ocultar material de apoio'
+    btn.innerHTML = isCollapsed
+      ? `<i class="bi bi-book"></i> ${showText} <i class="bi bi-chevron-down" style="margin-left:auto;"></i>`
+      : `<i class="bi bi-book"></i> ${hideText} <i class="bi bi-chevron-up" style="margin-left:auto;"></i>`
   }
 
   handleKeydown(event) {

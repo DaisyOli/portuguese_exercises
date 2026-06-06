@@ -1,65 +1,90 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
-  static targets = ["sentence", "zone", "input"]
+  static targets = ["sentence", "zone", "input", "status"]
 
   connect() {
-    this.draggedSentence = null
-    this.setupDragDrop()
+    this.selectedSentence = null
+    this.selectedZone = null
+    this.setupTapToSwap()
+    this.setupKeyboardSupport()
+    this.setStatus("Toque em uma frase e depois no número do lugar para posicioná-la.")
   }
 
-  setupDragDrop() {
-    this.sentenceTargets.forEach(sentence => {
-      sentence.setAttribute("draggable", true)
-      sentence.addEventListener("dragstart", this.onDragStart.bind(this))
-      sentence.addEventListener("dragend", this.onDragEnd.bind(this))
-    })
-
+  setupTapToSwap() {
     this.zoneTargets.forEach(zone => {
-      zone.addEventListener("dragover", this.onDragOver.bind(this))
-      zone.addEventListener("dragleave", this.onDragLeave.bind(this))
-      zone.addEventListener("drop", this.onDrop.bind(this))
+      zone.addEventListener("click", this.onZoneClick.bind(this))
     })
   }
 
-  onDragStart(e) {
-    this.draggedSentence = e.currentTarget
-    e.currentTarget.classList.add("dragging")
-    e.dataTransfer.effectAllowed = "move"
+  setupKeyboardSupport() {
+    this.zoneTargets.forEach(zone => {
+      zone.setAttribute("role", "button")
+      zone.setAttribute("tabindex", "0")
+      zone.addEventListener("keydown", this.onZoneKeydown.bind(this))
+    })
   }
 
-  onDragEnd(e) {
-    e.currentTarget.classList.remove("dragging")
-    this.zoneTargets.forEach(z => z.classList.remove("drop-hover"))
+  onZoneKeydown(e) {
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault()
+      this.onZoneClick({ currentTarget: e.currentTarget })
+    }
   }
 
-  onDragOver(e) {
-    e.preventDefault()
-    e.dataTransfer.dropEffect = "move"
-    e.currentTarget.classList.add("drop-hover")
-  }
+  onZoneClick(e) {
+    const clickedZone = e.currentTarget
+    const clickedSentence = clickedZone.querySelector("[data-paragraph-ordering-target='sentence']")
+    if (!clickedSentence) return
 
-  onDragLeave(e) {
-    e.currentTarget.classList.remove("drop-hover")
-  }
-
-  onDrop(e) {
-    e.preventDefault()
-    const targetZone = e.currentTarget
-    targetZone.classList.remove("drop-hover")
-
-    if (!this.draggedSentence) return
-
-    const sourceZone = this.draggedSentence.closest("[data-paragraph-ordering-target='zone']")
-    if (sourceZone === targetZone) return
-
-    const existingSentence = targetZone.querySelector("[data-paragraph-ordering-target='sentence']")
-    if (existingSentence && sourceZone) {
-      sourceZone.appendChild(existingSentence)
+    if (!this.selectedSentence) {
+      this.selectSentence(clickedSentence, clickedZone)
+      this.setStatus("Agora toque no número do lugar para posicionar a frase.")
+      return
     }
 
-    targetZone.appendChild(this.draggedSentence)
+    if (this.selectedSentence === clickedSentence) {
+      this.clearSelection()
+      this.setStatus("Selecione uma frase para começar.")
+      return
+    }
+
+    this.swapSentences(this.selectedSentence, clickedSentence)
+    this.clearSelection()
     this.updateHiddenInput()
+    this.setStatus("Frase posicionada! Toque em outra frase para continuar.")
+  }
+
+  selectSentence(sentence, zone) {
+    this.selectedSentence = sentence
+    this.selectedZone = zone
+    sentence.classList.add("selected")
+    zone.classList.add("selected-zone")
+  }
+
+  clearSelection() {
+    if (this.selectedSentence) {
+      this.selectedSentence.classList.remove("selected")
+    }
+    if (this.selectedZone) {
+      this.selectedZone.classList.remove("selected-zone")
+    }
+    this.selectedSentence = null
+    this.selectedZone = null
+  }
+
+  swapSentences(sentA, sentB) {
+    const zoneA = sentA.parentElement
+    const zoneB = sentB.parentElement
+    if (!zoneA || !zoneB || zoneA === zoneB) return
+    zoneA.appendChild(sentB)
+    zoneB.appendChild(sentA)
+  }
+
+  setStatus(message) {
+    if (this.hasStatusTarget) {
+      this.statusTarget.textContent = message
+    }
   }
 
   updateHiddenInput() {

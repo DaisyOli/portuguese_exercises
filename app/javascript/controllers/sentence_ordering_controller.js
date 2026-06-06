@@ -1,65 +1,82 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
-  static targets = ["word", "zone", "input"]
+  static targets = ["word", "zone", "input", "status"]
 
   connect() {
-    this.draggedWord = null
-    this.setupDragDrop()
+    this.selectedWord = null
+    this.setupTapToSwap()
+    this.setupKeyboardSupport()
+    this.setStatus("Toque em uma palavra e depois clique em outra para trocá-la.")
   }
 
-  setupDragDrop() {
+  setupTapToSwap() {
     this.wordTargets.forEach(word => {
-      word.setAttribute("draggable", true)
-      word.addEventListener("dragstart", this.onDragStart.bind(this))
-      word.addEventListener("dragend", this.onDragEnd.bind(this))
-    })
-
-    this.zoneTargets.forEach(zone => {
-      zone.addEventListener("dragover", this.onDragOver.bind(this))
-      zone.addEventListener("dragleave", this.onDragLeave.bind(this))
-      zone.addEventListener("drop", this.onDrop.bind(this))
+      word.addEventListener("click", this.onWordClick.bind(this))
     })
   }
 
-  onDragStart(e) {
-    this.draggedWord = e.currentTarget
-    e.currentTarget.classList.add("dragging")
-    e.dataTransfer.effectAllowed = "move"
+  setupKeyboardSupport() {
+    this.wordTargets.forEach(word => {
+      word.setAttribute("role", "button")
+      word.setAttribute("tabindex", "0")
+      word.addEventListener("keydown", this.onWordKeydown.bind(this))
+    })
   }
 
-  onDragEnd(e) {
-    e.currentTarget.classList.remove("dragging")
-    this.zoneTargets.forEach(z => z.classList.remove("drop-hover"))
+  onWordKeydown(e) {
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault()
+      this.onWordClick(e)
+    }
   }
 
-  onDragOver(e) {
-    e.preventDefault()
-    e.dataTransfer.dropEffect = "move"
-    e.currentTarget.classList.add("drop-hover")
-  }
+  onWordClick(e) {
+    e.stopPropagation()
+    const clickedWord = e.currentTarget
+    const clickedZone = clickedWord.closest("[data-sentence-ordering-target='zone']")
+    if (!clickedZone) return
 
-  onDragLeave(e) {
-    e.currentTarget.classList.remove("drop-hover")
-  }
-
-  onDrop(e) {
-    e.preventDefault()
-    const targetZone = e.currentTarget
-    targetZone.classList.remove("drop-hover")
-
-    if (!this.draggedWord || targetZone === this.draggedWord.closest("[data-sentence-ordering-target='zone']")) return
-
-    const sourceZone = this.draggedWord.closest("[data-sentence-ordering-target='zone']")
-    const existingWord = targetZone.querySelector("[data-sentence-ordering-target='word']")
-
-    // Swap if target zone already has a word
-    if (existingWord && sourceZone) {
-      sourceZone.appendChild(existingWord)
+    if (!this.selectedWord) {
+      this.selectWord(clickedWord)
+      this.setStatus("Agora clique em outra palavra para trocar de lugar.")
+      return
     }
 
-    targetZone.appendChild(this.draggedWord)
+    if (this.selectedWord === clickedWord) {
+      this.clearSelection()
+      this.setStatus("Selecione uma palavra para começar.")
+      return
+    }
+
+    this.swapWords(this.selectedWord, clickedWord)
     this.updateHiddenInput()
+    this.clearSelection()
+    this.setStatus("Palavra posicionada! Toque em outra palavra para continuar.")
+  }
+
+  selectWord(word) {
+    this.selectedWord = word
+    this.selectedWord.classList.add("selected")
+  }
+
+  clearSelection() {
+    this.wordTargets.forEach(word => word.classList.remove("selected"))
+    this.selectedWord = null
+  }
+
+  swapWords(wordA, wordB) {
+    const zoneA = wordA.parentElement
+    const zoneB = wordB.parentElement
+    if (!zoneA || !zoneB || zoneA === zoneB) return
+    zoneA.appendChild(wordB)
+    zoneB.appendChild(wordA)
+  }
+
+  setStatus(message) {
+    if (this.hasStatusTarget) {
+      this.statusTarget.textContent = message
+    }
   }
 
   updateHiddenInput() {
