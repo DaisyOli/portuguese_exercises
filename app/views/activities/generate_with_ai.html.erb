@@ -1,0 +1,92 @@
+<% content_for :head do %>
+  <title>Gerar Atividade com IA · Practice-BR</title>
+  <style>
+    .pb-input:focus { border-color:#1A6B4A !important; box-shadow:0 0 0 3px rgba(26,107,74,0.1) !important; outline:none !important; }
+    .example-pill { cursor:pointer; transition:all 0.12s; }
+    .example-pill:hover { background:#E8F5EE !important; border-color:#2A9B6F !important; color:#0F3826 !important; }
+  </style>
+<% end %>
+
+<div style="max-width:680px; margin:1.5rem auto 3rem; padding:0 1.5rem;">
+
+  <%# Cabeçalho %>
+  <div style="display:flex; align-items:center; gap:12px; margin-bottom:1.25rem;">
+    <%= link_to activities_path,
+          style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; font-weight:600; color:#5C5853; padding:7px 14px; border:1.5px solid #DDD9D2; border-radius:8px; text-decoration:none; background:#fff; white-space:nowrap;" do %>
+      ← Voltar
+    <% end %>
+    <span style="font-family:'Raleway',sans-serif; font-size:1.2rem; font-weight:700; color:#1C1917;">
+      ✨ Gerar Atividade com IA
+    </span>
+  </div>
+
+  <%# Flash alert %>
+  <% if flash[:alert] %>
+    <div style="background:#FEF2F2; border:1.5px solid #FCA5A5; border-radius:10px; padding:14px 16px; margin-bottom:18px; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.85rem; color:#991B1B;">
+      <%= flash[:alert] %>
+    </div>
+  <% end %>
+
+  <div style="background:#fff; border:1px solid #DDD9D2; border-radius:20px; padding:32px 36px;">
+
+    <%# Explicação %>
+    <div style="background:linear-gradient(135deg,#E8F5EE 0%,#EBF7F2 100%); border:1.5px solid #2A9B6F; border-radius:14px; padding:18px 22px; margin-bottom:28px;">
+      <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.85rem; font-weight:700; color:#0F3826; margin-bottom:6px;">
+        Como funciona?
+      </div>
+      <p style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.83rem; color:#1A6B4A; margin:0; line-height:1.6;">
+        Descreva a atividade que você quer criar. A IA vai gerar título, descrição e questões automaticamente.
+        Você vai <strong>revisar tudo</strong> antes de publicar — nada vai para os alunos sem sua aprovação.
+      </p>
+    </div>
+
+    <%= form_tag generate_with_ai_activities_path, method: :post do %>
+
+      <div style="margin-bottom:22px;">
+        <label style="display:block; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; font-weight:600; color:#1C1917; margin-bottom:8px;">
+          Descreva a atividade que deseja criar
+        </label>
+        <%= text_area_tag :ai_prompt, params[:ai_prompt],
+              id: "ai-prompt",
+              class: "pb-input",
+              placeholder: "Ex: Crie 5 questões de múltipla escolha sobre cumprimentos formais e informais em português brasileiro, nível A2. Use situações do dia a dia.",
+              rows: 5,
+              style: "width:100%; padding:13px 16px; border:1.5px solid #DDD9D2; border-radius:12px; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.9rem; color:#1C1917; background:#fff; resize:vertical; min-height:120px; box-sizing:border-box; line-height:1.6;" %>
+        <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.75rem; color:#9C9892; margin-top:6px;">
+          Quanto mais detalhe você der (nível, tema, tipo de questão), melhor o resultado.
+        </div>
+      </div>
+
+      <%# Exemplos rápidos %>
+      <div style="margin-bottom:28px;">
+        <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.75rem; font-weight:600; color:#9C9892; margin-bottom:8px; text-transform:uppercase; letter-spacing:0.05em;">
+          Exemplos de prompts
+        </div>
+        <div style="display:flex; flex-wrap:wrap; gap:8px;">
+          <% [
+            "5 questões de múltipla escolha sobre verbos reflexivos no cotidiano, nível B1",
+            "6 exercícios de preencher lacunas com preposições de lugar, nível A2",
+            "4 questões de múltipla escolha sobre gírias e expressões informais brasileiras, nível B2",
+            "5 questões sobre o uso de 'por' e 'para', nível B1"
+          ].each do |ex| %>
+            <button type="button" class="example-pill"
+                    onclick="document.getElementById('ai-prompt').value = '<%= j(ex) %>'"
+                    style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.75rem; color:#5C5853; background:#F7F5F0; border:1.5px solid #DDD9D2; border-radius:20px; padding:5px 12px; text-align:left;">
+              <%= ex %>
+            </button>
+          <% end %>
+        </div>
+      </div>
+
+      <hr style="border:none; border-top:1px solid #F0EDE8; margin:0 0 24px 0;">
+
+      <div style="display:flex; align-items:center; justify-content:space-between;">
+        <%= link_to "Cancelar", activities_path,
+              style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.85rem; color:#9C9892; text-decoration:none; padding:8px 4px;" %>
+        <%= submit_tag "✨ Gerar atividade",
+              style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.9rem; font-weight:700; color:#fff; background:#1A6B4A; padding:12px 28px; border-radius:12px; border:none; cursor:pointer;" %>
+      </div>
+
+    <% end %>
+  </div>
+</div>

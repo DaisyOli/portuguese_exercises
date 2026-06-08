@@ -161,11 +161,11 @@
   background: #1A6B4A;
   color: #fff;
   font-family: 'Plus Jakarta Sans', sans-serif;
-  font-size: 1rem;
+  font-size: 0.92rem;
   font-weight: 700;
   border: none;
   border-radius: 12px;
-  padding: 12px 28px;
+  padding: 8px 20px;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -187,11 +187,11 @@
   background: #fff;
   color: #5C5853;
   font-family: 'Plus Jakarta Sans', sans-serif;
-  font-size: 0.9rem;
+  font-size: 0.92rem;
   font-weight: 600;
   border: 1.5px solid #DDD9D2;
   border-radius: 12px;
-  padding: 10px 24px;
+  padding: 8px 16px;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -514,7 +514,8 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  min-height: 100vh;
+  height: calc(100vh - 56px);
+  min-height: 0;
   padding: 1rem 1rem 1rem;
   overflow: hidden;
   box-sizing: border-box;
@@ -632,7 +633,7 @@
 }
 
 .mc-option-label {
-  min-height: 44px;
+  min-height: 40px;
 }
 
 .mc-option-label:has(input[type="radio"]:checked) {
@@ -676,9 +677,16 @@
 
 @media (max-width: 768px) {
   .quiz-outer {
+    height: auto;
     min-height: auto;
     overflow: visible;
     padding: 0.5rem 0.75rem 1rem;
+  }
+
+  [data-controller~="quiz-progress"] {
+    flex: none !important;
+    min-height: auto !important;
+    overflow: visible !important;
   }
 
   .quiz-two-col {
@@ -746,21 +754,22 @@
   .quiz-nav-row a,
   .quiz-nav-row button,
   .quiz-nav-row input[type="submit"] {
-    min-height: 52px !important;
+    min-height: 40px !important;
     font-size: 0.92rem !important;
     border-radius: 12px !important;
-    padding: 12px 18px !important;
+    padding: 8px 16px !important;
   }
 
   .mc-option-label {
-    min-height: 52px;
-    padding: 14px 16px !important;
-    font-size: 1rem !important;
+    min-height: 40px;
+    padding: 9px 12px !important;
+    font-size: 0.92rem !important;
   }
 
   .fib-input {
-    font-size: 1rem !important;
-    padding: 6px 10px !important;
+    font-size: 0.92rem !important;
+    padding: 4px 8px !important;
+    width: 110px !important;
   }
 
   .word-drop-zone {
@@ -776,12 +785,12 @@
   }
 
   .sentence-drop-zone {
-    min-height: 56px;
+    min-height: 44px;
   }
 
   .draggable-sentence {
-    padding: 12px 14px;
+    padding: 8px 12px;
     font-size: 0.9rem;
-    min-height: 52px;
+    min-height: 40px;
   }
 }

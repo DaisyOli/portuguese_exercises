@@ -5,41 +5,40 @@ export default class extends Controller {
 
   connect() {
     this.selectedSentence = null
-    this.selectedZone = null
     this.setupTapToSwap()
     this.setupKeyboardSupport()
-    this.setStatus("Toque em uma frase e depois no número do lugar para posicioná-la.")
+    this.setStatus("Toque em uma frase e depois em outra para trocá-las de lugar.")
   }
 
   setupTapToSwap() {
-    this.zoneTargets.forEach(zone => {
-      zone.addEventListener("click", this.onZoneClick.bind(this))
+    this.sentenceTargets.forEach(sentence => {
+      sentence.addEventListener("click", this.onSentenceClick.bind(this))
     })
   }
 
   setupKeyboardSupport() {
-    this.zoneTargets.forEach(zone => {
-      zone.setAttribute("role", "button")
-      zone.setAttribute("tabindex", "0")
-      zone.addEventListener("keydown", this.onZoneKeydown.bind(this))
+    this.sentenceTargets.forEach(sentence => {
+      sentence.setAttribute("role", "button")
+      sentence.setAttribute("tabindex", "0")
+      sentence.addEventListener("keydown", this.onSentenceKeydown.bind(this))
     })
   }
 
-  onZoneKeydown(e) {
+  onSentenceKeydown(e) {
     if (e.key === "Enter" || e.key === " ") {
       e.preventDefault()
-      this.onZoneClick({ currentTarget: e.currentTarget })
+      this.onSentenceClick(e)
     }
   }
 
-  onZoneClick(e) {
-    const clickedZone = e.currentTarget
-    const clickedSentence = clickedZone.querySelector("[data-paragraph-ordering-target='sentence']")
-    if (!clickedSentence) return
+  onSentenceClick(e) {
+    e.stopPropagation()
+    e.currentTarget.blur()
+    const clickedSentence = e.currentTarget
 
     if (!this.selectedSentence) {
-      this.selectSentence(clickedSentence, clickedZone)
-      this.setStatus("Agora toque no número do lugar para posicionar a frase.")
+      this.selectSentence(clickedSentence)
+      this.setStatus("Agora toque em outra frase para trocá-la de lugar.")
       return
     }
 
@@ -50,27 +49,20 @@ export default class extends Controller {
     }
 
     this.swapSentences(this.selectedSentence, clickedSentence)
-    this.clearSelection()
     this.updateHiddenInput()
+    this.clearSelection()
+    setTimeout(() => document.activeElement?.blur(), 0)
     this.setStatus("Frase posicionada! Toque em outra frase para continuar.")
   }
 
-  selectSentence(sentence, zone) {
+  selectSentence(sentence) {
     this.selectedSentence = sentence
-    this.selectedZone = zone
     sentence.classList.add("selected")
-    zone.classList.add("selected-zone")
   }
 
   clearSelection() {
-    if (this.selectedSentence) {
-      this.selectedSentence.classList.remove("selected")
-    }
-    if (this.selectedZone) {
-      this.selectedZone.classList.remove("selected-zone")
-    }
+    this.sentenceTargets.forEach(s => s.classList.remove("selected"))
     this.selectedSentence = null
-    this.selectedZone = null
   }
 
   swapSentences(sentA, sentB) {

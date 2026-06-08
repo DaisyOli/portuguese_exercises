@@ -7,6 +7,10 @@ class Activity < ApplicationRecord
   has_many :paragraph_orderings, dependent: :destroy
   has_many :column_matchings, dependent: :destroy
 
+  has_one_attached :audio_file
+  has_one_attached :image_file
+  has_one_attached :video_file
+
   validates :title, presence: true, length: { minimum: 3, maximum: 100 }
   validates :description, presence: true
   validates :level, presence: true
@@ -14,6 +18,7 @@ class Activity < ApplicationRecord
   
   scope :ordered, -> { order(created_at: :desc) }
   scope :by_level, ->(level) { where(level: level) }
+  scope :published, -> { where(draft: false) }
   scope :with_questions_count, -> {
     left_outer_joins(:questions)
       .group(:id)
@@ -34,7 +39,18 @@ class Activity < ApplicationRecord
   def to_param
     slug
   end
-  
+
+  def level_color_class
+    case level
+    when 'A1' then 'bg-info'
+    when 'A2' then 'bg-primary'
+    when 'B1' then 'bg-success'
+    when 'B2' then 'bg-warning'
+    when 'C1' then 'bg-danger'
+    else 'bg-secondary'
+    end
+  end
+
   private
   
   def generate_slug

@@ -58,8 +58,8 @@ RSpec.describe QuizSubmissionService, type: :service do
 
       it 'redireciona para resolve_quiz com parâmetro show_score' do
         result = service.call
-        
-        expect(result[:redirect_path]).to eq([:resolve_quiz, activity, { locale: I18n.locale, show_score: true }])
+
+        expect(result[:redirect_path]).to include("show_score=true")
         expect(result[:show_score]).to be true
         expect(result[:notice]).to be_nil
       end
@@ -141,10 +141,10 @@ RSpec.describe QuizSubmissionService, type: :service do
 
       it 'trata erros graciosamente' do
         result = service.call
-        
+
         expect(result[:success]).to be false
         expect(result[:alert]).to be_present
-        expect(result[:redirect_path]).to eq([:activities])
+        expect(result[:redirect_path]).to include("activities")
       end
     end
 

@@ -22,13 +22,17 @@ class ActivitiesIndexService
   private
 
   def fetch_activities
-    activities = Activity.all
+    activities = @current_user.student? ? Activity.published : Activity.all
 
-    # Aplicar filtros
+    if @params[:view] == 'grid'
+      activities = activities.with_attached_image_file
+                             .with_attached_video_file
+                             .with_attached_audio_file
+    end
+
     activities = activities.where(level: @params[:level]) if @params[:level].present?
     activities = activities.where("title ILIKE ?", "%#{@params[:search]}%") if @params[:search].present?
 
-    # Aplicar ordenação
     apply_sorting(activities).page(@params[:page]).per(9)
   end
 
@@ -48,8 +52,9 @@ class ActivitiesIndexService
   end
 
   def fetch_activities_by_level
-    Rails.cache.fetch(["activities_by_level"], expires_in: 1.hour) do
-      Activity.all.group_by(&:level)
+    Rails.cache.fetch(["activities_by_level", @current_user.role], expires_in: 1.hour) do
+      base = @current_user.student? ? Activity.published : Activity.all
+      base.group_by(&:level)
     end
   end
 

@@ -37,6 +37,7 @@ en:
     save: "Save"
     edit: "Edit"
     delete: "Delete"
+    remove: "Remove"
     back: "Back"
     cancel: "Cancel"
     confirm: "Confirm"
@@ -264,6 +265,24 @@ en:
     save_suggestion: "Save suggestion"
     suggestions: "Suggestions"
     confirm_delete_suggestion: "Are you sure you want to delete this suggestion?"
+    add_audio: "Audio"
+    audio_label: "Audio"
+    audio_file_label: "Audio file"
+    audio_file_hint: "Accepted formats: MP3, WAV, OGG, M4A, AAC. Maximum 50 MB."
+    save_audio: "Save audio"
+    confirm_delete_audio: "Remove the audio from this activity?"
+    audio_not_supported: "Your browser does not support audio playback."
+    upload_from_computer: "From computer"
+    image_file_label: "Image file"
+    image_file_hint: "Accepted formats: JPG, PNG, GIF, WEBP. Maximum 10 MB."
+    save_image_file: "Save image"
+    confirm_delete_image_file: "Remove the image from this activity?"
+    choose_file: "Choose file"
+    no_file_chosen: "No file chosen"
+    video_file_label: "Video file"
+    video_file_hint: "Accepted formats: MP4, MOV, AVI, WEBM. Maximum 200 MB."
+    save_video_file: "Save video"
+    confirm_delete_video_file: "Remove the video from this activity?"
     
   questions:
     title: "Question"
@@ -347,6 +366,9 @@ en:
     suggestion_deleted: "Suggestion removed successfully."
     suggestion_create_error: "Error adding suggestion. Please try again."
     video_deleted: "Video removed successfully."
+    audio_deleted: "Audio removed successfully."
+    image_file_deleted: "Image removed successfully."
+    video_file_deleted: "Video removed successfully."
     
   devise:
     sessions:

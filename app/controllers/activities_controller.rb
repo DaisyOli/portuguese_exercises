@@ -2,8 +2,8 @@ class ActivitiesController < ApplicationController
   include QuizManagement
   
   before_action :authenticate_user!
-  before_action :set_activity, only: [:show, :edit, :update, :destroy, :resolve_quiz, :submit_quiz, :quiz_results, :clear_statement, :clear_media, :clear_video, :clear_explanation, :clear_attempt_history]
-  before_action :authorize_teacher, only: [:new, :create, :edit, :update, :destroy]
+  before_action :set_activity, only: [:show, :edit, :update, :destroy, :resolve_quiz, :submit_quiz, :quiz_results, :clear_statement, :clear_media, :clear_video, :clear_explanation, :clear_audio, :clear_image_file, :clear_video_file, :clear_attempt_history, :review_draft, :publish_draft]
+  before_action :authorize_teacher, only: [:new, :create, :edit, :update, :destroy, :generate_with_ai, :review_draft, :publish_draft]
 
   def index
     service_result = ActivitiesIndexService.new(params: params, current_user: current_user).call
@@ -28,6 +28,9 @@ class ActivitiesController < ApplicationController
   end
 
   def resolve_quiz
+    if current_user.student? && @activity.draft?
+      redirect_to student_dashboard_path, alert: "Esta atividade ainda não está disponível." and return
+    end
     @questions = load_questions
     
     if params[:show_score] == 'true' && session[:quiz_attempt_id].present?
@@ -80,6 +83,53 @@ class ActivitiesController < ApplicationController
     redirect_to activities_path, alert: "Ocorreu um erro ao exibir os resultados. Tente novamente."
   end
 
+  def generate_with_ai
+    if request.get?
+      @activity = Activity.new
+      return
+    end
+
+    prompt = params[:ai_prompt].to_s.strip
+    if prompt.blank?
+      flash.now[:alert] = "Por favor, descreva a atividade que deseja gerar."
+      @activity = Activity.new
+      return render :generate_with_ai, status: :unprocessable_entity
+    end
+
+    result = ActivityGenerationService.new(prompt: prompt, teacher: current_user).call
+
+    if result[:success]
+      redirect_to review_draft_activity_path(result[:activity]),
+                  notice: "Atividade gerada! Revise e publique quando estiver pronto."
+    else
+      flash.now[:alert] = result[:error]
+      @activity = Activity.new
+      render :generate_with_ai, status: :unprocessable_entity
+    end
+  end
+
+  def review_draft
+    unless @activity.teacher == current_user
+      redirect_to activities_path, alert: t('messages.permission_denied') and return
+    end
+    @questions           = @activity.questions.to_a
+    @sentence_orderings  = @activity.sentence_orderings.to_a
+    @paragraph_orderings = @activity.paragraph_orderings.includes(:paragraph_sentences).to_a
+    @column_matchings    = @activity.column_matchings.includes(:matching_pairs).to_a
+  end
+
+  def publish_draft
+    unless @activity.teacher == current_user
+      redirect_to activities_path, alert: t('messages.permission_denied') and return
+    end
+
+    if @activity.update(draft: false)
+      redirect_to activity_path(@activity), notice: "Atividade publicada com sucesso!"
+    else
+      redirect_to review_draft_activity_path(@activity), alert: "Erro ao publicar atividade."
+    end
+  end
+
   def new
     @activity = Activity.new
   end
@@ -125,6 +175,12 @@ class ActivitiesController < ApplicationController
         ultimo_conteudo = 'video'
       elsif params[:activity][:explanation_text].present?
         ultimo_conteudo = 'explanation'
+      elsif params[:activity][:audio_file].present?
+        ultimo_conteudo = 'audio'
+      elsif params[:activity][:image_file].present?
+        ultimo_conteudo = 'image_file'
+      elsif params[:activity][:video_file].present?
+        ultimo_conteudo = 'video_file'
       end
       
       redirect_to activity_path(@activity, ultimo_conteudo: ultimo_conteudo), notice: t('messages.activity_updated')
@@ -173,6 +229,24 @@ class ActivitiesController < ApplicationController
     redirect_to activity_path(@activity, ultima_acao: 'conteudo_excluido'), notice: t('messages.explanation_deleted')
   end
 
+  def clear_audio
+    redirect_to activities_path, alert: t('messages.permission_denied') and return unless @activity.teacher == current_user
+    @activity.audio_file.purge
+    redirect_to activity_path(@activity, ultima_acao: 'conteudo_excluido'), notice: t('messages.audio_deleted')
+  end
+
+  def clear_image_file
+    redirect_to activities_path, alert: t('messages.permission_denied') and return unless @activity.teacher == current_user
+    @activity.image_file.purge
+    redirect_to activity_path(@activity, ultima_acao: 'conteudo_excluido'), notice: t('messages.image_file_deleted')
+  end
+
+  def clear_video_file
+    redirect_to activities_path, alert: t('messages.permission_denied') and return unless @activity.teacher == current_user
+    @activity.video_file.purge
+    redirect_to activity_path(@activity, ultima_acao: 'conteudo_excluido'), notice: t('messages.video_file_deleted')
+  end
+
   def clear_attempt_history
     @activity = Activity.find_by!(slug: params[:slug])
     
@@ -203,7 +277,7 @@ class ActivitiesController < ApplicationController
   end
 
   def activity_params
-    params.require(:activity).permit(:title, :description, :level, :media_url, :video_url, :explanation_text, :statement)
+    params.require(:activity).permit(:title, :description, :level, :media_url, :video_url, :explanation_text, :statement, :audio_file, :image_file, :video_file)
   end
   
   def authorize_teacher

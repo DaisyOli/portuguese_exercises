@@ -26,6 +26,10 @@ class QuizAttempt < ApplicationRecord
     results["total_questions"] if results
   end
   
+  def correct_percentage
+    score || 0
+  end
+
   def passed?
     score.to_i >= 60
   end
@@ -86,6 +90,6 @@ class QuizAttempt < ApplicationRecord
   end
   
   def clear_user_attempts_cache
-    Rails.cache.delete("best_attempts/#{user_id}")
+    Rails.cache.delete_matched("best_attempts/#{user_id}*")
   end
 end

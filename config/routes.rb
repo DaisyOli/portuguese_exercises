@@ -17,14 +17,25 @@ Rails.application.routes.draw do
 
   # Rotas para atividades e questões
   resources :activities, param: :slug do
+    collection do
+      get  :generate_with_ai
+      post :generate_with_ai
+    end
+
     member do
+      get  :review_draft
+      post :publish_draft
       get :solve, action: :resolve_quiz  # /activities/:slug/solve
       post :submit, action: :submit_quiz # /activities/:slug/submit
+      get :submit, to: redirect { |params, _req| "/activities/#{params[:slug]}/solve" }
       get :results, action: :quiz_results # /activities/:slug/results
       patch :clear_statement
       match :clear_media, via: [:patch, :post]
       match :clear_video, via: [:patch, :post]
       patch :clear_explanation
+      match :clear_audio, via: [:patch, :post]
+      match :clear_image_file, via: [:patch, :post]
+      match :clear_video_file, via: [:patch, :post]
       delete :clear_attempt_history
     end
 

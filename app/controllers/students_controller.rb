@@ -10,7 +10,7 @@ class StudentsController < ApplicationController
       @current_level = params[:level]
       load_level_activities
     else
-      @activities_by_level = Activity.all.group_by(&:level)
+      @activities_by_level = Activity.published.group_by(&:level)
     end
   end
 
@@ -21,13 +21,18 @@ class StudentsController < ApplicationController
     offset = params[:offset].to_i
     
     completed_ids = session[:completed_quizzes] || []
-    activities = Activity.where(level: level)
+    activities = Activity.published
+                        .where(level: level)
                         .where.not(id: completed_ids)
                         .with_questions_count
+                        .with_attached_image_file
+                        .with_attached_video_file
+                        .with_attached_audio_file
+                        .includes(:teacher)
                         .limit(ACTIVITIES_PER_PAGE)
                         .offset(offset)
-    
-    total_pending = Activity.where(level: level).where.not(id: completed_ids).count
+
+    total_pending = Activity.published.where(level: level).where.not(id: completed_ids).count
     has_more = (offset + ACTIVITIES_PER_PAGE) < total_pending
     
     render json: {
@@ -43,12 +48,24 @@ class StudentsController < ApplicationController
   def load_level_activities
     completed_ids = session[:completed_quizzes] || []
 
-    @pending_activities = Activity.by_level(@current_level)
+    @pending_activities = Activity.published
+                                  .by_level(@current_level)
                                   .where.not(id: completed_ids)
                                   .with_questions_count
+                                  .with_attached_image_file
+                                  .with_attached_video_file
+                                  .with_attached_audio_file
+                                  .includes(:teacher)
                                   .limit(ACTIVITIES_PER_PAGE)
-    @total_pending        = Activity.by_level(@current_level).where.not(id: completed_ids).count
-    @completed_activities = Activity.by_level(@current_level).where(id: completed_ids).with_questions_count
+    @total_pending        = Activity.published.by_level(@current_level).where.not(id: completed_ids).count
+    @completed_activities = Activity.published
+                                    .by_level(@current_level)
+                                    .where(id: completed_ids)
+                                    .with_questions_count
+                                    .with_attached_image_file
+                                    .with_attached_video_file
+                                    .with_attached_audio_file
+                                    .includes(:teacher)
     @activities = @pending_activities
   end
   

@@ -154,6 +154,7 @@ RSpec.describe Question, type: :model do
     describe 'cache clearing' do
       it 'clears activity questions cache after commit' do
         question = create(:question)
+        allow(Rails.cache).to receive(:delete_matched)
         expect(Rails.cache).to receive(:delete_matched).with("activity_questions/#{question.activity_id}*")
         question.update(content: 'Updated content _____')
       end

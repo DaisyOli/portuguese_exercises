@@ -95,5 +95,14 @@ Rails.application.configure do
     Bullet.alert        = true
     Bullet.rails_logger = true
     Bullet.add_footer   = true
+
+    # Activity cover/badge helpers check all 3 attachment types regardless of which are present
+    Bullet.add_safelist(type: :unused_eager_loading, class_name: "Activity", association: :image_file_attachment)
+    Bullet.add_safelist(type: :unused_eager_loading, class_name: "Activity", association: :video_file_attachment)
+    Bullet.add_safelist(type: :unused_eager_loading, class_name: "Activity", association: :audio_file_attachment)
+    # Active Storage blobs are used by rails_blob_path but Bullet can't track that
+    Bullet.add_safelist(type: :unused_eager_loading, class_name: "ActiveStorage::Attachment", association: :blob)
+    Bullet.add_safelist(type: :unused_eager_loading, class_name: "ActiveStorage::Blob", association: :variant_records)
+    Bullet.add_safelist(type: :unused_eager_loading, class_name: "ActiveStorage::Blob", association: :preview_image_attachment)
   end
 end

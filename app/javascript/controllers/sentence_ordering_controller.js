@@ -33,6 +33,7 @@ export default class extends Controller {
 
   onWordClick(e) {
     e.stopPropagation()
+    e.currentTarget.blur()
     const clickedWord = e.currentTarget
     const clickedZone = clickedWord.closest("[data-sentence-ordering-target='zone']")
     if (!clickedZone) return
@@ -52,6 +53,7 @@ export default class extends Controller {
     this.swapWords(this.selectedWord, clickedWord)
     this.updateHiddenInput()
     this.clearSelection()
+    setTimeout(() => document.activeElement?.blur(), 0)
     this.setStatus("Palavra posicionada! Toque em outra palavra para continuar.")
   }
 

@@ -10,4 +10,33 @@ module ApplicationHelper
   def cefr_colors(level)
     CEFR_COLORS[level] || CEFR_COLORS['A1']
   end
+
+  def activity_media_badge(activity)
+    if activity.image_file.attached? || (activity.media_url.present? && !activity.media_url.match?(/youtube\.com|youtu\.be/))
+      { icon: 'bi-image', label: 'Imagem' }
+    elsif activity.video_url.present? || activity.video_file.attached?
+      { icon: 'bi-play-circle', label: 'Vídeo' }
+    elsif activity.audio_file.attached?
+      { icon: 'bi-music-note-beamed', label: 'Áudio' }
+    else
+      { icon: 'bi-journal-text', label: 'Texto' }
+    end
+  end
+
+  def activity_cover(activity)
+    if activity.image_file.attached?
+      { type: :image, url: rails_blob_path(activity.image_file, disposition: 'inline') }
+    elsif activity.media_url.present? && !activity.media_url.match?(/youtube\.com|youtu\.be/)
+      { type: :image, url: activity.media_url }
+    elsif activity.video_url.present?
+      yt = activity.video_url.match(/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/)
+      yt ? { type: :image, url: "https://img.youtube.com/vi/#{yt[1]}/hqdefault.jpg" } : { type: :gradient, icon: 'bi-play-circle' }
+    elsif activity.video_file.attached?
+      { type: :gradient, icon: 'bi-play-circle' }
+    elsif activity.audio_file.attached?
+      { type: :gradient, icon: 'bi-music-note-beamed' }
+    else
+      { type: :gradient, icon: 'bi-journal-text' }
+    end
+  end
 end

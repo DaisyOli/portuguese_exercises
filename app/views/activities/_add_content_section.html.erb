@@ -71,6 +71,12 @@
     <button type="button" style="<%= neutral %>"
             data-action="content-form#toggle"
             data-bs-toggle="collapse"
+            data-bs-target="#new-audio-form">
+      <i class="bi bi-music-note-beamed"></i> <%= t('activities.add_audio') %>
+    </button>
+    <button type="button" style="<%= neutral %>"
+            data-action="content-form#toggle"
+            data-bs-toggle="collapse"
             data-bs-target="#new-suggestion-form">
       <i class="bi bi-lightbulb"></i> <%= t('activities.add_suggestion') %>
     </button>
@@ -159,27 +165,158 @@
 
 <div class="collapse form-collapse" id="new-image-form" data-content-form-target="form">
   <div style="<%= wrap_s %>">
-    <%= form_with(model: activity, local: true) do |f| %>
-      <div style="<%= field_s %>">
-        <%= f.label :media_url, t('activities.image_url_label'), style: label_s %>
-        <%= f.text_field :media_url, style: input_s,
-            placeholder: t('activities.image_url_placeholder') %>
-      </div>
-      <%= f.submit t('activities.save_image'), style: submit_content %>
-    <% end %>
+
+    <%# Mini-tab: URL | Do computador %>
+    <div style="display:flex; gap:6px; margin-bottom:14px;">
+      <button type="button" id="img-tab-url"
+              onclick="document.getElementById('img-section-url').style.display='block';
+                       document.getElementById('img-section-file').style.display='none';
+                       this.style.background='#0F3826'; this.style.color='#fff'; this.style.borderColor='#0F3826';
+                       document.getElementById('img-tab-file').style.background='#fff';
+                       document.getElementById('img-tab-file').style.color='#5C5853'; document.getElementById('img-tab-file').style.borderColor='#DDD9D2';"
+              style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.78rem; font-weight:600;
+                     padding:5px 14px; border-radius:8px; border:1.5px solid #0F3826;
+                     background:#0F3826; color:#fff; cursor:pointer;">
+        <i class="bi bi-link-45deg"></i> URL
+      </button>
+      <button type="button" id="img-tab-file"
+              onclick="document.getElementById('img-section-url').style.display='none';
+                       document.getElementById('img-section-file').style.display='block';
+                       this.style.background='#0F3826'; this.style.color='#fff'; this.style.borderColor='#0F3826';
+                       document.getElementById('img-tab-url').style.background='#fff';
+                       document.getElementById('img-tab-url').style.color='#5C5853'; document.getElementById('img-tab-url').style.borderColor='#DDD9D2';"
+              style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.78rem; font-weight:600;
+                     padding:5px 14px; border-radius:8px; border:1.5px solid #DDD9D2;
+                     background:#fff; color:#5C5853; cursor:pointer;">
+        <i class="bi bi-upload"></i> <%= t('activities.upload_from_computer') %>
+      </button>
+    </div>
+
+    <%# Seção URL (visível por padrão) %>
+    <div id="img-section-url">
+      <%= form_with(model: activity, local: true) do |f| %>
+        <div style="<%= field_s %>">
+          <%= f.label :media_url, t('activities.image_url_label'), style: label_s %>
+          <%= f.text_field :media_url, style: input_s,
+              placeholder: t('activities.image_url_placeholder') %>
+        </div>
+        <%= f.submit t('activities.save_image'), style: submit_content %>
+      <% end %>
+    </div>
+
+    <%# Seção Upload (oculta por padrão) %>
+    <div id="img-section-file" style="display:none;">
+      <%= form_with(model: activity, local: true, multipart: true) do |f| %>
+        <div style="<%= field_s %>">
+          <%= f.label :image_file, t('activities.image_file_label'), style: label_s %>
+          <div style="display:flex; align-items:center; gap:10px; margin-top:4px;">
+            <%= f.file_field :image_file, accept: "image/*",
+                  id: "img-file-input-new",
+                  style: "position:absolute; opacity:0; width:0.1px; height:0.1px;",
+                  onchange: "document.getElementById('img-file-name-new').textContent = this.files[0]?.name || #{t('activities.no_file_chosen').to_json}" %>
+            <label for="img-file-input-new"
+                   style="display:inline-flex; align-items:center; gap:6px; padding:8px 14px;
+                          border:1.5px solid #DDD9D2; border-radius:8px; cursor:pointer;
+                          background:#fff; font-family:'Plus Jakarta Sans',sans-serif;
+                          font-size:0.83rem; font-weight:600; color:#5C5853; white-space:nowrap;">
+              <i class="bi bi-paperclip"></i> <%= t('activities.choose_file') %>
+            </label>
+            <span id="img-file-name-new"
+                  style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; color:#9C9892; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">
+              <%= t('activities.no_file_chosen') %>
+            </span>
+          </div>
+          <small style="<%= hint_s %>"><%= t('activities.image_file_hint') %></small>
+        </div>
+        <%= f.submit t('activities.save_image_file'), style: submit_content %>
+      <% end %>
+    </div>
+
   </div>
 </div>
 
 <div class="collapse form-collapse" id="new-video-form" data-content-form-target="form">
   <div style="<%= wrap_s %>">
-    <%= form_with(model: activity, local: true) do |f| %>
+
+    <%# Mini-tab: YouTube | Do computador %>
+    <div style="display:flex; gap:6px; margin-bottom:14px;">
+      <button type="button" id="vid-tab-url"
+              onclick="document.getElementById('vid-section-url').style.display='block';
+                       document.getElementById('vid-section-file').style.display='none';
+                       this.style.background='#0F3826'; this.style.color='#fff'; this.style.borderColor='#0F3826';
+                       document.getElementById('vid-tab-file').style.background='#fff';
+                       document.getElementById('vid-tab-file').style.color='#5C5853'; document.getElementById('vid-tab-file').style.borderColor='#DDD9D2';"
+              style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.78rem; font-weight:600;
+                     padding:5px 14px; border-radius:8px; border:1.5px solid #0F3826;
+                     background:#0F3826; color:#fff; cursor:pointer;">
+        <i class="bi bi-youtube"></i> YouTube
+      </button>
+      <button type="button" id="vid-tab-file"
+              onclick="document.getElementById('vid-section-url').style.display='none';
+                       document.getElementById('vid-section-file').style.display='block';
+                       this.style.background='#0F3826'; this.style.color='#fff'; this.style.borderColor='#0F3826';
+                       document.getElementById('vid-tab-url').style.background='#fff';
+                       document.getElementById('vid-tab-url').style.color='#5C5853'; document.getElementById('vid-tab-url').style.borderColor='#DDD9D2';"
+              style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.78rem; font-weight:600;
+                     padding:5px 14px; border-radius:8px; border:1.5px solid #DDD9D2;
+                     background:#fff; color:#5C5853; cursor:pointer;">
+        <i class="bi bi-upload"></i> <%= t('activities.upload_from_computer') %>
+      </button>
+    </div>
+
+    <%# Seção YouTube (visível por padrão) %>
+    <div id="vid-section-url">
+      <%= form_with(model: activity, local: true) do |f| %>
+        <div style="<%= field_s %>">
+          <%= f.label :video_url, t('activities.video_url_label'), style: label_s %>
+          <%= f.text_field :video_url, style: input_s,
+              placeholder: t('activities.video_url_placeholder') %>
+          <small style="<%= hint_s %>"><%= t('activities.video_url_hint') %></small>
+        </div>
+        <%= f.submit t('activities.save_video'), style: submit_content %>
+      <% end %>
+    </div>
+
+    <%# Seção Upload (oculta por padrão) %>
+    <div id="vid-section-file" style="display:none;">
+      <%= form_with(model: activity, local: true, multipart: true) do |f| %>
+        <div style="<%= field_s %>">
+          <%= f.label :video_file, t('activities.video_file_label'), style: label_s %>
+          <div style="display:flex; align-items:center; gap:10px; margin-top:4px;">
+            <%= f.file_field :video_file, accept: "video/*",
+                  id: "vid-file-input-new",
+                  style: "position:absolute; opacity:0; width:0.1px; height:0.1px;",
+                  onchange: "document.getElementById('vid-file-name-new').textContent = this.files[0]?.name || #{t('activities.no_file_chosen').to_json}" %>
+            <label for="vid-file-input-new"
+                   style="display:inline-flex; align-items:center; gap:6px; padding:8px 14px;
+                          border:1.5px solid #DDD9D2; border-radius:8px; cursor:pointer;
+                          background:#fff; font-family:'Plus Jakarta Sans',sans-serif;
+                          font-size:0.83rem; font-weight:600; color:#5C5853; white-space:nowrap;">
+              <i class="bi bi-paperclip"></i> <%= t('activities.choose_file') %>
+            </label>
+            <span id="vid-file-name-new"
+                  style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; color:#9C9892; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">
+              <%= t('activities.no_file_chosen') %>
+            </span>
+          </div>
+          <small style="<%= hint_s %>"><%= t('activities.video_file_hint') %></small>
+        </div>
+        <%= f.submit t('activities.save_video_file'), style: submit_content %>
+      <% end %>
+    </div>
+
+  </div>
+</div>
+
+<div class="collapse form-collapse" id="new-audio-form" data-content-form-target="form">
+  <div style="<%= wrap_s %>">
+    <%= form_with(model: activity, local: true, multipart: true) do |f| %>
       <div style="<%= field_s %>">
-        <%= f.label :video_url, t('activities.video_url_label'), style: label_s %>
-        <%= f.text_field :video_url, style: input_s,
-            placeholder: t('activities.video_url_placeholder') %>
-        <small style="<%= hint_s %>"><%= t('activities.video_url_hint') %></small>
+        <%= f.label :audio_file, t('activities.audio_file_label'), style: label_s %>
+        <%= f.file_field :audio_file, accept: "audio/*", style: input_s %>
+        <small style="<%= hint_s %>"><%= t('activities.audio_file_hint') %></small>
       </div>
-      <%= f.submit t('activities.save_video'), style: submit_content %>
+      <%= f.submit t('activities.save_audio'), style: submit_content %>
     <% end %>
   </div>
 </div>

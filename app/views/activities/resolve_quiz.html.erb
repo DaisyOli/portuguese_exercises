@@ -11,7 +11,10 @@
   has_material = @activity.statement.present? ||
                  @activity.media_url.present? ||
                  @activity.video_url.present? ||
-                 @activity.explanation_text.present?
+                 @activity.explanation_text.present? ||
+                 @activity.audio_file.attached? ||
+                 @activity.image_file.attached? ||
+                 @activity.video_file.attached?
 %>
 
 <div class="quiz-outer">
@@ -154,14 +157,9 @@
                 <p class="ordering-instruction-text">
                   <%= ordering.instruction.present? ? ordering.instruction : t('sentence_orderings.instruction_default') %>
                 </p>
-                <div class="ordering-controls" style="margin-bottom:10px; display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
-                  <p class="ordering-hint-text" data-sentence-ordering-target="status" aria-live="polite" style="margin:0; flex:1 1 auto;">
-                    Toque em uma palavra e depois no lugar 1, 2, 3... para posicioná-la.
-                  </p>
-                </div>
                 <div class="word-zones-container">
                   <% ordering.shuffled_words.each_with_index do |word, i| %>
-                    <div class="word-drop-zone" data-sentence-ordering-target="zone" role="button" tabindex="0" aria-label="Posição <%= i + 1 %>: <%= word.word %>">
+                    <div class="word-drop-zone" data-sentence-ordering-target="zone">
                       <span class="slot-number"><%= i + 1 %></span>
                       <span class="draggable-word"
                             data-sentence-ordering-target="word"
@@ -199,14 +197,9 @@
                 <p class="ordering-instruction-text">
                   <%= ordering.instruction.present? ? ordering.instruction : t('paragraph_orderings.instruction_default') %>
                 </p>
-                <div class="ordering-controls" style="margin-bottom:10px; display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
-                  <p class="ordering-hint-text" data-paragraph-ordering-target="status" aria-live="polite" style="margin:0; flex:1 1 auto;">
-                    Toque em uma frase e depois no lugar 1, 2, 3... para posicioná-la.
-                  </p>
-                </div>
                 <div class="sentence-zones-container">
                   <% ordering.shuffled_sentences.each_with_index do |ps, i| %>
-                    <div class="sentence-drop-zone" data-paragraph-ordering-target="zone" role="button" tabindex="0" aria-label="Posição <%= i + 1 %>: <%= truncate(ps.sentence, length: 45) %>">
+                    <div class="sentence-drop-zone" data-paragraph-ordering-target="zone">
                       <span class="slot-number"><%= i + 1 %></span>
                       <div class="draggable-sentence"
                            data-paragraph-ordering-target="sentence"
@@ -365,11 +358,27 @@
                     </div>
                   <% end %>
                 <% else %>
-                  <div>
+                  <div style="text-align:center;">
                     <img src="<%= @activity.media_url %>" alt="<%= t('activities.image_label') %>"
-                         style="max-width:100%; border-radius:8px;">
+                         style="max-width:100%; border-radius:8px; display:inline-block;">
                   </div>
                 <% end %>
+              <% end %>
+
+              <% if @activity.image_file.attached? %>
+                <div style="text-align:center; margin-bottom:1rem;">
+                  <img src="<%= rails_blob_path(@activity.image_file, disposition: 'inline') %>"
+                       alt="<%= t('activities.image_label') %>"
+                       style="width:100%; max-height:320px; border-radius:8px; display:block; object-fit:contain;">
+                </div>
+              <% end %>
+
+              <% if @activity.video_file.attached? %>
+                <div style="margin-bottom:1rem;">
+                  <video controls style="width:100%; max-height:280px; border-radius:8px; display:block;">
+                    <source src="<%= rails_blob_path(@activity.video_file, disposition: 'inline') %>">
+                  </video>
+                </div>
               <% end %>
 
               <% if @activity.video_url.present? %>
@@ -388,6 +397,18 @@
               <% if @activity.explanation_text.present? %>
                 <div class="quiz-statement-block">
                   <%= @activity.explanation_text.include?('<') ? sanitize(@activity.explanation_text, tags: %w[p br strong em u ol ul li], attributes: []) : simple_format(@activity.explanation_text) %>
+                </div>
+              <% end %>
+
+              <% if @activity.audio_file.attached? %>
+                <div style="margin-bottom:1rem;">
+                  <div style="font-family:'DM Mono',monospace; font-size:0.7rem; font-weight:700;
+                              text-transform:uppercase; letter-spacing:0.06em; color:#C9952A; margin-bottom:8px;">
+                    <i class="bi bi-music-note-beamed"></i> <%= t('activities.audio_label') %>
+                  </div>
+                  <audio controls style="width:100%;">
+                    <source src="<%= rails_blob_path(@activity.audio_file, disposition: 'inline') %>">
+                  </audio>
                 </div>
               <% end %>
 

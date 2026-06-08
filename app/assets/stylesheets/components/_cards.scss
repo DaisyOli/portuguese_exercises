@@ -391,6 +391,45 @@
   }
 }
 
+// ── CARDS COM CAPA VISUAL ──
+.activity-card {
+  background: #fff;
+  border: 1px solid #DDD9D2;
+  border-radius: 14px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: box-shadow 0.15s ease, transform 0.15s ease;
+
+  &:hover {
+    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.09);
+    transform: translateY(-2px);
+  }
+}
+
+.activity-card-cover {
+  height: 140px;
+  overflow: hidden;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+}
+
+@media (max-width: 640px) {
+  .activity-card-cover {
+    height: 120px;
+  }
+}
+
 // 📱 RESPONSIVIDADE PARA CARDS
 @media (max-width: 768px) {
   .card-atividade {

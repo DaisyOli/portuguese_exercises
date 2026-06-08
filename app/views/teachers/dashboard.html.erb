@@ -22,7 +22,7 @@
   }
 %>
 
-<div style="max-width:1100px; margin:0 auto; padding:2rem 1.5rem;">
+<div class="dash-outer" style="max-width:1100px; margin:0 auto;">
 
   <%# ── Saudação ── %>
   <div style="margin-bottom:2rem;">
@@ -35,7 +35,7 @@
   </div>
 
   <%# ── 4 Cards de Métricas ── %>
-  <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:1rem; margin-bottom:2rem;">
+  <div class="dash-metrics-grid" style="margin-bottom:2rem;">
 
     <div style="background:#fff; border:1px solid #DDD9D2; border-radius:14px; padding:20px 22px;">
       <div style="font-family:'DM Mono',monospace; font-size:0.68rem; color:#9C9892; letter-spacing:0.08em; margin-bottom:8px; text-transform:uppercase;">Atividades</div>
@@ -110,7 +110,7 @@
     <% else %>
       <% recent_activities.each_with_index do |activity, i| %>
         <% c = cefr_colors(activity.level) %>
-        <div style="display:flex; align-items:center; gap:16px; padding:14px 0; <%= i < recent_activities.size - 1 ? 'border-bottom:1px solid #F0EDE8;' : '' %>">
+        <div class="dash-activity-row" style="padding:14px 0; <%= i < recent_activities.size - 1 ? 'border-bottom:1px solid #F0EDE8;' : '' %>">
           <span style="font-family:'DM Mono',monospace; font-size:0.72rem; font-weight:700;
                        background:<%= c[:bg] %>; color:<%= c[:text] %>; border:1.5px solid <%= c[:border] %>;
                        padding:3px 10px; border-radius:20px; flex-shrink:0;">
@@ -126,7 +126,7 @@
               </div>
             <% end %>
           </div>
-          <div style="display:flex; align-items:center; gap:8px; flex-shrink:0;">
+          <div class="dash-row-buttons" style="display:flex; align-items:center; gap:8px; flex-shrink:0;">
             <%= link_to "Ver", activity_path(activity),
                   style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.78rem; font-weight:600;
                           color:#2563EB; padding:5px 12px; border:1.5px solid #BFDBFE; border-radius:8px;
@@ -142,12 +142,18 @@
   </div>
 
   <%# ── CTA Footer ── %>
-  <div style="display:flex; justify-content:center; padding-bottom:2rem;">
+  <div style="display:flex; justify-content:center; gap:12px; flex-wrap:wrap; padding-bottom:2rem;">
     <%= link_to activities_path,
           style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.9rem; font-weight:700;
                   background:#1A6B4A; color:#fff; padding:13px 32px; border-radius:12px;
                   text-decoration:none; display:inline-flex; align-items:center; gap:8px;" do %>
       Ver Todas as Atividades →
+    <% end %>
+    <%= link_to generate_with_ai_activities_path,
+          style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.9rem; font-weight:700;
+                  background:#0F3826; color:#fff; padding:13px 28px; border-radius:12px;
+                  text-decoration:none; display:inline-flex; align-items:center; gap:8px;" do %>
+      ✨ Gerar com IA
     <% end %>
   </div>
 

@@ -19,8 +19,12 @@
           field_label:    t('activities.statement_label') %>
   <% end %>
 
-  <% if @activity.media_url.present? || @activity.video_url.present? %>
+  <% if @activity.media_url.present? || @activity.video_url.present? || @activity.image_file.attached? || @activity.video_file.attached? %>
     <%= render 'media_section', activity: @activity %>
+  <% end %>
+
+  <% if @activity.audio_file.attached? %>
+    <%= render 'audio_section', activity: @activity %>
   <% end %>
 
   <% if @activity.explanation_text.present? %>
