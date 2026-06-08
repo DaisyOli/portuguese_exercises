@@ -3,12 +3,12 @@
 
     <div style="display:flex; align-items:center; padding:12px 18px; border-bottom:1px solid #BBF7D0; background:rgba(26,107,74,0.06);">
       <span style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; color:#1A6B4A; display:flex; align-items:center; gap:6px;">
-        <i class="bi bi-sort-alpha-down"></i> Organizar palavras (<%= activity.sentence_orderings.count %>)
+        <i class="bi bi-sort-alpha-down"></i> Organizar palavras (<%= activity.sentence_orderings.size %>)
       </span>
     </div>
 
     <div style="padding:14px 16px; display:flex; flex-direction:column; gap:10px;">
-      <% activity.sentence_orderings.order(:display_order, :created_at).each_with_index do |ordering, index| %>
+      <% activity.sentence_orderings.sort_by { |o| [o.display_order.to_i, o.created_at] }.each_with_index do |ordering, index| %>
 
         <div id="sentence-ordering-<%= ordering.id %>" style="border:1px solid #D1EAD9; border-radius:10px; overflow:hidden; background:#fff;">
 
@@ -40,7 +40,7 @@
             <% if ordering.instruction.present? %>
               <div style="margin-top:4px; font-size:0.82rem; color:#9C9892; font-style:italic;"><%= ordering.instruction %></div>
             <% end %>
-            <div style="margin-top:4px; font-size:0.77rem; color:#9C9892;"><%= ordering.sentence_words.size %> palavras · embaralhadas para o aluno</div>
+            <div style="margin-top:4px; font-size:0.77rem; color:#9C9892;"><%= ordering.sentence_words_count %> palavras · embaralhadas para o aluno</div>
           </div>
 
           <div class="collapse" id="edit-ordering-<%= ordering.id %>">

@@ -3,6 +3,7 @@ class ActivitiesController < ApplicationController
   
   before_action :authenticate_user!
   before_action :set_activity, only: [:show, :edit, :update, :destroy, :resolve_quiz, :submit_quiz, :quiz_results, :clear_statement, :clear_media, :clear_video, :clear_explanation, :clear_audio, :clear_image_file, :clear_video_file, :clear_attempt_history, :review_draft, :publish_draft]
+  before_action :preload_exercise_associations, only: [:show]
   before_action :authorize_teacher, only: [:new, :create, :edit, :update, :destroy, :generate_with_ai, :review_draft, :publish_draft]
 
   def index
@@ -268,6 +269,14 @@ class ActivitiesController < ApplicationController
 
   def set_activity
     @activity = Activity.find_by!(slug: params[:slug])
+  end
+
+  def preload_exercise_associations
+    return unless current_user&.teacher?
+    @activity = Activity.includes(
+      column_matchings:    :matching_pairs,
+      paragraph_orderings: :paragraph_sentences
+    ).find(@activity.id)
   end
 
   def find_quiz_attempt
