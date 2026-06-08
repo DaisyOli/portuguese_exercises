@@ -3,14 +3,15 @@ class Question < ApplicationRecord
 
   attr_accessor :options_text
 
-  QUESTION_TYPES = ['multiple_choice', 'fill_in_blank']
+  QUESTION_TYPES = ['multiple_choice', 'fill_in_blank', 'open_ended']
 
   scope :by_type, ->(type) { where(question_type: type) }
 
   validates :content, presence: true
-  validates :correct_answer, presence: true
+  validates :correct_answer, presence: true, unless: :open_ended?
   validates :question_type, presence: true, inclusion: { in: QUESTION_TYPES }
   validates :options, presence: true, if: :multiple_choice?
+  validates :weight, numericality: { only_integer: true, greater_than: 0, less_than_or_equal_to: 3 }, allow_nil: false
   validate :correct_answer_in_options, if: :multiple_choice?
   validate :content_has_blank, if: :fill_in_blank?
 
@@ -23,6 +24,10 @@ class Question < ApplicationRecord
   
   def fill_in_blank?
     question_type == 'fill_in_blank'
+  end
+
+  def open_ended?
+    question_type == 'open_ended'
   end
 
   private

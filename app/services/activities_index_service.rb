@@ -32,6 +32,8 @@ class ActivitiesIndexService
 
     activities = activities.where(level: @params[:level]) if @params[:level].present?
     activities = activities.where("title ILIKE ?", "%#{@params[:search]}%") if @params[:search].present?
+    activities = activities.where(ai_generated: true) if @params[:origem] == 'ia'
+    activities = activities.where(ai_generated: false) if @params[:origem] == 'manual'
 
     apply_sorting(activities).page(@params[:page]).per(9)
   end

@@ -18,7 +18,9 @@
 <%
   pill = "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.8rem; font-weight:600; padding:6px 13px; border-radius:20px; border:1.5px solid; cursor:pointer; white-space:nowrap; display:inline-flex; align-items:center; gap:5px;"
   neutral  = pill + "background:#F0EDE8; color:#5C5853; border-color:#DDD9D2;"
-  questao  = pill + "background:#EBF2FC; color:#1A4A8A; border-color:#BFDBFE;"
+  multipla = pill + "background:#EBF2FC; color:#1A4A8A; border-color:#BFDBFE;"
+  lacuna   = pill + "background:#F5F3FF; color:#4338CA; border-color:#C4B5FD;"
+  ai_q     = pill + "background:#FFF8E7; color:#92400E; border-color:#F5D478;"
   palavras = pill + "background:#E8F5EE; color:#0F3826; border-color:#BBF7D0;"
   paras    = pill + "background:#ECFDF5; color:#065F46; border-color:#A7F3D0;"
   colunas  = pill + "background:#FFF7ED; color:#7C2D12; border-color:#FED7AA;"
@@ -87,11 +89,17 @@
     Exercícios
   </div>
   <div style="display:flex; gap:7px; flex-wrap:wrap;">
-    <button type="button" style="<%= questao %>"
+    <button type="button" style="<%= multipla %>"
             data-action="content-form#toggle"
             data-bs-toggle="collapse"
-            data-bs-target="#new-question-form">
-      <i class="bi bi-check2-square"></i> <%= t('activities.add_question') %>
+            data-bs-target="#new-q-mc-form">
+      <i class="bi bi-ui-radios"></i> Múltipla escolha
+    </button>
+    <button type="button" style="<%= lacuna %>"
+            data-action="content-form#toggle"
+            data-bs-toggle="collapse"
+            data-bs-target="#new-q-fib-form">
+      <i class="bi bi-input-cursor-text"></i> Completar lacuna
     </button>
     <button type="button" style="<%= palavras %>"
             data-action="content-form#toggle"
@@ -110,6 +118,12 @@
             data-bs-toggle="collapse"
             data-bs-target="#new-column-matching-form">
       <i class="bi bi-arrow-left-right"></i> <%= t('column_matchings.title') %>
+    </button>
+    <button type="button" style="<%= ai_q %>"
+            data-action="content-form#toggle"
+            data-bs-toggle="collapse"
+            data-bs-target="#new-q-ai-form">
+      ✨ Questão com IA
     </button>
   </div>
 </div>
@@ -370,11 +384,33 @@
   })();
 </script>
 
-<div class="collapse form-collapse" id="new-question-form" data-content-form-target="form">
+<div class="collapse form-collapse" id="new-q-mc-form" data-content-form-target="form">
   <div style="<%= wrap_s %>">
-    <div data-controller="question-form">
-      <%= render partial: "questions/form", locals: { question: activity.questions.build, activity: activity } %>
-    </div>
+    <%= render "questions/form",
+          question: activity.questions.build(question_type: 'multiple_choice'),
+          activity: activity,
+          preset_type: 'multiple_choice',
+          form_prefix: 'mc' %>
+  </div>
+</div>
+
+<div class="collapse form-collapse" id="new-q-fib-form" data-content-form-target="form">
+  <div style="<%= wrap_s %>">
+    <%= render "questions/form",
+          question: activity.questions.build(question_type: 'fill_in_blank'),
+          activity: activity,
+          preset_type: 'fill_in_blank',
+          form_prefix: 'fib' %>
+  </div>
+</div>
+
+<div class="collapse form-collapse" id="new-q-ai-form" data-content-form-target="form">
+  <div style="<%= wrap_s %>">
+    <%= render "questions/form",
+          question: activity.questions.build(question_type: 'open_ended'),
+          activity: activity,
+          preset_type: 'open_ended',
+          form_prefix: 'ai' %>
   </div>
 </div>
 

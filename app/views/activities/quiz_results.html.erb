@@ -107,6 +107,47 @@
               <% end %>
             </div>
 
+          <% elsif result["question_type"] == "open_ended" %>
+            <div class="question-text">
+              <%= sanitize((result["question_text"].presence || "N/A").to_s, tags: %w[p br strong em u], attributes: []) %>
+            </div>
+            <span class="question-type-badge" style="color:#C9952A; border-color:#FED7AA; background:#FFF7ED;">
+              ✨ <%= t('questions.types.open_ended') %>
+            </span>
+            <div class="answer-section" style="margin-top:10px;">
+              <div class="answer-item your-answer" style="background:#FAFAF9;">
+                <div class="answer-label">
+                  <i class="bi bi-person"></i> <%= t('quiz.your_answer') %>:
+                </div>
+                <%= result["given_answer"].presence || t('quiz.not_answered') %>
+              </div>
+
+              <% if result["ai_unavailable"] %>
+                <div style="background:#F7F5F0; border:1.5px solid #DDD9D2; border-radius:10px; padding:14px 16px; margin-top:8px;">
+                  <p style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.85rem; color:#5C5853; margin:0; display:flex; align-items:center; gap:6px;">
+                    <i class="bi bi-exclamation-circle" style="color:#C9952A;"></i>
+                    <%= result["ai_feedback"].presence || t('ai.errors.generic') %>
+                  </p>
+                </div>
+              <% else %>
+                <% ai_score = result["ai_score"].to_i %>
+                <% score_color = ai_score >= 70 ? '#1A6B4A' : (ai_score >= 40 ? '#C9952A' : '#B91C1C') %>
+                <div style="background:#FFF7ED; border:1.5px solid #FED7AA; border-radius:10px; padding:14px 16px; margin-top:8px;">
+                  <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:8px;">
+                    <span style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.78rem; font-weight:700; color:#C9952A; display:flex; align-items:center; gap:5px;">
+                      ✨ <%= t('quiz.ai_feedback') %>
+                    </span>
+                    <span style="font-family:'DM Mono',monospace; font-size:0.9rem; font-weight:700; color:<%= score_color %>;">
+                      <%= ai_score %>/100
+                    </span>
+                  </div>
+                  <p style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.88rem; color:#1C1917; margin:0; line-height:1.55;">
+                    <%= result["ai_feedback"].presence || t('ai.errors.generic') %>
+                  </p>
+                </div>
+              <% end %>
+            </div>
+
           <% else %>
             <div class="question-text">
               <%= sanitize((result["question_text"].presence || "N/A").to_s, tags: %w[p br strong em u], attributes: []) %>

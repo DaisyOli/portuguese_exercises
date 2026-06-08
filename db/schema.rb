@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2026_06_08_063719) do
+ActiveRecord::Schema[7.1].define(version: 2026_06_08_093219) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -111,6 +111,8 @@ ActiveRecord::Schema[7.1].define(version: 2026_06_08_063719) do
     t.datetime "updated_at", null: false
     t.json "options"
     t.string "correct_answer"
+    t.text "evaluation_prompt"
+    t.integer "weight", default: 1, null: false
     t.index ["activity_id"], name: "index_questions_on_activity_id"
   end
 

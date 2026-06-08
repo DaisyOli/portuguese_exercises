@@ -1,4 +1,6 @@
 <%
+  preset_type ||= nil
+  form_prefix ||= nil
   label_s  = "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; font-weight:600; color:#5C5853; display:block; margin-bottom:6px;"
   input_s  = "width:100%; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.88rem; padding:9px 12px; border:1.5px solid #DDD9D2; border-radius:8px; color:#1C1917; background:#fff; box-sizing:border-box;"
   hint_s   = "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.78rem; color:#9C9892; margin-top:5px; display:block;"
@@ -6,7 +8,7 @@
   alert_s  = "background:#EBF2FC; border:1px solid #BFDBFE; border-radius:8px; padding:12px 14px; font-size:0.85rem; color:#1A4A8A; font-family:'Plus Jakarta Sans',sans-serif;"
   submit_s = "background:#1A4A8A; color:#fff; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.88rem; font-weight:700; border:none; border-radius:12px; padding:9px 24px; cursor:pointer; width:100%; margin-top:4px;"
   delete_s = "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; font-weight:600; color:#B91C1C; padding:8px 14px; border:1.5px solid #FECACA; border-radius:10px; background:#FEF2F2; cursor:pointer; text-decoration:none; display:inline-block; margin-top:8px; width:100%; text-align:center;"
-  form_uid = question.id || 'new'
+  form_uid = question.id&.to_s || form_prefix || 'new'
 %>
 
 <% unless @quill_loaded %>
@@ -33,6 +35,7 @@
       data: { turbo: false }
     } do |form| %>
 
+    <% if preset_type.blank? %>
     <div style="<%= field_s %>">
       <%= form.label :question_type, t('questions.form.question_type'), style: label_s %>
       <%= form.select :question_type,
@@ -48,6 +51,9 @@
           }
       %>
     </div>
+    <% else %>
+      <%= form.hidden_field :question_type, value: preset_type %>
+    <% end %>
 
     <div style="<%= field_s %>">
       <%= form.label :content, t('questions.form.question_content'), style: label_s %>
@@ -75,7 +81,37 @@
       <small style="<%= hint_s %>"><%= t('questions.form.options_help') %></small>
     </div>
 
-    <div style="<%= field_s %>" data-question-selector-target="correctAnswer">
+    <%# open_ended: info note + rubrica field %>
+    <div style="<%= field_s %> display:<%= question.open_ended? ? 'block' : 'none' %>;"
+         class="open-ended-fields"
+         data-question-selector-target="openEnded">
+      <div style="background:#FFF7ED; border:1px solid #FED7AA; border-radius:8px; padding:12px 14px; font-size:0.85rem; color:#7C2D12; font-family:'Plus Jakarta Sans',sans-serif; margin-bottom:12px;">
+        <strong>✨ <%= t('questions.form.open_ended_info_title') %></strong><br>
+        <%= t('questions.form.open_ended_info') %>
+      </div>
+      <%= form.label :evaluation_prompt, t('questions.form.evaluation_prompt_label'), style: label_s %>
+      <%= form.text_area :evaluation_prompt,
+          style: input_s,
+          rows: 3,
+          placeholder: t('questions.form.evaluation_prompt_placeholder') %>
+      <small style="<%= hint_s %>"><%= t('questions.form.evaluation_prompt_hint') %></small>
+
+      <div style="<%= field_s %> margin-top:8px; margin-bottom:0;">
+        <span style="<%= label_s %>"><%= t('questions.form.weight_label') %></span>
+        <div style="display:flex; gap:8px; margin-top:4px;">
+          <% [1, 2, 3].each do |w| %>
+            <label style="display:flex; align-items:center; gap:6px; padding:7px 14px; border:1.5px solid <%= (question.weight || 1) == w ? '#C9952A' : '#DDD9D2' %>; border-radius:8px; background:<%= (question.weight || 1) == w ? '#FFF7ED' : '#fff' %>; cursor:pointer; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; font-weight:600; color:<%= (question.weight || 1) == w ? '#7C2D12' : '#5C5853' %>;">
+              <%= form.radio_button :weight, w, style: "accent-color:#C9952A;" %>
+              ×<%= w %><%= w == 1 ? " (#{t('questions.form.weight_normal')})" : "" %>
+            </label>
+          <% end %>
+        </div>
+        <small style="<%= hint_s %>"><%= t('questions.form.weight_hint') %></small>
+      </div>
+    </div>
+
+    <div style="<%= field_s %> display:<%= question.open_ended? ? 'none' : 'block' %>;"
+         data-question-selector-target="correctAnswer">
       <%= form.label :correct_answer, t('questions.form.correct_answer'), style: label_s %>
       <%= form.text_field :correct_answer,
           style: input_s,
@@ -134,9 +170,11 @@
           const type = select.value;
           const multipleChoiceFields = form.querySelector('.multiple-choice-fields');
           const fillInBlankHelp = form.querySelector('.fill-in-blank-help');
+          const openEndedFields = form.querySelector('.open-ended-fields');
           const correctAnswerField = form.querySelector('[data-question-selector-target="correctAnswer"]');
           if (multipleChoiceFields) multipleChoiceFields.style.display = 'none';
           if (fillInBlankHelp) fillInBlankHelp.style.display = 'none';
+          if (openEndedFields) openEndedFields.style.display = 'none';
           if (correctAnswerField) correctAnswerField.style.display = 'block';
           switch (type) {
             case 'multiple_choice':
@@ -144,6 +182,10 @@
               break;
             case 'fill_in_blank':
               if (fillInBlankHelp) fillInBlankHelp.style.display = 'block';
+              break;
+            case 'open_ended':
+              if (openEndedFields) openEndedFields.style.display = 'block';
+              if (correctAnswerField) correctAnswerField.style.display = 'none';
               break;
           }
         }

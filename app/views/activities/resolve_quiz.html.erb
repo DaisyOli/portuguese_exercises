@@ -87,56 +87,82 @@
         <%# All exercise cards stacked — height fixed to tallest card (no layout shift) %>
         <div class="quiz-questions-stack">
 
-        <%# Questions (multiple choice + fill in blank) %>
+        <%# Questions (multiple choice + fill in blank + open ended) %>
         <% @questions.each_with_index do |question, index| %>
           <div data-quiz-progress-target="question"
                style="<%= exercise_index == 0 ? '' : 'display:none;' %>">
-            <% cache [question, index, I18n.locale] do %>
+            <% if question.open_ended? %>
+              <%# open_ended: never cache — textarea must be empty on each load %>
               <div class="question-card">
                 <div class="question-header">
                   <span style="font-family:'DM Mono',monospace; font-weight:700; font-size:0.75rem; color:#9C9892;"><%= "%02d" % (index + 1) %></span>
-                  <% if question.fill_in_blank? %>
-                    <span style="font-size:0.72rem; font-weight:600; color:#9C9892; font-family:'Plus Jakarta Sans',sans-serif;">
-                      <i class="bi bi-input-cursor-text"></i> <%= t('questions.types.fill_in_blank') %>
-                    </span>
-                  <% elsif question.multiple_choice? %>
-                    <span style="font-size:0.72rem; font-weight:600; color:#9C9892; font-family:'Plus Jakarta Sans',sans-serif;">
-                      <i class="bi bi-list-ul"></i> <%= t('questions.types.multiple_choice') %>
-                    </span>
-                  <% end %>
+                  <span style="font-size:0.72rem; font-weight:600; color:#C9952A; font-family:'Plus Jakarta Sans',sans-serif;">
+                    ✨ <%= t('questions.types.open_ended') %>
+                  </span>
                 </div>
                 <div class="question-body">
                   <div class="question-text">
-                    <% if question.fill_in_blank? %>
-                      <% safe_c = sanitize(question.content.to_s, tags: %w[p br strong em u], attributes: []) %>
-                      <%= safe_c.gsub('_____',
-                            text_field_tag("answers[#{question.id}]", nil,
-                              class: "fib-input",
-                              style: "display:inline-block; width:140px; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.92rem; padding:4px 10px; border:2px solid #1A6B4A; border-radius:6px; color:#1C1917; background:#F0FAF5; margin:0 4px;",
-                              autocomplete: "off",
-                              autocapitalize: "none",
-                              autocorrect: "off",
-                              spellcheck: "false",
-                              inputmode: "text")
-                          ).html_safe %>
-                    <% else %>
-                      <%= sanitize(question.content.to_s, tags: %w[p br strong em u], attributes: []) %>
-                    <% end %>
+                    <%= sanitize(question.content.to_s, tags: %w[p br strong em u], attributes: []) %>
                   </div>
-
-                  <% if question.multiple_choice? && question.options.any? %>
-                    <div style="display:flex; flex-direction:column; gap:8px; margin-top:4px;">
-                      <% question.options.each do |option| %>
-                        <label class="mc-option-label" style="display:flex; align-items:center; gap:10px; padding:10px 14px; border:1.5px solid #DDD9D2; border-radius:8px; cursor:pointer; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.92rem; color:#1C1917; transition:border-color 0.15s, background 0.15s;">
-                          <%= radio_button_tag "answers[#{question.id}]", option, false,
-                                style: "width:20px; height:20px; accent-color:#1A6B4A; flex-shrink:0; cursor:pointer;" %>
-                          <%= option %>
-                        </label>
-                      <% end %>
-                    </div>
-                  <% end %>
+                  <%= text_area_tag "answers[#{question.id}]", nil,
+                        rows: 5,
+                        placeholder: t('quiz.open_answer_placeholder'),
+                        style: "width:100%; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.92rem; padding:10px 12px; border:2px solid #DDD9D2; border-radius:8px; color:#1C1917; background:#fff; resize:vertical; box-sizing:border-box; margin-top:8px;",
+                        autocorrect: "off",
+                        spellcheck: "false" %>
+                  <p style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.75rem; color:#C9952A; margin-top:6px;">
+                    ✨ <%= t('quiz.evaluated_by_ai') %>
+                  </p>
                 </div>
               </div>
+            <% else %>
+              <% cache [question, index, I18n.locale] do %>
+                <div class="question-card">
+                  <div class="question-header">
+                    <span style="font-family:'DM Mono',monospace; font-weight:700; font-size:0.75rem; color:#9C9892;"><%= "%02d" % (index + 1) %></span>
+                    <% if question.fill_in_blank? %>
+                      <span style="font-size:0.72rem; font-weight:600; color:#9C9892; font-family:'Plus Jakarta Sans',sans-serif;">
+                        <i class="bi bi-input-cursor-text"></i> <%= t('questions.types.fill_in_blank') %>
+                      </span>
+                    <% elsif question.multiple_choice? %>
+                      <span style="font-size:0.72rem; font-weight:600; color:#9C9892; font-family:'Plus Jakarta Sans',sans-serif;">
+                        <i class="bi bi-list-ul"></i> <%= t('questions.types.multiple_choice') %>
+                      </span>
+                    <% end %>
+                  </div>
+                  <div class="question-body">
+                    <div class="question-text">
+                      <% if question.fill_in_blank? %>
+                        <% safe_c = sanitize(question.content.to_s, tags: %w[p br strong em u], attributes: []) %>
+                        <%= safe_c.gsub('_____',
+                              text_field_tag("answers[#{question.id}]", nil,
+                                class: "fib-input",
+                                style: "display:inline-block; width:140px; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.92rem; padding:4px 10px; border:2px solid #1A6B4A; border-radius:6px; color:#1C1917; background:#F0FAF5; margin:0 4px;",
+                                autocomplete: "off",
+                                autocapitalize: "none",
+                                autocorrect: "off",
+                                spellcheck: "false",
+                                inputmode: "text")
+                            ).html_safe %>
+                      <% else %>
+                        <%= sanitize(question.content.to_s, tags: %w[p br strong em u], attributes: []) %>
+                      <% end %>
+                    </div>
+
+                    <% if question.multiple_choice? && question.options.any? %>
+                      <div style="display:flex; flex-direction:column; gap:8px; margin-top:4px;">
+                        <% question.options.each do |option| %>
+                          <label class="mc-option-label" style="display:flex; align-items:center; gap:10px; padding:10px 14px; border:1.5px solid #DDD9D2; border-radius:8px; cursor:pointer; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.92rem; color:#1C1917; transition:border-color 0.15s, background 0.15s;">
+                            <%= radio_button_tag "answers[#{question.id}]", option, false,
+                                  style: "width:20px; height:20px; accent-color:#1A6B4A; flex-shrink:0; cursor:pointer;" %>
+                            <%= option %>
+                          </label>
+                        <% end %>
+                      </div>
+                    <% end %>
+                  </div>
+                </div>
+              <% end %>
             <% end %>
           </div>
           <% exercise_index += 1 %>

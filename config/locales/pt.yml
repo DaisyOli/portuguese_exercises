@@ -2,6 +2,14 @@ pt:
   hello: "Olá"
   app_name: "Practice-BR"
   welcome: "Bem-vindo ao Practice-BR"
+
+  ai:
+    errors:
+      rate_limit: "Limite de requisições da IA atingido. Aguarde alguns minutos e tente novamente."
+      timeout: "A IA demorou muito para responder. Tente novamente em instantes."
+      api: "Erro na API da IA: %{message}"
+      invalid_format: "A IA retornou um formato inválido. Tente reformular o pedido."
+      generic: "Não foi possível avaliar automaticamente no momento. Tente novamente mais tarde."
   
   # Common - Botões e textos comuns
   common:
@@ -219,6 +227,7 @@ pt:
     types:
       multiple_choice: "Múltipla escolha"
       fill_in_blank: "Preencher lacuna"
+      open_ended: "Questão aberta (IA)"
     fill_in_blank_help: "Use _____ (5 underscores) para marcar onde o aluno deve inserir a resposta."
     confirm_delete: "Tem certeza que deseja excluir esta questão?"
     add_options: "Adicionar Opções"
@@ -253,11 +262,20 @@ pt:
       options_placeholder: "Ex: Brasília, Rio de Janeiro, São Paulo, Salvador"
       correct_answer: "Resposta Correta"
       correct_answer_placeholder: "Digite a resposta correta (deve ser igual a uma das opções)"
+      correct_answer_help: ""
       sentences: "Digite as frases na ordem correta"
       sentences_placeholder: "Digite cada frase em uma linha separada. Ex:\nEu vi o cachorro\nO cachorro me viu\nO cachorro latiu\nEu saí correndo"
       points: "Pontos"
       fill_in_blank_help_html: "<strong>Dica:</strong> Use exatamente 5 underscores (_____) para marcar as lacunas a serem preenchidas. Ex: 'Eu _____ chocolate' (a lacuna será substituída por um campo de texto)."
       help: "Use o formulário abaixo para criar sua questão."
+      open_ended_info_title: "Questão avaliada por IA"
+      open_ended_info: "O aluno escreverá uma resposta livre. A IA (Claude Haiku) avaliará automaticamente com uma nota de 0 a 100 e um feedback personalizado."
+      evaluation_prompt_label: "Critério de avaliação para a IA (opcional)"
+      evaluation_prompt_placeholder: "Ex: Verifique se o aluno usou o pretérito perfeito corretamente e se a resposta faz sentido no contexto."
+      evaluation_prompt_hint: "Se deixar em branco, a IA usará o seu melhor julgamento para avaliar a resposta."
+      weight_label: "Peso no score total"
+      weight_normal: "padrão"
+      weight_hint: "Questões com peso maior têm mais impacto na nota final."
 
   # Quiz
   quiz:
@@ -295,6 +313,11 @@ pt:
     next: "Próxima"
     tip: "Dica"
     see_material: "Ver material ▼"
+    open_answer_placeholder: "Escreva sua resposta aqui..."
+    evaluated_by_ai: "Esta resposta será avaliada pela inteligência artificial"
+    ai_feedback: "Feedback da IA"
+    ai_score: "Nota da IA"
+    ai_error: "Erro ao avaliar a resposta. Por favor, tente novamente."
 
   # Formulários
   forms:

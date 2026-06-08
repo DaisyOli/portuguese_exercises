@@ -166,13 +166,18 @@ class ActivityGenerationService
     response_text = call_api
     parsed = parse_json(strip_markdown(response_text))
     build_activity(parsed)
+  rescue Anthropic::Errors::RateLimitError
+    { success: false, error: I18n.t('ai.errors.rate_limit') }
+  rescue Anthropic::Errors::APITimeoutError, Anthropic::Errors::APIConnectionError
+    { success: false, error: I18n.t('ai.errors.timeout') }
   rescue Anthropic::Errors::APIStatusError => e
-    { success: false, error: "Erro na API da IA: #{e.message}" }
+    Rails.logger.error "ActivityGenerationService API error: #{e.message}"
+    { success: false, error: I18n.t('ai.errors.api', message: e.message) }
   rescue JSON::ParserError
-    { success: false, error: "A IA retornou um formato inválido. Tente reformular o pedido." }
+    { success: false, error: I18n.t('ai.errors.invalid_format') }
   rescue => e
     Rails.logger.error "ActivityGenerationService error: #{e.class}: #{e.message}\n#{e.backtrace.first(5).join("\n")}"
-    { success: false, error: "Ocorreu um erro ao gerar a atividade. Tente novamente." }
+    { success: false, error: I18n.t('ai.errors.generic') }
   end
 
   private

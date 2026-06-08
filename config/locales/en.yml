@@ -31,6 +31,14 @@ en:
   hello: "Hello"
   app_name: "Practice-BR"
   welcome: "Welcome to Practice-BR"
+
+  ai:
+    errors:
+      rate_limit: "AI rate limit reached. Please wait a few minutes and try again."
+      timeout: "The AI took too long to respond. Please try again in a moment."
+      api: "AI API error: %{message}"
+      invalid_format: "The AI returned an invalid format. Try rephrasing your request."
+      generic: "Unable to evaluate automatically at this time. Please try again later."
   
   # Common - Buttons and common text
   common:
@@ -294,6 +302,7 @@ en:
     types:
       multiple_choice: "Multiple choice"
       fill_in_blank: "Fill in the blank"
+      open_ended: "Open-ended (AI)"
     fill_in_blank_help: "Use _____ (5 underscores) to mark where the student should enter the answer."
     form:
       question_type: "Question Type"
@@ -307,9 +316,18 @@ en:
       options_placeholder: "Ex: Brasilia, Rio de Janeiro, Sao Paulo, Salvador"
       correct_answer: "Correct Answer"
       correct_answer_placeholder: "Enter the correct answer (must match one of the options)"
+      correct_answer_help: ""
       sentences: "Sentences (one per line)"
       points: "Points"
       fill_in_blank_help_html: "<strong>Tip:</strong> Use exactly 5 underscores (_____) to mark blanks to be filled. Ex: 'I _____ chocolate' (the blank will be replaced with a text field)."
+      open_ended_info_title: "AI-evaluated question"
+      open_ended_info: "The student writes a free-form answer. The AI (Claude Haiku) will automatically evaluate it with a score from 0 to 100 and personalised feedback."
+      evaluation_prompt_label: "Evaluation criteria for the AI (optional)"
+      evaluation_prompt_placeholder: "Ex: Check whether the student used the past tense correctly and whether the answer makes sense in context."
+      evaluation_prompt_hint: "If left blank, the AI will use its best judgement to evaluate the answer."
+      weight_label: "Weight in total score"
+      weight_normal: "default"
+      weight_hint: "Higher-weight questions have more impact on the final score."
     options_required: "At least two options are required"
     add: "Add Question"
     
@@ -341,6 +359,11 @@ en:
     next: "Next"
     tip: "Tip"
     see_material: "See material ▼"
+    open_answer_placeholder: "Write your answer here..."
+    evaluated_by_ai: "This answer will be evaluated by artificial intelligence"
+    ai_feedback: "AI Feedback"
+    ai_score: "AI Score"
+    ai_error: "Error evaluating response. Please try again."
 
   forms:
     save: "Save"
