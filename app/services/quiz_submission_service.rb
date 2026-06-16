@@ -269,9 +269,10 @@ class QuizSubmissionService
       error_path = Rails.application.routes.url_helpers.activities_path
     end
 
-    @quiz_attempt.score       = score
-    @quiz_attempt.results     = quiz_results_data
-    @quiz_attempt.submitted_at = Time.current
+    @quiz_attempt.score            = score
+    @quiz_attempt.results          = quiz_results_data
+    @quiz_attempt.submitted_at     = Time.current
+    @quiz_attempt.teacher_comments = {} if @quiz_attempt.persisted?
 
     if @quiz_attempt.save
       update_session(score)

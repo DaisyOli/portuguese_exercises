@@ -155,6 +155,11 @@
                     ✨ IA
                   </span>
                 <% end %>
+                <% if activity.ratings_count > 0 %>
+                  <span style="font-family:'DM Mono',monospace; font-size:0.7rem; font-weight:700; color:#C9952A; white-space:nowrap; flex-shrink:0; display:inline-flex; align-items:center; gap:2px;">
+                    <i class="bi bi-star-fill" style="font-size:0.62rem;"></i> <%= activity.average_rating %>
+                  </span>
+                <% end %>
               </div>
               <% if activity.content_type.present? %>
                 <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.75rem; color:#9C9892; margin-top:2px;">
@@ -239,7 +244,7 @@
                 <div style="margin-bottom:10px;"></div>
               <% end %>
 
-              <div style="display:flex; gap:16px; margin-bottom:12px;">
+              <div style="display:flex; gap:16px; margin-bottom:12px; align-items:flex-end;">
                 <div>
                   <div style="font-family:'DM Mono',monospace; font-size:0.95rem; font-weight:700; color:#2563EB; line-height:1;">
                     <%= @attempt_stats[:counts][activity.id] || 0 %>
@@ -252,6 +257,14 @@
                   </div>
                   <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.68rem; color:#9C9892; margin-top:2px;">estudantes</div>
                 </div>
+                <% if activity.ratings_count > 0 %>
+                  <div>
+                    <div style="font-family:'DM Mono',monospace; font-size:0.95rem; font-weight:700; color:#C9952A; line-height:1; display:flex; align-items:center; gap:3px;">
+                      <i class="bi bi-star-fill" style="font-size:0.75rem;"></i> <%= activity.average_rating %>
+                    </div>
+                    <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.68rem; color:#9C9892; margin-top:2px;">média</div>
+                  </div>
+                <% end %>
               </div>
 
               <div style="display:flex; gap:6px; border-top:1px solid #F0EDE8; padding-top:12px; margin-top:auto;">

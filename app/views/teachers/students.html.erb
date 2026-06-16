@@ -1,0 +1,174 @@
+<% content_for :head do %>
+  <title>Meus Alunos · Practice-BR</title>
+<% end %>
+
+<% students = @students.to_a %>
+<%
+  total          = students.size
+  without_level  = students.count { |s| s.level.blank? }
+  scores         = students.map { |s| s.avg_score.to_i }.select { |s| s > 0 }
+  avg_all        = scores.any? ? (scores.sum.to_f / scores.size).round : nil
+%>
+
+<div style="background:#fff; min-height:calc(100vh - 56px); padding:2rem 1.5rem;">
+<div style="max-width:1100px; margin:0 auto;">
+
+  <%# ── Breadcrumb ── %>
+  <div style="display:flex; align-items:center; gap:8px; margin-bottom:1.5rem;
+              font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; color:#9C9892;">
+    <%= link_to "Dashboard", teacher_dashboard_path, style: "color:#9C9892; text-decoration:none;" %>
+    <span>›</span>
+    <span style="color:#1C1917; font-weight:600;">Meus Alunos</span>
+  </div>
+
+  <%# ── Header ── %>
+  <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:16px; flex-wrap:wrap; margin-bottom:1.75rem;">
+    <div>
+      <h1 style="font-family:'Raleway',sans-serif; font-size:1.75rem; font-weight:800; color:#1C1917; margin:0 0 10px 0;">
+        Meus Alunos
+      </h1>
+      <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
+        <span style="font-family:'DM Mono',monospace; font-size:0.72rem; font-weight:700;
+                     background:#E8F5EE; color:#0F3826; border:1.5px solid #2A9B6F;
+                     padding:3px 10px; border-radius:20px;">
+          <%= total %> <%= total == 1 ? 'aluno' : 'alunos' %>
+        </span>
+        <% if avg_all %>
+          <% ac = avg_all >= 70 ? {bg:'#E8F5EE',text:'#0F3826',border:'#2A9B6F'} : avg_all >= 40 ? {bg:'#FFF8E7',text:'#7C4A00',border:'#F5D478'} : {bg:'#FEF2F2',text:'#7F1D1D',border:'#FECACA'} %>
+          <span style="font-family:'DM Mono',monospace; font-size:0.72rem; font-weight:700;
+                       background:<%= ac[:bg] %>; color:<%= ac[:text] %>; border:1.5px solid <%= ac[:border] %>;
+                       padding:3px 10px; border-radius:20px;">
+            média geral: <%= avg_all %>%
+          </span>
+        <% end %>
+        <% if without_level > 0 %>
+          <span style="font-family:'DM Mono',monospace; font-size:0.72rem; font-weight:700;
+                       background:#FEF2F2; color:#B91C1C; border:1.5px solid #FECACA;
+                       padding:3px 10px; border-radius:20px;">
+            ⚠️ <%= without_level %> sem nível
+          </span>
+        <% end %>
+      </div>
+    </div>
+
+    <%= link_to new_user_invitation_path,
+          style: "flex-shrink:0; background:#1A6B4A; color:#fff; font-family:'Plus Jakarta Sans',sans-serif;
+                  font-size:0.88rem; font-weight:700; padding:11px 22px; border-radius:10px;
+                  text-decoration:none; display:inline-flex; align-items:center; gap:6px;" do %>
+      + Convidar aluno
+    <% end %>
+  </div>
+
+  <% if students.empty? %>
+    <div style="background:#fff; border:1px solid #DDD9D2; border-radius:16px; padding:60px 20px; text-align:center;">
+      <div style="font-size:2.5rem; margin-bottom:14px;">🎓</div>
+      <div style="font-family:'Raleway',sans-serif; font-size:1.1rem; font-weight:700; color:#1C1917; margin-bottom:6px;">
+        Nenhum aluno ainda
+      </div>
+      <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.88rem; color:#9C9892; margin-bottom:24px;">
+        Convide alunos para acompanhar o progresso deles aqui.
+      </div>
+      <%= link_to new_user_invitation_path,
+            style: "background:#1A6B4A; color:#fff; font-family:'Plus Jakarta Sans',sans-serif;
+                    font-size:0.88rem; font-weight:700; padding:11px 24px; border-radius:10px;
+                    text-decoration:none; display:inline-flex; align-items:center; gap:6px;" do %>
+        + Convidar primeiro aluno
+      <% end %>
+    </div>
+
+  <% else %>
+    <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(300px, 1fr)); gap:14px;">
+      <% students.each do |student| %>
+        <% sc  = student.avg_score.to_i %>
+        <% bar_color = sc >= 70 ? '#1A6B4A' : sc >= 40 ? '#C9952A' : (student.avg_score.present? ? '#B91C1C' : '#DDD9D2') %>
+
+        <%= link_to teacher_student_profile_path(student), style: "display:block; text-decoration:none;" do %>
+          <div style="background:#fff; border:1px solid #DDD9D2; border-radius:14px; overflow:hidden;
+                      transition:box-shadow 0.15s, border-color 0.15s;"
+               onmouseover="this.style.boxShadow='0 4px 16px rgba(0,0,0,0.08)'; this.style.borderColor='#C0BBB3';"
+               onmouseout="this.style.boxShadow='none'; this.style.borderColor='#DDD9D2';">
+
+            <%# Barra colorida no topo %>
+            <div style="height:4px; background:<%= bar_color %>; opacity:0.7;"></div>
+
+            <div style="padding:18px 20px;">
+
+              <%# Avatar + nome + nível %>
+              <div style="display:flex; align-items:center; gap:12px; margin-bottom:16px;">
+                <div style="width:44px; height:44px; border-radius:50%; background:#1A6B4A; display:flex; align-items:center; justify-content:center;
+                            font-family:'Raleway',sans-serif; font-size:1.1rem; font-weight:800; color:#fff; flex-shrink:0;">
+                  <%= student.display_name[0].upcase %>
+                </div>
+                <div style="flex:1; min-width:0;">
+                  <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.92rem; font-weight:700; color:#1C1917;
+                              white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
+                    <%= student.display_name %>
+                  </div>
+                  <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.77rem; color:#9C9892;
+                              white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin-top:1px;">
+                    <%= student.email %>
+                  </div>
+                </div>
+                <% if student.level.present? %>
+                  <% lc = cefr_colors(student.level) %>
+                  <span style="font-family:'DM Mono',monospace; font-size:0.7rem; font-weight:700;
+                               background:<%= lc[:bg] %>; color:<%= lc[:text] %>; border:1.5px solid <%= lc[:border] %>;
+                               padding:2px 9px; border-radius:20px; flex-shrink:0;">
+                    <%= student.level %>
+                  </span>
+                <% else %>
+                  <span style="font-family:'DM Mono',monospace; font-size:0.68rem; font-weight:700;
+                               background:#FEF2F2; color:#B91C1C; border:1.5px solid #FECACA;
+                               padding:2px 8px; border-radius:20px; flex-shrink:0;">
+                    ⚠️
+                  </span>
+                <% end %>
+              </div>
+
+              <%# Separador %>
+              <div style="height:1px; background:#F0EDE8; margin-bottom:14px;"></div>
+
+              <%# Stats ── tentativas / média / última atividade %>
+              <div style="display:flex; gap:0;">
+
+                <div style="flex:1; text-align:center; padding:0 8px;">
+                  <div style="font-family:'DM Mono',monospace; font-size:1.1rem; font-weight:800; color:#0F3826; line-height:1.1;">
+                    <%= student.total_attempts.to_i %>
+                  </div>
+                  <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.7rem; color:#9C9892; margin-top:3px;">tentativas</div>
+                </div>
+
+                <div style="width:1px; background:#F0EDE8; align-self:stretch;"></div>
+
+                <div style="flex:1; text-align:center; padding:0 8px;">
+                  <% avg_color = sc >= 70 ? '#1A6B4A' : sc >= 40 ? '#C9952A' : (student.avg_score.present? ? '#B91C1C' : '#9C9892') %>
+                  <div style="font-family:'DM Mono',monospace; font-size:1.1rem; font-weight:800; color:<%= avg_color %>; line-height:1.1;">
+                    <%= student.avg_score.present? ? "#{sc}%" : "—" %>
+                  </div>
+                  <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.7rem; color:#9C9892; margin-top:3px;">média</div>
+                </div>
+
+                <div style="width:1px; background:#F0EDE8; align-self:stretch;"></div>
+
+                <div style="flex:1; text-align:center; padding:0 8px;">
+                  <div style="font-family:'DM Mono',monospace; font-size:0.8rem; font-weight:700; color:#5C5853; line-height:1.2;">
+                    <% if student.last_active %>
+                      <%= time_ago_in_words(student.last_active) %>
+                    <% else %>
+                      —
+                    <% end %>
+                  </div>
+                  <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.7rem; color:#9C9892; margin-top:3px;">última atividade</div>
+                </div>
+
+              </div>
+
+            </div>
+          </div>
+        <% end %>
+      <% end %>
+    </div>
+  <% end %>
+
+</div>
+</div>

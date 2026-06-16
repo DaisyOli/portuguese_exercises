@@ -58,6 +58,12 @@
           <i class="bi bi-bar-chart-line" style="color:<%= m[:border] %>;"></i>
           <%= m[:label] %>
         </span>
+        <% rc = activity.ratings_count; avg = activity.average_rating %>
+        <% if rc > 0 %>
+          <span style="font-family:'DM Mono',monospace; font-size:0.77rem; font-weight:700; color:#C9952A; display:flex; align-items:center; gap:3px;">
+            <i class="bi bi-star-fill" style="font-size:0.68rem;"></i> <%= avg %>
+          </span>
+        <% end %>
       </div>
 
       <div style="display:flex; align-items:center; justify-content:space-between; gap:10px; padding-top:12px; border-top:1px solid #F0EDE8;">

@@ -192,10 +192,189 @@
           <i class="bi bi-arrow-left"></i> <%= t('activities.back_to_dashboard') %>
         <% end %>
       <% else %>
-        <%= link_to student_dashboard_path, class: "btn-quiz-secondary" do %>
-          <i class="bi bi-grid"></i> Voltar ao Meu Painel
+        <% if current_user&.student? %>
+          <button type="button"
+                  onclick="(function(){ var o=document.getElementById('rating-modal-overlay'); if(o){ o.style.display='flex'; } else { window.location.href='<%= student_dashboard_path %>'; } })()"
+                  class="btn-quiz-secondary" style="cursor:pointer;">
+            <i class="bi bi-grid"></i> Voltar ao Meu Painel
+          </button>
+        <% else %>
+          <%= link_to student_dashboard_path, class: "btn-quiz-secondary" do %>
+            <i class="bi bi-grid"></i> Voltar ao Meu Painel
+          <% end %>
         <% end %>
       <% end %>
     </div>
   </div>
 </div>
+
+<%# ── Modal de avaliação ── %>
+<% if current_user&.student? %>
+<div id="rating-modal-overlay"
+     onclick="if(event.target===this) dismissRating()"
+     style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.55); z-index:9999;
+            align-items:center; justify-content:center; padding:16px;">
+  <div style="background:#fff; border-radius:20px; padding:36px 32px; max-width:460px; width:100%;
+              box-shadow:0 24px 60px rgba(0,0,0,0.22); position:relative;">
+
+    <%# Sucesso (oculto inicialmente) %>
+    <div id="rating-success" style="display:none; text-align:center; padding:16px 0;">
+      <div style="font-size:3rem; margin-bottom:12px;">⭐</div>
+      <div style="font-family:'Raleway',sans-serif; font-size:1.15rem; font-weight:700; color:#0F3826; margin-bottom:6px;">
+        Obrigada pela sua avaliação!
+      </div>
+      <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.88rem; color:#5C5853;">
+        Redirecionando para o painel…
+      </div>
+    </div>
+
+    <%# Formulário de avaliação %>
+    <div id="rating-modal-content">
+      <div style="display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:20px; gap:8px;">
+        <div>
+          <div style="font-family:'Raleway',sans-serif; font-size:1.1rem; font-weight:700; color:#1C1917; margin-bottom:4px;">
+            ⭐ O que achou desta atividade?
+          </div>
+          <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; color:#9C9892;">
+            <em><%= @activity.title %></em>
+          </div>
+        </div>
+        <button type="button" onclick="dismissRating()"
+                title="Pular"
+                style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.75rem; color:#9C9892;
+                       background:transparent; border:none; cursor:pointer; padding:4px; flex-shrink:0; margin-top:2px;">
+          Pular
+        </button>
+      </div>
+
+      <div id="modal-stars-container" style="display:flex; gap:8px; margin-bottom:20px; justify-content:center;">
+        <% 5.times do |i| %>
+          <i class="bi bi-<%= @existing_rating && i < @existing_rating.stars ? 'star-fill' : 'star' %>"
+             data-value="<%= i + 1 %>"
+             style="font-size:2.4rem; color:<%= @existing_rating && i < @existing_rating.stars ? '#C9952A' : '#DDD9D2' %>; cursor:pointer; transition:color 0.1s;"
+             onmouseover="hoverStars(<%= i + 1 %>)"
+             onmouseout="resetStars()"
+             onclick="selectStar(<%= i + 1 %>)"></i>
+        <% end %>
+      </div>
+
+      <textarea id="modal-rating-comment"
+                maxlength="500"
+                rows="3"
+                placeholder="Comentário opcional (max. 500 caracteres)..."
+                style="width:100%; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.85rem;
+                       padding:10px 13px; border:1.5px solid #DDD9D2; border-radius:10px;
+                       color:#1C1917; background:#FAFAF9; box-sizing:border-box; resize:vertical; margin-bottom:8px;"></textarea>
+
+      <div id="modal-rating-feedback" style="display:none; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; color:#B91C1C; margin-bottom:10px;"></div>
+
+      <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+        <button id="modal-submit-btn"
+                type="button"
+                onclick="submitRating('<%= @existing_rating ? activity_activity_rating_path(@activity, @existing_rating) : activity_activity_ratings_path(@activity) %>', '<%= @existing_rating ? 'PATCH' : 'POST' %>')"
+                disabled
+                style="flex:1; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.9rem; font-weight:700;
+                       background:#1A6B4A; color:#fff; border:none; border-radius:10px;
+                       padding:12px 20px; cursor:pointer; opacity:0.4; min-width:160px;">
+          <%= @existing_rating ? "Atualizar avaliação" : "Enviar avaliação" %>
+        </button>
+        <button type="button" onclick="dismissRating()"
+                style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.85rem; color:#9C9892;
+                       background:transparent; border:1.5px solid #DDD9D2; border-radius:10px;
+                       padding:11px 18px; cursor:pointer;">
+          Pular →
+        </button>
+      </div>
+    </div>
+
+  </div>
+</div>
+<% end %>
+
+<script>
+  var selectedStars = <%= @existing_rating&.stars || 0 %>;
+  var dashboardUrl  = '<%= student_dashboard_path %>';
+
+  function openRatingModal() {
+    var overlay = document.getElementById('rating-modal-overlay');
+    if (overlay) { overlay.style.display = 'flex'; }
+    else { window.location.href = dashboardUrl; }
+  }
+
+  function dismissRating() {
+    window.location.href = dashboardUrl;
+  }
+
+  function hoverStars(n) {
+    document.querySelectorAll('#modal-stars-container .bi').forEach(function(el, i) {
+      el.className = 'bi bi-' + (i < n ? 'star-fill' : 'star');
+      el.style.color = i < n ? '#C9952A' : '#DDD9D2';
+    });
+  }
+
+  function resetStars() {
+    document.querySelectorAll('#modal-stars-container .bi').forEach(function(el, i) {
+      el.className = 'bi bi-' + (i < selectedStars ? 'star-fill' : 'star');
+      el.style.color = i < selectedStars ? '#C9952A' : '#DDD9D2';
+    });
+  }
+
+  function selectStar(n) {
+    selectedStars = n;
+    resetStars();
+    var btn = document.getElementById('modal-submit-btn');
+    btn.disabled = false;
+    btn.style.opacity = '1';
+  }
+
+  function submitRating(url, method) {
+    if (!selectedStars || selectedStars < 1) {
+      var fb = document.getElementById('modal-rating-feedback');
+      fb.textContent = 'Selecione pelo menos 1 estrela.';
+      fb.style.display = 'block';
+      return;
+    }
+
+    var btn = document.getElementById('modal-submit-btn');
+    btn.disabled = true;
+    btn.textContent = 'Enviando…';
+
+    var comment = document.getElementById('modal-rating-comment').value;
+    var tokenEl = document.querySelector('meta[name="csrf-token"]');
+    var token   = tokenEl ? tokenEl.content : '';
+
+    var fallback = setTimeout(function() { window.location.href = dashboardUrl; }, 8000);
+
+    fetch(url, {
+      method: method,
+      headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': token },
+      body: JSON.stringify({ activity_rating: { stars: selectedStars, comment: comment } })
+    })
+    .then(function(r) {
+      clearTimeout(fallback);
+      if (!r.ok) { window.location.href = dashboardUrl; return null; }
+      return r.json();
+    })
+    .then(function(data) {
+      if (!data) return;
+      if (data.status === 'success') {
+        document.getElementById('rating-modal-content').style.display = 'none';
+        document.getElementById('rating-success').style.display = 'block';
+        setTimeout(function() { window.location.href = dashboardUrl; }, 1600);
+      } else {
+        clearTimeout(fallback);
+        window.location.href = dashboardUrl;
+      }
+    })
+    .catch(function() {
+      clearTimeout(fallback);
+      window.location.href = dashboardUrl;
+    });
+  }
+
+  <% if @existing_rating %>
+    document.getElementById('modal-rating-comment').value = <%= @existing_rating.comment.to_json %>;
+    document.getElementById('modal-submit-btn').disabled = false;
+    document.getElementById('modal-submit-btn').style.opacity = '1';
+  <% end %>
+</script>

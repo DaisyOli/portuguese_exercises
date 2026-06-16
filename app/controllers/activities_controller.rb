@@ -76,8 +76,9 @@ class ActivitiesController < ApplicationController
     return redirect_to resolve_quiz_activity_path(@activity, locale: I18n.locale),
                         alert: t('messages.answer_quiz_first') if @quiz_attempt.nil?
 
-    @questions    = @activity.questions.index_by(&:id)
-    @quiz_results = @quiz_attempt.normalized_results(@questions)
+    @questions      = @activity.questions.index_by(&:id)
+    @quiz_results   = @quiz_attempt.normalized_results(@questions)
+    @existing_rating = current_user&.student? ? @activity.rating_by_user(current_user) : nil
     render 'quiz_results'
   rescue => e
     Rails.logger.error "Erro ao mostrar resultados: #{e.message}\n#{e.backtrace.join("\n")}"

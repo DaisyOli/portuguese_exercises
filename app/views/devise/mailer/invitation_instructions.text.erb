@@ -1,8 +1,9 @@
-<%= t("devise.mailer.invitation_instructions.hello", email: @resource.email) %>,
+Practice-BR — Você foi convidado!
 
 <%= t("devise.mailer.invitation_instructions.someone_invited_you") %>
 
-<%= t("devise.mailer.invitation_instructions.accept") %>: <%= accept_invitation_url(@resource, invitation_token: @token, host: 'practicept.site') %>
+<%= t("devise.mailer.invitation_instructions.accept") %>:
+<%= accept_invitation_url(@resource, invitation_token: @token) %>
 
 <% if @resource.invitation_due_at %>
 <%= t("devise.mailer.invitation_instructions.accept_until", due_date: l(@resource.invitation_due_at, format: :long)) %>
@@ -11,5 +12,4 @@
 <%= t("devise.mailer.invitation_instructions.ignore") %>
 
 ---
-© 2024 PracticePT. Todos os direitos reservados.
-Este é um email automático, por favor não responda. 
+© Practice-BR · Este é um email automático, por favor não responda.

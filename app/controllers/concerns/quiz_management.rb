@@ -30,15 +30,9 @@ module QuizManagement
   end
 
   def load_completed_exercises
-    session[:completed_quizzes] ||= []
-
-    completed_activity_ids = current_user.quiz_attempts
-                                         .select(:activity_id)
-                                         .distinct
-                                         .pluck(:activity_id)
-
-    completed_activity_ids.each do |activity_id|
-      session[:completed_quizzes] << activity_id unless session[:completed_quizzes].include?(activity_id)
-    end
+    session[:completed_quizzes] = current_user.quiz_attempts
+                                              .select(:activity_id)
+                                              .distinct
+                                              .pluck(:activity_id)
   end
 end 

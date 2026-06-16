@@ -49,6 +49,55 @@
     <%= render 'add_content_section', activity: @activity %>
   <% end %>
 
+  <%# ── Avaliações dos alunos (visível apenas para o professor dono) ── %>
+  <% if current_user.teacher? && @activity.teacher == current_user %>
+    <% ratings = @activity.activity_ratings.includes(:user).order(created_at: :desc) %>
+    <% if ratings.any? %>
+      <div style="background:#fff; border:1px solid #DDD9D2; border-radius:16px; padding:24px 28px; margin-top:2rem;">
+        <div style="display:flex; align-items:center; gap:12px; margin-bottom:1.25rem;">
+          <h2 style="font-family:'Raleway',sans-serif; font-size:1rem; font-weight:700; color:#1C1917; margin:0;">
+            Avaliações dos alunos
+          </h2>
+          <span style="font-family:'DM Mono',monospace; font-size:0.88rem; font-weight:800; color:#C9952A;">
+            ⭐ <%= @activity.average_rating %>
+          </span>
+          <span style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.78rem; color:#9C9892;">
+            <%= pluralize(ratings.size, 'avaliação', 'avaliações') %>
+          </span>
+        </div>
+
+        <div style="display:flex; flex-direction:column; gap:10px;">
+          <% ratings.each do |rating| %>
+            <div style="border:1px solid #F0EDE8; border-radius:10px; padding:14px 16px;">
+              <div style="display:flex; align-items:center; gap:10px; margin-bottom:<%= rating.comment.present? ? '8px' : '0' %>; flex-wrap:wrap;">
+                <div style="width:28px; height:28px; border-radius:50%; background:#1A6B4A; display:flex; align-items:center; justify-content:center;
+                            font-family:'Raleway',sans-serif; font-size:0.72rem; font-weight:800; color:#fff; flex-shrink:0;">
+                  <%= rating.user.display_name[0].upcase %>
+                </div>
+                <span style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.85rem; font-weight:600; color:#1C1917;">
+                  <%= rating.user.display_name %>
+                </span>
+                <span style="font-size:0.9rem; letter-spacing:1px;">
+                  <% 5.times do |i| %>
+                    <i class="bi bi-star<%= i < rating.stars ? '-fill' : '' %>" style="color:#C9952A; font-size:0.85rem;"></i>
+                  <% end %>
+                </span>
+                <span style="font-family:'DM Mono',monospace; font-size:0.72rem; color:#9C9892; margin-left:auto;">
+                  <%= rating.created_at.strftime("%d/%m/%Y") %>
+                </span>
+              </div>
+              <% if rating.comment.present? %>
+                <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.85rem; color:#5C5853; line-height:1.55; padding-left:38px;">
+                  "<%= rating.comment %>"
+                </div>
+              <% end %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+  <% end %>
+
   <div style="text-align:center; margin-top:2.5rem; padding-bottom:1rem;">
     <%= link_to solve_activity_path(@activity),
           style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:1rem; font-weight:700; color:#fff; background:#1A6B4A; padding:14px 40px; border-radius:14px; text-decoration:none; display:inline-block;" do %>

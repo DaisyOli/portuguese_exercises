@@ -5,7 +5,15 @@ Rails.application.routes.draw do
   # Rotas para dashboards
   get 'student_dashboard', to: 'students#dashboard'
   get 'students/load_more', to: 'students#load_more'
+  get 'students/open_ended_attempts', to: 'students#open_ended_attempts', as: 'student_open_ended_attempts'
   get 'teacher_dashboard', to: 'teachers#dashboard'
+  get 'teachers/ratings/more', to: 'teachers#more_ratings', as: 'teacher_more_ratings'
+  get    'teachers/students',                        to: 'teachers#students',              as: 'teacher_students'
+  get    'teachers/students/:id',                    to: 'teachers#student_profile',       as: 'teacher_student_profile'
+  patch  'teachers/students/:id/level',              to: 'teachers#update_student_level',  as: 'teacher_student_level'
+  delete 'teachers/students/:id',                    to: 'teachers#remove_student',        as: 'teacher_student_remove'
+  patch  'teachers/students/:id/clear_comments',     to: 'teachers#clear_student_comments', as: 'teacher_student_clear_comments'
+  patch  'quiz_attempts/:id/teacher_comment',        to: 'teacher_comments#update',        as: 'quiz_attempt_teacher_comment'
   
   # Rota para atualização de idioma
   patch 'update_language', to: 'languages#update'
@@ -39,6 +47,7 @@ Rails.application.routes.draw do
       delete :clear_attempt_history
     end
 
+    resources :activity_ratings, only: [:create, :update], path: 'ratings'
     resources :questions
     resources :suggestions, only: [:create, :destroy]
     resources :sentence_orderings, only: [:create, :update, :destroy]

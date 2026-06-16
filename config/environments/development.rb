@@ -44,18 +44,17 @@ Rails.application.configure do
   # Configuração do Devise Mailer
   config.action_mailer.default_url_options = { host: 'localhost', port: 3000 }
   
-  # Configuração do Gmail para envio de emails
-  config.action_mailer.delivery_method = :smtp
-  config.action_mailer.smtp_settings = {
-    address: 'smtp.gmail.com',
-    port: 587,
-    domain: 'gmail.com',
-    user_name: ENV['GMAIL_USERNAME'] || 'seu-email@gmail.com',
-    password: ENV['GMAIL_PASSWORD'] || 'sua-senha-de-app',
-    authentication: :plain,
-    enable_starttls_auto: true
-  }
+  # Emails capturados pelo LetterOpenerWeb em desenvolvimento — acesse em /letter_opener
+  config.action_mailer.delivery_method = :letter_opener_web
   config.action_mailer.perform_deliveries = true
+
+  # Para testar com Gmail real, comente as duas linhas acima e descomente:
+  # config.action_mailer.delivery_method = :smtp
+  # config.action_mailer.smtp_settings = {
+  #   address: 'smtp.gmail.com', port: 587, domain: 'gmail.com',
+  #   user_name: ENV['GMAIL_USERNAME'], password: ENV['GMAIL_PASSWORD'],
+  #   authentication: :plain, enable_starttls_auto: true
+  # }
 
   # Print deprecation notices to the Rails logger.
   config.active_support.deprecation = :log
@@ -106,5 +105,9 @@ Rails.application.configure do
     Bullet.add_safelist(type: :unused_eager_loading, class_name: "ActiveStorage::Blob", association: :preview_image_attachment)
     # sentence_words_count counter cache é usado em vez de carregar a associação
     Bullet.add_safelist(type: :unused_eager_loading, class_name: "SentenceOrdering", association: :sentence_words)
+    # activity_ratings: includes necessário para evitar N+1 quando há avaliações
+    # Bullet não consegue prever que o badge condicional vai usar a associação
+    Bullet.add_safelist(type: :counter_cache,        class_name: "Activity", association: :activity_ratings)
+    Bullet.add_safelist(type: :unused_eager_loading, class_name: "Activity", association: :activity_ratings)
   end
 end

@@ -6,6 +6,7 @@ class Activity < ApplicationRecord
   has_many :sentence_orderings, dependent: :destroy
   has_many :paragraph_orderings, dependent: :destroy
   has_many :column_matchings, dependent: :destroy
+  has_many :activity_ratings, dependent: :destroy
 
   has_one_attached :audio_file
   has_one_attached :image_file
@@ -51,8 +52,22 @@ class Activity < ApplicationRecord
     end
   end
 
+  def average_rating
+    loaded = activity_ratings.to_a
+    return 0 if loaded.empty?
+    (loaded.sum(&:stars).to_f / loaded.size).round(1)
+  end
+
+  def ratings_count
+    activity_ratings.size
+  end
+
+  def rating_by_user(user)
+    activity_ratings.to_a.find { |r| r.user_id == user.id }
+  end
+
   private
-  
+
   def generate_slug
     return unless title.present?
     

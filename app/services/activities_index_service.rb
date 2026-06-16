@@ -22,7 +22,14 @@ class ActivitiesIndexService
   private
 
   def fetch_activities
-    activities = @current_user.student? ? Activity.published : Activity.all
+    if @current_user.student?
+      return Activity.none unless @current_user.level_assigned?
+      activities = Activity.published.where(level: @current_user.accessible_levels)
+    else
+      activities = Activity.all
+    end
+
+    activities = activities.includes(:activity_ratings)
 
     if @params[:view] == 'grid'
       activities = activities.with_attached_image_file
@@ -54,9 +61,14 @@ class ActivitiesIndexService
   end
 
   def fetch_activities_by_level
-    Rails.cache.fetch(["activities_by_level", @current_user.role], expires_in: 1.hour) do
-      base = @current_user.student? ? Activity.published : Activity.all
-      base.group_by(&:level)
+    cache_key = @current_user.student? ? ["activities_by_level", @current_user.id] : ["activities_by_level", "teacher"]
+    Rails.cache.fetch(cache_key, expires_in: 1.hour) do
+      if @current_user.student?
+        return {} unless @current_user.level_assigned?
+        Activity.published.where(level: @current_user.accessible_levels).group_by(&:level)
+      else
+        Activity.all.group_by(&:level)
+      end
     end
   end
 

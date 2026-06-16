@@ -10,8 +10,41 @@
   manual_activities   = total_activities - ai_activities
   unique_students     = QuizAttempt.joins(:activity).where(activities: { teacher_id: current_user.id }).distinct.count('user_id')
   total_attempts      = QuizAttempt.joins(:activity).where(activities: { teacher_id: current_user.id }).count
-  recent_activities   = user_activities.order(created_at: :desc).limit(5)
+  recent_activities   = user_activities.includes(:activity_ratings).order(created_at: :desc).limit(5)
   max_count           = activities_by_level.values.max || 1
+
+  # Avaliações recentes com comentário escrito
+  recent_ratings = ActivityRating
+    .joins(:activity, :user)
+    .where(activities: { teacher_id: current_user.id })
+    .where.not(comment: [nil, ''])
+    .order(created_at: :desc)
+    .includes(:user, :activity)
+    .limit(3)
+
+  # Meus Alunos — os 3 mais recentemente ativos
+  recent_students = current_user.students
+    .left_joins(:quiz_attempts)
+    .where(
+      "quiz_attempts.id IS NULL OR quiz_attempts.activity_id IN (?)",
+      user_activities.select(:id)
+    )
+    .select("users.*, MAX(quiz_attempts.submitted_at) AS last_active, ROUND(AVG(quiz_attempts.score)::numeric,0) AS avg_score")
+    .group("users.id")
+    .order(Arel.sql("MAX(quiz_attempts.submitted_at) DESC NULLS LAST"))
+    .limit(3)
+
+  # Aguardando revisão — tentativas com questão aberta e teacher_comments vazio, apenas de alunos vinculados
+  pending_review = QuizAttempt
+    .joins(activity: :questions)
+    .where(activities: { teacher_id: current_user.id })
+    .where(user_id: current_user.students.select(:id))
+    .where(questions: { question_type: 'open_ended' })
+    .where("quiz_attempts.teacher_comments = '{}' OR quiz_attempts.teacher_comments IS NULL")
+    .includes(:activity, :user)
+    .distinct
+    .order(submitted_at: :desc)
+    .limit(5)
 
   # cefr_colors(level) available from ApplicationHelper::CEFR_COLORS
 
@@ -106,52 +139,175 @@
     </div>
   </div>
 
-  <%# ── Atividades Recentes ── %>
-  <div style="background:#fff; border:1px solid #DDD9D2; border-radius:16px; padding:28px; margin-bottom:2rem;">
 
-    <h2 style="font-family:'Raleway',sans-serif; font-size:1.1rem; font-weight:700; color:#1C1917; margin-bottom:1.5rem;">
-      Atividades Recentes
-    </h2>
 
-    <% if recent_activities.empty? %>
-      <div style="text-align:center; padding:40px 20px; color:#9C9892;">
-        <div style="font-size:2.5rem; margin-bottom:12px;">📝</div>
-        <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.9rem; font-weight:600; color:#5C5853; margin-bottom:6px;">Nenhuma atividade ainda</div>
-        <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem;">Clique em "+ Nova Atividade" para começar.</div>
+  <%# ── Meus Alunos ── %>
+  <div style="background:#fff; border:1px solid #DDD9D2; border-radius:16px; padding:28px; margin-bottom:1.5rem;">
+    <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:1.25rem;">
+      <h2 style="font-family:'Raleway',sans-serif; font-size:1.1rem; font-weight:700; color:#1C1917;">
+        Meus Alunos
+      </h2>
+      <%= link_to "Ver todos →", teacher_students_path,
+            style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.8rem; color:#1A6B4A; font-weight:600; text-decoration:none;" %>
+    </div>
+
+    <% if recent_students.empty? %>
+      <div style="text-align:center; padding:24px 20px; color:#9C9892;">
+        <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.88rem;">Nenhum aluno convidado ainda.</div>
       </div>
     <% else %>
-      <% recent_activities.each_with_index do |activity, i| %>
-        <% c = cefr_colors(activity.level) %>
-        <div class="dash-activity-row" style="padding:14px 0; <%= i < recent_activities.size - 1 ? 'border-bottom:1px solid #F0EDE8;' : '' %>">
-          <span style="font-family:'DM Mono',monospace; font-size:0.72rem; font-weight:700;
-                       background:<%= c[:bg] %>; color:<%= c[:text] %>; border:1.5px solid <%= c[:border] %>;
-                       padding:3px 10px; border-radius:20px; flex-shrink:0;">
-            <%= activity.level %>
-          </span>
-          <div style="flex:1; min-width:0;">
-            <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.9rem; font-weight:600; color:#1C1917; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
-              <%= activity.title %>
+      <div style="display:flex; flex-direction:column; gap:10px;">
+        <% recent_students.each do |student| %>
+          <%= link_to teacher_student_profile_path(student),
+                style: "display:flex; align-items:center; gap:12px; padding:12px 14px; border:1px solid #F0EDE8; border-radius:10px; text-decoration:none; background:#FAFAF9;"  do %>
+            <div style="width:34px; height:34px; border-radius:50%; background:#1A6B4A; display:flex; align-items:center; justify-content:center;
+                        font-family:'Raleway',sans-serif; font-size:0.88rem; font-weight:800; color:#fff; flex-shrink:0;">
+              <%= student.display_name[0].upcase %>
             </div>
-            <% if activity.content_type.present? %>
-              <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.78rem; color:#9C9892; margin-top:2px;">
-                <%= type_labels[activity.content_type] || activity.content_type.humanize %>
+            <div style="flex:1; min-width:0;">
+              <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.88rem; font-weight:700; color:#1C1917;
+                          white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
+                <%= student.display_name %>
               </div>
+              <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.75rem; color:#9C9892;">
+                <% if student.last_active %>
+                  ativo <%= time_ago_in_words(student.last_active) %> atrás
+                <% else %>
+                  sem tentativas ainda
+                <% end %>
+              </div>
+            </div>
+            <% if student.avg_score.present? %>
+              <span style="font-family:'DM Mono',monospace; font-size:0.82rem; font-weight:800; color:#5C5853; flex-shrink:0;">
+                <%= student.avg_score.to_i %>%
+              </span>
             <% end %>
-          </div>
-          <div class="dash-row-buttons" style="display:flex; align-items:center; gap:8px; flex-shrink:0;">
-            <%= link_to "Ver", activity_path(activity),
-                  style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.78rem; font-weight:600;
-                          color:#2563EB; padding:5px 12px; border:1.5px solid #BFDBFE; border-radius:8px;
-                          text-decoration:none; background:#EBF2FC;" %>
-            <%= link_to "Editar", edit_activity_path(activity),
-                  style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.78rem; font-weight:500;
-                          color:#5C5853; padding:5px 12px; border:1.5px solid #DDD9D2; border-radius:8px;
-                          text-decoration:none;" %>
-          </div>
-        </div>
-      <% end %>
+          <% end %>
+        <% end %>
+      </div>
     <% end %>
   </div>
+
+  <%# ── Avaliações recentes ── %>
+  <% if recent_ratings.any? %>
+  <%
+    total_ratings = ActivityRating
+      .joins(:activity)
+      .where(activities: { teacher_id: current_user.id })
+      .where.not(comment: [nil, ''])
+      .count
+  %>
+  <div style="background:#F0F9FF; border:1px solid #BAE6FD; border-radius:16px; padding:28px; margin-bottom:1.5rem;">
+    <div style="display:flex; align-items:center; gap:8px; margin-bottom:1.25rem;">
+      <h2 style="font-family:'Raleway',sans-serif; font-size:1.1rem; font-weight:700; color:#075985; margin:0;">
+        ⭐ Avaliações dos alunos
+      </h2>
+      <span style="font-family:'DM Mono',monospace; font-size:0.75rem; font-weight:700;
+                   background:#BAE6FD; color:#075985; padding:2px 8px; border-radius:20px;">
+        <%= total_ratings %>
+      </span>
+    </div>
+    <div id="ratings-list" style="display:flex; flex-direction:column; gap:8px;">
+      <% recent_ratings.each do |rating| %>
+        <%= render 'teachers/rating_card', rating: rating %>
+      <% end %>
+    </div>
+    <% if total_ratings > 3 %>
+    <div style="text-align:center; margin-top:14px;">
+      <button id="load-more-ratings"
+              data-offset="3"
+              data-url="<%= teacher_more_ratings_path %>"
+              style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; font-weight:600; color:#0369A1;
+                     background:#E0F2FE; border:1px solid #BAE6FD; border-radius:8px; padding:8px 20px;
+                     cursor:pointer;">
+        Ver mais avaliações
+      </button>
+    </div>
+    <% end %>
+  </div>
+  <% end %>
+
+  <script>
+    (function() {
+      var btn  = document.getElementById('load-more-ratings');
+      if (!btn) return;
+      var list         = document.getElementById('ratings-list');
+      var initialCount = list.children.length;
+      var expanded     = false;
+
+      btn.addEventListener('click', function() {
+        if (expanded) {
+          while (list.children.length > initialCount) {
+            list.removeChild(list.lastChild);
+          }
+          btn.dataset.offset = String(initialCount);
+          btn.textContent = 'Ver mais avaliações';
+          btn.style.color      = '#0369A1';
+          btn.style.background = '#E0F2FE';
+          expanded = false;
+          return;
+        }
+
+        var offset = parseInt(btn.dataset.offset);
+        btn.disabled = true;
+        btn.textContent = 'Carregando...';
+        fetch(btn.dataset.url + '?offset=' + offset, {
+          headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' }
+        })
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+          list.insertAdjacentHTML('beforeend', data.html);
+          btn.dataset.offset = data.next_offset;
+          btn.disabled = false;
+          if (data.has_more) {
+            btn.textContent = 'Ver mais avaliações';
+          } else {
+            btn.textContent = 'Ver menos';
+            btn.style.color      = '#075985';
+            btn.style.background = '#BAE6FD';
+            expanded = true;
+          }
+        })
+        .catch(function() {
+          btn.disabled = false;
+          btn.textContent = 'Ver mais avaliações';
+        });
+      });
+    })();
+  </script>
+
+  <%# ── Aguardando Revisão ── %>
+  <% if pending_review.any? %>
+  <div style="background:#FFF8E7; border:1px solid #F5D478; border-radius:16px; padding:28px; margin-bottom:1.5rem;">
+    <div style="display:flex; align-items:center; gap:8px; margin-bottom:1.25rem;">
+      <h2 style="font-family:'Raleway',sans-serif; font-size:1.1rem; font-weight:700; color:#7C4A00; margin:0;">
+        ✍️ Aguardando seu feedback
+      </h2>
+      <span style="font-family:'DM Mono',monospace; font-size:0.75rem; font-weight:700;
+                   background:#F5D478; color:#7C4A00; padding:2px 8px; border-radius:20px;">
+        <%= pending_review.size %>
+      </span>
+    </div>
+    <div style="display:flex; flex-direction:column; gap:8px;">
+      <% pending_review.each do |attempt| %>
+        <%= link_to teacher_student_profile_path(attempt.user_id, anchor: "attempt-#{attempt.id}"),
+              style: "display:flex; align-items:center; justify-content:space-between; padding:11px 14px; background:#fff; border:1px solid #F5D478; border-radius:10px; text-decoration:none;" do %>
+          <div>
+            <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.88rem; font-weight:700; color:#1C1917;">
+              <%= attempt.user&.display_name || "Aluno" %>
+            </div>
+            <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.75rem; color:#9C9892; margin-top:2px;">
+              <%= attempt.activity.title %> · <%= attempt.submitted_at.strftime("%d/%m") %>
+            </div>
+          </div>
+          <span style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.75rem; font-weight:600; color:#C9952A;">
+            Ver →
+          </span>
+        <% end %>
+      <% end %>
+    </div>
+  </div>
+  <% end %>
 
   <%# ── CTA Footer ── %>
   <div style="display:flex; justify-content:center; gap:12px; flex-wrap:wrap; padding-bottom:2rem;">

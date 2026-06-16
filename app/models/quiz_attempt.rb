@@ -38,6 +38,15 @@ class QuizAttempt < ApplicationRecord
     results["results"] if results
   end
 
+  def open_ended_results
+    return [] unless results&.dig("results").is_a?(Hash)
+    results["results"].select { |_k, v| v.is_a?(Hash) && v["question_type"] == "open_ended" }
+  end
+
+  def teacher_comment_for(question_id)
+    (teacher_comments || {})["question_#{question_id}"].presence
+  end
+
   def normalized_results(questions = {})
     data = results.dup
 

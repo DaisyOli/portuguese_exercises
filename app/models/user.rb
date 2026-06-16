@@ -10,6 +10,7 @@ class User < ApplicationRecord
   
   ROLES = %w[teacher student].freeze
   LANGUAGES = %w[en pt fr].freeze
+  CEFR_LEVELS = %w[A1 A2 B1 B2 C1].freeze
   DEFAULT_LANGUAGE = 'pt'.freeze
 
   scope :teachers, -> { where(role: 'teacher') }
@@ -48,6 +49,16 @@ class User < ApplicationRecord
 
   def greeting_name
     name.presence
+  end
+
+  def accessible_levels
+    return [] if level.blank?
+    idx = CEFR_LEVELS.index(level)
+    idx ? CEFR_LEVELS[0..idx] : []
+  end
+
+  def level_assigned?
+    level.present?
   end
 
   private

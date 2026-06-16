@@ -42,15 +42,43 @@
         </div>
       <% end %>
 
-      <div style="margin-bottom:28px;">
+      <div style="margin-bottom:18px;">
         <%= f.label :role, "Tipo de usuário",
               style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; font-weight:600; color:#1C1917; display:block; margin-bottom:6px;" %>
         <%= f.select :role,
-              [['Estudante', 'student'], ['Professora', 'teacher']],
+              [['Estudante', 'student'], ['Professor(a)', 'teacher']],
               { include_blank: 'Selecione o tipo...' },
+              id: "invite-role-select",
               style: "width:100%; padding:11px 14px; border:1.5px solid #DDD9D2; border-radius:10px; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.9rem; color:#1C1917; background:#fff; box-sizing:border-box; cursor:pointer;",
               class: "auth-input",
               required: true %>
+      </div>
+
+      <%# ── Nível CEFR — aparece apenas quando Estudante é selecionado ── %>
+      <div id="level-field" style="display:none; margin-bottom:28px;">
+        <%= f.label :level, "Nível do aluno",
+              style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; font-weight:600; color:#1C1917; display:block; margin-bottom:8px;" %>
+        <p style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.78rem; color:#9C9892; margin:0 0 10px;">
+          Define quais atividades o aluno pode acessar. C1 = acesso total.
+        </p>
+        <div style="display:flex; gap:8px; flex-wrap:wrap;">
+          <% User::CEFR_LEVELS.each do |lvl| %>
+            <% lc = cefr_colors(lvl) %>
+            <label style="cursor:pointer;">
+              <%= f.radio_button :level, lvl, style: "display:none;",
+                    id: "level_#{lvl}",
+                    onchange: "updateLevelButtons()" %>
+              <span id="level-btn-<%= lvl %>"
+                    onclick="document.getElementById('level_<%= lvl %>').checked = true; updateLevelButtons();"
+                    style="display:inline-block; font-family:'DM Mono',monospace; font-size:0.78rem; font-weight:700;
+                           padding:7px 16px; border-radius:20px; cursor:pointer; user-select:none;
+                           border:1.5px solid #DDD9D2; background:#fff; color:#9C9892;
+                           transition:all 0.1s;">
+                <%= lvl %>
+              </span>
+            </label>
+          <% end %>
+        </div>
       </div>
 
       <%= f.submit "Enviar Convite",
@@ -65,3 +93,50 @@
 
   </div>
 </div>
+
+<script>
+  var cefrColors = {
+    A1: { bg: '#EFF6FF', text: '#1D4ED8', border: '#BFDBFE' },
+    A2: { bg: '#F0FDF4', text: '#15803D', border: '#86EFAC' },
+    B1: { bg: '#FFF7ED', text: '#C2410C', border: '#FDBA74' },
+    B2: { bg: '#FDF4FF', text: '#7E22CE', border: '#E9D5FF' },
+    C1: { bg: '#FFF1F2', text: '#BE123C', border: '#FECDD3' }
+  };
+
+  function toggleLevelField() {
+    var select = document.getElementById('invite-role-select');
+    var field  = document.getElementById('level-field');
+    if (!select || !field) return;
+    field.style.display = select.value === 'student' ? 'block' : 'none';
+  }
+
+  function updateLevelButtons() {
+    var radios = document.querySelectorAll('input[name="user[level]"]');
+    radios.forEach(function(radio) {
+      var btn = document.getElementById('level-btn-' + radio.value);
+      if (!btn) return;
+      if (radio.checked) {
+        var c = cefrColors[radio.value] || {};
+        btn.style.background  = c.bg    || '#E8F5EE';
+        btn.style.color       = c.text  || '#0F3826';
+        btn.style.borderColor = c.border || '#1A6B4A';
+      } else {
+        btn.style.background  = '#fff';
+        btn.style.color       = '#9C9892';
+        btn.style.borderColor = '#DDD9D2';
+      }
+    });
+  }
+
+  // Dispara tanto no carregamento inicial (Turbo ou não) quanto na mudança
+  document.addEventListener('DOMContentLoaded', function() {
+    toggleLevelField();
+    var select = document.getElementById('invite-role-select');
+    if (select) select.addEventListener('change', toggleLevelField);
+  });
+  document.addEventListener('turbo:load', function() {
+    toggleLevelField();
+    var select = document.getElementById('invite-role-select');
+    if (select) select.addEventListener('change', toggleLevelField);
+  });
+</script>

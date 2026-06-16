@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2026_06_08_093219) do
+ActiveRecord::Schema[7.1].define(version: 2026_06_08_123800) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -59,6 +59,19 @@ ActiveRecord::Schema[7.1].define(version: 2026_06_08_093219) do
     t.boolean "ai_generated"
     t.index ["slug"], name: "index_activities_on_slug"
     t.index ["teacher_id"], name: "index_activities_on_teacher_id"
+  end
+
+  create_table "activity_ratings", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.bigint "activity_id", null: false
+    t.integer "stars", null: false
+    t.text "comment"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["activity_id"], name: "index_activity_ratings_on_activity_id"
+    t.index ["user_id", "activity_id"], name: "index_activity_ratings_on_user_id_and_activity_id", unique: true
+    t.index ["user_id"], name: "index_activity_ratings_on_user_id"
+    t.check_constraint "stars >= 1 AND stars <= 5", name: "stars_range_check"
   end
 
   create_table "column_matchings", force: :cascade do |t|
@@ -124,6 +137,7 @@ ActiveRecord::Schema[7.1].define(version: 2026_06_08_093219) do
     t.datetime "submitted_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.jsonb "teacher_comments"
     t.index ["activity_id"], name: "index_quiz_attempts_on_activity_id"
     t.index ["user_id"], name: "index_quiz_attempts_on_user_id"
   end
@@ -182,6 +196,7 @@ ActiveRecord::Schema[7.1].define(version: 2026_06_08_093219) do
     t.integer "invitations_count", default: 0
     t.boolean "admin"
     t.string "name"
+    t.string "level"
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["invitation_token"], name: "index_users_on_invitation_token", unique: true
@@ -194,6 +209,8 @@ ActiveRecord::Schema[7.1].define(version: 2026_06_08_093219) do
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "activities", "users", column: "teacher_id"
+  add_foreign_key "activity_ratings", "activities"
+  add_foreign_key "activity_ratings", "users"
   add_foreign_key "column_matchings", "activities"
   add_foreign_key "matching_pairs", "column_matchings"
   add_foreign_key "paragraph_orderings", "activities"
