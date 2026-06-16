@@ -15,6 +15,9 @@ Rails.application.routes.draw do
   patch  'teachers/students/:id/clear_comments',     to: 'teachers#clear_student_comments', as: 'teacher_student_clear_comments'
   patch  'quiz_attempts/:id/teacher_comment',        to: 'teacher_comments#update',        as: 'quiz_attempt_teacher_comment'
   
+  # PWA manifest
+  get '/manifest.json', to: 'pwa#manifest', as: :pwa_manifest
+
   # Rota para atualização de idioma
   patch 'update_language', to: 'languages#update'
   

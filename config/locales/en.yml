@@ -428,3 +428,6 @@ en:
       pt: "Portuguese"
       en: "English"
       fr: "French"
+
+  pwa:
+    description: "Portuguese for foreigners"

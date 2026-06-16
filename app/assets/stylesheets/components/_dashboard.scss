@@ -50,3 +50,85 @@
     padding: 8px 12px;
   }
 }
+
+// Card "Continue estudando"
+.continue-card {
+  display: flex;
+  border: 1px solid #F0EDE8;
+  border-radius: 14px;
+  overflow: hidden;
+}
+
+.continue-card-image {
+  width: 160px;
+  min-height: 160px;
+  flex-shrink: 0;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.continue-card-body {
+  flex: 1;
+  min-width: 0;
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+}
+
+@media (max-width: 500px) {
+  .continue-card {
+    flex-direction: column;
+  }
+
+  .continue-card-image {
+    width: 100%;
+    min-height: 140px;
+    max-height: 160px;
+  }
+}
+
+// Seção "Minhas expressões escritas"
+.oe-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.oe-card-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+}
+
+.oe-card-header .oe-title {
+  font-size: 0.85rem;
+  flex: 1;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+@media (max-width: 768px) {
+  .oe-section-header {
+    align-items: flex-start;
+  }
+
+  .oe-card-header {
+    gap: 6px;
+  }
+}
+
+@media (max-width: 480px) {
+  .oe-card-header .oe-title {
+    font-size: 0.8rem;
+    white-space: normal;
+  }
+}

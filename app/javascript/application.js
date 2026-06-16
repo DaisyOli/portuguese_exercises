@@ -22,6 +22,13 @@ import "@popperjs/core"
 import "./quiz_results"
 import "./student_dashboard"
 
+// Registra service worker para PWA
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function() {
+    navigator.serviceWorker.register('/service-worker.js');
+  });
+}
+
 // Desabilita o Turbo para formulários específicos
 document.addEventListener("turbo:load", () => {
   // Desabilita Turbo para formulários de upload e drag-and-drop

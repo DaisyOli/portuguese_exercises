@@ -374,6 +374,9 @@ fr:
         teacher: "Professeur"
         student: "Étudiant"
 
+  pwa:
+    description: "Portugais pour les étrangers"
+
   # Auth
   auth:
-    sign_out: "Déconnexion" 
+    sign_out: "Déconnexion"

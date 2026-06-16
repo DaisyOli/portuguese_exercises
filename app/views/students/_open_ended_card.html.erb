@@ -14,14 +14,13 @@
 <div style="border:1px solid #F0EDE8; border-radius:12px; padding:14px 16px; background:#FAFAF9;">
 
   <%# cabeçalho: nível + título + data %>
-  <div style="display:flex; align-items:center; gap:8px; margin-bottom:10px; flex-wrap:wrap;">
+  <div class="oe-card-header">
     <span style="font-family:'DM Mono',monospace; font-size:0.68rem; font-weight:700;
                  background:<%= m[:bg] %>; color:<%= m[:text] %>; border:1.5px solid <%= m[:border] %>;
                  padding:2px 8px; border-radius:20px; flex-shrink:0;">
       <%= attempt.activity.level %>
     </span>
-    <span style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.85rem; font-weight:700; color:#1C1917;
-                 flex:1; min-width:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
+    <span class="oe-title" style="font-family:'Plus Jakarta Sans',sans-serif; font-weight:700; color:#1C1917;">
       <%= attempt.activity.title %>
     </span>
     <span style="font-family:'DM Mono',monospace; font-size:0.72rem; color:#9C9892; flex-shrink:0;">

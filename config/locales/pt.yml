@@ -467,4 +467,7 @@ pt:
     language_option:
       pt: "Português"
       en: "Inglês"
-      fr: "Francês" 
+      fr: "Francês"
+
+  pwa:
+    description: "Português para estrangeiros"
