@@ -85,17 +85,34 @@ class QuizSubmissionService
           end
 
         elsif question.fill_in_blank?
-          normalized_given   = I18n.transliterate(given_answer.to_s.strip.downcase.gsub(/\s+/, ''))
-          normalized_correct = I18n.transliterate(correct_answer.to_s.strip.downcase.gsub(/\s+/, ''))
-          is_correct = given_answer.present? && normalized_given == normalized_correct
+          all_answers = question.all_correct_answers
+          given_raw   = @params.dig(:answers, question.id.to_s)
+          given_array = if given_raw.respond_to?(:to_unsafe_h)
+            given_raw.to_unsafe_h.sort_by { |k, _| k.to_i }.map { |_, v| v.to_s.strip }
+          elsif given_raw.is_a?(Hash)
+            given_raw.sort_by { |k, _| k.to_i }.map { |_, v| v.to_s.strip }
+          else
+            [given_raw.to_s.strip]
+          end
+
+          blank_results = all_answers.each_with_index.map do |correct, i|
+            given     = given_array[i].to_s
+            norm_g    = I18n.transliterate(given.downcase.gsub(/\s+/, ''))
+            norm_c    = I18n.transliterate(correct.to_s.strip.downcase.gsub(/\s+/, ''))
+            ok        = given.present? && norm_g == norm_c
+            { "given" => given.presence || I18n.t('quiz.not_answered'), "correct" => correct, "ok" => ok }
+          end
+
+          is_correct = blank_results.all? { |r| r["ok"] }
 
           results[question.id] = {
-            "is_correct"    => is_correct,
-            "question_text" => question.content,
-            "question_type" => question.question_type,
-            "given_answer"  => given_answer.present? ? given_answer.to_s.strip : I18n.t('quiz.not_answered'),
-            "correct_answer" => correct_answer,
-            "raw_answer"    => given_answer.to_s.strip
+            "is_correct"     => is_correct,
+            "question_text"  => question.content,
+            "question_type"  => question.question_type,
+            "blank_results"  => blank_results,
+            "given_answer"   => given_array.first.presence || I18n.t('quiz.not_answered'),
+            "correct_answer" => all_answers.first,
+            "raw_answer"     => given_array.first.to_s
           }
 
         else

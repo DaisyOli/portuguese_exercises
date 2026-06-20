@@ -8,12 +8,12 @@ class Question < ApplicationRecord
   scope :by_type, ->(type) { where(question_type: type) }
 
   validates :content, presence: true
-  validates :correct_answer, presence: true, unless: :open_ended?
+  validates :correct_answer, presence: true, unless: -> { open_ended? || fill_in_blank? }
   validates :question_type, presence: true, inclusion: { in: QUESTION_TYPES }
   validates :options, presence: true, if: :multiple_choice?
   validates :weight, numericality: { only_integer: true, greater_than: 0, less_than_or_equal_to: 3 }, allow_nil: false
   validate :correct_answer_in_options, if: :multiple_choice?
-  validate :content_has_blank, if: :fill_in_blank?
+  validate :fill_in_blank_answers_valid, if: :fill_in_blank?
 
   before_validation :ensure_options_is_array
   before_validation :process_options_text
@@ -30,6 +30,15 @@ class Question < ApplicationRecord
     question_type == 'open_ended'
   end
 
+  def all_correct_answers
+    arr = correct_answers.presence&.reject(&:blank?)
+    arr.present? ? arr : [correct_answer].compact
+  end
+
+  def blank_count
+    content.to_s.scan('_____').length
+  end
+
   private
 
   def correct_answer_in_options
@@ -38,9 +47,16 @@ class Question < ApplicationRecord
     end
   end
 
-  def content_has_blank
+  def fill_in_blank_answers_valid
     unless content&.include?('_____')
       errors.add(:content, "deve conter pelo menos um espaço em branco (_____)")
+      return
+    end
+    answers = all_correct_answers
+    if answers.empty? || answers.any?(&:blank?)
+      errors.add(:base, "Todas as lacunas precisam de uma resposta correta")
+    elsif answers.length != blank_count
+      errors.add(:base, "Número de respostas (#{answers.length}) deve ser igual ao número de lacunas (#{blank_count})")
     end
   end
   

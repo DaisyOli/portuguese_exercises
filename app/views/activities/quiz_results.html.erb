@@ -148,6 +148,32 @@
               <% end %>
             </div>
 
+          <% elsif result["question_type"] == "fill_in_blank" && result["blank_results"].present? %>
+            <%# fill_in_blank com múltiplas lacunas %>
+            <div class="question-text">
+              <%= sanitize((result["question_text"].presence || "N/A").to_s, tags: %w[p br strong em u], attributes: []) %>
+            </div>
+            <span class="question-type-badge"><%= t("questions.types.fill_in_blank") %></span>
+            <div class="answer-section" style="margin-top:8px;">
+              <% result["blank_results"].each_with_index do |br, i| %>
+                <% ok = br["ok"] %>
+                <div style="border:1px solid <%= ok ? '#2A9B6F' : '#FECACA' %>; border-radius:8px; padding:10px 14px; margin-bottom:8px; background:<%= ok ? '#F0FAF5' : '#FEF2F2' %>;">
+                  <div style="font-family:'DM Mono',monospace; font-size:0.65rem; color:<%= ok ? '#1A6B4A' : '#B91C1C' %>; letter-spacing:0.06em; text-transform:uppercase; margin-bottom:6px;">
+                    <i class="bi bi-<%= ok ? 'check-circle' : 'x-circle' %>"></i>
+                    Lacuna <%= i + 1 %>
+                  </div>
+                  <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.88rem; color:#1C1917; margin-bottom:<%= ok ? '0' : '4px' %>;">
+                    <span style="color:#9C9892; font-size:0.78rem;">Sua resposta: </span><strong><%= br["given"] %></strong>
+                  </div>
+                  <% unless ok %>
+                    <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.85rem; color:#1A6B4A;">
+                      <span style="color:#9C9892; font-size:0.78rem;">Resposta correta: </span><strong><%= br["correct"] %></strong>
+                    </div>
+                  <% end %>
+                </div>
+              <% end %>
+            </div>
+
           <% else %>
             <div class="question-text">
               <%= sanitize((result["question_text"].presence || "N/A").to_s, tags: %w[p br strong em u], attributes: []) %>

@@ -44,17 +44,53 @@ class ActivityGenerationService
 
     ── TIPO 2: fill_in_blank ────────────────────
     Uso pedagógico: conjugação verbal, preposições, artigos, vocabulário
-    Estrutura:
+    Suporta até 4 lacunas por questão (cada _____ é uma lacuna separada).
+
+    Exemplo com 1 lacuna:
     {
       "type": "fill_in_blank",
       "content": "No sábado, Ana _____ ao mercado com a sua mãe de manhã. (ir — pretérito perfeito)",
-      "correct_answer": "foi"
+      "correct_answers": ["foi"]
     }
+
+    Exemplo com 2 lacunas:
+    {
+      "type": "fill_in_blank",
+      "content": "Eu _____ muito _____ de você. (gostar / orgulhoso)",
+      "correct_answers": ["gosto", "orgulhoso"]
+    }
+
+    Exemplo com 3 lacunas:
+    {
+      "type": "fill_in_blank",
+      "content": "Ontem nós _____ ao parque, _____ sorvete e _____ muito. (ir / comer / rir — pretérito perfeito)",
+      "correct_answers": ["fomos", "comemos", "rimos"]
+    }
+
     REGRAS:
-    - "content" deve conter EXATAMENTE _____ (5 underscores) onde a resposta vai
-    - "correct_answer" é a palavra ou expressão que preenche a lacuna
-    - Pode incluir a instrução entre parênteses no final da frase, como acima
+    - "content" deve conter EXATAMENTE _____ (5 underscores) para cada lacuna — máximo 4
+    - "correct_answers" é um array com uma resposta por lacuna, NA MESMA ORDEM que aparecem no texto
+    - O número de itens em "correct_answers" DEVE ser igual ao número de _____ no "content"
+    - Pode incluir instruções entre parênteses no final da frase, como nos exemplos acima
     - NÃO inclua "options"
+    - Use múltiplas lacunas quando fizer sentido pedagógico (ex: conjugar verbo + adjetivo, preencher artigo + substantivo)
+
+    ⚠️ REGRA CRÍTICA — LACUNA SEM SOBREPOSIÇÃO:
+    A resposta em "correct_answers" deve conter SOMENTE as palavras que substituem o _____. Nenhuma palavra da resposta pode já aparecer no "content" imediatamente antes ou depois da lacuna.
+
+    ERRADO (palavra da resposta repetida no texto):
+    content:  "A pólvora _____ usada em fogos de artifício."
+    resposta: "foi usada"  ← ERRADO: "usada" já está no texto!
+
+    CERTO — opção A (lacuna só para o auxiliar):
+    content:  "A pólvora _____ usada em fogos de artifício."
+    resposta: "foi"  ← só o auxiliar; "usada" fica no texto
+
+    CERTO — opção B (lacuna para a locução inteira):
+    content:  "A pólvora _____ em fogos de artifício."
+    resposta: "foi usada"  ← "usada" removido do texto e colocado na resposta
+
+    Antes de escrever cada questão, verifique: as palavras em "correct_answers[i]" aparecem no texto ao redor do _____ correspondente? Se sim, reescreva a questão usando a opção A ou B acima.
 
     ── TIPO 3: sentence_ordering ────────────────
     Uso pedagógico: ordem das palavras na frase, sintaxe, construção de frases
@@ -134,8 +170,8 @@ class ActivityGenerationService
         },
         {
           "type": "fill_in_blank",
-          "content": "Carlos _____ cedo no sábado. (dormir — pretérito perfeito)",
-          "correct_answer": "dormiu"
+          "content": "Carlos _____ cedo e _____ bem no sábado. (dormir / descansar — pretérito perfeito)",
+          "correct_answers": ["dormiu", "descansou"]
         },
         {
           "type": "sentence_ordering",
@@ -258,11 +294,13 @@ class ActivityGenerationService
   end
 
   def build_question(activity, ex)
+    answers = ex["correct_answers"]
     question = activity.questions.build(
-      question_type:  ex["type"],
-      content:        ex["content"],
-      correct_answer: ex["correct_answer"],
-      options:        ex["options"] || []
+      question_type:   ex["type"],
+      content:         ex["content"],
+      correct_answer:  answers&.first || ex["correct_answer"],
+      correct_answers: answers || [],
+      options:         ex["options"] || []
     )
     question.save
   end

@@ -44,7 +44,7 @@ class QuestionsController < ApplicationController
   end
 
   def question_params
-    params.require(:question).permit(:content, :correct_answer, :question_type, :options_text, :evaluation_prompt, :weight, options: [])
+    params.require(:question).permit(:content, :correct_answer, :question_type, :options_text, :evaluation_prompt, :weight, options: [], correct_answers: [])
   end
 
   def check_teacher_permission

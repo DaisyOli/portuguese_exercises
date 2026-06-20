@@ -292,7 +292,7 @@ fr:
       correct_answer_placeholder: "Saisissez la réponse correcte (doit correspondre à l'une des options)"
       sentences: "Phrases (une par ligne)"
       points: "Points"
-      fill_in_blank_help_html: "<strong>Conseil:</strong> Utilisez exactement 5 tirets bas (_____) pour marquer les espaces à remplir. Ex: 'Je _____ le chocolat' (l'espace sera remplacé par un champ de texte)."
+      fill_in_blank_help_html: "<strong>Conseil:</strong> Utilisez _____ (5 tirets bas) pour marquer chaque espace — jusqu'à 4 par question. Ex: 'Je _____ très _____ de vous.' Les champs de réponse apparaissent automatiquement."
 
   # Quiz
   quiz:
@@ -315,7 +315,7 @@ fr:
     score: "Score"
     xp: "XP"
     view_results: "Voir les résultats"
-    completed: "Quiz Terminé !"
+    completed: "Activité Terminée !"
     total_questions: "Total des Questions"
     see_detailed_results: "Voir les Résultats Détaillés"
     back: "Retour"

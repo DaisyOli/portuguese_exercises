@@ -110,13 +110,46 @@
       </div>
     </div>
 
-    <div style="<%= field_s %> display:<%= question.open_ended? ? 'none' : 'block' %>;"
+    <%# Campo único de resposta — para multiple_choice %>
+    <div style="<%= field_s %> display:<%= question.multiple_choice? ? 'block' : 'none' %>;"
          data-question-selector-target="correctAnswer">
       <%= form.label :correct_answer, t('questions.form.correct_answer'), style: label_s %>
       <%= form.text_field :correct_answer,
           style: input_s,
           placeholder: t('questions.form.correct_answer_placeholder') %>
       <small style="<%= hint_s %>"><%= t('questions.form.correct_answer_help') %></small>
+    </div>
+
+    <%# Campos de lacunas — para fill_in_blank (até 4) %>
+    <% existing_fib_answers = (question.fill_in_blank? ? question.all_correct_answers : []) rescue [] %>
+    <% visible_fib_count = [existing_fib_answers.length, 1].max %>
+    <div style="<%= field_s %> display:<%= question.fill_in_blank? ? 'block' : 'none' %>;"
+         class="fill-in-blank-answers"
+         data-question-selector-target="fillInBlankAnswers">
+      <label style="<%= label_s %>">Respostas</label>
+      <% 4.times do |i| %>
+        <div class="fib-answer-field" data-blank-index="<%= i %>"
+             style="margin-bottom:8px; display:<%= i < visible_fib_count ? 'flex' : 'none' %>;
+                    align-items:center; gap:10px;">
+          <span style="font-family:'DM Mono',monospace; font-size:0.72rem; font-weight:700;
+                       color:#1A6B4A; background:#E8F5EE; border:1px solid #2A9B6F;
+                       border-radius:6px; padding:3px 8px; flex-shrink:0; min-width:62px; text-align:center;">
+            Lacuna <%= i + 1 %>
+          </span>
+          <input type="text"
+                 name="question[correct_answers][]"
+                 value="<%= existing_fib_answers[i] %>"
+                 style="<%= input_s %> margin-bottom:0; flex:1;"
+                 placeholder="Resposta correta <%= i + 1 %>">
+        </div>
+      <% end %>
+      <button type="button" id="fib-add-btn-<%= form_uid %>"
+              style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.8rem; font-weight:600;
+                     color:#0F3826; padding:6px 12px; border:1.5px solid #BBF7D0; border-radius:20px;
+                     background:#E8F5EE; cursor:pointer; display:<%= visible_fib_count >= 4 ? 'none' : 'inline-flex' %>;
+                     align-items:center; gap:5px; margin-top:4px;">
+        <i class="bi bi-plus"></i> Adicionar lacuna
+      </button>
     </div>
 
     <%= form.submit t('common.save'), style: submit_s %>
@@ -170,24 +203,44 @@
           const type = select.value;
           const multipleChoiceFields = form.querySelector('.multiple-choice-fields');
           const fillInBlankHelp = form.querySelector('.fill-in-blank-help');
+          const fillInBlankAnswers = form.querySelector('.fill-in-blank-answers');
           const openEndedFields = form.querySelector('.open-ended-fields');
           const correctAnswerField = form.querySelector('[data-question-selector-target="correctAnswer"]');
           if (multipleChoiceFields) multipleChoiceFields.style.display = 'none';
           if (fillInBlankHelp) fillInBlankHelp.style.display = 'none';
+          if (fillInBlankAnswers) fillInBlankAnswers.style.display = 'none';
           if (openEndedFields) openEndedFields.style.display = 'none';
-          if (correctAnswerField) correctAnswerField.style.display = 'block';
+          if (correctAnswerField) correctAnswerField.style.display = 'none';
           switch (type) {
             case 'multiple_choice':
               if (multipleChoiceFields) multipleChoiceFields.style.display = 'block';
+              if (correctAnswerField) correctAnswerField.style.display = 'block';
               break;
             case 'fill_in_blank':
               if (fillInBlankHelp) fillInBlankHelp.style.display = 'block';
+              if (fillInBlankAnswers) fillInBlankAnswers.style.display = 'block';
               break;
             case 'open_ended':
               if (openEndedFields) openEndedFields.style.display = 'block';
-              if (correctAnswerField) correctAnswerField.style.display = 'none';
               break;
           }
+        }
+
+        function initFibAddButton() {
+          var addBtn = document.getElementById('fib-add-btn-' + formId);
+          if (!addBtn) return;
+          addBtn.addEventListener('click', function() {
+            var form = document.getElementById('question-form-' + formId);
+            if (!form) return;
+            var fields = Array.from(form.querySelectorAll('.fib-answer-field'));
+            var nextHidden = fields.find(function(f) { return f.style.display === 'none'; });
+            if (nextHidden) {
+              nextHidden.style.display = 'flex';
+              nextHidden.querySelector('input').focus();
+            }
+            var stillHidden = fields.some(function(f) { return f.style.display === 'none'; });
+            if (!stillHidden) addBtn.style.display = 'none';
+          });
         }
 
         function init() {
@@ -196,6 +249,7 @@
           const select = form.querySelector('select[name="question[question_type]"]');
           if (select) select.addEventListener('change', updateFields);
           updateFields();
+          initFibAddButton();
 
           const parentCollapse = form.closest('.collapse');
           if (parentCollapse) {
