@@ -4,14 +4,14 @@ class ActivityGenerationService
   SYSTEM_PROMPT = <<~PROMPT
     Você é um especialista em pedagogia e criação de materiais didáticos para ensino de português brasileiro como língua estrangeira (PLE).
 
-    Sua tarefa é gerar atividades completas em formato JSON estruturado. O sistema suporta exatamente 5 tipos de exercício — nenhum outro será aceito.
+    Sua tarefa é gerar atividades completas em formato JSON estruturado. O sistema suporta exatamente 6 tipos de exercício — nenhum outro será aceito.
 
     ═══════════════════════════════════════════
     REGRAS ABSOLUTAS
     ═══════════════════════════════════════════
     1. Responda SOMENTE com JSON válido — sem texto antes, sem texto depois, sem markdown
-    2. Use APENAS os 5 tipos de exercício listados abaixo. Qualquer outro tipo causará erro no sistema.
-    3. O campo "type" deve ter exatamente um destes valores: "multiple_choice", "fill_in_blank", "sentence_ordering", "paragraph_ordering", "column_matching"
+    2. Use APENAS os 6 tipos de exercício listados abaixo. Qualquer outro tipo causará erro no sistema.
+    3. O campo "type" deve ter exatamente um destes valores: "multiple_choice", "fill_in_blank", "sentence_ordering", "paragraph_ordering", "column_matching", "open_ended"
 
     ═══════════════════════════════════════════
     SCHEMA DO JSON
@@ -142,6 +142,24 @@ class ActivityGenerationService
     - "left" e "right" devem ser curtos (1-6 palavras)
     - "instruction" é opcional
 
+    ── TIPO 6: open_ended ───────────────────────
+    Uso pedagógico: expressão escrita livre, produção textual, reflexão pessoal
+    Estrutura:
+    {
+      "type": "open_ended",
+      "content": "Escreva 3 a 5 frases descrevendo um final de semana que você gostaria de ter. Use o pretérito perfeito."
+    }
+    REGRAS:
+    - "content" é o enunciado da proposta de escrita — seja claro sobre extensão esperada e contexto
+    - NÃO inclua "options", "correct_answer" nem "correct_answers"
+    - É OPCIONAL — não precisa aparecer em toda atividade
+    - Quando usado, deve ser SEMPRE o ÚLTIMO exercício da lista
+    - Use apenas quando a atividade tiver material suficiente para inspirar a escrita (texto, diálogo ou tema claro)
+    - Exemplos de propostas adequadas:
+        "Descreva em 3 a 4 frases o que você fez no último final de semana. Use o pretérito perfeito."
+        "Com base no diálogo, escreva uma mensagem de WhatsApp de Ana para uma amiga contando sobre o fim de semana."
+        "Você está planejando uma viagem ao Brasil. Escreva um pequeno texto (4-6 frases) descrevendo o que você quer fazer."
+
     ═══════════════════════════════════════════
     MAPEAMENTO PEDAGÓGICO
     ═══════════════════════════════════════════
@@ -151,7 +169,8 @@ class ActivityGenerationService
     - "ordenar palavras" → use "sentence_ordering"
     - "ordenar frases / parágrafos" → use "paragraph_ordering"
     - "associar / combinar / matching" → use "column_matching"
-    - "variar os tipos" → use os 5 tipos disponíveis acima, não invente novos
+    - "expressão escrita / produção textual" → use "open_ended" como último exercício
+    - "variar os tipos" → use os 6 tipos disponíveis acima, não invente novos
 
     ═══════════════════════════════════════════
     EXEMPLO COMPLETO
@@ -187,6 +206,10 @@ class ActivityGenerationService
             { "left": "Nós", "right": "fomos" },
             { "left": "Eles/Elas", "right": "foram" }
           ]
+        },
+        {
+          "type": "open_ended",
+          "content": "Escreva 3 a 4 frases descrevendo o que você fez no último final de semana. Use o pretérito perfeito."
         }
       ]
     }
@@ -279,7 +302,7 @@ class ActivityGenerationService
 
   def build_exercise(activity, ex)
     case ex["type"]
-    when "multiple_choice", "fill_in_blank"
+    when "multiple_choice", "fill_in_blank", "open_ended"
       build_question(activity, ex)
     when "sentence_ordering"
       build_sentence_ordering(activity, ex)
