@@ -78,7 +78,39 @@
   flex-direction: column;
 }
 
-@media (max-width: 500px) {
+.continue-card-title {
+  font-family: 'Raleway', sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #1C1917;
+  margin-bottom: 6px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.continue-card-bottom {
+  border-top: 1px solid #F0EDE8;
+  padding-top: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+// Telas médias — imagem proporcional, corpo tem espaço suficiente
+@media (max-width: 700px) {
+  .continue-card-image {
+    width: 120px;
+    min-height: 120px;
+  }
+}
+
+// Telas pequenas — empilha verticalmente
+@media (max-width: 600px) {
   .continue-card {
     flex-direction: column;
   }
@@ -86,7 +118,11 @@
   .continue-card-image {
     width: 100%;
     min-height: 140px;
-    max-height: 160px;
+    max-height: 170px;
+  }
+
+  .continue-card-title {
+    -webkit-line-clamp: 3;
   }
 }
 

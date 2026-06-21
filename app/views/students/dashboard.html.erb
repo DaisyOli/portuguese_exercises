@@ -295,7 +295,7 @@
               </span>
             </div>
 
-            <div style="font-family:'Raleway',sans-serif; font-size:1rem; font-weight:700; color:#1C1917; margin-bottom:6px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
+            <div class="continue-card-title">
               <%= continue_activity.title %>
             </div>
 
@@ -320,7 +320,7 @@
               </div>
             <% end %>
 
-            <div style="border-top:1px solid #F0EDE8; padding-top:10px; display:flex; align-items:center; justify-content:space-between; gap:10px;">
+            <div class="continue-card-bottom">
               <span style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.77rem; color:#9C9892; display:flex; align-items:center; gap:4px; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">
                 <i class="bi bi-person" style="flex-shrink:0;"></i>
                 Prof. <%= continue_activity.teacher&.name %>
