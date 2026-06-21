@@ -1,22 +1,23 @@
 <% has_other_content = activity.statement.present? || activity.media_url.present? || activity.video_url.present? || activity.explanation_text.present? %>
+<% regular_qs = activity.questions.where.not(question_type: 'open_ended').order(:created_at) %>
 
-<% if activity.questions.any? %>
+<% if regular_qs.any? %>
   <div style="background:#F0FAF5; border:1px solid #BBF7D0; border-left:4px solid #1A6B4A; border-radius:14px; margin-bottom:14px; overflow:hidden; <%= has_other_content ? '' : 'margin-top:8px;' %>">
 
     <div style="display:flex; align-items:center; padding:12px 18px; border-bottom:1px solid #BBF7D0; background:rgba(26,107,74,0.06);">
       <span style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; color:#1A6B4A; display:flex; align-items:center; gap:6px;">
-        <i class="bi bi-list-check"></i> Questões (<%= activity.questions.count %>)
+        <i class="bi bi-list-check"></i> Questões (<%= regular_qs.count %>)
       </span>
     </div>
 
     <div style="padding:14px 16px; display:flex; flex-direction:column; gap:10px;">
-      <% activity.questions.open_ended_last.each_with_index do |question, index| %>
+      <% regular_qs.each_with_index do |question, index| %>
         <%= render 'question_card', question: question, activity: activity, index: index %>
       <% end %>
     </div>
 
   </div>
-<% else %>
+<% elsif activity.questions.none? %>
   <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.85rem; color:#9C9892; padding:14px 20px; background:#FAFAF9; border:1px solid #F0EDE8; border-radius:12px; margin-bottom:14px;">
     <%= t('activities.no_questions') %>
   </div>

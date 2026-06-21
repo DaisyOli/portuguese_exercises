@@ -67,6 +67,21 @@
     <%= render 'sentence_orderings_list', activity: @activity %>
     <%= render 'paragraph_orderings_list', activity: @activity %>
     <%= render 'column_matchings_list', activity: @activity %>
+    <% oe_questions = @activity.questions.where(question_type: 'open_ended').order(:created_at) %>
+    <% if oe_questions.any? %>
+      <div style="background:#FFFBF0; border:1px solid #F5E0A0; border-left:4px solid #C9952A; border-radius:14px; margin-bottom:14px; overflow:hidden;">
+        <div style="display:flex; align-items:center; padding:12px 18px; border-bottom:1px solid #F5E0A0; background:rgba(201,149,42,0.06);">
+          <span style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; color:#7C5500; display:flex; align-items:center; gap:6px;">
+            ✨ Expressão escrita (<%= oe_questions.count %>)
+          </span>
+        </div>
+        <div style="padding:14px 16px; display:flex; flex-direction:column; gap:10px;">
+          <% oe_questions.each_with_index do |question, index| %>
+            <%= render 'question_card', question: question, activity: @activity, index: index %>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
     <%= render 'suggestions_list', activity: @activity %>
     <%= render 'add_content_section', activity: @activity %>
   <% end %>

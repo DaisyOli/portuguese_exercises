@@ -3,6 +3,9 @@
 <% end %>
 
 <%
+  regular_questions    = @questions.reject(&:open_ended?)
+  open_ended_questions = @questions.select(&:open_ended?)
+
   total_exercises = @questions.size +
                     @activity.sentence_orderings.size +
                     @activity.paragraph_orderings.size +
@@ -87,35 +90,10 @@
         <%# All exercise cards stacked — height fixed to tallest card (no layout shift) %>
         <div class="quiz-questions-stack">
 
-        <%# Questions (multiple choice + fill in blank + open ended) %>
-        <% @questions.each_with_index do |question, index| %>
+        <%# Questions (multiple choice + fill in blank) — open_ended rendered after all other types %>
+        <% regular_questions.each_with_index do |question, index| %>
           <div data-quiz-progress-target="question"
                style="<%= exercise_index == 0 ? '' : 'display:none;' %>">
-            <% if question.open_ended? %>
-              <%# open_ended: never cache — textarea must be empty on each load %>
-              <div class="question-card">
-                <div class="question-header">
-                  <span style="font-family:'DM Mono',monospace; font-weight:700; font-size:0.75rem; color:#9C9892;"><%= "%02d" % (index + 1) %></span>
-                  <span style="font-size:0.72rem; font-weight:600; color:#C9952A; font-family:'Plus Jakarta Sans',sans-serif;">
-                    ✨ <%= t('questions.types.open_ended') %>
-                  </span>
-                </div>
-                <div class="question-body">
-                  <div class="question-text">
-                    <%= sanitize(question.content.to_s, tags: %w[p br strong em u], attributes: []) %>
-                  </div>
-                  <%= text_area_tag "answers[#{question.id}]", nil,
-                        rows: 5,
-                        placeholder: t('quiz.open_answer_placeholder'),
-                        style: "width:100%; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.92rem; padding:10px 12px; border:2px solid #DDD9D2; border-radius:8px; color:#1C1917; background:#fff; resize:vertical; box-sizing:border-box; margin-top:8px;",
-                        autocorrect: "off",
-                        spellcheck: "false" %>
-                  <p style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.75rem; color:#C9952A; margin-top:6px;">
-                    ✨ <%= t('quiz.evaluated_by_ai') %>
-                  </p>
-                </div>
-              </div>
-            <% else %>
               <% cache [question, index, I18n.locale] do %>
                 <div class="question-card">
                   <div class="question-header">
@@ -166,7 +144,6 @@
                   </div>
                 </div>
               <% end %>
-            <% end %>
           </div>
           <% exercise_index += 1 %>
         <% end %>
@@ -293,6 +270,36 @@
                        name="column_matching_answers[<%= matching.id %>]"
                        data-column-matching-target="input"
                        value="">
+              </div>
+            </div>
+          </div>
+          <% exercise_index += 1 %>
+        <% end %>
+
+        <%# Open-ended writing exercises — always rendered last %>
+        <% open_ended_questions.each_with_index do |question, index| %>
+          <div data-quiz-progress-target="question"
+               style="<%= exercise_index == 0 ? '' : 'display:none;' %>">
+            <div class="question-card">
+              <div class="question-header">
+                <span style="font-family:'DM Mono',monospace; font-weight:700; font-size:0.75rem; color:#9C9892;"><%= "%02d" % (index + 1) %></span>
+                <span style="font-size:0.72rem; font-weight:600; color:#C9952A; font-family:'Plus Jakarta Sans',sans-serif;">
+                  ✨ <%= t('questions.types.open_ended') %>
+                </span>
+              </div>
+              <div class="question-body">
+                <div class="question-text">
+                  <%= sanitize(question.content.to_s, tags: %w[p br strong em u], attributes: []) %>
+                </div>
+                <%= text_area_tag "answers[#{question.id}]", nil,
+                      rows: 5,
+                      placeholder: t('quiz.open_answer_placeholder'),
+                      style: "width:100%; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.92rem; padding:10px 12px; border:2px solid #DDD9D2; border-radius:8px; color:#1C1917; background:#fff; resize:vertical; box-sizing:border-box; margin-top:8px;",
+                      autocorrect: "off",
+                      spellcheck: "false" %>
+                <p style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.75rem; color:#C9952A; margin-top:6px;">
+                  ✨ <%= t('quiz.evaluated_by_ai') %>
+                </p>
               </div>
             </div>
           </div>
