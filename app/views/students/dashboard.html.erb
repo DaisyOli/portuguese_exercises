@@ -31,8 +31,15 @@
   current_level_data = levels_data.find { |d| !d[:empty] && d[:pct] < 100 } ||
                        levels_data.reverse.find { |d| !d[:empty] }
 
+  # levels the student can access, ordered: own level first, then descending (B1 → A2 → A1)
+  accessible_levels = current_user.accessible_levels
+  priority_levels   = accessible_levels.reverse
+
   # first pending activity for "continue studying" — only needed on the main dashboard (no level filter)
-  all_pending = levels_data.flat_map { |d| d[:acts].reject { |a| completed_ids.include?(a.id) } }
+  all_pending = priority_levels.flat_map do |lvl|
+    (levels_data.find { |d| d[:level] == lvl } || { acts: [] })[:acts]
+      .reject { |a| completed_ids.include?(a.id) }
+  end
 
   # Helper: classify activity by support type using a pre-loaded set of attached names
   suporte_type = ->(act, attached_names) {
@@ -450,7 +457,19 @@
     <div class="dash-levels-grid" id="tour-levels">
       <% levels_data.each do |ld| %>
         <% m = cefr_colors(ld[:level]) %>
-        <% if ld[:empty] %>
+        <% is_locked = !accessible_levels.include?(ld[:level]) %>
+        <% if is_locked %>
+          <div style="text-align:center; border:1.5px solid #E5E1D8; border-radius:12px; padding:12px 8px; opacity:0.4; cursor:not-allowed; position:relative;" title="Nível não liberado pelo seu professor">
+            <div style="background:#F0EDE8; color:#9C9892; border:1.5px solid #DDD9D2; font-family:'DM Mono',monospace; font-size:0.85rem; font-weight:800; width:44px; height:44px; border-radius:10px; display:flex; align-items:center; justify-content:center; margin:0 auto 8px;">
+              🔒
+            </div>
+            <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.75rem; font-weight:600; color:#9C9892; margin-bottom:8px;"><%= ld[:level] %></div>
+            <div style="background:#F0EDE8; border-radius:99px; height:5px; overflow:hidden; margin-bottom:4px;">
+              <div style="width:0%; height:100%; border-radius:99px;"></div>
+            </div>
+            <div style="font-family:'DM Mono',monospace; font-size:0.65rem; color:#9C9892;">bloqueado</div>
+          </div>
+        <% elsif ld[:empty] %>
           <div style="text-align:center; border:1.5px solid #F0EDE8; border-radius:12px; padding:12px 8px; opacity:0.45; cursor:not-allowed;">
             <div style="background:<%= m[:bg] %>; color:<%= m[:text] %>; border:1.5px solid <%= m[:border] %>; font-family:'DM Mono',monospace; font-size:0.85rem; font-weight:800; width:44px; height:44px; border-radius:10px; display:flex; align-items:center; justify-content:center; margin:0 auto 8px;">
               <%= ld[:level] %>
