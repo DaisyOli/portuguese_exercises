@@ -16,9 +16,9 @@
       </div>
     </div>
     <div style="display:flex; gap:10px; flex-shrink:0;">
-      <%= link_to edit_activity_path(@activity),
+      <%= link_to activity_path(@activity),
             style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.85rem; font-weight:600; color:#5C5853; padding:9px 18px; border:1.5px solid #DDD9D2; border-radius:10px; text-decoration:none; background:#fff; white-space:nowrap;" do %>
-        Editar
+        Editar / Adicionar exercícios
       <% end %>
       <%= button_to "✓ Publicar atividade", publish_draft_activity_path(@activity),
             method: :post,

@@ -4,6 +4,28 @@
 
 <div id="activity-show-root" data-user-id="<%= current_user.id %>" style="max-width:900px; margin:1.5rem auto 3rem; padding:0 1.5rem;">
 
+  <% if @activity.ai_generated? && @activity.draft? && current_user.teacher? %>
+    <div style="background:linear-gradient(135deg,#FFF7ED 0%,#FFFBF0 100%); border:2px solid #C9952A; border-radius:16px; padding:18px 22px; margin-bottom:20px; display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap;">
+      <div>
+        <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.88rem; font-weight:700; color:#7C4A00; margin-bottom:3px;">
+          ✨ Rascunho gerado por IA — não visível para os alunos ainda
+        </div>
+        <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.8rem; color:#A06000;">
+          Adicione ou ajuste os exercícios abaixo, depois publique.
+        </div>
+      </div>
+      <div style="display:flex; gap:10px; flex-shrink:0;">
+        <%= link_to review_draft_activity_path(@activity),
+              style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; font-weight:600; color:#5C5853; padding:8px 16px; border:1.5px solid #DDD9D2; border-radius:10px; text-decoration:none; background:#fff; white-space:nowrap;" do %>
+          Pré-visualizar
+        <% end %>
+        <%= button_to "✓ Publicar atividade", publish_draft_activity_path(@activity),
+              method: :post,
+              style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.88rem; font-weight:700; color:#fff; background:#1A6B4A; padding:8px 20px; border-radius:10px; border:none; cursor:pointer; white-space:nowrap;" %>
+      </div>
+    </div>
+  <% end %>
+
   <%= render 'activity_header', activity: @activity %>
 
   <% if @activity.statement.present? %>
