@@ -130,7 +130,7 @@ Rails.application.configure do
   }
 
   config.action_mailer.default_options = {
-    from: 'Practice-BR <no-reply@practicebr.com>',
+    from: 'Practice-BR <contato@practicebr.com>',
     reply_to: 'contato@practicebr.com'
   }
 
