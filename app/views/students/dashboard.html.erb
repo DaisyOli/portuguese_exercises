@@ -33,18 +33,58 @@
 
   # first pending activity for "continue studying" — only needed on the main dashboard (no level filter)
   all_pending = levels_data.flat_map { |d| d[:acts].reject { |a| completed_ids.include?(a.id) } }
-  continue_activity = if all_pending.first && params[:level].blank?
+
+  # Helper: classify activity by support type using a pre-loaded set of attached names
+  suporte_type = ->(act, attached_names) {
+    names = attached_names[act.id] || []
+    if names.include?('image_file') || (act.media_url.present? && !act.media_url.match?(/youtube\.com|youtu\.be/))
+      :imagem
+    elsif names.include?('video_file') || act.video_url.present?
+      :video
+    elsif names.include?('audio_file')
+      :audio
+    else
+      :texto
+    end
+  }
+
+  # Determine last completed activity's suporte (one query for the attempt + one batch for attachments)
+  last_suporte = nil
+  last_attempt = completed_ids.any? && params[:level].blank? ?
+    QuizAttempt.where(user: current_user).order(submitted_at: :desc).first : nil
+
+  if last_attempt&.activity_id
+    last_attached = ActiveStorage::Attachment
+      .where(record_type: 'Activity', record_id: last_attempt.activity_id,
+             name: %w[audio_file video_file image_file])
+      .pluck(:name)
+    la = last_attempt.activity
+    last_suporte = suporte_type.call(la, { la.id => last_attached })
+  end
+
+  # Batch-load attachment names for all pending activities (single query)
+  pending_ids = all_pending.map(&:id)
+  pending_attached = pending_ids.any? ? ActiveStorage::Attachment
+    .where(record_type: 'Activity', record_id: pending_ids, name: %w[audio_file video_file image_file])
+    .group_by(&:record_id)
+    .transform_values { |recs| recs.map(&:name) } : {}
+
+  # Pick first pending with a different suporte; fall back to first pending
+  best_candidate = if last_suporte && all_pending.any?
+    all_pending.find { |a| suporte_type.call(a, pending_attached) != last_suporte } || all_pending.first
+  else
+    all_pending.first
+  end
+
+  continue_activity = if best_candidate && params[:level].blank?
     Activity.with_attached_image_file.with_attached_video_file.with_attached_audio_file
-            .includes(:teacher).find(all_pending.first.id)
+            .includes(:teacher).find(best_candidate.id)
   end
 
   # last completed activity (for when nothing is pending)
-  last_completed_activity = if continue_activity.nil? && params[:level].blank? && completed_ids.any?
-    last_attempt = QuizAttempt.where(user: current_user).order(submitted_at: :desc).first
-    if last_attempt&.activity
-      Activity.with_attached_image_file.with_attached_video_file.with_attached_audio_file
-              .includes(:teacher).find(last_attempt.activity.id)
-    end
+  last_completed_activity = if continue_activity.nil? && params[:level].blank? && last_attempt&.activity
+    Activity.with_attached_image_file.with_attached_video_file.with_attached_audio_file
+            .includes(:teacher).find(last_attempt.activity.id)
   end
 
   level_descriptions = {
