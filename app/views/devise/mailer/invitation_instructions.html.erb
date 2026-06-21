@@ -3,57 +3,70 @@
 <head>
   <meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
 </head>
-<body style="margin:0; padding:0; background:#F7F5F0; font-family:'Helvetica Neue',Arial,sans-serif;">
+<body style="margin:0; padding:0; background:#F0EDE8; font-family:'Helvetica Neue',Arial,sans-serif;">
 
-  <table width="100%" cellpadding="0" cellspacing="0" style="background:#F7F5F0; padding:40px 16px;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background:#F0EDE8; padding:40px 16px;">
     <tr>
       <td align="center">
-        <table width="560" cellpadding="0" cellspacing="0" style="background:#fff; border-radius:16px; border:1px solid #DDD9D2; overflow:hidden;">
+        <table width="560" cellpadding="0" cellspacing="0" style="background:#fff; border-radius:16px; overflow:hidden; box-shadow:0 2px 12px rgba(0,0,0,0.08);">
 
           <%# ── Cabeçalho ── %>
           <tr>
-            <td style="background:#0F3826; padding:28px 36px;">
-              <div style="font-family:'Helvetica Neue',Arial,sans-serif; font-size:1.3rem; font-weight:800; color:#fff; letter-spacing:-0.02em;">
-                Practice-BR
-              </div>
-              <div style="font-family:'Helvetica Neue',Arial,sans-serif; font-size:0.8rem; color:#6EBD96; margin-top:4px;">
-                Plataforma de Português para Estrangeiros
-              </div>
+            <td style="background:#0F3826; padding:28px 36px; text-align:center;">
+              <img src="<%= image_url('practice-br-logo-horizontal-color.png') %>"
+                   alt="Practice-BR"
+                   width="180"
+                   style="display:block; margin:0 auto; height:auto;"
+                   onerror="this.style.display='none'" />
             </td>
           </tr>
 
           <%# ── Corpo ── %>
           <tr>
-            <td style="padding:36px 36px 28px;">
-              <div style="font-size:2rem; margin-bottom:16px;">🎉</div>
-              <h1 style="font-family:'Helvetica Neue',Arial,sans-serif; font-size:1.2rem; font-weight:700; color:#1C1917; margin:0 0 12px;">
-                Você foi convidado!
+            <td style="padding:40px 40px 32px;">
+
+              <div style="font-size:2.4rem; text-align:center; margin-bottom:20px;">🇧🇷</div>
+
+              <h1 style="font-family:'Helvetica Neue',Arial,sans-serif; font-size:1.35rem; font-weight:800; color:#0F3826; margin:0 0 16px; text-align:center; letter-spacing:-0.01em;">
+                Você foi convidado para o Practice-BR!
               </h1>
-              <p style="font-family:'Helvetica Neue',Arial,sans-serif; font-size:0.9rem; color:#5C5853; line-height:1.6; margin:0 0 24px;">
-                <%= t("devise.mailer.invitation_instructions.someone_invited_you") %>
+
+              <% teacher = @resource.invited_by %>
+              <% if teacher&.name.present? %>
+                <p style="font-family:'Helvetica Neue',Arial,sans-serif; font-size:0.95rem; color:#3D3A36; line-height:1.65; margin:0 0 12px;">
+                  Olá! <strong><%= teacher.name %></strong> te convidou para praticar português brasileiro na plataforma Practice-BR.
+                </p>
+              <% else %>
+                <p style="font-family:'Helvetica Neue',Arial,sans-serif; font-size:0.95rem; color:#3D3A36; line-height:1.65; margin:0 0 12px;">
+                  Olá! Você foi convidado para praticar português brasileiro na plataforma Practice-BR.
+                </p>
+              <% end %>
+
+              <p style="font-family:'Helvetica Neue',Arial,sans-serif; font-size:0.95rem; color:#3D3A36; line-height:1.65; margin:0 0 28px;">
+                Aqui você vai encontrar atividades interativas — exercícios de vocabulário, compreensão de texto, preenchimento de lacunas e muito mais — criadas especialmente para o seu nível.
               </p>
 
-              <table cellpadding="0" cellspacing="0" width="100%" style="margin-bottom:28px;">
+              <table cellpadding="0" cellspacing="0" width="100%" style="margin-bottom:32px;">
                 <tr>
                   <td align="center">
                     <a href="<%= accept_invitation_url(@resource, invitation_token: @token) %>"
                        style="display:inline-block; background:#1A6B4A; color:#fff;
-                              font-family:'Helvetica Neue',Arial,sans-serif; font-size:0.92rem; font-weight:700;
-                              padding:14px 36px; border-radius:10px; text-decoration:none;">
-                      <%= t("devise.mailer.invitation_instructions.accept") %> →
+                              font-family:'Helvetica Neue',Arial,sans-serif; font-size:1rem; font-weight:700;
+                              padding:16px 44px; border-radius:12px; text-decoration:none; letter-spacing:0.01em;">
+                      Aceitar convite →
                     </a>
                   </td>
                 </tr>
               </table>
 
               <% if @resource.invitation_due_at %>
-                <p style="font-family:'Helvetica Neue',Arial,sans-serif; font-size:0.8rem; color:#9C9892; margin:0 0 16px;">
-                  <%= t("devise.mailer.invitation_instructions.accept_until", due_date: l(@resource.invitation_due_at, format: :long)) %>
+                <p style="font-family:'Helvetica Neue',Arial,sans-serif; font-size:0.8rem; color:#9C9892; margin:0 0 16px; text-align:center;">
+                  Este convite expira em <%= l(@resource.invitation_due_at, format: :long) %>.
                 </p>
               <% end %>
 
-              <p style="font-family:'Helvetica Neue',Arial,sans-serif; font-size:0.8rem; color:#9C9892; line-height:1.55; margin:0;">
-                <%= t("devise.mailer.invitation_instructions.ignore") %>
+              <p style="font-family:'Helvetica Neue',Arial,sans-serif; font-size:0.8rem; color:#9C9892; line-height:1.55; margin:0; text-align:center;">
+                Se você não esperava este convite, pode ignorar este email com segurança. Nenhuma conta será criada.
               </p>
             </td>
           </tr>
