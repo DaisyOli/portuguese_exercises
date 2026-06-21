@@ -6,6 +6,7 @@ class Question < ApplicationRecord
   QUESTION_TYPES = ['multiple_choice', 'fill_in_blank', 'open_ended']
 
   scope :by_type, ->(type) { where(question_type: type) }
+  scope :open_ended_last, -> { order(Arel.sql("CASE WHEN question_type = 'open_ended' THEN 1 ELSE 0 END"), :created_at) }
 
   validates :content, presence: true
   validates :correct_answer, presence: true, unless: -> { open_ended? || fill_in_blank? }

@@ -10,7 +10,7 @@
     </div>
 
     <div style="padding:14px 16px; display:flex; flex-direction:column; gap:10px;">
-      <% activity.questions.each_with_index do |question, index| %>
+      <% activity.questions.open_ended_last.each_with_index do |question, index| %>
         <%= render 'question_card', question: question, activity: activity, index: index %>
       <% end %>
     </div>

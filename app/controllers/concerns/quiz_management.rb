@@ -21,10 +21,10 @@ module QuizManagement
 
   def load_questions
     if params[:skip_cache] == "true"
-      @activity.questions.to_a
+      @activity.questions.open_ended_last.to_a
     else
       Rails.cache.fetch(["activity_questions", @activity.id, @activity.updated_at.to_i], expires_in: 1.hour) do
-        @activity.questions.to_a
+        @activity.questions.open_ended_last.to_a
       end
     end
   end

@@ -114,7 +114,7 @@ class ActivitiesController < ApplicationController
     unless @activity.teacher == current_user
       redirect_to activities_path, alert: t('messages.permission_denied') and return
     end
-    @questions           = @activity.questions.to_a
+    @questions           = @activity.questions.open_ended_last.to_a
     @sentence_orderings  = @activity.sentence_orderings.to_a
     @paragraph_orderings = @activity.paragraph_orderings.includes(:paragraph_sentences).to_a
     @column_matchings    = @activity.column_matchings.includes(:matching_pairs).to_a
