@@ -89,10 +89,10 @@ module ActivityPromptTemplates
     ]
   }.freeze
 
-  def self.pick(level)
+  def self.pick(level, existing_count: 0)
     templates = TEMPLATES.fetch(level, TEMPLATES["A1"])
-    # Índice determinístico baseado no dia do ano — varia a cada dia sem precisar armazenar estado
-    index = (Date.today.yday + level.sum) % templates.length
+    # existing_count garante que gerações consecutivas no mesmo dia usem templates diferentes
+    index = (Date.today.yday + level.sum + existing_count) % templates.length
     templates[index]
   end
 end

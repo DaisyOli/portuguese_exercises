@@ -27,7 +27,8 @@ class Admin::DraftsController < Admin::BaseController
 
     return redirect_to admin_drafts_path, notice: "Meta atingida em todos os níveis! 🎉" if level.nil?
 
-    prompt = ActivityPromptTemplates.pick(level)
+    existing_count = Activity.where(teacher: teacher, ai_generated: true, level: level).count
+    prompt = ActivityPromptTemplates.pick(level, existing_count: existing_count)
     result = ActivityGenerationService.new(prompt: prompt, teacher: teacher).call
 
     if result[:success]
