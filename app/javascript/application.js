@@ -21,6 +21,7 @@ import "controllers"
 import "@popperjs/core"
 import "./quiz_results"
 import "./student_dashboard"
+import "./teacher_dashboard"
 
 // Registra service worker para PWA
 if ('serviceWorker' in navigator) {

@@ -1,4 +1,120 @@
 // 🎯 DASHBOARD DO ESTUDANTE - JavaScript dedicado
+
+const TOUR_TEXTS = {
+  fr: {
+    skip:     'Passer',
+    start:    'Commencer →',
+    next:     'Suivant →',
+    finish:   'Terminer ✓',
+    welcome:  '<strong>Bienvenue sur Practice-BR ! 👋</strong><br><br>Faisons un rapide tour de la plateforme.',
+    metrics:  'Ici vous suivez vos progrès : jours consécutifs 🔥, activités terminées et votre dernière note.',
+    continue: 'Votre prochaine activité suggérée apparaît ici. Cliquez pour commencer quand vous êtes prêt(e) !',
+    levels:   'Explorez les activités organisées par niveau — du A1 au C1. Cliquez sur un niveau pour voir ce qui est disponible.',
+    avatar:   'Votre menu se trouve ici — pour vous déconnecter ou voir vos informations.'
+  },
+  en: {
+    skip:     'Skip',
+    start:    'Start →',
+    next:     'Next →',
+    finish:   'Finish ✓',
+    welcome:  '<strong>Welcome to Practice-BR! 👋</strong><br><br>Let\'s take a quick tour of the platform.',
+    metrics:  'Track your progress here: study streak 🔥, completed activities and your latest score.',
+    continue: 'Your next suggested activity appears here. Click to start when you\'re ready!',
+    levels:   'Explore activities organised by level — from A1 to C1. Click any level to see what\'s available.',
+    avatar:   'Your menu is up here — to sign out or view your account.'
+  },
+  pt: {
+    skip:     'Pular',
+    start:    'Começar →',
+    next:     'Próximo →',
+    finish:   'Concluir ✓',
+    welcome:  '<strong>Seja bem-vinda à Practice-BR! 👋</strong><br><br>Vamos fazer um tour rápido para você conhecer a plataforma.',
+    metrics:  'Aqui você acompanha seu progresso: sequência de estudos 🔥, atividades concluídas e sua última nota.',
+    continue: 'Sua próxima atividade sugerida aparece aqui. Clique para começar quando estiver pronto(a)!',
+    levels:   'Explore atividades organizadas por nível — do A1 ao C1. Clique em qualquer nível para ver o que está disponível.',
+    avatar:   'Seu menu fica aqui em cima — para sair da conta ou ver suas informações.'
+  }
+}
+
+function detectLang() {
+  const lang = (navigator.language || 'pt').toLowerCase()
+  if (lang.startsWith('fr')) return 'fr'
+  if (lang.startsWith('en')) return 'en'
+  return 'pt'
+}
+
+function initOnboardingTour() {
+  if (typeof Shepherd === 'undefined') return
+  const root = document.getElementById('student-dashboard-root')
+  if (!root) return
+
+  const userId = root.dataset.userId
+  if (!userId) return
+
+  const storageKey = `practicebr_tour_done_${userId}`
+  if (localStorage.getItem(storageKey)) return
+
+  const t = TOUR_TEXTS[detectLang()]
+
+  const tour = new Shepherd.Tour({
+    useModalOverlay: true,
+    defaultStepOptions: {
+      cancelIcon: { enabled: true },
+      scrollTo: { behavior: 'smooth', block: 'center' }
+    }
+  })
+
+  tour.addStep({
+    id: 'welcome',
+    text: t.welcome,
+    buttons: [
+      { text: t.skip,  action: () => tour.cancel(), classes: 'shepherd-button-secondary' },
+      { text: t.start, action: () => tour.next() }
+    ]
+  })
+
+  if (document.querySelector('#tour-metrics')) {
+    tour.addStep({
+      id: 'metrics',
+      attachTo: { element: '#tour-metrics', on: 'bottom' },
+      text: t.metrics,
+      buttons: [{ text: t.next, action: () => tour.next() }]
+    })
+  }
+
+  if (document.querySelector('#tour-continue')) {
+    tour.addStep({
+      id: 'continue',
+      attachTo: { element: '#tour-continue', on: 'right' },
+      text: t.continue,
+      buttons: [{ text: t.next, action: () => tour.next() }]
+    })
+  }
+
+  if (document.querySelector('#tour-levels')) {
+    tour.addStep({
+      id: 'levels',
+      attachTo: { element: '#tour-levels', on: 'top' },
+      text: t.levels,
+      buttons: [{ text: t.next, action: () => tour.next() }]
+    })
+  }
+
+  if (document.querySelector('#tour-avatar')) {
+    tour.addStep({
+      id: 'avatar',
+      attachTo: { element: '#tour-avatar', on: 'bottom' },
+      text: t.avatar,
+      buttons: [{ text: t.finish, action: () => tour.complete() }]
+    })
+  }
+
+  tour.on('complete', () => localStorage.setItem(storageKey, '1'))
+  tour.on('cancel',   () => localStorage.setItem(storageKey, '1'))
+
+  tour.start()
+}
+
 document.addEventListener('DOMContentLoaded', function() {
   // Função principal de inicialização
   function initStudentDashboard() {
@@ -137,4 +253,6 @@ document.addEventListener('turbo:load', function() {
       });
     }
   }, 100);
+
+  initOnboardingTour()
 }); 

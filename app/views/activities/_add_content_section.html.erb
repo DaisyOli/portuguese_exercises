@@ -36,13 +36,13 @@
   btn_rm   = "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.72rem; font-weight:600; color:#B91C1C; padding:4px 8px; border:1.5px solid #FECACA; border-radius:6px; background:#FEF2F2; cursor:pointer;"
 %>
 
-<div data-controller="content-form" style="background:#fff; border:1px solid #DDD9D2; border-radius:16px; padding:20px 24px; margin-bottom:16px;">
+<div id="tour-add-content-panel" data-controller="content-form" style="background:#fff; border:1px solid #DDD9D2; border-radius:16px; padding:20px 24px; margin-bottom:16px;">
   <div style="font-family:'DM Mono',monospace; font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.1em; color:#5C5853; margin-bottom:12px;">
     + <%= t('activities.add_content') %>
   </div>
 
   <%# Grupo: Material de estudo %>
-  <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.67rem; font-weight:700; text-transform:uppercase; letter-spacing:0.07em; color:#C9952A; margin-bottom:6px;">
+  <div id="tour-study-material-group" style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.67rem; font-weight:700; text-transform:uppercase; letter-spacing:0.07em; color:#C9952A; margin-bottom:6px;">
     Material de estudo
   </div>
   <div style="display:flex; gap:7px; flex-wrap:wrap; margin-bottom:14px;">
@@ -85,7 +85,7 @@
   </div>
 
   <%# Grupo: Exercícios %>
-  <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.67rem; font-weight:700; text-transform:uppercase; letter-spacing:0.07em; color:#1A6B4A; margin-bottom:6px;">
+  <div id="tour-exercises-group" style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.67rem; font-weight:700; text-transform:uppercase; letter-spacing:0.07em; color:#1A6B4A; margin-bottom:6px;">
     Exercícios
   </div>
   <div style="display:flex; gap:7px; flex-wrap:wrap;">

@@ -2,7 +2,7 @@
   <title><%= @activity.title %> · Practice-BR</title>
 <% end %>
 
-<div style="max-width:900px; margin:1.5rem auto 3rem; padding:0 1.5rem;">
+<div id="activity-show-root" data-user-id="<%= current_user.id %>" style="max-width:900px; margin:1.5rem auto 3rem; padding:0 1.5rem;">
 
   <%= render 'activity_header', activity: @activity %>
 
@@ -100,6 +100,7 @@
 
   <div style="text-align:center; margin-top:2.5rem; padding-bottom:1rem;">
     <%= link_to solve_activity_path(@activity),
+          id: "tour-resolve-quiz",
           style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:1rem; font-weight:700; color:#fff; background:#1A6B4A; padding:14px 40px; border-radius:14px; text-decoration:none; display:inline-block;" do %>
       <%= t('activities.solve_quiz') %> →
     <% end %>

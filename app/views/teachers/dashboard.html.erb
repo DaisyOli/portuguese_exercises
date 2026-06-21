@@ -57,7 +57,7 @@
   }
 %>
 
-<div class="dash-outer" style="max-width:1100px; margin:0 auto;">
+<div class="dash-outer" id="teacher-dashboard-root" data-user-id="<%= current_user.id %>" style="max-width:1100px; margin:0 auto;">
 
   <%# ── Saudação ── %>
   <div style="margin-bottom:2rem;">
@@ -70,7 +70,7 @@
   </div>
 
   <%# ── 4 Cards de Métricas ── %>
-  <div class="dash-metrics-grid" style="margin-bottom:2rem;">
+  <div class="dash-metrics-grid" id="tour-teacher-metrics" style="margin-bottom:2rem;">
 
     <div style="background:#fff; border:1px solid #DDD9D2; border-radius:14px; padding:20px 22px;">
       <div style="font-family:'DM Mono',monospace; font-size:0.68rem; color:#9C9892; letter-spacing:0.08em; margin-bottom:8px; text-transform:uppercase;">Atividades</div>
@@ -142,7 +142,7 @@
 
 
   <%# ── Meus Alunos ── %>
-  <div style="background:#fff; border:1px solid #DDD9D2; border-radius:16px; padding:28px; margin-bottom:1.5rem;">
+  <div id="tour-teacher-students" style="background:#fff; border:1px solid #DDD9D2; border-radius:16px; padding:28px; margin-bottom:1.5rem;">
     <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:1.25rem;">
       <h2 style="font-family:'Raleway',sans-serif; font-size:1.1rem; font-weight:700; color:#1C1917;">
         Meus Alunos

@@ -56,7 +56,7 @@
   }
 %>
 
-<div class="dash-outer" style="max-width:1000px; margin:0 auto;">
+<div class="dash-outer" style="max-width:1000px; margin:0 auto;" data-user-id="<%= current_user.id %>" id="student-dashboard-root">
 
 <% unless current_user.level_assigned? %>
   <div style="background:#FEF2F2; border:1px solid #FECACA; border-radius:14px; padding:24px 28px; margin-bottom:1.5rem; text-align:center;">
@@ -183,7 +183,7 @@
   </div>
 
   <%# — 4 Cards de Métricas — %>
-  <div class="dash-metrics-grid" style="margin-bottom:1.5rem;">
+  <div class="dash-metrics-grid" id="tour-metrics" style="margin-bottom:1.5rem;">
 
     <div style="background:#fff; border:1px solid #DDD9D2; border-radius:14px; padding:18px 20px;">
       <div style="font-family:'DM Mono',monospace; font-size:0.67rem; color:#9C9892; letter-spacing:0.08em; text-transform:uppercase; margin-bottom:10px;">Sequência</div>
@@ -230,7 +230,7 @@
         <% cont_q     = continue_activity.try(:questions_count).to_i %>
         <% cont_started = QuizAttempt.where(user: current_user, activity: continue_activity).exists? %>
 
-        <div class="continue-card">
+        <div class="continue-card" id="tour-continue">
 
           <%# Capa lateral %>
           <div class="continue-card-image">
@@ -407,7 +407,7 @@
     <h2 style="font-family:'Raleway',sans-serif; font-size:1rem; font-weight:700; color:#1C1917; margin:0 0 16px 0;">
       Seus níveis
     </h2>
-    <div class="dash-levels-grid">
+    <div class="dash-levels-grid" id="tour-levels">
       <% levels_data.each do |ld| %>
         <% m = cefr_colors(ld[:level]) %>
         <% if ld[:empty] %>
