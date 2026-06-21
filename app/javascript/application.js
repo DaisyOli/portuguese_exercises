@@ -3,7 +3,6 @@ import "@hotwired/turbo-rails"
 import "@hotwired/stimulus"
 import "@hotwired/stimulus-loading"
 import "@rails/ujs"
-import "bootstrap"
 
 // Não importamos jQuery via importmap, pois já está no layout como tag script
 
@@ -18,7 +17,6 @@ document.addEventListener('DOMContentLoaded', function() {
 // O Sortable já está disponível como window.Sortable
 
 import "controllers"
-import "@popperjs/core"
 import "quiz_results"
 import "student_dashboard"
 import "teacher_dashboard"

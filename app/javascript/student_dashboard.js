@@ -57,13 +57,6 @@ function detectMobileOS() {
   return null
 }
 
-function detectLang() {
-  const lang = (navigator.language || 'pt').toLowerCase()
-  if (lang.startsWith('fr')) return 'fr'
-  if (lang.startsWith('en')) return 'en'
-  return 'pt'
-}
-
 function initOnboardingTour() {
   if (typeof Shepherd === 'undefined') return
   const root = document.getElementById('student-dashboard-root')
