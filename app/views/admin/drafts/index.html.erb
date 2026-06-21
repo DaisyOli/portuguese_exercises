@@ -1,0 +1,149 @@
+<% content_for :head do %>
+  <title>Agente de Conteúdo · Admin</title>
+<% end %>
+
+<div class="dash-outer" style="max-width:1100px; margin:0 auto;">
+
+  <%# ── Voltar ── %>
+  <%= link_to admin_root_path,
+        style: "display:inline-flex; align-items:center; gap:6px; font-family:'Plus Jakarta Sans',sans-serif;
+                font-size:0.82rem; font-weight:600; color:#5C5853; text-decoration:none; margin-bottom:1.25rem;" do %>
+    ← Painel Admin
+  <% end %>
+
+  <%# ── Cabeçalho ── %>
+  <div style="display:flex; align-items:flex-start; justify-content:space-between; flex-wrap:wrap; gap:16px; margin-bottom:2rem;">
+    <div>
+      <div style="display:flex; align-items:center; gap:10px; margin-bottom:4px;">
+        <h1 style="font-family:'Raleway',sans-serif; font-size:1.75rem; font-weight:700; color:#1C1917; margin:0;">
+          Agente de Conteúdo
+        </h1>
+        <span style="font-family:'DM Mono',monospace; font-size:0.65rem; font-weight:700; letter-spacing:0.1em;
+                     background:#C9952A; color:#fff; padding:3px 10px; border-radius:20px; text-transform:uppercase;">
+          ✨ IA
+        </span>
+      </div>
+      <p style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.9rem; color:#5C5853; margin:0;">
+        Progresso de geração · <%= @drafts.count %> rascunho<%= @drafts.count == 1 ? '' : 's' %> aguardando revisão
+      </p>
+    </div>
+
+    <%= form_with url: admin_generate_draft_path, method: :post, local: true do |f| %>
+      <button type="submit"
+              style="background:#1A6B4A; color:#fff; font-family:'Plus Jakarta Sans',sans-serif; font-weight:700;
+                     font-size:0.88rem; border:none; border-radius:10px; padding:12px 24px; cursor:pointer;
+                     display:inline-flex; align-items:center; gap:8px;"
+              data-confirm="Vai chamar a IA agora. Pode levar até 30 segundos. Continuar?">
+        ✨ Gerar 1 agora
+      </button>
+    <% end %>
+  </div>
+
+  <%# ── Progresso por nível ── %>
+  <div style="background:#fff; border:1px solid #DDD9D2; border-radius:16px; padding:28px; margin-bottom:1.5rem;">
+    <h2 style="font-family:'Raleway',sans-serif; font-size:1rem; font-weight:700; color:#1C1917; margin:0 0 20px;">
+      Progresso por nível
+    </h2>
+
+    <div style="display:flex; flex-direction:column; gap:14px;">
+      <% @target.each do |level, goal| %>
+        <% published = @published.fetch(level, 0) %>
+        <% pct = [(published.to_f / goal * 100).round, 100].min %>
+        <% c = cefr_colors(level) %>
+        <div style="display:flex; align-items:center; gap:14px;">
+          <span style="font-family:'DM Mono',monospace; font-size:0.72rem; font-weight:700;
+                       background:<%= c[:bg] %>; color:<%= c[:text] %>; border:1.5px solid <%= c[:border] %>;
+                       padding:3px 10px; border-radius:20px; min-width:38px; text-align:center; flex-shrink:0;">
+            <%= level %>
+          </span>
+          <div style="flex:1; background:#F7F5F0; border-radius:99px; height:10px; overflow:hidden;">
+            <div style="width:<%= pct %>%; height:100%; border-radius:99px; background:<%= c[:bar] %>; transition:width 0.4s;"></div>
+          </div>
+          <span style="font-family:'DM Mono',monospace; font-size:0.82rem; color:#1C1917; min-width:64px; text-align:right; flex-shrink:0;">
+            <%= published %> / <%= goal %>
+          </span>
+          <% if published >= goal %>
+            <span style="font-size:0.75rem; color:#1A6B4A; font-weight:700; flex-shrink:0;">✓ Meta</span>
+          <% else %>
+            <span style="font-family:'DM Mono',monospace; font-size:0.72rem; color:#9C9892; flex-shrink:0;">
+              faltam <%= goal - published %>
+            </span>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+
+    <div style="margin-top:16px; padding-top:16px; border-top:1px solid #F0EDE8;">
+      <% total_published = @published.values.sum %>
+      <% total_goal = @target.values.sum %>
+      <span style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.85rem; color:#5C5853;">
+        Total publicadas com IA:
+        <strong style="color:#1C1917;"><%= total_published %></strong> de
+        <strong style="color:#1C1917;"><%= total_goal %></strong>
+        (<%= [(total_published.to_f / total_goal * 100).round, 100].min %>%)
+      </span>
+    </div>
+  </div>
+
+  <%# ── Rascunhos pendentes ── %>
+  <div style="background:#fff; border:1px solid #DDD9D2; border-radius:16px; padding:28px;">
+    <h2 style="font-family:'Raleway',sans-serif; font-size:1rem; font-weight:700; color:#1C1917; margin:0 0 20px;">
+      Rascunhos aguardando revisão
+    </h2>
+
+    <% if @drafts.empty? %>
+      <div style="text-align:center; padding:40px 20px; color:#9C9892;">
+        <div style="font-size:2rem; margin-bottom:8px;">🎉</div>
+        <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.9rem;">Nenhum rascunho pendente.</div>
+      </div>
+    <% else %>
+      <div style="display:flex; flex-direction:column; gap:10px;">
+        <% @drafts.each do |activity| %>
+          <% exercise_count = activity.questions.size + activity.sentence_orderings.size +
+                              activity.paragraph_orderings.size + activity.column_matchings.size %>
+          <% c = cefr_colors(activity.level) %>
+          <div style="display:flex; align-items:center; gap:14px; padding:14px 18px;
+                      border:1px solid #F0EDE8; border-radius:12px; background:#FAFAF9;">
+
+            <span style="font-family:'DM Mono',monospace; font-size:0.7rem; font-weight:700;
+                         background:<%= c[:bg] %>; color:<%= c[:text] %>; border:1.5px solid <%= c[:border] %>;
+                         padding:2px 8px; border-radius:20px; flex-shrink:0;">
+              <%= activity.level %>
+            </span>
+
+            <div style="flex:1; min-width:0;">
+              <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.9rem; font-weight:600;
+                          color:#1C1917; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
+                <%= activity.title %>
+              </div>
+              <div style="font-family:'DM Mono',monospace; font-size:0.72rem; color:#9C9892; margin-top:2px;">
+                <%= exercise_count %> exercício<%= exercise_count == 1 ? '' : 's' %> ·
+                gerada <%= time_ago_in_words(activity.created_at) %> atrás
+              </div>
+            </div>
+
+            <div style="display:flex; gap:8px; flex-shrink:0;">
+              <%= link_to review_draft_activity_path(activity),
+                    style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.8rem; font-weight:700;
+                            color:#fff; background:#1A6B4A; text-decoration:none;
+                            padding:7px 14px; border-radius:8px;" do %>
+                Revisar →
+              <% end %>
+
+              <%= button_to admin_draft_path(activity),
+                    method: :delete,
+                    data: { confirm: "Descartar '#{activity.title}'? Esta ação não pode ser desfeita." },
+                    form: { style: "display:inline;" },
+                    style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.8rem; font-weight:600;
+                            color:#B91C1C; background:#FEF2F2; border:1.5px solid #FECACA;
+                            padding:7px 14px; border-radius:8px; cursor:pointer;" do %>
+                Descartar
+              <% end %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+
+</div>

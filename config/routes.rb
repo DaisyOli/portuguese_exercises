@@ -65,6 +65,8 @@ Rails.application.routes.draw do
   # Dashboard administrativa
   namespace :admin do
     root to: "dashboard#index"
+    resources :drafts, only: [:index, :destroy]
+    post "drafts/generate", to: "drafts#generate", as: :generate_draft
   end
 
   # API pública para trial

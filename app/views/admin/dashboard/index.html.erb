@@ -56,6 +56,27 @@
 
   </div>
 
+  <%# ── Agente de Conteúdo ── %>
+  <%= link_to admin_drafts_path,
+        style: "display:flex; align-items:center; justify-content:space-between;
+                background:#0F3826; border-radius:14px; padding:20px 24px; margin-bottom:1.5rem;
+                text-decoration:none;" do %>
+    <div style="display:flex; align-items:center; gap:14px;">
+      <span style="font-size:1.4rem;">✨</span>
+      <div>
+        <div style="font-family:'Raleway',sans-serif; font-size:1rem; font-weight:700; color:#fff;">
+          Agente de Conteúdo
+        </div>
+        <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.8rem; color:rgba(255,255,255,0.6); margin-top:2px;">
+          <%= Activity.where(ai_generated: true, draft: true).count %> rascunho(s) aguardando revisão
+        </div>
+      </div>
+    </div>
+    <span style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.85rem; font-weight:700; color:#6EBD96;">
+      Ver painel →
+    </span>
+  <% end %>
+
   <%# ── Professores ── %>
   <div style="background:#fff; border:1px solid #DDD9D2; border-radius:16px; padding:28px; margin-bottom:1.5rem;">
 
