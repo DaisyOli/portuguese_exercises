@@ -21,6 +21,9 @@ gem "sprockets-rails"
 # Use postgresql as the database for Active Record
 gem "pg"
 
+# CORS para o endpoint público de trial (aceita requisições da landing page)
+gem "rack-cors"
+
 # Use the Puma web server [https://github.com/puma/puma]
 gem "puma", ">= 5.0"
 
@@ -54,6 +57,9 @@ gem "bootsnap", require: false
 
 # Use Active Storage variants [https://guides.rubyonrails.org/active_storage_overview.html#transforming-images]
 # gem "image_processing", "~> 1.2"
+
+# Cloudinary para armazenamento de mídia em produção
+gem "cloudinary"
 
 # Adiciona ostruct para compatibilidade futura
 gem 'ostruct'

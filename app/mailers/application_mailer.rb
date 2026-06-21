@@ -1,6 +1,6 @@
 class ApplicationMailer < ActionMailer::Base
-  default from: "Exercise App <no-reply@exerciseapp.com.br>", 
-          reply_to: "suporte@exerciseapp.com.br"
+  default from: "Practice-BR <no-reply@practicebr.com>",
+          reply_to: "contato@practicebr.com"
   layout "mailer"
   
   def self.configure_headers(headers)
@@ -9,7 +9,7 @@ class ApplicationMailer < ActionMailer::Base
       'X-Priority' => '3',
       'X-Mailer' => 'Exercise App Mailer',
       'Importance' => 'Normal',
-      'Message-ID' => "<#{SecureRandom.uuid}@exerciseapp.com.br>",
+      'Message-ID' => "<#{SecureRandom.uuid}@practicebr.com>",
       'Precedence' => 'Bulk'
     })
   end

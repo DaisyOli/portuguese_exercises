@@ -1,0 +1,274 @@
+<% content_for :head do %>
+  <title>Admin · Practice-BR</title>
+<% end %>
+
+<div class="dash-outer" style="max-width:1100px; margin:0 auto;">
+
+  <%# ── Voltar ── %>
+  <%= link_to teacher_dashboard_path,
+        style: "display:inline-flex; align-items:center; gap:6px; font-family:'Plus Jakarta Sans',sans-serif;
+                font-size:0.82rem; font-weight:600; color:#5C5853; text-decoration:none; margin-bottom:1.25rem;" do %>
+    ← Voltar para minha dashboard
+  <% end %>
+
+  <%# ── Cabeçalho ── %>
+  <div style="margin-bottom:2rem;">
+    <div style="display:flex; align-items:center; gap:10px; margin-bottom:4px;">
+      <h1 style="font-family:'Raleway',sans-serif; font-size:1.75rem; font-weight:700; color:#1C1917; margin:0;">
+        Painel Administrativo
+      </h1>
+      <span style="font-family:'DM Mono',monospace; font-size:0.65rem; font-weight:700; letter-spacing:0.1em;
+                   background:#0F3826; color:#6EBD96; padding:3px 10px; border-radius:20px; text-transform:uppercase;">
+        Admin
+      </span>
+    </div>
+    <p style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.95rem; color:#5C5853;">
+      Visão geral da plataforma · <%= l(Date.today, format: :long) %>
+    </p>
+  </div>
+
+  <%# ── 4 Cards de Resumo ── %>
+  <div class="dash-metrics-grid" style="margin-bottom:2rem;">
+
+    <div style="background:#fff; border:1px solid #DDD9D2; border-radius:14px; padding:20px 22px;">
+      <div style="font-family:'DM Mono',monospace; font-size:0.68rem; color:#9C9892; letter-spacing:0.08em; margin-bottom:8px; text-transform:uppercase;">Professores</div>
+      <div style="font-family:'Raleway',sans-serif; font-size:2rem; font-weight:800; color:#0F3826; line-height:1;"><%= @summary[:teachers] %></div>
+      <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.78rem; color:#5C5853; margin-top:6px;">na plataforma</div>
+    </div>
+
+    <div style="background:#fff; border:1px solid #DDD9D2; border-radius:14px; padding:20px 22px;">
+      <div style="font-family:'DM Mono',monospace; font-size:0.68rem; color:#9C9892; letter-spacing:0.08em; margin-bottom:8px; text-transform:uppercase;">Alunos</div>
+      <div style="font-family:'Raleway',sans-serif; font-size:2rem; font-weight:800; color:#2563EB; line-height:1;"><%= @summary[:students] %></div>
+      <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.78rem; color:#5C5853; margin-top:6px;">cadastrados</div>
+    </div>
+
+    <div style="background:#fff; border:1px solid #DDD9D2; border-radius:14px; padding:20px 22px;">
+      <div style="font-family:'DM Mono',monospace; font-size:0.68rem; color:#9C9892; letter-spacing:0.08em; margin-bottom:8px; text-transform:uppercase;">Trials ativos</div>
+      <div style="font-family:'Raleway',sans-serif; font-size:2rem; font-weight:800; color:#C9952A; line-height:1;"><%= @summary[:trials_active] %></div>
+      <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.78rem; color:#5C5853; margin-top:6px;">de <%= @trial_summary[:total] %> no total</div>
+    </div>
+
+    <div style="background:#fff; border:1px solid #DDD9D2; border-radius:14px; padding:20px 22px;">
+      <div style="font-family:'DM Mono',monospace; font-size:0.68rem; color:#9C9892; letter-spacing:0.08em; margin-bottom:8px; text-transform:uppercase;">Atividades</div>
+      <div style="font-family:'Raleway',sans-serif; font-size:2rem; font-weight:800; color:#1A6B4A; line-height:1;"><%= @summary[:activities_published] %></div>
+      <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.78rem; color:#5C5853; margin-top:6px;">publicadas</div>
+    </div>
+
+  </div>
+
+  <%# ── Professores ── %>
+  <div style="background:#fff; border:1px solid #DDD9D2; border-radius:16px; padding:28px; margin-bottom:1.5rem;">
+
+    <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:1.5rem;">
+      <div style="display:flex; align-items:center; gap:10px;">
+        <h2 style="font-family:'Raleway',sans-serif; font-size:1.1rem; font-weight:700; color:#1C1917; margin:0;">
+          Professores
+        </h2>
+        <span style="font-family:'DM Mono',monospace; font-size:0.72rem; color:#9C9892;">
+          <%= @teachers.size %> no total
+        </span>
+      </div>
+      <%= link_to new_user_invitation_path,
+            style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; font-weight:700;
+                    background:#1A6B4A; color:#fff; padding:8px 18px; border-radius:10px;
+                    text-decoration:none; display:inline-flex; align-items:center; gap:6px;" do %>
+        + Convidar Professor
+      <% end %>
+    </div>
+
+    <% if @teachers.empty? %>
+      <div style="text-align:center; padding:32px; color:#9C9892; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.88rem;">
+        Nenhum professor cadastrado ainda.
+      </div>
+    <% else %>
+      <div style="display:flex; flex-direction:column; gap:1px; background:#F0EDE8; border-radius:10px; overflow:hidden; border:1px solid #EAE7E2;">
+
+        <%# Cabeçalho da tabela %>
+        <div style="display:grid; grid-template-columns:2fr 1fr 1fr 1fr 1fr 1fr; gap:0;
+                    background:#F7F5F0; padding:10px 16px;">
+          <% ["Professor", "Atividades", "Alunos", "Tentativas", "Média", "Última ativ."].each_with_index do |h, i| %>
+            <div style="font-family:'DM Mono',monospace; font-size:0.65rem; color:#9C9892;
+                        letter-spacing:0.08em; text-transform:uppercase;
+                        text-align:<%= i == 0 ? 'left' : 'center' %>;">
+              <%= h %>
+            </div>
+          <% end %>
+        </div>
+
+        <% @teachers.each do |stat| %>
+          <div style="display:grid; grid-template-columns:2fr 1fr 1fr 1fr 1fr 1fr; gap:0;
+                      background:#fff; padding:14px 16px; align-items:center;">
+
+            <%# Nome / email %>
+            <div>
+              <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.88rem; font-weight:700; color:#1C1917;">
+                <%= stat[:teacher].display_name %>
+              </div>
+              <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.72rem; color:#9C9892; margin-top:1px;">
+                <%= stat[:teacher].email %>
+              </div>
+            </div>
+
+            <%# Atividades pub / total %>
+            <div style="text-align:center;">
+              <span style="font-family:'Raleway',sans-serif; font-size:1rem; font-weight:800; color:#0F3826;">
+                <%= stat[:activities_published] %>
+              </span>
+              <span style="font-family:'DM Mono',monospace; font-size:0.75rem; color:#9C9892;">
+                / <%= stat[:activities_total] %>
+              </span>
+            </div>
+
+            <%# Alunos (rentabilidade) %>
+            <div style="text-align:center;">
+              <% if stat[:students_count] > 0 %>
+                <span style="display:inline-block; font-family:'DM Mono',monospace; font-size:0.8rem; font-weight:700;
+                             background:#E8F5EE; color:#1A6B4A; border:1px solid #BBF7D0;
+                             padding:3px 10px; border-radius:20px;">
+                  <%= stat[:students_count] %>
+                </span>
+              <% else %>
+                <span style="font-family:'DM Mono',monospace; font-size:0.8rem; color:#DDD9D2;">—</span>
+              <% end %>
+            </div>
+
+            <%# Tentativas %>
+            <div style="text-align:center; font-family:'DM Mono',monospace; font-size:0.85rem; color:#5C5853;">
+              <%= stat[:total_attempts] %>
+            </div>
+
+            <%# Média de score %>
+            <div style="text-align:center;">
+              <% if stat[:avg_score] %>
+                <% score = stat[:avg_score].to_f %>
+                <span style="font-family:'DM Mono',monospace; font-size:0.85rem; font-weight:800;
+                             color:<%= score >= 70 ? '#1A6B4A' : score >= 50 ? '#C9952A' : '#C0392B' %>;">
+                  <%= stat[:avg_score] %>%
+                </span>
+              <% else %>
+                <span style="color:#DDD9D2; font-family:'DM Mono',monospace;">—</span>
+              <% end %>
+            </div>
+
+            <%# Última atividade criada %>
+            <div style="text-align:center; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.75rem; color:#9C9892;">
+              <% if stat[:last_activity_at] %>
+                <%= time_ago_in_words(stat[:last_activity_at]) %> atrás
+              <% else %>
+                <span style="color:#DDD9D2;">—</span>
+              <% end %>
+            </div>
+
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+
+  <%# ── Trials ── %>
+  <div style="background:#fff; border:1px solid #DDD9D2; border-radius:16px; padding:28px; margin-bottom:1.5rem;">
+
+    <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:1.5rem;">
+      <h2 style="font-family:'Raleway',sans-serif; font-size:1.1rem; font-weight:700; color:#1C1917; margin:0;">
+        Trials
+      </h2>
+    </div>
+
+    <%# Mini-cards de resumo %>
+    <div class="dash-metrics-grid" style="margin-bottom:1.5rem;">
+      <% [
+        { label: "Total criados", value: @trial_summary[:total], color: "#0F3826", bg: "#E8F5EE", border: "#BBF7D0" },
+        { label: "Ativos agora", value: @trial_summary[:active], color: "#1A6B4A", bg: "#F0F9F4", border: "#6EBD96" },
+        { label: "Esgotados (3/3)", value: @trial_summary[:exhausted], color: "#92400E", bg: "#FFF7ED", border: "#FED7AA" },
+        { label: "Expirados", value: @trial_summary[:expired], color: "#991B1B", bg: "#FEF2F2", border: "#FECACA" }
+      ].each do |card| %>
+        <div style="background:<%= card[:bg] %>; border:1px solid <%= card[:border] %>; border-radius:12px; padding:16px 18px;">
+          <div style="font-family:'Raleway',sans-serif; font-size:1.6rem; font-weight:800; color:<%= card[:color] %>; line-height:1;">
+            <%= card[:value] %>
+          </div>
+          <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.75rem; color:<%= card[:color] %>; opacity:0.7; margin-top:5px;">
+            <%= card[:label] %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+
+    <%# Tabela de trials %>
+    <% if @trials.empty? %>
+      <div style="text-align:center; padding:24px; color:#9C9892; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.88rem;">
+        Nenhum trial cadastrado ainda.
+      </div>
+    <% else %>
+      <div style="display:flex; flex-direction:column; gap:1px; background:#F0EDE8; border-radius:10px; overflow:hidden; border:1px solid #EAE7E2;">
+
+        <div style="display:grid; grid-template-columns:2fr 0.5fr 1fr 1fr 0.8fr; gap:0;
+                    background:#F7F5F0; padding:10px 16px;">
+          <% ["Email", "Nível", "Atividades", "Expira em", "Status"].each_with_index do |h, i| %>
+            <div style="font-family:'DM Mono',monospace; font-size:0.65rem; color:#9C9892;
+                        letter-spacing:0.08em; text-transform:uppercase;
+                        text-align:<%= i == 0 ? 'left' : 'center' %>;">
+              <%= h %>
+            </div>
+          <% end %>
+        </div>
+
+        <% @trials.each do |trial| %>
+          <% status = if trial.trial_exhausted? then :exhausted
+                       elsif trial.trial_expired? then :expired
+                       else :active
+                       end %>
+          <% status_styles = {
+               active:    { bg: "#E8F5EE", color: "#1A6B4A", border: "#BBF7D0", label: "Ativo" },
+               exhausted: { bg: "#FFF7ED", color: "#92400E", border: "#FED7AA", label: "Esgotado" },
+               expired:   { bg: "#FEF2F2", color: "#991B1B", border: "#FECACA", label: "Expirado" }
+             }[status] %>
+          <div style="display:grid; grid-template-columns:2fr 0.5fr 1fr 1fr 0.8fr; gap:0;
+                      background:#fff; padding:13px 16px; align-items:center;">
+
+            <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.85rem; color:#1C1917;">
+              <%= trial.email %>
+            </div>
+
+            <div style="text-align:center;">
+              <span style="font-family:'DM Mono',monospace; font-size:0.75rem; font-weight:700;
+                           background:#F0EDE8; color:#5C5853; padding:2px 8px; border-radius:20px;">
+                <%= trial.level %>
+              </span>
+            </div>
+
+            <div style="text-align:center;">
+              <div style="display:inline-flex; align-items:center; gap:4px;">
+                <% 3.times do |i| %>
+                  <div style="width:10px; height:10px; border-radius:50%;
+                               background:<%= i < trial.trial_activities_used ? '#1A6B4A' : '#DDD9D2' %>;"></div>
+                <% end %>
+                <span style="font-family:'DM Mono',monospace; font-size:0.72rem; color:#9C9892; margin-left:4px;">
+                  <%= trial.trial_activities_used %>/3
+                </span>
+              </div>
+            </div>
+
+            <div style="text-align:center; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.78rem; color:#5C5853;">
+              <% if trial.trial_expires_at %>
+                <%= l(trial.trial_expires_at, format: :short) %>
+              <% else %>
+                <span style="color:#DDD9D2;">—</span>
+              <% end %>
+            </div>
+
+            <div style="text-align:center;">
+              <span style="font-family:'DM Mono',monospace; font-size:0.7rem; font-weight:700;
+                           background:<%= status_styles[:bg] %>; color:<%= status_styles[:color] %>;
+                           border:1px solid <%= status_styles[:border] %>;
+                           padding:3px 10px; border-radius:20px; text-transform:uppercase; letter-spacing:0.05em;">
+                <%= status_styles[:label] %>
+              </span>
+            </div>
+
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+
+</div>

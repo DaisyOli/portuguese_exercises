@@ -5,6 +5,7 @@ class ActivitiesController < ApplicationController
   before_action :set_activity, only: [:show, :edit, :update, :destroy, :resolve_quiz, :submit_quiz, :quiz_results, :clear_statement, :clear_media, :clear_video, :clear_explanation, :clear_audio, :clear_image_file, :clear_video_file, :clear_attempt_history, :review_draft, :publish_draft]
   before_action :preload_exercise_associations, only: [:show]
   before_action :authorize_teacher, only: [:new, :create, :edit, :update, :destroy, :generate_with_ai, :review_draft, :publish_draft]
+  before_action :check_trial_level_restriction!, only: [:show, :resolve_quiz, :submit_quiz]
 
   def index
     service_result = ActivitiesIndexService.new(params: params, current_user: current_user).call
@@ -13,7 +14,7 @@ class ActivitiesController < ApplicationController
     @activities_by_level = service_result[:activities_by_level]
     @attempt_stats     = service_result[:attempt_stats]
 
-    if current_user.student?
+    if current_user.student_like?
       @best_attempts = service_result[:best_attempts]
       load_completed_exercises
     end
@@ -22,14 +23,13 @@ class ActivitiesController < ApplicationController
   def show
     @questions = load_questions
     
-    if current_user.student?
-      # Redirecionamento direto para resolver o quiz
+    if current_user.student_like?
       redirect_to resolve_quiz_activity_path(@activity)
     end
   end
 
   def resolve_quiz
-    if current_user.student? && @activity.draft?
+    if current_user.student_like? && @activity.draft?
       redirect_to student_dashboard_path, alert: "Esta atividade ainda não está disponível." and return
     end
     @questions = load_questions
@@ -78,7 +78,7 @@ class ActivitiesController < ApplicationController
 
     @questions      = @activity.questions.index_by(&:id)
     @quiz_results   = @quiz_attempt.normalized_results(@questions)
-    @existing_rating = current_user&.student? ? @activity.rating_by_user(current_user) : nil
+    @existing_rating = current_user&.student_like? ? @activity.rating_by_user(current_user) : nil
     render 'quiz_results'
   rescue => e
     Rails.logger.error "Erro ao mostrar resultados: #{e.message}\n#{e.backtrace.join("\n")}"
@@ -293,6 +293,15 @@ class ActivitiesController < ApplicationController
   def authorize_teacher
     unless current_user&.teacher?
       redirect_to root_path, alert: "Acesso restrito a professores."
+    end
+  end
+
+  def check_trial_level_restriction!
+    return unless current_user&.trial?
+    return unless @activity
+
+    if @activity.level != current_user.level
+      redirect_to student_dashboard_path, alert: "Seu acesso trial é apenas para atividades do nível #{current_user.level}."
     end
   end
 end

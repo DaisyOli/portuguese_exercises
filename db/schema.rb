@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2026_06_16_183222) do
+ActiveRecord::Schema[7.1].define(version: 2026_06_20_151056) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -198,6 +198,8 @@ ActiveRecord::Schema[7.1].define(version: 2026_06_16_183222) do
     t.boolean "admin"
     t.string "name"
     t.string "level"
+    t.integer "trial_activities_used"
+    t.datetime "trial_expires_at"
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["invitation_token"], name: "index_users_on_invitation_token", unique: true

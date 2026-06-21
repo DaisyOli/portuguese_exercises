@@ -286,13 +286,44 @@ RSpec.describe QuizAttempt, type: :model do
       activity = create(:activity)
       user1 = create(:user, :student)
       user2 = create(:user, :student)
-      
+
       attempt1 = create(:quiz_attempt, activity: activity, user: user1, score: 85.0)
       attempt2 = create(:quiz_attempt, activity: activity, user: user2, score: 92.0)
-      
+
       expect(activity.quiz_attempts).to include(attempt1, attempt2)
       expect(user1.quiz_attempts).to include(attempt1)
       expect(user2.quiz_attempts).to include(attempt2)
+    end
+  end
+
+  describe 'trial counter callback' do
+    let(:trial_user) { create(:user, :trial, trial_activities_used: 0) }
+    let(:activity)   { create(:activity) }
+
+    it 'incrementa trial_activities_used ao criar nova tentativa' do
+      expect {
+        create(:quiz_attempt, user: trial_user, activity: activity)
+      }.to change { trial_user.reload.trial_activities_used }.from(0).to(1)
+    end
+
+    it 'não incrementa ao atualizar uma tentativa existente' do
+      attempt = create(:quiz_attempt, user: trial_user, activity: activity)
+      expect {
+        attempt.update!(score: 90)
+      }.not_to change { trial_user.reload.trial_activities_used }
+    end
+
+    it 'não incrementa para usuário student' do
+      student = create(:user, :student)
+      expect {
+        create(:quiz_attempt, user: student, activity: activity)
+      }.not_to change { trial_user.reload.trial_activities_used }
+    end
+
+    it 'não incrementa para tentativa anônima (sem usuário)' do
+      expect {
+        create(:quiz_attempt, user: nil, activity: activity)
+      }.not_to change { trial_user.reload.trial_activities_used }
     end
   end
 end 

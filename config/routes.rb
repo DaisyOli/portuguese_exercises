@@ -62,6 +62,21 @@ Rails.application.routes.draw do
     end
   end
 
+  # Dashboard administrativa
+  namespace :admin do
+    root to: "dashboard#index"
+  end
+
+  # API pública para trial
+  namespace :api do
+    namespace :v1 do
+      resources :trials, only: [:create]
+    end
+  end
+
+  # Página de acesso trial encerrado
+  get "acesso-encerrado", to: "home#trial_expired", as: "trial_expired"
+
   # Health check para monitoramento
   get "up" => "rails/health#show", as: :rails_health_check
 

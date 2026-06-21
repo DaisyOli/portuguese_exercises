@@ -16,7 +16,8 @@ class QuizAttempt < ApplicationRecord
   scope :for_user, ->(user) { where(user: user) }
 
   before_create :set_submitted_at
-  after_commit :clear_user_attempts_cache, if: :user_id?
+  after_create  :increment_trial_counter
+  after_commit  :clear_user_attempts_cache, if: :user_id?
 
   def total_correct
     results["total_correct"] if results
@@ -96,6 +97,10 @@ class QuizAttempt < ApplicationRecord
   
   def set_submitted_at
     self.submitted_at ||= Time.current
+  end
+
+  def increment_trial_counter
+    user&.trial? && user.increment!(:trial_activities_used)
   end
   
   def clear_user_attempts_cache

@@ -26,16 +26,9 @@ Rails.application.configure do
     'Cache-Control' => "public, max-age=#{1.year.to_i}, s-maxage=#{30.days.to_i}"
   }
 
-  # Compress CSS using a preprocessor.
-  # config.assets.css_compressor = :sass
-
-  # Melhorar compressão de CSS e JavaScript
-  config.assets.css_compressor = :sass
-  # Desativar o compressor de JS temporariamente para diagnosticar problemas
-  # config.assets.js_compressor = :terser
-  
-  # Permitir a compilação de assets em tempo real para diagnóstico
-  config.assets.compile = true
+  # Tailwind gera CSS moderno — SassC não suporta; deixar sem compressor
+  config.assets.css_compressor = nil
+  config.assets.compile = false
 
   # Enable serving of images, stylesheets, and JavaScripts from an asset server.
   # config.asset_host = "http://assets.example.com"
@@ -44,8 +37,7 @@ Rails.application.configure do
   # config.action_dispatch.x_sendfile_header = "X-Sendfile" # for Apache
   # config.action_dispatch.x_sendfile_header = "X-Accel-Redirect" # for NGINX
 
-  # Store uploaded files on the local file system (see config/storage.yml for options).
-  config.active_storage.service = :local
+  config.active_storage.service = :cloudinary
 
   # Mount Action Cable outside main process or domain.
   # config.action_cable.mount_path = nil
@@ -99,7 +91,7 @@ Rails.application.configure do
 
   # Use a real queuing backend for Active Job (and separate queues per environment).
   # config.active_job.queue_adapter = :resque
-  config.active_job.queue_name_prefix = "practice_pt_production"
+  config.active_job.queue_name_prefix = "practicebr_production"
 
   config.action_mailer.perform_caching = false
 
@@ -125,32 +117,23 @@ Rails.application.configure do
   # Skip DNS rebinding protection for the default health check endpoint.
   # config.host_authorization = { exclude: ->(request) { request.path == "/up" } }
 
-  # Configuração do Gmail para envio de emails em produção
+  # Resend para envio de emails em produção (resend.com)
   config.action_mailer.delivery_method = :smtp
   config.action_mailer.perform_deliveries = true
   config.action_mailer.smtp_settings = {
-    address: 'smtp.gmail.com',
+    address: 'smtp.resend.com',
     port: 587,
-    domain: 'exerciseapp.com.br',
-    user_name: ENV['GMAIL_USERNAME'],
-    password: ENV['GMAIL_PASSWORD'],
+    user_name: 'resend',
+    password: ENV['RESEND_API_KEY'],
     authentication: :plain,
-    enable_starttls_auto: true,
-    open_timeout: 5,
-    read_timeout: 5
+    enable_starttls_auto: true
   }
-  
-  # Adiciona cabeçalhos para evitar spam
+
   config.action_mailer.default_options = {
-    from: 'Exercise App <no-reply@exerciseapp.com.br>',
-    reply_to: 'suporte@exerciseapp.com.br',
-    'X-MC-AutoText' => 'true',
-    'X-Priority' => '3',
-    'X-Mailer' => 'Exercise App Mailer',
-    'Importance' => 'Normal',
-    'Precedence' => 'Bulk'
+    from: 'Practice-BR <no-reply@practicebr.com>',
+    reply_to: 'contato@practicebr.com'
   }
-  
+
   # Host para os links nos emails
-  config.action_mailer.default_url_options = { host: 'practicept.site', protocol: 'https' }
+  config.action_mailer.default_url_options = { host: 'app.practicebr.com', protocol: 'https' }
 end

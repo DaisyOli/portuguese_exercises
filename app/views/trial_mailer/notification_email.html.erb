@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
+</head>
+<body style="margin:0; padding:0; background:#F7F5F0; font-family:'Helvetica Neue',Arial,sans-serif;">
+
+  <table width="100%" cellpadding="0" cellspacing="0" style="background:#F7F5F0; padding:40px 16px;">
+    <tr>
+      <td align="center">
+        <table width="560" cellpadding="0" cellspacing="0" style="background:#fff; border-radius:16px; border:1px solid #DDD9D2; overflow:hidden;">
+
+          <tr>
+            <td style="background:#0F3826; padding:28px 36px;">
+              <div style="font-size:1.3rem; font-weight:800; color:#fff; letter-spacing:-0.02em;">
+                Practice-BR · Novo Trial
+              </div>
+            </td>
+          </tr>
+
+          <tr>
+            <td style="padding:36px 36px 28px;">
+              <h1 style="font-size:1.1rem; font-weight:700; color:#1C1917; margin:0 0 20px;">
+                Um novo visitante pediu acesso de teste.
+              </h1>
+
+              <table cellpadding="0" cellspacing="0" width="100%" style="background:#F0F7F4; border-radius:10px; padding:20px; margin-bottom:24px;">
+                <tr>
+                  <td style="padding:6px 0; font-size:0.9rem; color:#1C1917;">
+                    <strong>Email:</strong> <%= @user.email %>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding:6px 0; font-size:0.9rem; color:#1C1917;">
+                    <strong>Nível CEFR:</strong> <%= @user.level %>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding:6px 0; font-size:0.9rem; color:#1C1917;">
+                    <strong>Acesso expira em:</strong> <%= l(@expires_at, format: :long) %>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding:6px 0; font-size:0.9rem; color:#1C1917;">
+                    <strong>Cadastrado em:</strong> <%= l(@user.created_at, format: :long) %>
+                  </td>
+                </tr>
+              </table>
+
+              <p style="font-size:0.85rem; color:#5C5853; margin:0;">
+                O email de boas-vindas com o link de acesso já foi enviado automaticamente para o visitante.
+              </p>
+            </td>
+          </tr>
+
+          <tr>
+            <td style="background:#F7F5F0; border-top:1px solid #EAE7E2; padding:18px 36px; text-align:center;">
+              <p style="font-size:0.75rem; color:#9C9892; margin:0;">
+                © Practice-BR · Notificação interna automática.
+              </p>
+            </td>
+          </tr>
+
+        </table>
+      </td>
+    </tr>
+  </table>
+
+</body>
+</html>

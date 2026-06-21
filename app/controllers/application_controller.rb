@@ -2,12 +2,13 @@ class ApplicationController < ActionController::Base
   # Autenticação padrão
   before_action :authenticate_user!
   before_action :configure_permitted_parameters, if: :devise_controller?
+  before_action :check_trial_restrictions!
   around_action :switch_locale
 
   def after_sign_in_path_for(resource)
     if resource.teacher?
       teacher_dashboard_path
-    elsif resource.student?
+    elsif resource.student_like?
       student_dashboard_path
     else
       root_path
@@ -24,6 +25,16 @@ class ApplicationController < ActionController::Base
   end
 
   private
+
+  def check_trial_restrictions!
+    return unless current_user&.trial?
+    return if devise_controller?
+    return if controller_name == "home" && action_name == "trial_expired"
+
+    if current_user.trial_expired? || current_user.trial_exhausted?
+      redirect_to trial_expired_path
+    end
+  end
 
   def switch_locale(&action)
     I18n.with_locale(I18n.default_locale, &action)

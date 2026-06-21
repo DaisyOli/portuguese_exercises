@@ -24,11 +24,13 @@
     <% if current_user.teacher? %>
       <%= link_to "+ Nova Atividade", new_activity_path,
             class: "hidden sm:inline-flex items-center whitespace-nowrap px-4 py-1.5 rounded-lg text-sm font-semibold text-white no-underline",
-            style: "background:#C9952A; font-family:'Plus Jakarta Sans',sans-serif; text-decoration:none;" %>
-
-      <%= link_to "Convidar", new_user_invitation_path,
-            class: "hidden sm:inline-flex items-center whitespace-nowrap px-4 py-1.5 rounded-lg text-sm font-semibold text-white no-underline",
             style: "background:#2A9B6F; font-family:'Plus Jakarta Sans',sans-serif; text-decoration:none;" %>
+
+      <%= link_to new_user_invitation_path,
+            class: "hidden sm:inline-flex items-center whitespace-nowrap px-4 py-1.5 rounded-lg text-sm font-semibold text-white no-underline",
+            style: "background:#C9952A; font-family:'Plus Jakarta Sans',sans-serif; text-decoration:none; gap:6px;" do %>
+        ✉️ Convidar
+      <% end %>
     <% end %>
 
     <%# Streak pill — sempre visível para alunos, só se > 0 para professoras %>
@@ -58,7 +60,7 @@
         <%# Cabeçalho do dropdown %>
         <li class="px-3 pt-1 pb-0 pointer-events-none">
           <span style="font-family:'DM Mono',monospace; font-size:0.68rem; color:#9C9892; letter-spacing:0.08em;">
-            <%= current_user.teacher? ? 'PROFESSORA' : 'ALUNO' %>
+            <%= current_user.admin? ? 'ADMIN' : (current_user.teacher? ? 'PROFESSORA' : 'ALUNO') %>
           </span>
         </li>
         <li class="px-3 pb-2 pointer-events-none">
@@ -72,17 +74,28 @@
         <% if current_user.teacher? %>
           <li class="sm:hidden">
             <%= link_to new_activity_path,
-                  style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.875rem; font-weight:600; color:#C9952A;" do %>
+                  style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.875rem; font-weight:600; color:#1A6B4A;" do %>
               + Nova Atividade
             <% end %>
           </li>
           <li class="sm:hidden">
             <%= link_to new_user_invitation_path,
-                  style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.875rem; color:#1C1917;" do %>
-              Convidar aluno
+                  style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.875rem; font-weight:600; color:#C9952A;" do %>
+              ✉️ Convidar aluno
             <% end %>
           </li>
           <div class="sm:hidden" style="height:1px; background:#DDD9D2; margin:6px 8px;"></div>
+        <% end %>
+
+        <%# Link para painel admin — só para admins %>
+        <% if current_user.admin? %>
+          <div style="height:1px; background:#DDD9D2; margin:6px 8px;"></div>
+          <li>
+            <%= link_to admin_root_path,
+                  style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.875rem; font-weight:600; color:#0F3826;" do %>
+              ⚙️ Painel Admin
+            <% end %>
+          </li>
         <% end %>
 
         <%# Sair %>
