@@ -98,6 +98,21 @@
 
     <% end %>
   </div>
+
+  <% if @activity.ai_generated? && @activity.draft? %>
+    <div style="margin-top:16px; background:linear-gradient(135deg,#F0F7F4 0%,#E8F5EE 100%); border:1.5px solid #2A9B6F; border-radius:16px; padding:20px 24px; display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap;">
+      <div>
+        <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.88rem; font-weight:700; color:#0F3826; margin-bottom:3px;">
+          Atividade pronta? Publique agora.
+        </div>
+        <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.8rem; color:#2A6B4A;">
+          Salve as alterações acima antes de publicar.
+        </div>
+      </div>
+      <%= button_to "✓ Publicar atividade", publish_draft_activity_path(@activity),
+            method: :post,
+            style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.9rem; font-weight:700; color:#fff; background:#1A6B4A; padding:10px 24px; border-radius:10px; border:none; cursor:pointer; white-space:nowrap; flex-shrink:0;" %>
+    </div>
+  <% end %>
+
 </div>
-
-
