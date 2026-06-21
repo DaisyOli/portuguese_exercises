@@ -2,38 +2,59 @@
 
 const TOUR_TEXTS = {
   fr: {
-    skip:     'Passer',
-    start:    'Commencer →',
-    next:     'Suivant →',
-    finish:   'Terminer ✓',
-    welcome:  '<strong>Bienvenue sur Practice-BR ! 👋</strong><br><br>Faisons un rapide tour de la plateforme.',
-    metrics:  'Ici vous suivez vos progrès : jours consécutifs 🔥, activités terminées et votre dernière note.',
-    continue: 'Votre prochaine activité suggérée apparaît ici. Cliquez pour commencer quand vous êtes prêt(e) !',
-    levels:   'Explorez les activités organisées par niveau — du A1 au C1. Cliquez sur un niveau pour voir ce qui est disponible.',
-    avatar:   'Votre menu se trouve ici — pour vous déconnecter ou voir vos informations.'
+    skip:            'Passer',
+    start:           'Commencer →',
+    next:            'Suivant →',
+    finish:          'Terminer ✓',
+    welcome:         '<strong>Bienvenue sur Practice-BR ! 👋</strong><br><br>Faisons un rapide tour de la plateforme.',
+    metrics:         'Ici vous suivez vos progrès : jours consécutifs 🔥, activités terminées et votre dernière note.',
+    continue:        'Votre prochaine activité suggérée apparaît ici. Cliquez pour commencer quand vous êtes prêt(e) !',
+    levels:          'Explorez les activités organisées par niveau — du A1 au C1. Cliquez sur un niveau pour voir ce qui est disponible.',
+    avatar:          'Votre menu se trouve ici — pour vous déconnecter ou voir vos informations.',
+    install_android: '📲 <strong>Installez l\'application !</strong><br><br>Appuyez sur le menu <strong>⋮</strong> de Chrome puis choisissez <strong>« Ajouter à l\'écran d\'accueil »</strong> pour un accès rapide.',
+    install_ios:     '📲 <strong>Installez l\'application !</strong><br><br>Appuyez sur <strong>□↑</strong> dans Safari puis choisissez <strong>« Sur l\'écran d\'accueil »</strong> pour un accès rapide.'
   },
   en: {
-    skip:     'Skip',
-    start:    'Start →',
-    next:     'Next →',
-    finish:   'Finish ✓',
-    welcome:  '<strong>Welcome to Practice-BR! 👋</strong><br><br>Let\'s take a quick tour of the platform.',
-    metrics:  'Track your progress here: study streak 🔥, completed activities and your latest score.',
-    continue: 'Your next suggested activity appears here. Click to start when you\'re ready!',
-    levels:   'Explore activities organised by level — from A1 to C1. Click any level to see what\'s available.',
-    avatar:   'Your menu is up here — to sign out or view your account.'
+    skip:            'Skip',
+    start:           'Start →',
+    next:            'Next →',
+    finish:          'Finish ✓',
+    welcome:         '<strong>Welcome to Practice-BR! 👋</strong><br><br>Let\'s take a quick tour of the platform.',
+    metrics:         'Track your progress here: study streak 🔥, completed activities and your latest score.',
+    continue:        'Your next suggested activity appears here. Click to start when you\'re ready!',
+    levels:          'Explore activities organised by level — from A1 to C1. Click any level to see what\'s available.',
+    avatar:          'Your menu is up here — to sign out or view your account.',
+    install_android: '📲 <strong>Install the app!</strong><br><br>Tap the <strong>⋮</strong> menu in Chrome and choose <strong>"Add to Home Screen"</strong> for quick access.',
+    install_ios:     '📲 <strong>Install the app!</strong><br><br>Tap <strong>□↑</strong> in Safari and choose <strong>"Add to Home Screen"</strong> for quick access.'
   },
   pt: {
-    skip:     'Pular',
-    start:    'Começar →',
-    next:     'Próximo →',
-    finish:   'Concluir ✓',
-    welcome:  '<strong>Seja bem-vinda à Practice-BR! 👋</strong><br><br>Vamos fazer um tour rápido para você conhecer a plataforma.',
-    metrics:  'Aqui você acompanha seu progresso: sequência de estudos 🔥, atividades concluídas e sua última nota.',
-    continue: 'Sua próxima atividade sugerida aparece aqui. Clique para começar quando estiver pronto(a)!',
-    levels:   'Explore atividades organizadas por nível — do A1 ao C1. Clique em qualquer nível para ver o que está disponível.',
-    avatar:   'Seu menu fica aqui em cima — para sair da conta ou ver suas informações.'
+    skip:            'Pular',
+    start:           'Começar →',
+    next:            'Próximo →',
+    finish:          'Concluir ✓',
+    welcome:         '<strong>Seja bem-vinda à Practice-BR! 👋</strong><br><br>Vamos fazer um tour rápido para você conhecer a plataforma.',
+    metrics:         'Aqui você acompanha seu progresso: sequência de estudos 🔥, atividades concluídas e sua última nota.',
+    continue:        'Sua próxima atividade sugerida aparece aqui. Clique para começar quando estiver pronto(a)!',
+    levels:          'Explore atividades organizadas por nível — do A1 ao C1. Clique em qualquer nível para ver o que está disponível.',
+    avatar:          'Seu menu fica aqui em cima — para sair da conta ou ver suas informações.',
+    install_android: '📲 <strong>Instale o app!</strong><br><br>Toque no menu <strong>⋮</strong> do Chrome e escolha <strong>"Adicionar à tela inicial"</strong> para acesso rápido.',
+    install_ios:     '📲 <strong>Instale o app!</strong><br><br>Toque em <strong>□↑</strong> no Safari e escolha <strong>"Adicionar à tela de início"</strong> para acesso rápido.'
   }
+}
+
+function detectLang() {
+  const lang = (navigator.language || 'pt').toLowerCase()
+  if (lang.startsWith('fr')) return 'fr'
+  if (lang.startsWith('en')) return 'en'
+  return 'pt'
+}
+
+function detectMobileOS() {
+  if (window.matchMedia('(display-mode: standalone)').matches) return null
+  const ua = navigator.userAgent
+  if (/android/i.test(ua)) return 'android'
+  if (/iPad|iPhone|iPod/.test(ua)) return 'ios'
+  return null
 }
 
 function detectLang() {
@@ -96,6 +117,15 @@ function initOnboardingTour() {
       id: 'levels',
       attachTo: { element: '#tour-levels', on: 'top' },
       text: t.levels,
+      buttons: [{ text: t.next, action: () => tour.next() }]
+    })
+  }
+
+  const mobileOS = detectMobileOS()
+  if (mobileOS) {
+    tour.addStep({
+      id: 'install',
+      text: mobileOS === 'ios' ? t.install_ios : t.install_android,
       buttons: [{ text: t.next, action: () => tour.next() }]
     })
   }
