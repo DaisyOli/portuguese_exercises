@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
+</head>
+<body style="margin:0; padding:0; background:#F7F5F0; font-family:'Helvetica Neue',Arial,sans-serif;">
+
+  <table width="100%" cellpadding="0" cellspacing="0" style="background:#F7F5F0; padding:40px 16px;">
+    <tr>
+      <td align="center">
+        <table width="560" cellpadding="0" cellspacing="0" style="background:#fff; border-radius:16px; border:1px solid #DDD9D2; overflow:hidden;">
+
+          <tr>
+            <td style="background:#7C2D12; padding:28px 36px;">
+              <div style="font-size:0.75rem; font-weight:700; color:rgba(255,255,255,0.6); letter-spacing:0.1em; text-transform:uppercase; margin-bottom:6px;">
+                Practice-BR · Agente de Conteúdo
+              </div>
+              <div style="font-size:1.3rem; font-weight:800; color:#fff; letter-spacing:-0.02em;">
+                ⚠️ Falha ao gerar atividade <%= @level %>
+              </div>
+            </td>
+          </tr>
+
+          <tr>
+            <td style="padding:32px 36px 24px;">
+
+              <p style="font-size:0.95rem; color:#1C1917; margin:0 0 20px;">
+                O agente tentou gerar uma atividade de nível <strong><%= @level %></strong> hoje, mas encontrou um problema.
+              </p>
+
+              <table cellpadding="0" cellspacing="0" width="100%" style="background:#FEF2F2; border-radius:10px; padding:16px 20px; margin-bottom:28px; border:1px solid #FECACA;">
+                <tr>
+                  <td>
+                    <span style="font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:#B91C1C;">Tipo de erro</span><br>
+                    <span style="font-size:0.9rem; color:#7F1D1D; font-family:monospace;"><%= @error_key %></span>
+                  </td>
+                </tr>
+              </table>
+
+              <p style="font-size:0.85rem; color:#5C5853; margin:0 0 24px;">
+                Você pode gerar a atividade manualmente clicando no botão abaixo.
+                O problema costuma ser temporário (limite de requisições ou instabilidade da API).
+              </p>
+
+              <table cellpadding="0" cellspacing="0" width="100%">
+                <tr>
+                  <td align="center">
+                    <a href="<%= @generate_url %>"
+                       style="display:inline-block; background:#C9952A; color:#fff; font-weight:700; font-size:0.95rem; text-decoration:none; padding:14px 36px; border-radius:10px;">
+                      Gerar manualmente →
+                    </a>
+                  </td>
+                </tr>
+              </table>
+
+            </td>
+          </tr>
+
+          <tr>
+            <td style="background:#F7F5F0; border-top:1px solid #EAE7E2; padding:18px 36px; text-align:center;">
+              <p style="font-size:0.75rem; color:#9C9892; margin:0;">
+                © Practice-BR · Notificação automática do agente de conteúdo.
+              </p>
+            </td>
+          </tr>
+
+        </table>
+      </td>
+    </tr>
+  </table>
+
+</body>
+</html>

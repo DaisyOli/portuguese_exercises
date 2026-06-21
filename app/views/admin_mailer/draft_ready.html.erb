@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
+</head>
+<body style="margin:0; padding:0; background:#F7F5F0; font-family:'Helvetica Neue',Arial,sans-serif;">
+
+  <table width="100%" cellpadding="0" cellspacing="0" style="background:#F7F5F0; padding:40px 16px;">
+    <tr>
+      <td align="center">
+        <table width="560" cellpadding="0" cellspacing="0" style="background:#fff; border-radius:16px; border:1px solid #DDD9D2; overflow:hidden;">
+
+          <tr>
+            <td style="background:#0F3826; padding:28px 36px;">
+              <div style="font-size:0.75rem; font-weight:700; color:rgba(255,255,255,0.6); letter-spacing:0.1em; text-transform:uppercase; margin-bottom:6px;">
+                Practice-BR · Agente de Conteúdo
+              </div>
+              <div style="font-size:1.3rem; font-weight:800; color:#fff; letter-spacing:-0.02em;">
+                ✅ Nova atividade pronta para revisão
+              </div>
+            </td>
+          </tr>
+
+          <tr>
+            <td style="padding:32px 36px 24px;">
+
+              <table cellpadding="0" cellspacing="0" width="100%" style="background:#F0F7F4; border-radius:12px; padding:20px 24px; margin-bottom:28px;">
+                <tr>
+                  <td style="padding:5px 0;">
+                    <span style="font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:#9C9892;">Título</span><br>
+                    <span style="font-size:1rem; font-weight:700; color:#1C1917;"><%= @activity.title %></span>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding:10px 0 5px; border-top:1px solid #DDD9D2;">
+                    <span style="font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:#9C9892;">Nível</span><br>
+                    <span style="font-size:0.95rem; font-weight:700; color:#1A6B4A;"><%= @activity.level %></span>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding:10px 0 5px; border-top:1px solid #DDD9D2;">
+                    <span style="font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:#9C9892;">Exercícios gerados</span><br>
+                    <span style="font-size:0.95rem; color:#1C1917;"><%= @exercise_count %> exercício<%= @exercise_count == 1 ? '' : 's' %></span>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding:10px 0 5px; border-top:1px solid #DDD9D2;">
+                    <span style="font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:#9C9892;">Gerado em</span><br>
+                    <span style="font-size:0.85rem; color:#5C5853;"><%= @activity.created_at.strftime("%d/%m/%Y às %H:%M") %></span>
+                  </td>
+                </tr>
+              </table>
+
+              <table cellpadding="0" cellspacing="0" width="100%">
+                <tr>
+                  <td align="center">
+                    <a href="<%= @review_url %>"
+                       style="display:inline-block; background:#1A6B4A; color:#fff; font-weight:700; font-size:0.95rem; text-decoration:none; padding:14px 36px; border-radius:10px;">
+                      Revisar atividade →
+                    </a>
+                  </td>
+                </tr>
+              </table>
+
+              <p style="font-size:0.8rem; color:#9C9892; text-align:center; margin:20px 0 0;">
+                A atividade está salva como rascunho. Só aparece para alunos após você publicar.
+              </p>
+            </td>
+          </tr>
+
+          <tr>
+            <td style="background:#F7F5F0; border-top:1px solid #EAE7E2; padding:18px 36px; text-align:center;">
+              <p style="font-size:0.75rem; color:#9C9892; margin:0;">
+                © Practice-BR · Gerado automaticamente pelo agente de conteúdo.
+              </p>
+            </td>
+          </tr>
+
+        </table>
+      </td>
+    </tr>
+  </table>
+
+</body>
+</html>
