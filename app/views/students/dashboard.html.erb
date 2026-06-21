@@ -330,7 +330,7 @@
             <div class="continue-card-bottom">
               <span style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.77rem; color:#9C9892; display:flex; align-items:center; gap:4px; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">
                 <i class="bi bi-person" style="flex-shrink:0;"></i>
-                Prof. <%= continue_activity.teacher&.name %>
+                Prof. <%= continue_activity.teacher&.display_name %>
               </span>
               <%= link_to solve_activity_path(continue_activity),
                     style: "flex-shrink:0; background:#0F3826; color:#fff; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.85rem; font-weight:700; padding:9px 20px; border-radius:10px; text-decoration:none; white-space:nowrap;" do %>

@@ -68,7 +68,7 @@
 
       <div style="display:flex; align-items:center; justify-content:space-between; gap:10px; padding-top:12px; border-top:1px solid #F0EDE8;">
         <span style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.77rem; color:#9C9892; display:flex; align-items:center; gap:4px; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">
-          <i class="bi bi-person" style="flex-shrink:0;"></i> Prof. <%= activity.teacher&.name %>
+          <i class="bi bi-person" style="flex-shrink:0;"></i> Prof. <%= activity.teacher&.display_name %>
         </span>
         <%= link_to solve_activity_path(activity),
               style: "flex-shrink:0; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.85rem; font-weight:700; padding:9px 20px; border-radius:10px; text-decoration:none; display:inline-flex; align-items:center; gap:6px; #{completed ? 'background:#F7F5F0; color:#5C5853; border:1.5px solid #DDD9D2;' : "background:#{m[:border]}; color:#fff;"}" do %>
