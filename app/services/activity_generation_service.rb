@@ -20,7 +20,8 @@ class ActivityGenerationService
       "title": "Título da atividade (3-8 palavras)",
       "description": "1-2 frases descrevendo o que o aluno vai praticar",
       "level": "A1",
-      "statement": "(OPCIONAL) Texto ou diálogo que aparece ANTES dos exercícios. Omita este campo se não houver.",
+      "explanation_text": "(OPCIONAL) O texto principal da atividade — diálogo, artigo, trecho literário, receita, etc. É o conteúdo que o aluno vai ler e consultar para responder os exercícios. Omita se não houver texto de base.",
+      "statement": "(OPCIONAL) Instrução curta que aparece logo antes dos exercícios. Máx. 2 frases. Ex: 'Leia o diálogo acima e responda as questões.' Omita se não houver instrução específica.",
       "exercises": [ ... ]
     }
 
@@ -272,13 +273,14 @@ class ActivityGenerationService
 
     ActiveRecord::Base.transaction do
       activity = Activity.new(
-        title:        data["title"],
-        description:  data["description"],
-        level:        data["level"],
-        statement:    data["statement"].presence,
-        teacher:      @teacher,
-        draft:        true,
-        ai_generated: true
+        title:            data["title"],
+        description:      data["description"],
+        level:            data["level"],
+        explanation_text: data["explanation_text"].presence,
+        statement:        data["statement"].presence,
+        teacher:          @teacher,
+        draft:            true,
+        ai_generated:     true
       )
 
       unless activity.save
