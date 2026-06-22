@@ -244,7 +244,7 @@ class ActivityGenerationService
   def call_api
     message = @client.messages.create(
       model: "claude-haiku-4-5-20251001",
-      max_tokens: 2000,
+      max_tokens: 3500,
       system: SYSTEM_PROMPT,
       messages: [{ role: "user", content: @prompt }]
     )
@@ -255,7 +255,11 @@ class ActivityGenerationService
   end
 
   def strip_markdown(text)
-    text.gsub(/\A```(?:json)?\s*/i, '').gsub(/\s*```\z/, '').strip
+    text = text.gsub(/\A```(?:json)?\s*/i, '').gsub(/\s*```\z/, '').strip
+    start_idx = text.index('{')
+    end_idx   = text.rindex('}')
+    return text unless start_idx && end_idx && start_idx < end_idx
+    text[start_idx..end_idx]
   end
 
   def parse_json(text)
