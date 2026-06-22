@@ -27,8 +27,9 @@ namespace :activities do
         break
       end
 
-      prompt = ActivityPromptTemplates.pick(level)
-      Rails.logger.info "[ActivityAgent] Nível: #{level} | Prompt: #{prompt[0..80]}..."
+      existing_count = Activity.where(teacher: teacher, ai_generated: true, level: level).count
+      prompt = ActivityPromptTemplates.pick(level, existing_count: existing_count)
+      Rails.logger.info "[ActivityAgent] Nível: #{level} (existing: #{existing_count}) | Prompt: #{prompt[0..80]}..."
 
       result = ActivityGenerationService.new(prompt: prompt, teacher: teacher).call
 
