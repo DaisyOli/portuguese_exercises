@@ -146,24 +146,36 @@
 </div>
 
 <script>
-  function scrollToElement() {
-    let elemento = null;
+  (function() {
+    var targetId = null;
     <% if params[:ultimo_id].present? %>
-      elemento = document.getElementById('question-<%= params[:ultimo_id] %>');
+      targetId = 'question-<%= params[:ultimo_id] %>';
+    <% elsif params[:ultimo_conteudo].present? %>
+      <% if params[:ultimo_conteudo] == 'suggestion' %>
+        targetId = '__suggestion_last__';
+      <% else %>
+        targetId = '<%= params[:ultimo_conteudo] %>';
+      <% end %>
     <% end %>
-    <% if params[:ultimo_conteudo].present? %>
-      if ('<%= params[:ultimo_conteudo] %>' === 'suggestion') {
-        elemento = document.querySelector('#suggestions-section .card:last-child');
-      } else {
-        elemento = document.getElementById('<%= params[:ultimo_conteudo] %>');
-      }
-    <% end %>
-    if (!elemento) return;
-    window.scrollTo(0, elemento.offsetTop - 100);
-    elemento.style.transition = 'box-shadow 0.3s';
-    elemento.style.boxShadow = '0 0 0 3px rgba(201,149,42,0.35)';
-    setTimeout(function() { elemento.style.boxShadow = ''; }, 2000);
-  }
-  scrollToElement();
-  setTimeout(scrollToElement, 500);
+
+    if (!targetId) return;
+
+    function highlight(el) {
+      el.style.transition = 'box-shadow 0.3s';
+      el.style.boxShadow  = '0 0 0 3px rgba(201,149,42,0.35)';
+      setTimeout(function() { el.style.boxShadow = ''; }, 2000);
+    }
+
+    function scrollOnce() {
+      var el = targetId === '__suggestion_last__'
+        ? document.querySelector('#suggestions-section .card:last-child')
+        : document.getElementById(targetId);
+      if (!el) return;
+      el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      highlight(el);
+    }
+
+    // Espera o layout estabilizar (Quill e outros scripts do card terminarem)
+    setTimeout(scrollOnce, 300);
+  })();
 </script>
