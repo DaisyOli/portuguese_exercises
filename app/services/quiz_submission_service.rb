@@ -249,7 +249,7 @@ class QuizSubmissionService
     message = client.messages.create(
       model: :"claude-haiku-4-5",
       max_tokens: 256,
-      system_: AI_CORRECTION_SYSTEM,
+      system: AI_CORRECTION_SYSTEM,
       messages: [{
         role: "user",
         content: "Questão: #{ActionView::Base.full_sanitizer.sanitize(question.content.to_s)}\n#{rubric_line}Resposta do aluno: #{given_answer.to_s.strip}"
