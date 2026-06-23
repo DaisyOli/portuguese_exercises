@@ -12,9 +12,14 @@
       Para continuar aprendendo português, fale com um professor da Practice-BR.
     </p>
 
+    <%= link_to billing_new_path,
+          class: "btn btn-lg w-full mb-3",
+          style: "background:#1A6B4A; color:#fff; border-color:#1A6B4A; font-weight:700;" do %>
+      Assinar agora — €9,99/mês
+    <% end %>
+
     <a href="mailto:contato@practicebr.com?subject=Quero%20continuar%20aprendendo%20-%20Practice-BR"
-       class="btn btn-lg w-full mb-4"
-       style="background:#1A6B4A; color:#fff; border-color:#1A6B4A;">
+       class="btn btn-outline btn-sm w-full mb-4">
       Falar com um professor
     </a>
 

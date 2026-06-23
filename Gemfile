@@ -23,6 +23,7 @@ gem "pg"
 
 # CORS para o endpoint público de trial (aceita requisições da landing page)
 gem "rack-cors"
+gem "stripe", "~> 13.0"
 
 # Use the Puma web server [https://github.com/puma/puma]
 gem "puma", ">= 5.0"

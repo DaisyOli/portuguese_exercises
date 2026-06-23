@@ -1,6 +1,11 @@
 require "net/http"
 require "json"
 
+# Integração com YouTube Data API v3.
+# Código deployado mas INATIVO por decisão da Daisy (junho/2026) — evitar custos da API.
+# Para ativar: criar chave em console.cloud.google.com → YouTube Data API v3
+# e rodar: heroku config:set YOUTUBE_API_KEY=...
+# Sem a chave, o serviço retorna nil e a atividade é salva normalmente sem vídeo.
 class YoutubeSearchService
   API_BASE = "https://www.googleapis.com/youtube/v3/search".freeze
 
