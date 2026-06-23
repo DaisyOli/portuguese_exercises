@@ -10,9 +10,7 @@ class InvitationsController < Devise::InvitationsController
   end
 
   def after_accept_path_for(resource)
-    return teacher_dashboard_path if resource.teacher?
-    return billing_new_path       if resource.trial?
-    student_dashboard_path
+    resource.teacher? ? teacher_dashboard_path : student_dashboard_path
   end
 
   protected
