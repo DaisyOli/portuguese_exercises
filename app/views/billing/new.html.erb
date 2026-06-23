@@ -1,84 +1,75 @@
 <% content_for :head do %>
-  <title>Ativar acesso · Practice-BR</title>
+  <title>Practice-BR · Ativar acesso</title>
 <% end %>
 
 <div style="min-height:100vh; display:flex; align-items:center; justify-content:center; background:#F7F5F0; padding:2rem 1rem;">
   <div style="max-width:480px; width:100%;">
 
-    <%# Logo / título %>
+    <%# Logo %>
     <div style="text-align:center; margin-bottom:2rem;">
-      <div style="font-family:'Raleway',sans-serif; font-size:1.6rem; font-weight:800; color:#1A6B4A; margin-bottom:6px;">
-        Practice-BR
-      </div>
-      <p style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.95rem; color:#5C5853;">
-        Ative seu acesso para começar a aprender
-      </p>
+      <%= image_tag "practice-br-logo-horizontal-color.svg",
+            alt: "Practice-BR",
+            style: "height:48px; width:auto;" %>
     </div>
 
-    <%# Card de planos %>
+    <%# Card %>
     <div style="background:#fff; border:1px solid #DDD9D2; border-radius:20px; overflow:hidden; box-shadow:0 4px 24px rgba(0,0,0,0.06);">
 
-      <%# Header %>
+      <%# Header verde %>
       <div style="background:linear-gradient(135deg,#1A6B4A 0%,#0F3826 100%); padding:28px 32px; color:#fff;">
-        <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.75rem; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; opacity:0.7; margin-bottom:8px;">
+        <div class="billing-label" style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.75rem; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; opacity:0.7; margin-bottom:8px;">
           Acesso completo
         </div>
-        <div style="font-family:'Raleway',sans-serif; font-size:1.1rem; font-weight:700;">
-          Practice-BR — Estudante
+        <div style="font-family:'Raleway',sans-serif; font-size:1.1rem; font-weight:700; margin-bottom:16px;" class="billing-title">
+          Ative seu acesso para começar
         </div>
-        <ul style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.85rem; opacity:0.9; margin:16px 0 0; padding:0; list-style:none; display:flex; flex-direction:column; gap:6px;">
-          <li>✓ Todas as atividades do seu nível</li>
-          <li>✓ Correção automática por IA</li>
-          <li>✓ Acompanhamento do professor</li>
-          <li>✓ Cancele quando quiser</li>
+        <ul style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.87rem; opacity:0.92; margin:0; padding:0; list-style:none; display:flex; flex-direction:column; gap:8px;">
+          <li class="billing-f1">✓ Todas as atividades até o seu nível</li>
+          <li class="billing-f2">✓ Correção automática por IA</li>
+          <li class="billing-f3">✓ Conteúdo produzido por professores reais</li>
+          <li class="billing-f4">✓ Cancele quando quiser</li>
         </ul>
       </div>
 
-      <%# Opções de plano %>
+      <%# Planos %>
       <div style="padding:24px 32px; display:flex; flex-direction:column; gap:12px;">
 
-        <%# Plano mensal %>
+        <%# Mensal %>
         <%= form_with url: billing_checkout_path, method: :post, local: true do |f| %>
           <%= hidden_field_tag :plan, "monthly" %>
-          <button type="submit" style="width:100%; background:#fff; border:2px solid #DDD9D2; border-radius:14px; padding:16px 20px; cursor:pointer; text-align:left; transition:border-color 0.2s;"
+          <button type="submit"
+                  style="width:100%; background:#fff; border:2px solid #DDD9D2; border-radius:14px; padding:16px 20px; cursor:pointer; text-align:left;"
                   onmouseover="this.style.borderColor='#1A6B4A'" onmouseout="this.style.borderColor='#DDD9D2'">
             <div style="display:flex; align-items:center; justify-content:space-between;">
               <div>
-                <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.9rem; font-weight:700; color:#1C1917;">
-                  Mensal
-                </div>
-                <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.78rem; color:#9C9892; margin-top:2px;">
-                  Renovação automática a cada mês
-                </div>
+                <div class="billing-monthly-label" style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.9rem; font-weight:700; color:#1C1917;">Mensal</div>
+                <div class="billing-monthly-sub" style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.78rem; color:#9C9892; margin-top:2px;">Renovação automática a cada mês</div>
               </div>
-              <div style="text-align:right;">
+              <div style="text-align:right; flex-shrink:0;">
                 <div style="font-family:'Raleway',sans-serif; font-size:1.4rem; font-weight:800; color:#1C1917;">€9,99</div>
-                <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.72rem; color:#9C9892;">por mês</div>
+                <div class="billing-per-month" style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.72rem; color:#9C9892;">por mês</div>
               </div>
             </div>
           </button>
         <% end %>
 
-        <%# Plano anual %>
+        <%# Anual %>
         <%= form_with url: billing_checkout_path, method: :post, local: true do |f| %>
           <%= hidden_field_tag :plan, "annual" %>
-          <button type="submit" style="width:100%; background:#F0FAF4; border:2px solid #2A9B6F; border-radius:14px; padding:16px 20px; cursor:pointer; text-align:left; position:relative; transition:border-color 0.2s;"
+          <button type="submit"
+                  style="width:100%; background:#F0FAF4; border:2px solid #2A9B6F; border-radius:14px; padding:16px 20px; cursor:pointer; text-align:left; position:relative;"
                   onmouseover="this.style.borderColor='#1A6B4A'" onmouseout="this.style.borderColor='#2A9B6F'">
-            <div style="position:absolute; top:-10px; right:16px; background:#C9952A; color:#fff; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.68rem; font-weight:700; padding:3px 10px; border-radius:20px; letter-spacing:0.04em;">
-              ECONOMIA DE 25%
+            <div class="billing-badge" style="position:absolute; top:-10px; right:16px; background:#C9952A; color:#fff; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.68rem; font-weight:700; padding:3px 10px; border-radius:20px; letter-spacing:0.04em;">
+              ÉCONOMIE 25%
             </div>
             <div style="display:flex; align-items:center; justify-content:space-between;">
               <div>
-                <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.9rem; font-weight:700; color:#1C1917;">
-                  Anual
-                </div>
-                <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.78rem; color:#5C5853; margin-top:2px;">
-                  Equivale a €7,49/mês
-                </div>
+                <div class="billing-annual-label" style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.9rem; font-weight:700; color:#1C1917;">Anual</div>
+                <div class="billing-annual-sub" style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.78rem; color:#5C5853; margin-top:2px;">Equivale a €7,49/mês</div>
               </div>
-              <div style="text-align:right;">
+              <div style="text-align:right; flex-shrink:0;">
                 <div style="font-family:'Raleway',sans-serif; font-size:1.4rem; font-weight:800; color:#1A6B4A;">€89,90</div>
-                <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.72rem; color:#9C9892;">por ano</div>
+                <div class="billing-per-year" style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.72rem; color:#9C9892;">por ano</div>
               </div>
             </div>
           </button>
@@ -86,11 +77,8 @@
 
       </div>
 
-      <%# Rodapé %>
-      <div style="padding:0 32px 24px; text-align:center;">
-        <p style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.75rem; color:#9C9892; margin:0;">
-          Pagamento seguro via Stripe &nbsp;·&nbsp; Cancele a qualquer momento &nbsp;·&nbsp; Sem taxas ocultas
-        </p>
+      <div class="billing-footer" style="padding:0 32px 24px; text-align:center; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.75rem; color:#9C9892;">
+        Pagamento seguro via Stripe · Cancele a qualquer momento · Sem taxas ocultas
       </div>
     </div>
 
@@ -101,3 +89,82 @@
 
   </div>
 </div>
+
+<script>
+(function() {
+  const lang = (navigator.language || navigator.userLanguage || 'pt').toLowerCase().substring(0, 2);
+
+  const t = {
+    fr: {
+      label:        "Accès complet",
+      title:        "Activez votre accès pour commencer",
+      f1:           "✓ Toutes les activités jusqu'à votre niveau",
+      f2:           "✓ Correction automatique par IA",
+      f3:           "✓ Contenu créé par de vrais professeurs",
+      f4:           "✓ Annulez quand vous voulez",
+      monthlyLabel: "Mensuel",
+      monthlySub:   "Renouvellement automatique chaque mois",
+      perMonth:     "par mois",
+      annualLabel:  "Annuel",
+      annualSub:    "Équivaut à €7,49/mois",
+      perYear:      "par an",
+      badge:        "ÉCONOMIE 25%",
+      footer:       "Paiement sécurisé via Stripe · Annulez à tout moment · Sans frais cachés"
+    },
+    en: {
+      label:        "Full access",
+      title:        "Activate your access to start learning",
+      f1:           "✓ All activities up to your level",
+      f2:           "✓ Automatic AI correction",
+      f3:           "✓ Content created by real teachers",
+      f4:           "✓ Cancel anytime",
+      monthlyLabel: "Monthly",
+      monthlySub:   "Automatic renewal each month",
+      perMonth:     "per month",
+      annualLabel:  "Annual",
+      annualSub:    "Equivalent to €7.49/month",
+      perYear:      "per year",
+      badge:        "SAVE 25%",
+      footer:       "Secure payment via Stripe · Cancel anytime · No hidden fees"
+    },
+    pt: {
+      label:        "Acesso completo",
+      title:        "Ative seu acesso para começar",
+      f1:           "✓ Todas as atividades até o seu nível",
+      f2:           "✓ Correção automática por IA",
+      f3:           "✓ Conteúdo produzido por professores reais",
+      f4:           "✓ Cancele quando quiser",
+      monthlyLabel: "Mensal",
+      monthlySub:   "Renovação automática a cada mês",
+      perMonth:     "por mês",
+      annualLabel:  "Anual",
+      annualSub:    "Equivale a €7,49/mês",
+      perYear:      "por ano",
+      badge:        "ECONOMIA 25%",
+      footer:       "Pagamento seguro via Stripe · Cancele a qualquer momento · Sem taxas ocultas"
+    }
+  };
+
+  const d = t[lang] || t['fr'];
+
+  function setText(cls, text) {
+    var els = document.querySelectorAll('.' + cls);
+    els.forEach(function(el) { el.textContent = text; });
+  }
+
+  setText('billing-label',        d.label);
+  setText('billing-title',        d.title);
+  setText('billing-f1',           d.f1);
+  setText('billing-f2',           d.f2);
+  setText('billing-f3',           d.f3);
+  setText('billing-f4',           d.f4);
+  setText('billing-monthly-label',d.monthlyLabel);
+  setText('billing-monthly-sub',  d.monthlySub);
+  setText('billing-per-month',    d.perMonth);
+  setText('billing-annual-label', d.annualLabel);
+  setText('billing-annual-sub',   d.annualSub);
+  setText('billing-per-year',     d.perYear);
+  setText('billing-badge',        d.badge);
+  setText('billing-footer',       d.footer);
+})();
+</script>
