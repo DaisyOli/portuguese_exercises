@@ -14,7 +14,7 @@ namespace :activities do
       Rails.logger.info "[ActivityAgent] Gerando #{i + 1}/#{count}..."
 
       target = { "A1" => 30, "A2" => 30, "B1" => 30, "B2" => 20 }
-      current = Activity.where(teacher: teacher, ai_generated: true, draft: false).group(:level).count
+      current = Activity.where(teacher: teacher, ai_generated: true).group(:level).count
 
       level = target
         .map    { |lvl, goal| [lvl, goal - current.fetch(lvl, 0)] }

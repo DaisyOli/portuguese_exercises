@@ -28,12 +28,19 @@
       </p>
     </div>
 
-    <%= form_with url: admin_generate_draft_path, method: :post, local: true do |f| %>
+    <%= form_with url: admin_generate_draft_path, method: :post, local: true,
+          style: "display:flex; align-items:center; gap:8px; flex-wrap:wrap;" do |f| %>
+      <%= f.select :level,
+            [["Nível automático", ""]] + %w[A1 A2 B1 B2].map { |l| [l, l] },
+            {},
+            style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.85rem; font-weight:600;
+                    border:1.5px solid #DDD9D2; border-radius:10px; padding:10px 14px; background:#fff;
+                    color:#1C1917; cursor:pointer;" %>
       <button type="submit"
               style="background:#1A6B4A; color:#fff; font-family:'Plus Jakarta Sans',sans-serif; font-weight:700;
                      font-size:0.88rem; border:none; border-radius:10px; padding:12px 24px; cursor:pointer;
                      display:inline-flex; align-items:center; gap:8px;"
-              data-confirm="Vai chamar a IA agora. Pode levar até 30 segundos. Continuar?">
+              data-turbo-confirm="Vai chamar a IA agora. Pode levar até 30 segundos. Continuar?">
         ✨ Gerar 1 agora
       </button>
     <% end %>
