@@ -32,7 +32,12 @@ class Admin::DraftsController < Admin::BaseController
     result = ActivityGenerationService.new(prompt: prompt, teacher: teacher).call
 
     if result[:success]
-      redirect_to admin_drafts_path, notice: "✅ '#{result[:activity].title}' (#{level}) gerada e aguardando revisão."
+      activity = result[:activity]
+      if (query = result[:search_query])
+        video_url = YoutubeSearchService.new(query: query).call
+        activity.update_column(:video_url, video_url) if video_url
+      end
+      redirect_to admin_drafts_path, notice: "✅ '#{activity.title}' (#{level}) gerada e aguardando revisão."
     else
       redirect_to admin_drafts_path, alert: "❌ Falha ao gerar (#{result[:error]}). Tente novamente."
     end

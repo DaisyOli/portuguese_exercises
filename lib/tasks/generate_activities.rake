@@ -35,6 +35,15 @@ namespace :activities do
 
       if result[:success]
         activity = result[:activity]
+
+        if (query = result[:search_query])
+          video_url = YoutubeSearchService.new(query: query).call
+          if video_url
+            activity.update_column(:video_url, video_url)
+            Rails.logger.info "[ActivityAgent] 📺 Vídeo associado: #{video_url}"
+          end
+        end
+
         Rails.logger.info "[ActivityAgent] ✅ '#{activity.title}'"
         AdminMailer.draft_ready(activity).deliver_now
       else
