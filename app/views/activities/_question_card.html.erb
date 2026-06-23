@@ -76,7 +76,14 @@
     <% end %>
 
     <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.78rem; font-weight:600; color:#1A6B4A;">
-      ✓ <%= t('questions.correct_answer') %>: <%= question.correct_answer %>
+      <% all_answers = question.fill_in_blank? ? question.all_correct_answers.reject(&:blank?) : [] %>
+      <% if all_answers.length > 1 %>
+        <% all_answers.each_with_index do |ans, i| %>
+          ✓ Lacuna <%= i + 1 %>: <%= ans %><% unless i == all_answers.length - 1 %> &nbsp;·&nbsp;<% end %>
+        <% end %>
+      <% else %>
+        ✓ <%= t('questions.correct_answer') %>: <%= question.correct_answer %>
+      <% end %>
     </div>
   </div>
 
@@ -125,10 +132,36 @@
             </div>
           </div>
 
-          <div class="row mb-3" data-question-selector-target="correctAnswer">
+          <%# Resposta única — multiple_choice %>
+          <div class="row mb-3" data-question-selector-target="correctAnswer"
+               style="display:<%= question.fill_in_blank? ? 'none' : 'block' %>;">
             <div class="col-md-12">
               <%= form.label :correct_answer, t('questions.form.correct_answer') %>
               <%= form.text_field :correct_answer, class: "form-control" %>
+            </div>
+          </div>
+
+          <%# Respostas múltiplas — fill_in_blank %>
+          <% fib_answers = question.fill_in_blank? ? question.all_correct_answers.reject(&:blank?) : [] %>
+          <% fib_count   = [fib_answers.length, 1].max %>
+          <div class="row mb-3 fill-in-blank-answers" data-question-selector-target="fillInBlankAnswers"
+               style="display:<%= question.fill_in_blank? ? 'block' : 'none' %>;">
+            <div class="col-md-12">
+              <label class="form-label">Respostas</label>
+              <% 4.times do |i| %>
+                <div class="fib-answer-field" data-blank-index="<%= i %>"
+                     style="margin-bottom:8px; display:<%= i < fib_count ? 'flex' : 'none' %>; align-items:center; gap:10px;">
+                  <span style="font-family:'DM Mono',monospace; font-size:0.72rem; font-weight:700; color:#1A6B4A; background:#E8F5EE; border:1px solid #2A9B6F; border-radius:6px; padding:3px 8px; flex-shrink:0; min-width:62px; text-align:center;">
+                    Lacuna <%= i + 1 %>
+                  </span>
+                  <input type="text"
+                         name="question[correct_answers][]"
+                         value="<%= fib_answers[i] %>"
+                         class="form-control"
+                         style="margin-bottom:0; flex:1;"
+                         placeholder="Resposta correta <%= i + 1 %>">
+                </div>
+              <% end %>
             </div>
           </div>
 

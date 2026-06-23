@@ -3,7 +3,7 @@ import { Controller } from "@hotwired/stimulus"
 // Controlador para gerenciar a seleção de tipos de questão
 export default class extends Controller {
   // Definir os targets
-  static targets = ["selector", "multipleChoice", "fillInBlank", "correctAnswer"]
+  static targets = ["selector", "multipleChoice", "fillInBlank", "correctAnswer", "fillInBlankAnswers"]
 
   // Conectar o controlador
   connect() {
@@ -51,20 +51,21 @@ export default class extends Controller {
   
   // Esconde todos os campos específicos
   hideAllFields() {
-    if (this.hasMultipleChoiceTarget) this.multipleChoiceTarget.style.display = "none"
-    if (this.hasFillInBlankTarget) this.fillInBlankTarget.style.display = "none"
-    
-    // Mostrar campo de resposta por padrão
-    if (this.hasCorrectAnswerTarget) this.correctAnswerTarget.style.display = "block"
+    if (this.hasMultipleChoiceTarget)    this.multipleChoiceTarget.style.display    = "none"
+    if (this.hasFillInBlankTarget)       this.fillInBlankTarget.style.display       = "none"
+    if (this.hasFillInBlankAnswersTarget) this.fillInBlankAnswersTarget.style.display = "none"
+    if (this.hasCorrectAnswerTarget)     this.correctAnswerTarget.style.display     = "block"
   }
-  
+
   // Mostra campos para múltipla escolha
   showMultipleChoiceFields() {
     if (this.hasMultipleChoiceTarget) this.multipleChoiceTarget.style.display = "block"
   }
-  
+
   // Mostra campos para preencher lacunas
   showFillInBlankFields() {
-    if (this.hasFillInBlankTarget) this.fillInBlankTarget.style.display = "block"
+    if (this.hasFillInBlankTarget)        this.fillInBlankTarget.style.display        = "block"
+    if (this.hasFillInBlankAnswersTarget) this.fillInBlankAnswersTarget.style.display = "block"
+    if (this.hasCorrectAnswerTarget)      this.correctAnswerTarget.style.display      = "none"
   }
 } 
