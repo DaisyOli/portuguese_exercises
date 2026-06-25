@@ -9,6 +9,8 @@ Rails.application.routes.draw do
   get 'teacher_dashboard', to: 'teachers#dashboard'
   get 'teachers/ratings/more', to: 'teachers#more_ratings', as: 'teacher_more_ratings'
   get    'teachers/students',                        to: 'teachers#students',              as: 'teacher_students'
+  get    'teachers/students/:id/activities',          to: 'teachers#student_activities',    as: 'teacher_student_activities'
+  get    'teachers/students/:id/written',             to: 'teachers#student_written',       as: 'teacher_student_written'
   get    'teachers/students/:id',                    to: 'teachers#student_profile',       as: 'teacher_student_profile'
   patch  'teachers/students/:id/level',              to: 'teachers#update_student_level',  as: 'teacher_student_level'
   delete 'teachers/students/:id',                    to: 'teachers#remove_student',        as: 'teacher_student_remove'

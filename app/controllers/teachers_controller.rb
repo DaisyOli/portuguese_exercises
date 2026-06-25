@@ -1,6 +1,6 @@
 class TeachersController < ApplicationController
   before_action :authenticate_user!, except: []
-  before_action :require_teacher!, only: [:students, :student_profile, :update_student_level, :remove_student, :clear_student_comments, :more_ratings]
+  before_action :require_teacher!, only: [:students, :student_profile, :student_activities, :student_written, :update_student_level, :remove_student, :clear_student_comments, :more_ratings]
 
   def dashboard
   end
@@ -54,28 +54,73 @@ class TeachersController < ApplicationController
 
   def student_profile
     @student = current_user.students.find(params[:id])
-    @attempts = QuizAttempt
+    scope = QuizAttempt
+      .joins(:activity)
+      .where(user_id: @student.id, activities: { teacher_id: current_user.id })
+
+    # Aggregate metrics via SQL — no full record load
+    @total_activities = scope.count
+    @avg_score        = scope.average(:score)&.round || 0
+    @best_score       = scope.maximum(:score)&.round || 0
+
+    activity_ids = current_user.activities.pluck(:id)
+    @days_active = QuizAttempt
+      .where(user_id: @student.id, activity_id: activity_ids)
+      .where("submitted_at >= ?", 30.days.ago)
+      .pluck(:submitted_at).map { |t| t.to_date }.uniq.count
+
+    # Load minimal fields to inspect JSONB columns for badges
+    loaded = scope.select(:id, :results, :teacher_comments).to_a
+    @pending_count = loaded.count { |a| a.open_ended_results.any? && a.teacher_comments.blank? }
+    @total_written = loaded.count { |a| a.open_ended_results.any? }
+    @has_comments  = loaded.any?  { |a| a.teacher_comments.present? }
+  rescue ActiveRecord::RecordNotFound
+    redirect_to teacher_students_path, alert: "Aluno não encontrado."
+  end
+
+  def student_activities
+    @student = current_user.students.find(params[:id])
+    offset   = params[:offset].to_i
+    attempts = QuizAttempt
       .joins(:activity)
       .where(user_id: @student.id, activities: { teacher_id: current_user.id })
       .includes(:activity)
       .order(submitted_at: :desc)
+      .offset(offset)
+      .limit(6)
 
-    activity_ids = current_user.activities.pluck(:id)
-    attempt_dates = QuizAttempt
-      .where(user_id: @student.id, activity_id: activity_ids)
-      .where("submitted_at >= ?", 30.days.ago)
-      .pluck(:submitted_at)
-      .map { |t| t.to_date }
-      .uniq
-    @days_active = attempt_dates.count
+    has_more = attempts.size == 6
+    html = attempts.first(5).map { |a|
+      render_to_string(partial: 'teachers/student_activity_row', locals: { attempt: a }, formats: [:html])
+    }.join
 
-    @avg_score  = @attempts.average(:score)&.round || 0
-    @best_score = @attempts.maximum(:score)&.round || 0
-
-    # Open-ended attempts awaiting teacher feedback (for the pending badge)
-    @pending_count = @attempts.count { |a| a.open_ended_results.any? && a.teacher_comments.blank? }
+    render json: { html: html, has_more: has_more, next_offset: offset + 5 }
   rescue ActiveRecord::RecordNotFound
-    redirect_to teacher_students_path, alert: "Aluno não encontrado."
+    render json: { html: '', has_more: false, next_offset: 0 }
+  end
+
+  def student_written
+    @student = current_user.students.find(params[:id])
+    offset   = params[:offset].to_i
+    per_page = 5
+
+    all_written = QuizAttempt
+      .joins(:activity)
+      .where(user_id: @student.id, activities: { teacher_id: current_user.id })
+      .includes(:activity)
+      .order(submitted_at: :desc)
+      .to_a
+      .select { |a| a.open_ended_results.any? }
+
+    items    = all_written.drop(offset).first(per_page)
+    has_more = (offset + per_page) < all_written.size
+    html = items.map { |a|
+      render_to_string(partial: 'teachers/student_written_card', locals: { attempt: a }, formats: [:html])
+    }.join
+
+    render json: { html: html, has_more: has_more, next_offset: offset + per_page }
+  rescue ActiveRecord::RecordNotFound
+    render json: { html: '', has_more: false, next_offset: 0 }
   end
 
   def update_student_level
