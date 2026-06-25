@@ -12,6 +12,7 @@ class User < ApplicationRecord
   LANGUAGES = %w[en pt fr].freeze
   CEFR_LEVELS = %w[A1 A2 B1 B2 C1].freeze
   DEFAULT_LANGUAGE = 'pt'.freeze
+  PROFESSIONAL_TYPES = %w[OPCO eCPF].freeze
 
   scope :teachers, -> { where(role: 'teacher') }
   scope :students, -> { where(role: 'student') }
@@ -21,6 +22,7 @@ class User < ApplicationRecord
   validates :language, presence: true, inclusion: { in: LANGUAGES }
   validates :name, length: { maximum: 50 }, allow_blank: true
   validates :level, presence: true, inclusion: { in: CEFR_LEVELS }, if: :trial?
+  validates :professional_type, inclusion: { in: PROFESSIONAL_TYPES }, allow_blank: true
 
   before_validation :set_default_language, on: :create
   after_commit :notify_admin_if_teacher_joined

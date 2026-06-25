@@ -7,8 +7,22 @@ module ApplicationHelper
     'C1' => { bg: '#F3F4F6', text: '#1C1917', border: '#374151', bar: '#374151', label: 'Proficiente' },
   }.freeze
 
+  PROFESSIONAL_COLORS = {
+    'OPCO' => { bg: '#EFF6FF', text: '#1D4ED8', border: '#BFDBFE' },
+    'eCPF' => { bg: '#F5F3FF', text: '#7C3AED', border: '#DDD6FE' },
+  }.freeze
+
   def cefr_colors(level)
     CEFR_COLORS[level] || CEFR_COLORS['A1']
+  end
+
+  def professional_badge_html(user)
+    return '' if user.professional_type.blank?
+    c = PROFESSIONAL_COLORS[user.professional_type] || { bg: '#F3F4F6', text: '#374151', border: '#D1D5DB' }
+    content_tag(:span, user.professional_type,
+      style: "font-family:'DM Mono',monospace; font-size:0.68rem; font-weight:700; letter-spacing:0.04em; " \
+             "background:#{c[:bg]}; color:#{c[:text]}; border:1.5px solid #{c[:border]}; " \
+             "padding:2px 8px; border-radius:20px; flex-shrink:0;")
   end
 
   def activity_media_badge(activity)

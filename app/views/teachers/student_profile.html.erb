@@ -24,6 +24,7 @@
         <h1 style="font-family:'Raleway',sans-serif; font-size:1.3rem; font-weight:700; color:#1C1917; margin:0;">
           <%= @student.display_name %>
         </h1>
+        <%= professional_badge_html(@student) %>
         <% if @student.level.present? %>
           <% lc = cefr_colors(@student.level) %>
           <span style="font-family:'DM Mono',monospace; font-size:0.72rem; font-weight:700;

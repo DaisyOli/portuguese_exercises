@@ -16,7 +16,7 @@ class InvitationsController < Devise::InvitationsController
   protected
 
   def configure_permitted_parameters
-    devise_parameter_sanitizer.permit(:invite, keys: [:name, :role, :level])
+    devise_parameter_sanitizer.permit(:invite, keys: [:name, :role, :level, :professional_type])
     devise_parameter_sanitizer.permit(:accept_invitation, keys: [:name])
   end
 
