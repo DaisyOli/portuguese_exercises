@@ -6,6 +6,16 @@
       .no-print { display: none !important; }
       body { background: #fff !important; }
       .attestation-page { box-shadow: none !important; border: none !important; }
+      .attestation-header {
+        background: #fff !important;
+        border-bottom: 3px solid #0F3826 !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+      .attestation-header .logo-img { filter: none !important; }
+      .attestation-header .header-subtitle { color: #1A6B4A !important; }
+      .attestation-header .header-label { color: #0F3826 !important; }
+      .attestation-header .header-date { color: #5C5853 !important; }
     }
     body { background: #F7F5F0; margin: 0; padding: 0; }
   </style>
@@ -28,20 +38,21 @@
               box-shadow:0 4px 24px rgba(0,0,0,0.07); overflow:hidden;">
 
     <%# ── Cabeçalho ── %>
-    <div style="background:#0F3826; padding:28px 36px; display:flex; align-items:center; justify-content:space-between;">
+    <div class="attestation-header" style="background:#0F3826; padding:28px 36px; display:flex; align-items:center; justify-content:space-between;">
       <div>
         <%= image_tag "practice-br-logo-horizontal-color.svg",
               alt: "Practice-BR",
+              class: "logo-img",
               style: "height:44px; width:auto; filter:brightness(0) invert(1);" %>
-        <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.72rem; color:#6EBD96; margin-top:4px; letter-spacing:0.04em; text-transform:uppercase;">
+        <div class="header-subtitle" style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.72rem; color:#6EBD96; margin-top:4px; letter-spacing:0.04em; text-transform:uppercase;">
           Plateforme de Portugais Brésilien
         </div>
       </div>
       <div style="text-align:right;">
-        <div style="font-family:'DM Mono',monospace; font-size:0.72rem; color:#6EBD96; letter-spacing:0.06em; text-transform:uppercase; margin-bottom:3px;">
+        <div class="header-label" style="font-family:'DM Mono',monospace; font-size:0.72rem; color:#6EBD96; letter-spacing:0.06em; text-transform:uppercase; margin-bottom:3px;">
           Attestation de formation
         </div>
-        <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.78rem; color:#A7D9C0;">
+        <div class="header-date" style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.78rem; color:#A7D9C0;">
           Générée le <%= Time.current.strftime("%d/%m/%Y") %>
         </div>
       </div>
