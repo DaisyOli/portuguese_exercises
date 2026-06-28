@@ -286,6 +286,14 @@ class QuizSubmissionService
       error_path = Rails.application.routes.url_helpers.activities_path
     end
 
+    if (raw = @params[:started_at]).present?
+      parsed = Time.zone.parse(raw) rescue nil
+      if parsed && parsed < Time.current
+        capped = [Time.current - parsed, 2.hours].min
+        @quiz_attempt.started_at = Time.current - capped
+      end
+    end
+
     @quiz_attempt.score            = score
     @quiz_attempt.results          = quiz_results_data
     @quiz_attempt.submitted_at     = Time.current

@@ -74,6 +74,8 @@
             action: "submit->quiz-loading#submit"
           }) do |f| %>
 
+        <%= hidden_field_tag :started_at, '', id: 'started_at_field' %>
+
         <%# Progress: counter + thin bar — wrapped para sticky no mobile %>
         <div class="quiz-progress-header">
           <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:6px;">
@@ -475,5 +477,16 @@
     </div>
 
   <% end %>
+
+<script>
+(function() {
+  function stampStart() {
+    var f = document.getElementById('started_at_field');
+    if (f && !f.value) f.value = new Date().toISOString();
+  }
+  document.addEventListener('DOMContentLoaded', stampStart);
+  document.addEventListener('turbo:load', stampStart);
+})();
+</script>
 
 </div>

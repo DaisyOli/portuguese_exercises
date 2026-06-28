@@ -1,6 +1,6 @@
 class TeachersController < ApplicationController
   before_action :authenticate_user!, except: []
-  before_action :require_teacher!, only: [:students, :student_profile, :student_activities, :student_written, :update_student_level, :remove_student, :clear_student_comments, :more_ratings]
+  before_action :require_teacher!, only: [:students, :student_profile, :student_activities, :student_written, :student_attestation, :update_student_level, :remove_student, :clear_student_comments, :more_ratings]
 
   def dashboard
   end
@@ -74,6 +74,13 @@ class TeachersController < ApplicationController
     @pending_count = loaded.count { |a| a.open_ended_results.any? && a.teacher_comments.blank? }
     @total_written = loaded.count { |a| a.open_ended_results.any? }
     @has_comments  = loaded.any?  { |a| a.teacher_comments.present? }
+
+    # Training hours (only attempts with both timestamps)
+    @training_minutes = scope
+      .where.not(started_at: nil)
+      .select(:started_at, :submitted_at)
+      .to_a
+      .sum { |a| [(a.submitted_at - a.started_at) / 60, 120].min.to_i }
   rescue ActiveRecord::RecordNotFound
     redirect_to teacher_students_path, alert: "Aluno não encontrado."
   end
@@ -121,6 +128,20 @@ class TeachersController < ApplicationController
     render json: { html: html, has_more: has_more, next_offset: offset + per_page }
   rescue ActiveRecord::RecordNotFound
     render json: { html: '', has_more: false, next_offset: 0 }
+  end
+
+  def student_attestation
+    @student = current_user.students.find(params[:id])
+    @teacher = current_user
+    @attempts = QuizAttempt
+      .joins(:activity)
+      .where(user_id: @student.id, activities: { teacher_id: current_user.id })
+      .where.not(started_at: nil)
+      .includes(:activity)
+      .order(submitted_at: :asc)
+    @total_minutes = @attempts.to_a.sum { |a| [(a.submitted_at - a.started_at) / 60, 120].min.to_i }
+  rescue ActiveRecord::RecordNotFound
+    redirect_to teacher_students_path
   end
 
   def update_student_level

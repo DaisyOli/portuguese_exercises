@@ -16,6 +16,13 @@ module ApplicationHelper
     CEFR_COLORS[level] || CEFR_COLORS['A1']
   end
 
+  def format_training_duration(total_minutes)
+    return "—" if total_minutes.nil? || total_minutes == 0
+    h = total_minutes / 60
+    m = total_minutes % 60
+    h > 0 ? "#{h}h #{m.to_s.rjust(2, '0')}min" : "#{m}min"
+  end
+
   def professional_badge_html(user)
     return '' if user.professional_type.blank?
     c = PROFESSIONAL_COLORS[user.professional_type] || { bg: '#F3F4F6', text: '#374151', border: '#D1D5DB' }

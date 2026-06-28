@@ -21,5 +21,9 @@
   </span>
   <span style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.75rem; color:#9C9892; flex-shrink:0;">
     <%= attempt.submitted_at.strftime("%d/%m/%Y") %>
+    <% if attempt.started_at && attempt.submitted_at %>
+      <% mins = [(attempt.submitted_at - attempt.started_at) / 60, 120].min.to_i %>
+      · <span style="color:#7C3AED;">~<%= mins %>min</span>
+    <% end %>
   </span>
 </div>

@@ -111,7 +111,23 @@
       <div style="font-family:'Raleway',sans-serif; font-size:2rem; font-weight:800; color:#2563EB; line-height:1;"><%= @days_active %></div>
       <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.78rem; color:#5C5853; margin-top:6px;">dias ativos (30 dias)</div>
     </div>
+    <div style="background:#fff; border:1px solid #DDD9D2; border-radius:14px; padding:20px 22px;">
+      <div style="font-family:'DM Mono',monospace; font-size:0.68rem; color:#9C9892; letter-spacing:0.08em; margin-bottom:8px; text-transform:uppercase;">Formação</div>
+      <div style="font-family:'Raleway',sans-serif; font-size:2rem; font-weight:800; color:#7C3AED; line-height:1;"><%= format_training_duration(@training_minutes) %></div>
+      <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.78rem; color:#5C5853; margin-top:6px;">tempo registado</div>
+    </div>
   </div>
+
+  <% if @student.professional_type.present? && @training_minutes > 0 %>
+    <div style="margin-bottom:1.5rem; text-align:right;">
+      <%= link_to teacher_student_attestation_path(@student), target: '_blank',
+            style: "display:inline-flex; align-items:center; gap:6px; font-family:'Plus Jakarta Sans',sans-serif;
+                    font-size:0.85rem; font-weight:700; color:#7C3AED; text-decoration:none;
+                    background:#F5F3FF; border:1.5px solid #DDD6FE; border-radius:10px; padding:8px 16px;" do %>
+        📄 Attestation de formation
+      <% end %>
+    </div>
+  <% end %>
 
   <%# ── Seção: Atividades realizadas ── %>
   <div style="background:#fff; border:1px solid #DDD9D2; border-radius:16px; overflow:hidden; margin-bottom:1rem;">
