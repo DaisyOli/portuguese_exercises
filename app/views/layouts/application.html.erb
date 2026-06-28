@@ -62,7 +62,7 @@
   </head>
   
   <body>
-    <% if current_user %>
+    <% if current_user && !content_for?(:hide_navbar) %>
       <%= render 'shared/navbar' %>
       <div style="height:56px;"></div>
     <% end %>

@@ -1,5 +1,6 @@
+<% content_for :hide_navbar, true %>
 <% content_for :head do %>
-  <title>Attestation de formation · <%= @student.display_name %></title>
+  <title>Attestation - <%= @student.display_name %></title>
   <style>
     @media print {
       .no-print { display: none !important; }
@@ -13,7 +14,7 @@
 <div class="no-print" style="background:#0F3826; padding:12px 24px; display:flex; align-items:center; justify-content:space-between;">
   <%= link_to "← Voltar ao perfil", teacher_student_profile_path(@student),
         style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.85rem; color:#6EBD96; text-decoration:none;" %>
-  <button onclick="window.print()"
+  <button onclick="document.title='Attestation - <%= j @student.display_name %>'; window.print();"
           style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.85rem; font-weight:700;
                  background:#1A6B4A; color:#fff; border:none; border-radius:8px;
                  padding:8px 20px; cursor:pointer;">
@@ -29,10 +30,10 @@
     <%# ── Cabeçalho ── %>
     <div style="background:#0F3826; padding:28px 36px; display:flex; align-items:center; justify-content:space-between;">
       <div>
-        <div style="font-family:'Raleway',sans-serif; font-size:1.4rem; font-weight:900; color:#fff; letter-spacing:-0.01em;">
-          Practice<span style="color:#6EBD96;">-BR</span>
-        </div>
-        <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.72rem; color:#6EBD96; margin-top:3px; letter-spacing:0.04em; text-transform:uppercase;">
+        <%= image_tag "practice-br-logo-horizontal-color.svg",
+              alt: "Practice-BR",
+              style: "height:44px; width:auto; filter:brightness(0) invert(1);" %>
+        <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.72rem; color:#6EBD96; margin-top:4px; letter-spacing:0.04em; text-transform:uppercase;">
           Plateforme de Portugais Brésilien
         </div>
       </div>
