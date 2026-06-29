@@ -10,12 +10,15 @@ module Api
         return render_error(:unprocessable_entity, "Nível inválido. Use: A1, A2, B1, B2 ou C1.") unless User::CEFR_LEVELS.include?(level)
         return render_error(:unprocessable_entity, "Este email já tem uma conta. Acesse a plataforma normalmente.") if User.exists?(email: email)
 
+        admin = User.find_by(email: ENV["PLATFORM_ADMIN_EMAIL"])
+
         user = User.new(
           email: email,
           level: level,
           role: "trial",
           password: SecureRandom.hex(12),
-          trial_expires_at: 7.days.from_now
+          trial_expires_at: 7.days.from_now,
+          invited_by_id: admin&.id
         )
 
         unless user.save

@@ -10,7 +10,9 @@ class InvitationsController < Devise::InvitationsController
   end
 
   def after_accept_path_for(resource)
-    resource.teacher? ? teacher_dashboard_path : student_dashboard_path
+    return teacher_dashboard_path if resource.teacher?
+    return billing_new_path if resource.trial?
+    student_dashboard_path
   end
 
   protected
@@ -31,6 +33,6 @@ class InvitationsController < Devise::InvitationsController
   def force_student_role_for_teachers
     return if current_user&.admin?
     params[:user] ||= {}
-    params[:user][:role] = "student"
+    params[:user][:role] = "trial"
   end
 end

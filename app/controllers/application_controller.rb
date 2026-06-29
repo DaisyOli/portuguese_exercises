@@ -29,12 +29,16 @@ class ApplicationController < ActionController::Base
   def check_trial_restrictions!
     return unless current_user&.trial?
     return if devise_controller?
-    return if controller_name == "home"     && action_name == "trial_expired"
     return if controller_name == "billing"
     return if controller_name == "webhooks"
 
-    if current_user.trial_expired? || current_user.trial_exhausted?
-      redirect_to trial_expired_path
+    if current_user.invitation_accepted_at.present?
+      # Aluno convidado pelo professor: redireciona para assinatura
+      redirect_to billing_new_path
+    else
+      # Aluno da landing page: trial de 3 atividades ou 7 dias
+      return if controller_name == "home" && action_name == "trial_expired"
+      redirect_to trial_expired_path if current_user.trial_expired? || current_user.trial_exhausted?
     end
   end
 
