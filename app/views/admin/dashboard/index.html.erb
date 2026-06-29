@@ -261,10 +261,10 @@
               <div style="display:inline-flex; align-items:center; gap:4px;">
                 <% 3.times do |i| %>
                   <div style="width:10px; height:10px; border-radius:50%;
-                               background:<%= i < trial.trial_activities_used ? '#1A6B4A' : '#DDD9D2' %>;"></div>
+                               background:<%= i < trial.trial_activities_used.to_i ? '#1A6B4A' : '#DDD9D2' %>;"></div>
                 <% end %>
                 <span style="font-family:'DM Mono',monospace; font-size:0.72rem; color:#9C9892; margin-left:4px;">
-                  <%= trial.trial_activities_used %>/3
+                  <%= trial.trial_activities_used.to_i %>/3
                 </span>
               </div>
             </div>
