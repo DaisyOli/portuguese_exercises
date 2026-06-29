@@ -35,7 +35,7 @@
       <div style="padding:24px 32px; display:flex; flex-direction:column; gap:12px;">
 
         <%# Mensal %>
-        <%= form_with url: billing_checkout_path, method: :post, local: true do |f| %>
+        <%= form_with url: billing_checkout_path, method: :post, local: true, data: { turbo: false } do |f| %>
           <%= hidden_field_tag :plan, "monthly" %>
           <button type="submit"
                   style="width:100%; background:#fff; border:2px solid #DDD9D2; border-radius:14px; padding:16px 20px; cursor:pointer; text-align:left;"
@@ -54,7 +54,7 @@
         <% end %>
 
         <%# Anual %>
-        <%= form_with url: billing_checkout_path, method: :post, local: true do |f| %>
+        <%= form_with url: billing_checkout_path, method: :post, local: true, data: { turbo: false } do |f| %>
           <%= hidden_field_tag :plan, "annual" %>
           <button type="submit"
                   style="width:100%; background:#F0FAF4; border:2px solid #2A9B6F; border-radius:14px; padding:16px 20px; cursor:pointer; text-align:left; position:relative;"
@@ -99,7 +99,7 @@
       label:        "Accès complet",
       title:        "Activez votre accès pour commencer",
       f1:           "✓ Toutes les activités jusqu'à votre niveau",
-      f2:           "✓ Correction automatique par IA",
+      f2:           "✓ Correction automatique et détaillée",
       f3:           "✓ Contenu créé par de vrais professeurs",
       f4:           "✓ Annulez quand vous voulez",
       monthlyLabel: "Mensuel",
@@ -115,7 +115,7 @@
       label:        "Full access",
       title:        "Activate your access to start learning",
       f1:           "✓ All activities up to your level",
-      f2:           "✓ Automatic AI correction",
+      f2:           "✓ Automatic and detailed correction",
       f3:           "✓ Content created by real teachers",
       f4:           "✓ Cancel anytime",
       monthlyLabel: "Monthly",
@@ -131,7 +131,7 @@
       label:        "Acesso completo",
       title:        "Ative seu acesso para começar",
       f1:           "✓ Todas as atividades até o seu nível",
-      f2:           "✓ Correção automática por IA",
+      f2:           "✓ Correção automática e detalhada",
       f3:           "✓ Conteúdo produzido por professores reais",
       f4:           "✓ Cancele quando quiser",
       monthlyLabel: "Mensal",
