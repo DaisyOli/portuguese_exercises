@@ -52,7 +52,7 @@ class User < ApplicationRecord
   end
 
   def trial_exhausted?
-    trial? && trial_activities_used >= 3
+    trial? && trial_activities_used.to_i >= 3
   end
 
   def trial_access_active?
