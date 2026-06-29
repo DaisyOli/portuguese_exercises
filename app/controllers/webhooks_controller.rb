@@ -33,7 +33,7 @@ class WebhooksController < ApplicationController
   private
 
   def handle_checkout_completed(session)
-    user = User.find_by(id: session.dig("metadata", "user_id"))
+    user = User.find_by(id: session["metadata"]&.[]("user_id"))
     return unless user
 
     subscription = Stripe::Subscription.retrieve(session["subscription"])
