@@ -1,9 +1,16 @@
 <!DOCTYPE html>
-<html>
+<html lang="pt">
 <head>
   <meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 </head>
 <body style="margin:0; padding:0; background:#F0EDE8; font-family:'Helvetica Neue',Arial,sans-serif;">
+
+  <%# Preheader invisível — aparece no preview do email antes de abrir %>
+  <div style="display:none; max-height:0; overflow:hidden; mso-hide:all;">
+    <% teacher = @resource.invited_by %>
+    <%= teacher&.name.present? ? "#{teacher.name} te convidou para praticar português brasileiro." : "Você foi convidada para a plataforma Practice-BR." %>
+  </div>
 
   <table width="100%" cellpadding="0" cellspacing="0" style="background:#F0EDE8; padding:40px 16px;">
     <tr>
@@ -27,29 +34,28 @@
             <td style="padding:40px 40px 32px;">
 
               <h1 style="font-family:'Helvetica Neue',Arial,sans-serif; font-size:1.3rem; font-weight:800; color:#0F3826; margin:0 0 16px; text-align:center; letter-spacing:-0.01em;">
-                Voce foi convidado para o Practice-BR!
+                Voc&ecirc; foi convidado para o Practice-BR!
               </h1>
 
-              <% teacher = @resource.invited_by %>
               <% if teacher&.name.present? %>
                 <p style="font-family:'Helvetica Neue',Arial,sans-serif; font-size:0.95rem; color:#3D3A36; line-height:1.65; margin:0 0 12px;">
-                  Ola! <strong><%= teacher.name %></strong> te convidou para praticar portugues brasileiro na plataforma Practice-BR.
+                  Ol&aacute;! <strong><%= teacher.name %></strong> te convidou para praticar portugu&ecirc;s brasileiro na plataforma Practice-BR.
                 </p>
               <% else %>
                 <p style="font-family:'Helvetica Neue',Arial,sans-serif; font-size:0.95rem; color:#3D3A36; line-height:1.65; margin:0 0 12px;">
-                  Ola! Voce foi convidado para praticar portugues brasileiro na plataforma Practice-BR.
+                  Ol&aacute;! Voc&ecirc; foi convidado para praticar portugu&ecirc;s brasileiro na plataforma Practice-BR.
                 </p>
               <% end %>
 
               <p style="font-family:'Helvetica Neue',Arial,sans-serif; font-size:0.95rem; color:#3D3A36; line-height:1.65; margin:0 0 28px;">
-                Aqui voce vai encontrar atividades interativas — exercicios de vocabulario, compreensao de texto, preenchimento de lacunas e muito mais — criadas especialmente para o seu nivel.
+                Aqui voc&ecirc; vai encontrar atividades interativas &mdash; exerc&iacute;cios de vocabul&aacute;rio, compreens&atilde;o de texto, preenchimento de lacunas e muito mais &mdash; criadas especialmente para o seu n&iacute;vel.
               </p>
 
               <table cellpadding="0" cellspacing="0" width="100%" style="margin-bottom:32px;">
                 <tr>
                   <td align="center">
                     <a href="<%= accept_invitation_url(@resource, invitation_token: @token) %>"
-                       style="display:inline-block; background:#1A6B4A; color:#fff;
+                       style="display:inline-block; background:#C9952A; color:#fff;
                               font-family:'Helvetica Neue',Arial,sans-serif; font-size:1rem; font-weight:700;
                               padding:16px 44px; border-radius:12px; text-decoration:none; letter-spacing:0.01em;">
                       Aceitar convite &rarr;
@@ -65,7 +71,7 @@
               <% end %>
 
               <p style="font-family:'Helvetica Neue',Arial,sans-serif; font-size:0.8rem; color:#9C9892; line-height:1.55; margin:0; text-align:center;">
-                Se voce nao esperava este convite, pode ignorar este email com seguranca. Nenhuma conta sera criada.
+                Se voc&ecirc; n&atilde;o esperava este convite, pode ignorar este email com seguran&ccedil;a. Nenhuma conta ser&aacute; criada.
               </p>
             </td>
           </tr>
@@ -74,7 +80,7 @@
           <tr>
             <td style="background:#F7F5F0; border-top:1px solid #EAE7E2; padding:18px 36px; text-align:center;">
               <p style="font-family:'Helvetica Neue',Arial,sans-serif; font-size:0.75rem; color:#9C9892; margin:0;">
-                &copy; Practice-BR &middot; Este e um email automatico, por favor nao responda.
+                &copy; Practice-BR &middot; Este &eacute; um email autom&aacute;tico, por favor n&atilde;o responda.
               </p>
             </td>
           </tr>
