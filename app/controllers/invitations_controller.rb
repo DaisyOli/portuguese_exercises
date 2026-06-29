@@ -31,8 +31,7 @@ class InvitationsController < Devise::InvitationsController
   end
 
   def force_student_role_for_teachers
-    return if current_user&.admin?
     params[:user] ||= {}
-    params[:user][:role] = "trial"
+    params[:user][:role] = "trial" unless params.dig(:user, :role) == "teacher"
   end
 end

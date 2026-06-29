@@ -47,7 +47,7 @@
           <%= f.label :role, "Tipo de usuário",
                 style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; font-weight:600; color:#1C1917; display:block; margin-bottom:6px;" %>
           <%= f.select :role,
-                [['Estudante', 'student'], ['Professor(a)', 'teacher']],
+                [['Estudante', 'trial'], ['Professor(a)', 'teacher']],
                 { include_blank: 'Selecione o tipo...' },
                 id: "invite-role-select",
                 style: "width:100%; padding:11px 14px; border:1.5px solid #DDD9D2; border-radius:10px; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.9rem; color:#1C1917; background:#fff; box-sizing:border-box; cursor:pointer;",
@@ -125,7 +125,7 @@
     var select = document.getElementById('invite-role-select');
     var field  = document.getElementById('level-field');
     if (!select || !field) return;
-    field.style.display = select.value === 'student' ? 'block' : 'none';
+    field.style.display = select.value === 'trial' ? 'block' : 'none';
   }
 
   function updateLevelButtons() {
