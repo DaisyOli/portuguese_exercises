@@ -8,6 +8,8 @@ class ApplicationController < ActionController::Base
   def after_sign_in_path_for(resource)
     if resource.teacher?
       teacher_dashboard_path
+    elsif resource.trial? && resource.invitation_accepted_at.present?
+      billing_new_path
     elsif resource.student_like?
       student_dashboard_path
     else
