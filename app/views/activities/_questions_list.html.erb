@@ -2,7 +2,7 @@
 <% regular_qs = activity.questions.where.not(question_type: 'open_ended').order(:created_at) %>
 
 <% if regular_qs.any? %>
-  <div style="background:#F0FAF5; border:1px solid #BBF7D0; border-left:4px solid #1A6B4A; border-radius:14px; margin-bottom:14px; overflow:hidden; <%= has_other_content ? '' : 'margin-top:8px;' %>">
+  <div id="questions-section" style="background:#F0FAF5; border:1px solid #BBF7D0; border-left:4px solid #1A6B4A; border-radius:14px; margin-bottom:14px; overflow:hidden; <%= has_other_content ? '' : 'margin-top:8px;' %>">
 
     <div style="display:flex; align-items:center; padding:12px 18px; border-bottom:1px solid #BBF7D0; background:rgba(26,107,74,0.06);">
       <span style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; color:#1A6B4A; display:flex; align-items:center; gap:6px;">

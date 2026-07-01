@@ -29,8 +29,19 @@ class QuestionsController < ApplicationController
   end
 
   def destroy
+    sibling = @activity.questions.where.not(id: @question.id)
+                       .order(:created_at)
+                       .where("created_at >= ?", @question.created_at)
+                       .first ||
+              @activity.questions.where.not(id: @question.id)
+                       .order(created_at: :desc)
+                       .first
     @question.destroy
-    redirect_to activity_path(@activity, ultima_acao: 'questao_excluida'), notice: t('messages.question_deleted')
+    if sibling
+      redirect_to activity_path(@activity, ultimo_id: sibling.id), notice: t('messages.question_deleted')
+    else
+      redirect_to activity_path(@activity, ultimo_conteudo: 'questions-section'), notice: t('messages.question_deleted')
+    end
   end
 
   private
