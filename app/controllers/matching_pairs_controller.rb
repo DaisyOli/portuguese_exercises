@@ -9,17 +9,17 @@ class MatchingPairsController < ApplicationController
     right = params[:matching_pair][:right_item].to_s.strip
 
     if left.blank? || right.blank?
-      redirect_to activity_path(@activity), alert: t('column_matchings.pair_blank')
+      redirect_to activity_path(@activity, ultimo_conteudo: "column-matching-#{@column_matching.id}"), alert: t('column_matchings.pair_blank')
       return
     end
 
     @column_matching.add_pair(left, right)
-    redirect_to activity_path(@activity), notice: t('column_matchings.pair_added')
+    redirect_to activity_path(@activity, ultimo_conteudo: "column-matching-#{@column_matching.id}"), notice: t('column_matchings.pair_added')
   end
 
   def destroy
     @column_matching.matching_pairs.find(params[:id]).destroy
-    redirect_to activity_path(@activity), notice: t('column_matchings.pair_removed')
+    redirect_to activity_path(@activity, ultimo_conteudo: "column-matching-#{@column_matching.id}"), notice: t('column_matchings.pair_removed')
   end
 
   private

@@ -6,15 +6,15 @@ class ParagraphSentencesController < ApplicationController
 
   def create
     @paragraph_ordering.add_sentence(params[:paragraph_sentence][:sentence])
-    redirect_to activity_path(@activity), notice: t('paragraph_orderings.created')
+    redirect_to activity_path(@activity, ultimo_conteudo: "paragraph-ordering-#{@paragraph_ordering.id}"), notice: t('paragraph_orderings.created')
   rescue ActiveRecord::RecordInvalid => e
-    redirect_to activity_path(@activity), alert: e.message
+    redirect_to activity_path(@activity, ultimo_conteudo: "paragraph-ordering-#{@paragraph_ordering.id}"), alert: e.message
   end
 
   def destroy
     @paragraph_ordering.paragraph_sentences.find(params[:id]).destroy
     @paragraph_ordering.send(:shuffle_display_positions!)
-    redirect_to activity_path(@activity), notice: t('paragraph_orderings.destroyed')
+    redirect_to activity_path(@activity, ultimo_conteudo: "paragraph-ordering-#{@paragraph_ordering.id}"), notice: t('paragraph_orderings.destroyed')
   end
 
   private
