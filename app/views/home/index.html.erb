@@ -32,7 +32,7 @@
 
       <%= button_to t('auth.sign_out'), destroy_user_session_path,
             method: :delete,
-            data: { turbo: false },
+            form: { data: { turbo: false } },
             style: "display:block; width:100%; background:#FEF2F2; color:#B91C1C; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.88rem; font-weight:600; padding:10px; border:1.5px solid #FECACA; border-radius:12px; cursor:pointer; box-sizing:border-box;" %>
 
     <% else %>
