@@ -1,6 +1,11 @@
 namespace :student_emails do
-  desc "Envia lembrete semanal para alunos com weekly_reminder_email ativo"
+  desc "Envia lembrete semanal para alunos com weekly_reminder_email ativo (roda toda segunda)"
   task weekly_reminder: :environment do
+    unless Date.today.monday?
+      puts "Hoje não é segunda-feira — nada enviado."
+      next
+    end
+
     sent = 0
 
     User.where(role: "student", weekly_reminder_email: true).find_each do |student|
