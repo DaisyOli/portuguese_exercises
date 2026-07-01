@@ -3,7 +3,7 @@ import { Controller } from "@hotwired/stimulus"
 // Controlador para gerenciar a seleção de tipos de questão
 export default class extends Controller {
   // Definir os targets
-  static targets = ["selector", "multipleChoice", "fillInBlank", "correctAnswer", "fillInBlankAnswers"]
+  static targets = ["selector", "multipleChoice", "fillInBlank", "correctAnswer", "fillInBlankAnswers", "openEnded"]
 
   // Conectar o controlador
   connect() {
@@ -46,15 +46,23 @@ export default class extends Controller {
       case "fill_in_blank":
         this.showFillInBlankFields()
         break
+      case "open_ended":
+        this.showOpenEndedFields()
+        break
     }
   }
   
   // Esconde todos os campos específicos
   hideAllFields() {
-    if (this.hasMultipleChoiceTarget)    this.multipleChoiceTarget.style.display    = "none"
-    if (this.hasFillInBlankTarget)       this.fillInBlankTarget.style.display       = "none"
+    if (this.hasMultipleChoiceTarget)     this.multipleChoiceTarget.style.display     = "none"
+    if (this.hasFillInBlankTarget)        this.fillInBlankTarget.style.display        = "none"
     if (this.hasFillInBlankAnswersTarget) this.fillInBlankAnswersTarget.style.display = "none"
-    if (this.hasCorrectAnswerTarget)     this.correctAnswerTarget.style.display     = "block"
+    if (this.hasCorrectAnswerTarget)      this.correctAnswerTarget.style.display      = "none"
+    if (this.hasOpenEndedTarget)          this.openEndedTarget.style.display          = "none"
+  }
+
+  showOpenEndedFields() {
+    if (this.hasOpenEndedTarget) this.openEndedTarget.style.display = "block"
   }
 
   // Mostra campos para múltipla escolha
