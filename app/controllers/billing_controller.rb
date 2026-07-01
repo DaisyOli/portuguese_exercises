@@ -27,4 +27,19 @@ class BillingController < ApplicationController
 
   def cancel
   end
+
+  def cancel_subscription
+    sub_id = current_user.stripe_subscription_id
+    unless sub_id.present?
+      redirect_to student_dashboard_path, alert: "Nenhuma assinatura ativa encontrada."
+      return
+    end
+
+    Stripe::Subscription.update(sub_id, { cancel_at_period_end: true })
+    current_user.update!(subscription_status: "canceling")
+    redirect_to student_dashboard_path, notice: "cancel_confirmed"
+  rescue Stripe::StripeError => e
+    Rails.logger.error "[Billing] Stripe cancel error: #{e.message}"
+    redirect_to student_dashboard_path, alert: "Erro ao cancelar. Tente novamente."
+  end
 end

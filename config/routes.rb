@@ -80,11 +80,12 @@ Rails.application.routes.draw do
   end
 
   # Assinatura Stripe
-  get  "assinar",           to: "billing#new",             as: :billing_new
-  post "assinar/checkout",  to: "billing#create_checkout",  as: :billing_checkout
-  get  "assinar/sucesso",   to: "billing#success",          as: :billing_success
-  get  "assinar/cancelado", to: "billing#cancel",           as: :billing_cancel
-  post "webhooks/stripe",   to: "webhooks#stripe"
+  get  "assinar",              to: "billing#new",              as: :billing_new
+  post "assinar/checkout",     to: "billing#create_checkout",  as: :billing_checkout
+  get  "assinar/sucesso",      to: "billing#success",          as: :billing_success
+  get  "assinar/cancelado",    to: "billing#cancel",           as: :billing_cancel
+  post "assinar/cancelar",     to: "billing#cancel_subscription", as: :billing_cancel_subscription
+  post "webhooks/stripe",      to: "webhooks#stripe"
 
   # Página de acesso trial encerrado
   get "acesso-encerrado", to: "home#trial_expired", as: "trial_expired"
