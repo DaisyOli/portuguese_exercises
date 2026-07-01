@@ -23,6 +23,8 @@ class WebhooksController < ApplicationController
       handle_payment_succeeded(event["data"]["object"])
     when "invoice.payment_failed"
       handle_payment_failed(event["data"]["object"])
+    when "customer.subscription.updated"
+      handle_subscription_updated(event["data"]["object"])
     when "customer.subscription.deleted"
       handle_subscription_deleted(event["data"]["object"])
     end
@@ -67,6 +69,18 @@ class WebhooksController < ApplicationController
 
     user.update!(subscription_status: "past_due")
     Rails.logger.warn "[Webhook] ⚠️ Falha de pagamento: #{user.email}"
+  end
+
+  def handle_subscription_updated(subscription)
+    user = User.find_by(stripe_subscription_id: subscription["id"])
+    return unless user
+
+    status = subscription["cancel_at_period_end"] ? "canceling" : "active"
+    user.update!(
+      subscription_status:             status,
+      subscription_current_period_end: Time.at(subscription["current_period_end"]).utc
+    )
+    Rails.logger.info "[Webhook] 🔄 Assinatura atualizada: #{user.email} → #{status}"
   end
 
   def handle_subscription_deleted(subscription)
