@@ -52,6 +52,11 @@ class Activity < ApplicationRecord
     end
   end
 
+  def estimated_duration
+    mins = [questions.size * 2, 5].max
+    "~#{mins} min"
+  end
+
   def average_rating
     loaded = activity_ratings.to_a
     return 0 if loaded.empty?

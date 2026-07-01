@@ -43,6 +43,11 @@ class StudentsController < ApplicationController
     }
   end
   
+  def toggle_weekly_reminder
+    current_user.update!(weekly_reminder_email: !current_user.weekly_reminder_email?)
+    redirect_to student_dashboard_path
+  end
+
   def open_ended_attempts
     per_page = 3
     offset   = params[:offset].to_i

@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
+</head>
+<body style="margin:0; padding:0; background:#F7F5F0; font-family:'Helvetica Neue',Arial,sans-serif;">
+
+  <table width="100%" cellpadding="0" cellspacing="0" style="background:#F7F5F0; padding:40px 16px;">
+    <tr>
+      <td align="center">
+        <table width="520" cellpadding="0" cellspacing="0" style="background:#fff; border-radius:16px; border:1px solid #DDD9D2; overflow:hidden; max-width:520px;">
+
+          <%# Cabeçalho %>
+          <tr>
+            <td style="background:#0F3826; padding:24px 32px;">
+              <div style="font-size:1.1rem; font-weight:800; color:#fff; letter-spacing:-0.02em;">Practice-BR</div>
+              <div style="font-size:0.7rem; color:#6EBD96; margin-top:3px;">
+                <% if @lang == "fr" %>Plateforme de Portugais pour Étrangers
+                <% elsif @lang == "en" %>Portuguese Learning Platform
+                <% else %>Plataforma de Português para Estrangeiros
+                <% end %>
+              </div>
+            </td>
+          </tr>
+
+          <%# Corpo %>
+          <tr>
+            <td style="padding:28px 32px 24px;">
+              <div style="font-size:1.8rem; margin-bottom:12px;">🌿</div>
+
+              <h1 style="font-size:1.1rem; font-weight:700; color:#1C1917; margin:0 0 10px; line-height:1.3;">
+                <% if @lang == "fr" %>Bonjour, <%= @student.name %> !
+                <% elsif @lang == "en" %>Hey, <%= @student.name %>!
+                <% else %>Oi, <%= @student.name %>!
+                <% end %>
+              </h1>
+
+              <p style="font-size:0.85rem; color:#5C5853; line-height:1.65; margin:0 0 20px;">
+                <% if @lang == "fr" %>
+                  Voici vos exercices disponibles cette semaine. À votre rythme, sans pression.
+                <% elsif @lang == "en" %>
+                  Here are your available exercises for this week. No rush — practice at your own pace.
+                <% else %>
+                  Aqui estão seus exercícios disponíveis no momento. Sem pressa — pratique no seu ritmo.
+                <% end %>
+              </p>
+
+              <%# Lista de atividades — títulos sempre em português %>
+              <table cellpadding="0" cellspacing="0" width="100%" style="margin-bottom:22px;">
+                <% @activities.each do |activity| %>
+                  <tr>
+                    <td style="padding:11px 0; border-bottom:1px solid #F0EDE8;">
+                      <table cellpadding="0" cellspacing="0" width="100%">
+                        <tr>
+                          <td width="42" valign="top" style="padding-top:2px;">
+                            <span style="display:inline-block; font-size:0.63rem; font-weight:800; letter-spacing:0.05em; padding:3px 8px; border-radius:20px; background:#DCFCE7; color:#15803D; white-space:nowrap;">
+                              <%= activity.level %>
+                            </span>
+                          </td>
+                          <td style="padding-left:10px;">
+                            <div style="font-size:0.85rem; font-weight:600; color:#1C1917;">
+                              <%= activity.title %>
+                            </div>
+                            <div style="font-size:0.73rem; color:#1A6B4A; font-style:italic; margin-top:2px;">
+                              <%= activity.estimated_duration %>
+                            </div>
+                          </td>
+                        </tr>
+                      </table>
+                    </td>
+                  </tr>
+                <% end %>
+              </table>
+
+              <%# Botão CTA bilíngue %>
+              <table cellpadding="0" cellspacing="0" width="100%">
+                <tr>
+                  <td>
+                    <a href="<%= @url %>" style="display:block; background:#1A6B4A; color:#fff; text-decoration:none; font-weight:700; border-radius:10px; text-align:center; padding:13px 22px;">
+                      <span style="display:block; font-size:0.95rem;">Ver exercícios →</span>
+                      <% if @lang == "fr" %>
+                        <span style="display:block; font-size:0.72rem; opacity:0.75; font-weight:400; margin-top:2px;">Voir mes exercices</span>
+                      <% elsif @lang == "en" %>
+                        <span style="display:block; font-size:0.72rem; opacity:0.75; font-weight:400; margin-top:2px;">See my exercises</span>
+                      <% end %>
+                    </a>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <%# Rodapé com opt-out %>
+          <tr>
+            <td style="border-top:1px solid #F0EDE8; padding:14px 32px 20px;">
+              <p style="font-size:0.7rem; color:#B5B0AA; line-height:1.6; margin:0;">
+                <% if @lang == "fr" %>
+                  Vous avez activé le rappel hebdomadaire de Practice-BR.<br>
+                  <a href="<%= student_dashboard_url %>" style="color:#9C9690;">Désactiver les rappels</a>
+                <% elsif @lang == "en" %>
+                  You enabled the weekly reminder for Practice-BR.<br>
+                  <a href="<%= student_dashboard_url %>" style="color:#9C9690;">Turn off reminders</a>
+                <% else %>
+                  Você ativou o lembrete semanal da Practice-BR.<br>
+                  <a href="<%= student_dashboard_url %>" style="color:#9C9690;">Desativar lembretes</a>
+                <% end %>
+              </p>
+            </td>
+          </tr>
+
+        </table>
+      </td>
+    </tr>
+  </table>
+
+</body>
+</html>

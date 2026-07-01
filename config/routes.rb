@@ -3,8 +3,9 @@ Rails.application.routes.draw do
   root to: 'home#index'
 
   # Rotas para dashboards
-  get 'student_dashboard', to: 'students#dashboard'
-  get 'students/load_more', to: 'students#load_more'
+  get   'student_dashboard',                        to: 'students#dashboard'
+  patch 'student_dashboard/weekly_reminder_toggle', to: 'students#toggle_weekly_reminder', as: :student_toggle_weekly_reminder
+  get   'students/load_more',                       to: 'students#load_more'
   get 'students/open_ended_attempts', to: 'students#open_ended_attempts', as: 'student_open_ended_attempts'
   get 'teacher_dashboard', to: 'teachers#dashboard'
   get 'teachers/ratings/more', to: 'teachers#more_ratings', as: 'teacher_more_ratings'

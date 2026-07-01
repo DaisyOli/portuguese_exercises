@@ -126,6 +126,7 @@ class ActivitiesController < ApplicationController
     end
 
     if @activity.update(draft: false)
+      notify_students_of_new_activity(@activity)
       redirect_to activity_path(@activity), notice: "Atividade publicada com sucesso!"
     else
       redirect_to review_draft_activity_path(@activity), alert: "Erro ao publicar atividade."
@@ -267,6 +268,15 @@ class ActivitiesController < ApplicationController
   end
 
   private
+
+  def notify_students_of_new_activity(activity)
+    notifiable_levels = StudentMailer.notifiable_levels_for_activity(activity.level)
+    activity.teacher.students
+            .where(level: notifiable_levels)
+            .find_each do |student|
+      StudentMailer.new_activity(student, activity).deliver_later
+    end
+  end
 
   def set_activity
     @activity = Activity.find_by!(slug: params[:slug])

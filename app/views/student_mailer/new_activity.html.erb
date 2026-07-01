@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
+</head>
+<body style="margin:0; padding:0; background:#F7F5F0; font-family:'Helvetica Neue',Arial,sans-serif;">
+
+  <table width="100%" cellpadding="0" cellspacing="0" style="background:#F7F5F0; padding:40px 16px;">
+    <tr>
+      <td align="center">
+        <table width="520" cellpadding="0" cellspacing="0" style="background:#fff; border-radius:16px; border:1px solid #DDD9D2; overflow:hidden; max-width:520px;">
+
+          <%# Cabeçalho %>
+          <tr>
+            <td style="background:#0F3826; padding:24px 32px;">
+              <div style="font-size:1.1rem; font-weight:800; color:#fff; letter-spacing:-0.02em;">Practice-BR</div>
+              <div style="font-size:0.7rem; color:#6EBD96; margin-top:3px;">
+                <% if @lang == "fr" %>Plateforme de Portugais pour Étrangers
+                <% elsif @lang == "en" %>Portuguese Learning Platform
+                <% else %>Plataforma de Português para Estrangeiros
+                <% end %>
+              </div>
+            </td>
+          </tr>
+
+          <%# Corpo %>
+          <tr>
+            <td style="padding:28px 32px 24px;">
+              <div style="font-size:1.8rem; margin-bottom:12px;">📖</div>
+
+              <h1 style="font-size:1.1rem; font-weight:700; color:#1C1917; margin:0 0 10px; line-height:1.3;">
+                <% if @lang == "fr" %>Un exercice vous attend !
+                <% elsif @lang == "en" %>A new exercise is waiting for you!
+                <% else %>Tem exercício novo por aqui!
+                <% end %>
+              </h1>
+
+              <p style="font-size:0.85rem; color:#5C5853; line-height:1.65; margin:0 0 20px;">
+                <% if @lang == "fr" %>
+                  Votre professeur vient de publier un nouvel exercice de niveau <strong><%= @activity.level %></strong>.
+                  Jetez-y un œil quand vous avez un moment.
+                <% elsif @lang == "en" %>
+                  Your teacher just published a new <strong><%= @activity.level %></strong> exercise.
+                  Take a look whenever you have a moment.
+                <% else %>
+                  Seu professor publicou uma atividade nova no nível <strong><%= @activity.level %></strong>.
+                  Vale a pena dar uma olhada quando tiver um tempinho.
+                <% end %>
+              </p>
+
+              <%# Card da atividade — título sempre em português %>
+              <table cellpadding="0" cellspacing="0" width="100%" style="background:#F0F7F4; border-radius:12px; border:1px solid #D4EDE3; padding:16px 18px; margin-bottom:22px;">
+                <tr>
+                  <td style="padding:0 0 8px 0;">
+                    <span style="display:inline-block; font-size:0.68rem; font-weight:800; letter-spacing:0.06em; padding:3px 9px; border-radius:20px; background:#DCFCE7; color:#15803D;">
+                      <%= @activity.level %>
+                    </span>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <p style="font-size:0.97rem; font-weight:700; color:#1C1917; margin:0 0 6px; line-height:1.4;">
+                      <%= @activity.title %>
+                    </p>
+                    <p style="font-size:0.75rem; color:#1A6B4A; font-style:italic; margin:0;">
+                      <%= @activity.estimated_duration %>
+                    </p>
+                  </td>
+                </tr>
+              </table>
+
+              <%# Botão CTA: PT em destaque, tradução discreta %>
+              <table cellpadding="0" cellspacing="0" width="100%">
+                <tr>
+                  <td>
+                    <a href="<%= @url %>" style="display:block; background:#1A6B4A; color:#fff; text-decoration:none; font-weight:700; border-radius:10px; text-align:center; padding:13px 22px;">
+                      <span style="display:block; font-size:0.95rem;">Fazer agora →</span>
+                      <% if @lang == "fr" %>
+                        <span style="display:block; font-size:0.72rem; opacity:0.75; font-weight:400; margin-top:2px;">Commencer l'exercice</span>
+                      <% elsif @lang == "en" %>
+                        <span style="display:block; font-size:0.72rem; opacity:0.75; font-weight:400; margin-top:2px;">Start the exercise</span>
+                      <% end %>
+                    </a>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <%# Rodapé %>
+          <tr>
+            <td style="border-top:1px solid #F0EDE8; padding:14px 32px 20px;">
+              <p style="font-size:0.7rem; color:#B5B0AA; line-height:1.6; margin:0;">
+                <% if @lang == "fr" %>
+                  Vous recevez cet email en tant qu'élève de Practice-BR.<br>
+                  <a href="<%= student_dashboard_url %>" style="color:#9C9690;">Gérer mes notifications</a>
+                <% elsif @lang == "en" %>
+                  You're receiving this email as a Practice-BR student.<br>
+                  <a href="<%= student_dashboard_url %>" style="color:#9C9690;">Manage notifications</a>
+                <% else %>
+                  Você recebe esse email porque é aluno(a) da Practice-BR.<br>
+                  <a href="<%= student_dashboard_url %>" style="color:#9C9690;">Ajustar notificações</a>
+                <% end %>
+              </p>
+            </td>
+          </tr>
+
+        </table>
+      </td>
+    </tr>
+  </table>
+
+</body>
+</html>
