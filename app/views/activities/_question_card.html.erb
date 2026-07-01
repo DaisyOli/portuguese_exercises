@@ -219,17 +219,21 @@
                 if (!select) return;
                 const type = select.value;
                 const multipleChoiceFields = form.querySelector('.multiple-choice-fields');
-                const fillInBlankHelp = form.querySelector('.fill-in-blank-help');
-                const correctAnswerField = form.querySelector('[data-question-selector-target="correctAnswer"]');
-                if (multipleChoiceFields) multipleChoiceFields.style.display = 'none';
-                if (fillInBlankHelp) fillInBlankHelp.style.display = 'none';
-                if (correctAnswerField) correctAnswerField.style.display = 'block';
+                const fillInBlankHelp      = form.querySelector('.fill-in-blank-help');
+                const fillInBlankAnswers   = form.querySelector('.fill-in-blank-answers');
+                const correctAnswerField   = form.querySelector('[data-question-selector-target="correctAnswer"]');
+                if (multipleChoiceFields)  multipleChoiceFields.style.display  = 'none';
+                if (fillInBlankHelp)       fillInBlankHelp.style.display       = 'none';
+                if (fillInBlankAnswers)    fillInBlankAnswers.style.display    = 'none';
+                if (correctAnswerField)    correctAnswerField.style.display    = 'none';
                 switch (type) {
                   case 'multiple_choice':
                     if (multipleChoiceFields) multipleChoiceFields.style.display = 'block';
+                    if (correctAnswerField)   correctAnswerField.style.display   = 'block';
                     break;
                   case 'fill_in_blank':
-                    if (fillInBlankHelp) fillInBlankHelp.style.display = 'block';
+                    if (fillInBlankHelp)    fillInBlankHelp.style.display    = 'block';
+                    if (fillInBlankAnswers) fillInBlankAnswers.style.display = 'block';
                     break;
                 }
               }
