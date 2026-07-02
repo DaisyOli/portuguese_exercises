@@ -7,6 +7,25 @@ class ActivityGenerationService
     Sua tarefa é gerar atividades completas em formato JSON estruturado. O sistema suporta exatamente 6 tipos de exercício — nenhum outro será aceito.
 
     ═══════════════════════════════════════════
+    CONTEXTO DA PLATAFORMA — LEIA ANTES DE TUDO
+    ═══════════════════════════════════════════
+    Practice-BR é uma plataforma 100% online para adultos (18+) que aprendem português brasileiro em 2026. Os alunos são profissionais, universitários, expatriados ou pessoas em imersão cultural no Brasil — não crianças em sala de aula física.
+
+    NUNCA use estes contextos (são inadequados para o público):
+    - Objetos de sala de aula física: caneta, lápis, quadro negro, caderno, borracha, régua, estojo
+    - Situações infantis ou escolares: primeiro dia de aula, material escolar, professor na lousa
+    - Referências datadas sem tecnologia (anos 80–90, sem internet, sem smartphone)
+
+    USE estes contextos — são os que engajam adultos em 2026:
+    - Apps e plataformas reais: WhatsApp, Instagram, iFood, Spotify, Airbnb, Nubank, Pix, Uber
+    - Trabalho remoto e vida profissional: reuniões por Zoom, email, coworking, home office
+    - Gastronomia urbana: restaurantes, bares, delivery, mercado, cafeteria, happy hour
+    - Viagens e turismo: Airbnb, roteiros, aeroporto, hospedagem, passagem
+    - Cultura contemporânea: séries brasileiras (Sintonia, Vai Rir?), podcasts, futebol, shows, carnaval, música
+    - Cotidiano adulto urbano: academia, apartamento, supermercado, transporte, medicina
+    - Compras online e finanças pessoais: bancos digitais, parcelamento, promoção, pagar Pix
+
+    ═══════════════════════════════════════════
     REGRAS ABSOLUTAS
     ═══════════════════════════════════════════
     1. Responda SOMENTE com JSON válido — sem texto antes, sem texto depois, sem markdown
@@ -93,6 +112,16 @@ class ActivityGenerationService
     resposta: "foi usada"  ← "usada" removido do texto e colocado na resposta
 
     Antes de escrever cada questão, verifique: as palavras em "correct_answers[i]" aparecem no texto ao redor do _____ correspondente? Se sim, reescreva a questão usando a opção A ou B acima.
+
+    ⚠️ REGRA ANTI-ÓBVIO — o título não pode dar a resposta:
+    Se o título da atividade é "O Verbo IR" e a lacuna tem "(ir — pretérito perfeito)" entre parênteses, a resposta é mecânica e sem valor pedagógico. Evite isso.
+
+    - Use pistas entre parênteses SOMENTE quando a forma é genuinamente irregular ou quando há ambiguidade real entre formas possíveis
+    - Prefira frases onde o contexto semântico + gramatical juntos levam à resposta — não só o reconhecimento automático do padrão
+    - Misture diferentes pontos gramaticais numa mesma atividade em vez de repetir o mesmo padrão óbvio em todas as lacunas
+    - Se você está tentado a escrever "(verbo X — tempo Y)" numa lacuna trivial, reescreva a frase para que o contexto já indique o tempo verbal sem precisar do aviso
+    - Exemplo RUIM: "Ana _____ ao mercado ontem. (ir — pretérito perfeito)" — qualquer aluno que sabe o verbo "ir" responde mecanicamente
+    - Exemplo BOM: "Quando Ana chegou em casa, ela viu que a geladeira estava vazia. Então ela _____ ao mercado antes do jantar." — o contexto exige raciocínio sobre tempo e sequência
 
     ── TIPO 3: sentence_ordering ────────────────
     Uso pedagógico: ordem das palavras na frase, sintaxe, construção de frases

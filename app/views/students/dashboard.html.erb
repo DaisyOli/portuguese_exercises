@@ -411,51 +411,79 @@
       <% end %>
     </div>
 
-    <%# Seu progresso geral %>
+    <%# Seu progresso %>
     <div style="background:#fff; border:1px solid #DDD9D2; border-radius:16px; padding:22px;">
       <h2 style="font-family:'Raleway',sans-serif; font-size:1rem; font-weight:700; color:#1C1917; margin:0 0 16px 0;">
-        Seu progresso geral
+        Seu progresso
       </h2>
-      <div style="display:flex; align-items:center; gap:20px;">
-        <%# Donut chart — CSS conic-gradient %>
-        <% donut_color = current_level_data ? cefr_colors(current_level_data[:level])[:bar] : '#2A9B6F' %>
-        <% donut_pct   = current_level_data ? current_level_data[:pct] : overall_pct %>
-        <div style="
-          width:100px; height:100px; border-radius:50%; flex-shrink:0;
-          background: conic-gradient(<%= donut_color %> <%= donut_pct %>%, #E8E5DF 0%);
-          display:flex; align-items:center; justify-content:center;
-        ">
+
+      <%
+        s_level      = current_user.level
+        s_level_data = levels_data.find { |d| d[:level] == s_level }
+        s_done       = s_level_data&.dig(:done) || 0
+        s_color      = s_level.present? ? cefr_colors(s_level)[:bar] : '#2A9B6F'
+        s_label      = s_level.present? ? cefr_colors(s_level)[:label] : nil
+        s_plural     = s_done == 1 ? '' : 's'
+        current_idx  = cefr_levels.index(s_level) || 0
+      %>
+
+      <% if s_level.present? %>
+        <div style="display:flex; align-items:center; gap:20px; margin-bottom:16px;">
+          <%# Badge de nível — círculo sólido %>
           <div style="
-            width:66px; height:66px; background:#fff; border-radius:50%;
-            display:flex; flex-direction:column; align-items:center; justify-content:center;
+            width:88px; height:88px; border-radius:50%; flex-shrink:0;
+            background:<%= s_color %>;
+            display:flex; align-items:center; justify-content:center;
+            box-shadow: 0 4px 16px <%= s_color %>44;
           ">
-            <% if current_level_data %>
-              <span style="font-family:'DM Mono',monospace; font-size:1rem; font-weight:800; color:<%= donut_color %>; line-height:1.1;"><%= current_level_data[:level] %></span>
-            <% else %>
-              <span style="font-family:'DM Mono',monospace; font-size:0.9rem; font-weight:800; color:<%= donut_color %>; line-height:1.1;"><%= overall_pct %>%</span>
-            <% end %>
+            <span style="font-family:'DM Mono',monospace; font-size:1.15rem; font-weight:800; color:#fff; letter-spacing:-0.02em;">
+              <%= s_level %>
+            </span>
+          </div>
+
+          <div>
+            <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.7rem; font-weight:700; letter-spacing:0.07em; text-transform:uppercase; color:#9C9892; margin-bottom:4px;">
+              <%= s_label %>
+            </div>
+            <div style="font-family:'Raleway',sans-serif; font-size:1.65rem; font-weight:800; color:#1C1917; line-height:1; margin-bottom:4px;">
+              <%= s_done %>
+            </div>
+            <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.8rem; color:#5C5853;">
+              atividade<%= s_plural %> <%= s_level %> concluída<%= s_plural %>
+            </div>
           </div>
         </div>
 
-        <div>
-          <% if current_level_data %>
-            <% cl_meta = cefr_colors(current_level_data[:level]) %>
-            <div style="font-family:'Raleway',sans-serif; font-size:1.1rem; font-weight:700; color:#1C1917; margin-bottom:4px;">
-              <%= cl_meta[:label] %>
-            </div>
-            <div style="font-family:'Raleway',sans-serif; font-size:1.5rem; font-weight:800; color:<%= donut_color %>; line-height:1; margin-bottom:6px;">
-              <%= current_level_data[:pct] %>%
-            </div>
-            <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.8rem; color:#5C5853;">
-              <%= current_level_data[:done] %> de <%= current_level_data[:total] %> atividades
-            </div>
-          <% else %>
-            <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.88rem; color:#5C5853;">
-              Nenhuma atividade disponível ainda.
-            </div>
+        <%# Caminho CEFR %>
+        <div style="display:flex; gap:5px; flex-wrap:wrap; margin-bottom:10px;">
+          <% cefr_levels.each_with_index do |lvl, i| %>
+            <% if lvl == s_level %>
+              <span style="font-family:'DM Mono',monospace; font-size:0.7rem; font-weight:800; padding:4px 10px; border-radius:20px; background:<%= s_color %>; color:#fff;">
+                <%= lvl %> ◉
+              </span>
+            <% elsif i < current_idx %>
+              <span style="font-family:'DM Mono',monospace; font-size:0.7rem; font-weight:700; padding:4px 10px; border-radius:20px; background:#DCFCE7; color:#15803D;">
+                <%= lvl %> ✓
+              </span>
+            <% else %>
+              <span style="font-family:'DM Mono',monospace; font-size:0.7rem; font-weight:600; padding:4px 10px; border-radius:20px; background:#F0EDE8; color:#C4BFB8;">
+                <%= lvl %>
+              </span>
+            <% end %>
           <% end %>
         </div>
-      </div>
+
+        <% if total_completed > s_done %>
+          <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.74rem; color:#B5B0AA;">
+            <%= total_completed %> atividades concluídas no total
+          </div>
+        <% end %>
+
+      <% else %>
+        <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.88rem; color:#5C5853;">
+          Nenhuma atividade disponível ainda.
+        </div>
+      <% end %>
     </div>
 
   </div>

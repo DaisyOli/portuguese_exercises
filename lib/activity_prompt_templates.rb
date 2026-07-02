@@ -1,15 +1,15 @@
 module ActivityPromptTemplates
   TEMPLATES = {
     "A1" => [
-      "Crie uma atividade lúdica de nível A1 sobre saudações e apresentações pessoais em português brasileiro. Use diálogos curtos e situações do cotidiano (encontrar alguém na rua, apresentar-se numa festa). Inclua pelo menos 2 exercícios de múltipla escolha e 2 de completar lacunas. O tom deve ser descontraído e encorajador.",
+      "Crie uma atividade lúdica de nível A1 sobre saudações e apresentações pessoais em português brasileiro. Use diálogos curtos e situações adultas atuais: apresentar-se numa videochamada de trabalho, responder uma mensagem de boas-vindas no WhatsApp de um grupo, conhecer alguém num happy hour. Inclua pelo menos 2 exercícios de múltipla escolha e 2 de completar lacunas. Tom descontraído, brasileiro e encorajador.",
 
-      "Crie uma atividade A1 sobre números de 1 a 20 e cores básicas em português brasileiro. Use contextos concretos e divertidos: contar objetos numa mochila, descrever roupas de personagens. Inclua exercícios de associar colunas (número x palavra) e múltipla escolha com imagens descritas em texto.",
+      "Crie uma atividade A1 sobre números de 1 a 20 e cores básicas em português brasileiro. Use contextos adultos e cotidianos: itens num carrinho de compras online, avaliações com estrelas num app, cores de produtos numa loja virtual, quantidades numa receita simples. Inclua exercícios de associar colunas (número x palavra) e múltipla escolha com situações concretas do dia a dia.",
 
       "Crie uma atividade A1 sobre os dias da semana e meses do ano em português brasileiro. Use uma agenda imaginária de um estudante universitário brasileiro. Inclua exercícios de completar lacunas e ordenar frases simples relacionadas à rotina semanal.",
 
       "Crie uma atividade A1 sobre os verbos ser, estar e ter no presente do indicativo em português brasileiro. Use exemplos de apresentação pessoal e descrição de família. O enunciado pode ser um pequeno texto de apresentação de uma personagem fictícia chamada Ana, brasileira de São Paulo. Inclua múltipla escolha e completar lacunas.",
 
-      "Crie uma atividade A1 sobre vocabulário da sala de aula e objetos do cotidiano em português brasileiro. Use um cenário de primeiro dia de aula. Inclua exercícios de associar colunas (objeto x função) e múltipla escolha com frases curtas e simples.",
+      "Crie uma atividade A1 sobre vocabulário digital e tecnologia do cotidiano em português brasileiro para adultos em 2026. Use o contexto de um estrangeiro recém-chegado ao Brasil configurando sua vida digital: instalando apps, fazendo seu primeiro Pix, pedindo comida pelo iFood, salvando contatos no WhatsApp. Vocabulário: celular, aplicativo, senha, mensagem, número, conta, tela, notificação. Inclua exercícios de associar colunas (função x palavra) e múltipla escolha com frases curtas e situações reais.",
 
       "Crie uma atividade A1 sobre artigos definidos e indefinidos (o, a, um, uma) e concordância de gênero em português brasileiro. Use exemplos concretos com objetos e pessoas. Enunciado pode ser um mini-texto sobre uma cozinha brasileira típica. Inclua completar lacunas e múltipla escolha.",
 
@@ -19,7 +19,17 @@ module ActivityPromptTemplates
 
       "Crie uma atividade A1 sobre preposições básicas de lugar (em, de, para, com) em português brasileiro. Use um texto curto sobre alguém descrevendo onde mora e para onde vai. Inclua múltipla escolha e completar lacunas com contexto de endereço e transporte.",
 
-      "Crie uma atividade A1 sobre expressões de tempo (hoje, amanhã, ontem, agora, depois) em português brasileiro. Use um diálogo entre dois estudantes marcando um encontro. Tom informal e brasileiro. Inclua ordenar frases e múltipla escolha."
+      "Crie uma atividade A1 sobre expressões de tempo (hoje, amanhã, ontem, agora, depois, mais tarde) em português brasileiro. Use uma conversa de WhatsApp entre dois amigos adultos marcando um encontro para jantar ou um happy hour. Tom informal e brasileiro, com emojis no diálogo. Inclua ordenar frases e múltipla escolha.",
+
+      "Crie uma atividade A1 sobre vocabulário de comida e bebida em português brasileiro. Use o contexto de um estrangeiro pedindo café da manhã num café de São Paulo ou escolhendo no cardápio digital de um app de delivery. Vocabulário essencial: café, suco, pão de queijo, fruta, água, cerveja, comer, beber, querer, preferir. Inclua um diálogo simples de pedido no balcão ou chat do app, múltipla escolha de vocabulário e completar lacunas. Tom prático e descontraído.",
+
+      "Crie uma atividade A1 sobre verbos regulares terminados em -er e -ir no presente do indicativo em português brasileiro (beber, comer, escrever, abrir, assistir, preferir). Use o contexto de rotinas culturais e digitais: um estrangeiro que assiste séries brasileiras no streaming, escreve no seu diário de aprendizado e bebe açaí depois da academia. Inclua completar lacunas onde o sujeito e o contexto tornam a conjugação necessária — sem dar os verbos entre parênteses. Varie os sujeitos (eu, você, ele, nós). Inclua também ordenar frases.",
+
+      "Crie uma atividade A1 sobre adjetivos básicos e concordância de gênero e número em português brasileiro. Use descrições de apartamentos num site de aluguel estilo Airbnb e descrições de pratos num cardápio digital. Adjetivos: bonito/a, grande, pequeno/a, novo/a, gostoso/a, tranquilo/a, caro/a, barato/a, moderno/a, aconchegante. Inclua associar colunas (adjetivo masculino x feminino) e completar lacunas com a forma de concordância correta em frases de anúncio ou avaliação.",
+
+      "Crie uma atividade A1 sobre emoções e estados pessoais em português brasileiro (feliz, triste, cansado/a, animado/a, estressado/a, com fome, com sede, com sono, nervoso/a, aliviado/a). Use o formato de posts fictícios de redes sociais, reações de WhatsApp e stickers. Inclua múltipla escolha (qual emoção corresponde à situação descrita) e associar colunas (situação cotidiana x estado emocional). Tom leve, atual e próximo da linguagem real dos brasileiros online.",
+
+      "Crie uma atividade A1 sobre vocabulário básico de moradia em português brasileiro. Use o contexto de um estrangeiro procurando apartamento para alugar no Brasil — lendo um anúncio online simples, trocando mensagem com o proprietário e descrevendo onde mora para um amigo. Vocabulário: apartamento, quarto, sala, cozinha, banheiro, aluguel, bairro, andar, perto de, longe de, mobiliado. Inclua múltipla escolha de compreensão do anúncio e completar lacunas em descrições simples."
     ],
 
     "A2" => [
@@ -41,7 +51,17 @@ module ActivityPromptTemplates
 
       "Crie uma atividade A2 sobre meios de transporte em português brasileiro. Use uma situação de planejamento de viagem pelo Brasil (avião, trem, ônibus, metrô). Inclua um diálogo numa agência de viagens e exercícios de associar colunas e completar lacunas.",
 
-      "Crie uma atividade A2 sobre saúde e partes do corpo em português brasileiro. Use um diálogo numa consulta médica com queixa de gripe ou dor. Vocabulário: cabeça, garganta, febre, remédio, descansar. Inclua ordenar o diálogo e múltipla escolha de vocabulário."
+      "Crie uma atividade A2 sobre saúde e partes do corpo em português brasileiro. Use um diálogo numa consulta médica com queixa de gripe ou dor. Vocabulário: cabeça, garganta, febre, remédio, descansar. Inclua ordenar o diálogo e múltipla escolha de vocabulário.",
+
+      "Crie uma atividade A2 sobre o pretérito perfeito em português brasileiro, com foco em ações concluídas recentes. Use um relato pessoal sobre um fim de semana agitado numa cidade brasileira: a personagem saiu com amigos, comeu num restaurante novo, viu um show e conheceu pessoas interessantes. NÃO dê os verbos entre parênteses nas lacunas — deixe o contexto temporal (ontem, sábado passado, na sexta) guiar a escolha do tempo verbal. Inclua completar lacunas com os verbos conjugados e múltipla escolha de compreensão do relato. Verbos irregulares essenciais: ir/foi, fazer/fez, ver/viu, ter/teve, vir/veio.",
+
+      "Crie uma atividade A2 sobre os verbos modais em português brasileiro (poder, querer, precisar, dever + infinitivo). Use situações realistas de um estrangeiro resolvendo pendências do dia a dia no Brasil: abrir conta num banco digital, marcar consulta médica, renovar documentos, ligar para o caseiro. Inclua completar lacunas em que o contexto determina qual modal é o correto, múltipla escolha destacando a diferença entre 'posso' (capacidade/permissão), 'quero' (desejo), 'preciso' (necessidade) e 'devo' (obrigação ou conselho).",
+
+      "Crie uma atividade A2 sobre o futuro próximo com 'ir + infinitivo' em português brasileiro. Use o contexto de uma agenda semanal real: uma brasileira planejando a semana com uma amiga — reuniões de trabalho, academia, happy hour, viagem de fim de semana para o litoral. Use trocas de mensagens de texto para mostrar os planos. Inclua completar lacunas com a construção correta de futuro próximo (variando sujeitos) e ordenar a sequência lógica dos planos da semana.",
+
+      "Crie uma atividade A2 sobre vocabulário financeiro do cotidiano brasileiro em 2026. Use situações adultas reais: pagar com Pix, parcelar uma compra no cartão, entender uma fatura de cartão, transferir dinheiro pelo Nubank, entender o troco numa compra. Vocabulário: conta, saldo, transferência, parcela, juros, vencimento, recibo, troco, desconto, pagar à vista, débito automático. Inclua completar lacunas numa situação de compra e múltipla escolha com mini-situações financeiras reais.",
+
+      "Crie uma atividade A2 sobre expressar convites e respostas sociais em português brasileiro. Use diálogos realistas entre adultos: convidar alguém para um show, jantar ou jogo de futebol; aceitar com entusiasmo; recusar educadamente por falta de tempo; sugerir outra data. Expressões-chave: 'que tal...?', 'topas?', 'boa ideia!', 'pode ser!', 'infelizmente não consigo', 'que tal a semana que vem?', 'com certeza!'. Inclua ordenar o diálogo completo e múltipla escolha da resposta mais adequada ao contexto."
     ],
 
     "B1" => [
