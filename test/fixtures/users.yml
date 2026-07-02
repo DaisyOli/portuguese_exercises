@@ -1,17 +1,47 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
-# This model initially had no columns defined. If you add columns to the
-# model remove the "{}" from the fixture names and add the columns immediately
-# below each fixture, per the syntax in the comments below
-#
 one:
   email: teacher1@example.com
   role: teacher
   language: pt
-# column: value
-#
+  name: Professora Ana
+  confirmed_at: 2024-01-01 00:00:00
+  encrypted_password: "$2a$12$39K2aHwlB9.S2C98mrI5.efQTGO4KsrSabuLbGkTY3MASXPwQj.2a"
+
 two:
   email: student1@example.com
   role: student
   language: pt
-# column: value
+  name: João Aluno
+  level: B1
+  weekly_reminder_email: true
+  confirmed_at: 2024-01-01 00:00:00
+  encrypted_password: "$2a$12$39K2aHwlB9.S2C98mrI5.efQTGO4KsrSabuLbGkTY3MASXPwQj.2a"
+
+student_pt:
+  email: student_pt@example.com
+  role: student
+  language: pt
+  name: Maria Silva
+  level: B1
+  weekly_reminder_email: true
+  confirmed_at: 2024-01-01 00:00:00
+  encrypted_password: "$2a$12$39K2aHwlB9.S2C98mrI5.efQTGO4KsrSabuLbGkTY3MASXPwQj.2a"
+
+student_fr:
+  email: student_fr@example.com
+  role: student
+  language: fr
+  name: Pierre Dupont
+  level: B1
+  confirmed_at: 2024-01-01 00:00:00
+  encrypted_password: "$2a$12$39K2aHwlB9.S2C98mrI5.efQTGO4KsrSabuLbGkTY3MASXPwQj.2a"
+
+student_en:
+  email: student_en@example.com
+  role: student
+  language: en
+  name: John Smith
+  level: B1
+  confirmed_at: 2024-01-01 00:00:00
+  encrypted_password: "$2a$12$39K2aHwlB9.S2C98mrI5.efQTGO4KsrSabuLbGkTY3MASXPwQj.2a"

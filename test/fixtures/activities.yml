@@ -4,12 +4,25 @@ one:
   title: Exercício de Português 1
   description: Descrição do primeiro exercício
   content_type: quiz
-  level: básico
+  level: B1
   teacher: one
+  slug: exercicio-1
+  draft: false
 
 two:
   title: Exercício de Português 2
   description: Descrição do segundo exercício
   content_type: quiz
-  level: intermediário
+  level: B2
   teacher: one
+  slug: exercicio-2
+  draft: false
+
+b1_published:
+  title: Atividade B1 para Testes
+  description: Atividade publicada usada nos testes de mailer
+  content_type: quiz
+  level: B1
+  teacher: one
+  slug: b1-published-test
+  draft: false
