@@ -1,5 +1,5 @@
 <%# Mostrado apenas para alunos que completaram pelo menos 1 atividade %>
-<% if current_user.student? && current_user.quiz_attempts.exists? %>
+<% if current_user.student_like? && current_user.quiz_attempts.exists? %>
 
 <div id="pwa-install-banner" style="display:none; position:fixed; bottom:0; left:0; right:0; z-index:1000;
      background:#0F3826; color:#fff; padding:16px 20px; box-shadow:0 -4px 20px rgba(0,0,0,0.2);">
