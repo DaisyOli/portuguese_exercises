@@ -57,6 +57,32 @@
         </div>
       <% end %>
 
+      <%# Toggle lembrete semanal %>
+      <div style="background:#F7F5F0; border-radius:12px; padding:14px 16px; margin-bottom:20px; display:flex; align-items:flex-start; gap:12px;">
+        <%= f.check_box :weekly_reminder_email,
+              style: "margin-top:3px; accent-color:#1A6B4A; width:16px; height:16px; flex-shrink:0; cursor:pointer;",
+              id: "weekly_reminder_checkbox" %>
+        <label for="weekly_reminder_checkbox" style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; color:#1C1917; cursor:pointer; line-height:1.4;">
+          <span style="font-weight:700;" id="wr-label">Lembrete semanal por email</span><br>
+          <span style="color:#9C9690;" id="wr-desc">Receba toda segunda os exercícios disponíveis no seu nível</span>
+        </label>
+      </div>
+
+      <script>
+      (function() {
+        var lang = navigator.language || 'pt';
+        var d = lang.startsWith('fr')
+          ? { label: "Rappel hebdomadaire par email", desc: "Recevez chaque lundi vos exercices disponibles · sem pressão" }
+          : lang.startsWith('en')
+          ? { label: "Weekly email reminder", desc: "Get your available exercises every Monday · sem pressão" }
+          : { label: "Lembrete semanal por email", desc: "Receba toda segunda os exercícios disponíveis no seu nível" };
+        var l = document.getElementById('wr-label');
+        var d2 = document.getElementById('wr-desc');
+        if (l) l.textContent = d.label;
+        if (d2) d2.textContent = d.desc;
+      })();
+      </script>
+
       <%= f.submit "Criar minha conta",
             style: "width:100%; background:#0F3826; color:#fff; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.9rem; font-weight:700; padding:12px; border:none; border-radius:12px; cursor:pointer; display:block;" %>
     <% end %>

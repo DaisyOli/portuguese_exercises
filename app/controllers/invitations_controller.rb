@@ -19,7 +19,7 @@ class InvitationsController < Devise::InvitationsController
 
   def configure_permitted_parameters
     devise_parameter_sanitizer.permit(:invite, keys: [:name, :role, :level, :professional_type])
-    devise_parameter_sanitizer.permit(:accept_invitation, keys: [:name])
+    devise_parameter_sanitizer.permit(:accept_invitation, keys: [:name, :weekly_reminder_email])
   end
 
   private
