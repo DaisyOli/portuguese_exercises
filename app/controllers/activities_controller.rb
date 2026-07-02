@@ -271,9 +271,17 @@ class ActivitiesController < ApplicationController
 
   def notify_students_of_new_activity(activity)
     notifiable_levels = StudentMailer.notifiable_levels_for_activity(activity.level)
-    User.where(role: "student", level: notifiable_levels)
-        .find_each do |student|
+    User.where(role: "student", level: notifiable_levels).find_each do |student|
       StudentMailer.new_activity(student, activity).deliver_later
+      push_body = student.language == "fr" ? "Un exercice #{activity.level} vous attend !" :
+                  student.language == "en" ? "A new #{activity.level} exercise is ready!" :
+                                             "Exercício #{activity.level} novo disponível!"
+      PushNotificationService.send_to_user(
+        student,
+        title: "Practice-BR 📖",
+        body:  push_body,
+        url:   activity_url(activity)
+      )
     end
   end
 

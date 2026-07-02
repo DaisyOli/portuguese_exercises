@@ -87,6 +87,7 @@ Rails.application.routes.draw do
   get  "assinar/cancelado",    to: "billing#cancel",           as: :billing_cancel
   post "assinar/cancelar",     to: "billing#cancel_subscription", as: :billing_cancel_subscription
   post "webhooks/stripe",      to: "webhooks#stripe"
+  resources :push_subscriptions, only: [:create, :destroy]
 
   # Página de acesso trial encerrado
   get "acesso-encerrado", to: "home#trial_expired", as: "trial_expired"

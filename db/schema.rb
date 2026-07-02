@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2026_07_01_142050) do
+ActiveRecord::Schema[7.1].define(version: 2026_07_02_064553) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -114,6 +114,17 @@ ActiveRecord::Schema[7.1].define(version: 2026_07_01_142050) do
     t.datetime "updated_at", null: false
     t.index ["paragraph_ordering_id", "correct_position"], name: "index_paragraph_sentences_on_ordering_and_position", unique: true
     t.index ["paragraph_ordering_id"], name: "index_paragraph_sentences_on_paragraph_ordering_id"
+  end
+
+  create_table "push_subscriptions", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.text "endpoint", null: false
+    t.string "p256dh_key", null: false
+    t.string "auth_key", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id", "endpoint"], name: "index_push_subscriptions_on_user_id_and_endpoint", unique: true
+    t.index ["user_id"], name: "index_push_subscriptions_on_user_id"
   end
 
   create_table "questions", force: :cascade do |t|
@@ -225,6 +236,7 @@ ActiveRecord::Schema[7.1].define(version: 2026_07_01_142050) do
   add_foreign_key "matching_pairs", "column_matchings"
   add_foreign_key "paragraph_orderings", "activities"
   add_foreign_key "paragraph_sentences", "paragraph_orderings"
+  add_foreign_key "push_subscriptions", "users"
   add_foreign_key "questions", "activities"
   add_foreign_key "quiz_attempts", "activities"
   add_foreign_key "quiz_attempts", "users"

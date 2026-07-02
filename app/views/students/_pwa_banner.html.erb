@@ -1,0 +1,186 @@
+<%# Mostrado apenas para alunos que completaram pelo menos 1 atividade %>
+<% if current_user.student? && current_user.quiz_attempts.exists? %>
+
+<div id="pwa-install-banner" style="display:none; position:fixed; bottom:0; left:0; right:0; z-index:1000;
+     background:#0F3826; color:#fff; padding:16px 20px; box-shadow:0 -4px 20px rgba(0,0,0,0.2);">
+  <div style="max-width:560px; margin:0 auto; display:flex; align-items:center; gap:14px; flex-wrap:wrap;">
+    <div style="flex:1; min-width:200px;">
+      <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.9rem; font-weight:700;" id="pwa-banner-title">
+        Instale o app para receber alertas
+      </div>
+      <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.78rem; color:#6EBD96; margin-top:3px;" id="pwa-banner-desc">
+        Saiba na hora quando seu professor publicar um exercício novo
+      </div>
+    </div>
+    <div style="display:flex; gap:8px; flex-shrink:0;">
+      <button id="pwa-install-btn" style="display:none; background:#1A6B4A; color:#fff; border:none;
+              font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; font-weight:700;
+              padding:9px 18px; border-radius:20px; cursor:pointer;">
+        <span id="pwa-install-btn-text">Instalar</span>
+      </button>
+      <button id="pwa-ios-btn" style="display:none; background:#1A6B4A; color:#fff; border:none;
+              font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; font-weight:700;
+              padding:9px 18px; border-radius:20px; cursor:pointer;"
+              onclick="document.getElementById('pwa-ios-instructions').style.display='block'; this.style.display='none';">
+        <span id="pwa-ios-btn-text">Como instalar</span>
+      </button>
+      <button onclick="document.getElementById('pwa-install-banner').style.display='none'; localStorage.setItem('pwa_banner_dismissed','1');"
+              style="background:transparent; color:#6EBD96; border:none; font-size:1.1rem; cursor:pointer; padding:4px 8px;">✕</button>
+    </div>
+  </div>
+
+  <%# Instruções iOS (ocultas por padrão) %>
+  <div id="pwa-ios-instructions" style="display:none; margin-top:14px; max-width:560px; margin-left:auto; margin-right:auto;
+       background:#1A6B4A; border-radius:12px; padding:14px 16px;">
+    <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; color:#fff; line-height:1.6;" id="pwa-ios-steps">
+      1. Toque em <strong>📤</strong> (botão de compartilhar no Safari)<br>
+      2. Role para baixo e toque em <strong>"Adicionar à Tela de Início"</strong><br>
+      3. Confirme tocando em <strong>"Adicionar"</strong>
+    </div>
+  </div>
+</div>
+
+<%# Banner para pedir permissão de push (só aparece no modo standalone) %>
+<div id="pwa-push-banner" style="display:none; position:fixed; bottom:0; left:0; right:0; z-index:1000;
+     background:#1A6B4A; color:#fff; padding:16px 20px; box-shadow:0 -4px 20px rgba(0,0,0,0.2);">
+  <div style="max-width:560px; margin:0 auto; display:flex; align-items:center; gap:14px; flex-wrap:wrap;">
+    <div style="flex:1;">
+      <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.9rem; font-weight:700;" id="push-banner-title">
+        Ativar notificações?
+      </div>
+      <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.78rem; color:#A7DFC0; margin-top:3px;" id="push-banner-desc">
+        Receba alertas quando seu professor publicar algo novo
+      </div>
+    </div>
+    <div style="display:flex; gap:8px; flex-shrink:0;">
+      <button id="push-enable-btn" style="background:#fff; color:#0F3826; border:none;
+              font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; font-weight:700;
+              padding:9px 18px; border-radius:20px; cursor:pointer;">
+        <span id="push-enable-text">Ativar</span>
+      </button>
+      <button onclick="document.getElementById('pwa-push-banner').style.display='none'; localStorage.setItem('push_banner_dismissed','1');"
+              style="background:transparent; color:#A7DFC0; border:none; font-size:1.1rem; cursor:pointer; padding:4px 8px;">✕</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function() {
+  // Textos por idioma
+  var lang = navigator.language || 'pt';
+  var t = lang.startsWith('fr') ? {
+    installTitle: "Installez l'app pour recevoir des alertes",
+    installDesc:  "Soyez averti(e) dès que votre professeur publie un nouvel exercice",
+    installBtn:   "Installer",
+    iosBtn:       "Comment installer",
+    iosSteps:     "1. Appuyez sur <strong>📤</strong> (partager dans Safari)<br>2. Faites défiler et appuyez sur <strong>« Sur l'écran d'accueil »</strong><br>3. Confirmez en appuyant sur <strong>« Ajouter »</strong>",
+    pushTitle:    "Activer les notifications ?",
+    pushDesc:     "Recevez une alerte quand votre professeur publie quelque chose de nouveau",
+    pushBtn:      "Activer"
+  } : lang.startsWith('en') ? {
+    installTitle: "Install the app to get alerts",
+    installDesc:  "Get notified instantly when your teacher publishes a new exercise",
+    installBtn:   "Install",
+    iosBtn:       "How to install",
+    iosSteps:     "1. Tap <strong>📤</strong> (share button in Safari)<br>2. Scroll down and tap <strong>\"Add to Home Screen\"</strong><br>3. Confirm by tapping <strong>\"Add\"</strong>",
+    pushTitle:    "Enable notifications?",
+    pushDesc:     "Get alerts when your teacher publishes something new",
+    pushBtn:      "Enable"
+  } : {
+    installTitle: "Instale o app para receber alertas",
+    installDesc:  "Saiba na hora quando seu professor publicar um exercício novo",
+    installBtn:   "Instalar",
+    iosBtn:       "Como instalar",
+    iosSteps:     "1. Toque em <strong>📤</strong> (botão de compartilhar no Safari)<br>2. Role para baixo e toque em <strong>\"Adicionar à Tela de Início\"</strong><br>3. Confirme tocando em <strong>\"Adicionar\"</strong>",
+    pushTitle:    "Ativar notificações?",
+    pushDesc:     "Receba alertas quando seu professor publicar algo novo",
+    pushBtn:      "Ativar"
+  };
+
+  // Aplicar textos
+  ['installTitle','installDesc','installBtn','iosBtn','pushTitle','pushDesc','pushBtn'].forEach(function(k) {
+    var el = document.getElementById('pwa-' + k.replace(/([A-Z])/g, '-$1').toLowerCase()) ||
+             document.getElementById('push-' + k.replace('push','').replace(/([A-Z])/g, '-$1').toLowerCase().replace(/^-/,''));
+    if (el) el.textContent = t[k];
+  });
+  document.getElementById('pwa-banner-title').textContent  = t.installTitle;
+  document.getElementById('pwa-banner-desc').textContent   = t.installDesc;
+  document.getElementById('pwa-install-btn-text').textContent = t.installBtn;
+  document.getElementById('pwa-ios-btn-text').textContent  = t.iosBtn;
+  document.getElementById('pwa-ios-steps').innerHTML       = t.iosSteps;
+  document.getElementById('push-banner-title').textContent = t.pushTitle;
+  document.getElementById('push-banner-desc').textContent  = t.pushDesc;
+  document.getElementById('push-enable-text').textContent  = t.pushBtn;
+
+  var isIOS        = /iPhone|iPad|iPod/.test(navigator.userAgent) && !window.MSStream;
+  var isStandalone = window.navigator.standalone ||
+                     window.matchMedia('(display-mode: standalone)').matches;
+  var dismissed    = localStorage.getItem('pwa_banner_dismissed');
+  var pushDismissed = localStorage.getItem('push_banner_dismissed');
+
+  if (isStandalone) {
+    // App instalado: verificar se já tem permissão de push
+    if (!pushDismissed && 'Notification' in window && Notification.permission === 'default') {
+      document.getElementById('pwa-push-banner').style.display = 'block';
+    }
+  } else if (!dismissed) {
+    // App não instalado: mostrar banner de instalação
+    document.getElementById('pwa-install-banner').style.display = 'block';
+    if (isIOS) {
+      document.getElementById('pwa-ios-btn').style.display = 'inline-block';
+    } else {
+      // Android: aguarda beforeinstallprompt
+      window.addEventListener('beforeinstallprompt', function(e) {
+        e.preventDefault();
+        window._deferredInstallPrompt = e;
+        document.getElementById('pwa-install-btn').style.display = 'inline-block';
+      });
+    }
+  }
+
+  // Botão instalar Android
+  var installBtn = document.getElementById('pwa-install-btn');
+  if (installBtn) {
+    installBtn.addEventListener('click', function() {
+      if (!window._deferredInstallPrompt) return;
+      window._deferredInstallPrompt.prompt();
+      window._deferredInstallPrompt.userChoice.then(function(result) {
+        window._deferredInstallPrompt = null;
+        if (result.outcome === 'accepted') {
+          document.getElementById('pwa-install-banner').style.display = 'none';
+          localStorage.setItem('pwa_banner_dismissed', '1');
+        }
+      });
+    });
+  }
+
+  // Botão ativar push
+  var pushBtn = document.getElementById('push-enable-btn');
+  if (pushBtn) {
+    pushBtn.addEventListener('click', function() {
+      var vapidKey = document.querySelector('meta[name="vapid-public-key"]').content;
+      Notification.requestPermission().then(function(permission) {
+        if (permission !== 'granted') return;
+        navigator.serviceWorker.ready.then(function(reg) {
+          reg.pushManager.subscribe({
+            userVisibleOnly: true,
+            applicationServerKey: vapidKey
+          }).then(function(sub) {
+            var json = sub.toJSON();
+            var csrf = document.querySelector('meta[name="csrf-token"]').content;
+            fetch('/push_subscriptions', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': csrf },
+              body: JSON.stringify({ endpoint: json.endpoint, keys: json.keys })
+            });
+            document.getElementById('pwa-push-banner').style.display = 'none';
+            localStorage.setItem('push_banner_dismissed', '1');
+          });
+        });
+      });
+    });
+  }
+})();
+</script>
+
+<% end %>

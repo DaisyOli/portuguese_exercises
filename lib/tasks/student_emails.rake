@@ -37,6 +37,18 @@ namespace :student_emails do
       next if pending.empty? && featured.empty?
 
       StudentMailer.weekly_reminder(student, pending, featured).deliver_later
+
+      push_body = student.language == "fr" ? "Vos exercices de la semaine vous attendent 🌿" :
+                  student.language == "en" ? "Your exercises for this week are ready 🌿" :
+                                             "Seus exercícios desta semana estão esperando 🌿"
+      PushNotificationService.send_to_user(
+        student,
+        title: "Practice-BR",
+        body:  push_body,
+        url:   Rails.application.routes.url_helpers.student_dashboard_url(
+                 host: Rails.application.config.action_mailer.default_url_options[:host]
+               )
+      )
       sent += 1
     end
 

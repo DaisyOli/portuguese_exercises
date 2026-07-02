@@ -7,6 +7,7 @@ class User < ApplicationRecord
   has_many :activities, foreign_key: :teacher_id, dependent: :destroy
   has_many :students, class_name: 'User', foreign_key: :invited_by_id
   has_many :quiz_attempts, dependent: :destroy
+  has_many :push_subscriptions, dependent: :destroy
   
   ROLES = %w[teacher student trial].freeze
   LANGUAGES = %w[en pt fr].freeze
