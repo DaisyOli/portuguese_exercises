@@ -72,6 +72,45 @@
                 <% end %>
               </table>
 
+              <%# Seção de favoritas (fallback quando pending < 3) %>
+              <% if @featured.any? %>
+                <table cellpadding="0" cellspacing="0" width="100%" style="margin-bottom:20px;">
+                  <tr>
+                    <td style="padding:16px 0 10px;">
+                      <div style="font-size:0.72rem; font-weight:700; color:#C9952A; text-transform:uppercase; letter-spacing:0.07em;">
+                        <% if @lang == "fr" %>⭐ Favoris des élèves
+                        <% elsif @lang == "en" %>⭐ Student favorites
+                        <% else %>⭐ Favoritas dos alunos
+                        <% end %>
+                      </div>
+                    </td>
+                  </tr>
+                  <% @featured.each do |activity| %>
+                    <tr>
+                      <td style="padding:10px 0; border-bottom:1px solid #F0EDE8;">
+                        <table cellpadding="0" cellspacing="0" width="100%">
+                          <tr>
+                            <td width="42" valign="top" style="padding-top:2px;">
+                              <span style="display:inline-block; font-size:0.63rem; font-weight:800; letter-spacing:0.05em; padding:3px 8px; border-radius:20px; background:#FEF9C3; color:#A16207; white-space:nowrap;">
+                                <%= activity.level %>
+                              </span>
+                            </td>
+                            <td style="padding-left:10px;">
+                              <div style="font-size:0.85rem; font-weight:600; color:#1C1917;">
+                                <%= activity.title %>
+                              </div>
+                              <div style="font-size:0.73rem; color:#C9952A; font-style:italic; margin-top:2px;">
+                                <%= activity.estimated_duration %>
+                              </div>
+                            </td>
+                          </tr>
+                        </table>
+                      </td>
+                    </tr>
+                  <% end %>
+                </table>
+              <% end %>
+
               <%# Botão CTA bilíngue %>
               <table cellpadding="0" cellspacing="0" width="100%">
                 <tr>

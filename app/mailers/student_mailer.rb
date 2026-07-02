@@ -16,9 +16,10 @@ class StudentMailer < ApplicationMailer
     mail(to: student.email, subject: subject)
   end
 
-  def weekly_reminder(student, activities)
+  def weekly_reminder(student, activities, featured = [])
     @student    = student
     @activities = activities
+    @featured   = featured
     @url        = student_dashboard_url
     @lang       = student.language.presence || "pt"
 

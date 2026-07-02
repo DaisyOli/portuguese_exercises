@@ -9,28 +9,34 @@ namespace :student_emails do
     sent = 0
 
     User.where(role: "student", weekly_reminder_email: true).find_each do |student|
-      next unless student.invited_by_id.present?
-
-      teacher = User.find_by(id: student.invited_by_id)
-      next unless teacher
-
-      completed_ids = QuizAttempt.where(user_id: student.id)
-                                 .joins(:activity)
-                                 .where(activities: { draft: false })
-                                 .pluck(:activity_id)
+      next unless student.level.present?
 
       levels = StudentMailer.notifiable_levels_for_activity(student.level)
                             .push(student.level)
                             .uniq
 
-      pending = teacher.activities
-                       .where(draft: false, level: levels)
-                       .where.not(id: completed_ids)
-                       .order(created_at: :desc)
+      completed_ids = QuizAttempt.where(user_id: student.id).pluck(:activity_id)
 
-      next if pending.empty?
+      pending = Activity.published
+                        .where(level: levels)
+                        .where.not(id: completed_ids)
+                        .order(created_at: :desc)
 
-      StudentMailer.weekly_reminder(student, pending).deliver_later
+      featured = []
+      if pending.count < 3
+        featured = Activity.published
+                           .where(level: levels)
+                           .joins(:activity_ratings)
+                           .group("activities.id")
+                           .having("COUNT(activity_ratings.id) >= 1")
+                           .order("AVG(activity_ratings.stars) DESC")
+                           .where.not(id: completed_ids + pending.map(&:id))
+                           .limit(3)
+      end
+
+      next if pending.empty? && featured.empty?
+
+      StudentMailer.weekly_reminder(student, pending, featured).deliver_later
       sent += 1
     end
 

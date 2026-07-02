@@ -271,9 +271,8 @@ class ActivitiesController < ApplicationController
 
   def notify_students_of_new_activity(activity)
     notifiable_levels = StudentMailer.notifiable_levels_for_activity(activity.level)
-    activity.teacher.students
-            .where(level: notifiable_levels)
-            .find_each do |student|
+    User.where(role: "student", level: notifiable_levels)
+        .find_each do |student|
       StudentMailer.new_activity(student, activity).deliver_later
     end
   end
