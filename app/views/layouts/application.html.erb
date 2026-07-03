@@ -68,6 +68,31 @@
   </head>
   
   <body>
+    <%# Splash animada PWA — aparece uma vez por sessão, apenas em modo standalone (app instalado) %>
+    <div id="pwa-splash" aria-hidden="true" style="position:fixed;inset:0;z-index:9999;background:#0F3826;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:28px;pointer-events:none;">
+      <%= image_tag "practice-br-logo-mark-mono-light.svg", alt: "", style: "width:100px;height:auto;" %>
+      <span style="font-family:'Raleway',sans-serif;font-size:1.5rem;font-weight:700;color:#F7F5F0;letter-spacing:0.04em;">Practice-BR</span>
+    </div>
+    <style>
+      @keyframes _splashLogoIn { from{opacity:0;transform:scale(.72)} to{opacity:1;transform:scale(1)} }
+      @keyframes _splashTextIn { from{opacity:0;transform:translateY(14px)} to{opacity:1;transform:translateY(0)} }
+      @keyframes _splashOut    { from{opacity:1} to{opacity:0} }
+      #pwa-splash > img  { animation: _splashLogoIn .55s cubic-bezier(.22,.68,0,1.2) both; }
+      #pwa-splash > span { animation: _splashTextIn .45s ease-out .35s both; }
+    </style>
+    <script>
+      (function(){
+        var el = document.getElementById('pwa-splash');
+        var standalone = window.matchMedia('(display-mode: standalone)').matches || navigator.standalone;
+        if (!standalone || sessionStorage.getItem('_pbr_splash')) { el.style.display='none'; return; }
+        sessionStorage.setItem('_pbr_splash','1');
+        setTimeout(function(){
+          el.style.animation='_splashOut .45s ease-in forwards';
+          setTimeout(function(){ el.style.display='none'; }, 450);
+        }, 1700);
+      })();
+    </script>
+
     <% if current_user && !content_for?(:hide_navbar) %>
       <%= render 'shared/navbar' %>
       <div style="height:56px;"></div>

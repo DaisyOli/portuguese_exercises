@@ -10,7 +10,7 @@ class PwaController < ApplicationController
       scope:            "/",
       display:          "standalone",
       orientation:      "portrait",
-      background_color: "#F7F5F0",
+      background_color: "#0F3826",
       theme_color:      "#0F3826",
       lang:             I18n.locale.to_s,
       icons: [
