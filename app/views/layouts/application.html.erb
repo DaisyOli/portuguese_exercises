@@ -69,27 +69,98 @@
   
   <body>
     <%# Splash animada PWA — aparece uma vez por sessão, apenas em modo standalone (app instalado) %>
-    <div id="pwa-splash" aria-hidden="true" style="position:fixed;inset:0;z-index:9999;background:#0F3826;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:28px;pointer-events:none;">
-      <%= image_tag "practice-br-logo-mark-mono-light.svg", alt: "", style: "width:100px;height:auto;" %>
-      <span style="font-family:'Raleway',sans-serif;font-size:1.5rem;font-weight:700;color:#F7F5F0;letter-spacing:0.04em;">Practice-BR</span>
+    <div id="pwa-splash" aria-hidden="true" style="position:fixed;inset:0;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding-bottom:96px;background:#F7F5F0;">
+      <div id="pwaLogoWrap" style="position:relative;width:160px;height:160px;flex-shrink:0;opacity:0;transform:scale(.88)">
+        <%= image_tag "practice-br-logo-mark-color.png", alt: "", style: "width:160px;height:160px;display:block;" %>
+        <svg viewBox="0 0 100 100" style="position:absolute;top:0;left:0;width:160px;height:160px;overflow:visible;" aria-hidden="true">
+          <circle id="pwacover" cx="76" cy="27" r="6" fill="#F7F5F0"/>
+          <circle id="pwadot" cx="35" cy="80" r="0" fill="#C9952A" opacity="0"/>
+        </svg>
+      </div>
+      <span id="pwaName" style="font-family:'Raleway',sans-serif;font-size:1.35rem;font-weight:700;letter-spacing:.04em;color:#0F3826;opacity:0;transform:translateY(8px);">Practice-BR</span>
+      <small id="pwaTag" style="font-family:'Raleway',sans-serif;font-size:.72rem;font-weight:400;letter-spacing:.08em;text-transform:uppercase;color:#9C9892;opacity:0;transform:translateY(8px);">APRENDER É UMA AVENTURA</small>
     </div>
-    <style>
-      @keyframes _splashLogoIn { from{opacity:0;transform:scale(.72)} to{opacity:1;transform:scale(1)} }
-      @keyframes _splashTextIn { from{opacity:0;transform:translateY(14px)} to{opacity:1;transform:translateY(0)} }
-      @keyframes _splashOut    { from{opacity:1} to{opacity:0} }
-      #pwa-splash > img  { animation: _splashLogoIn .55s cubic-bezier(.22,.68,0,1.2) both; }
-      #pwa-splash > span { animation: _splashTextIn .45s ease-out .35s both; }
-    </style>
     <script>
       (function(){
-        var el = document.getElementById('pwa-splash');
-        var standalone = window.matchMedia('(display-mode: standalone)').matches || navigator.standalone;
-        if (!standalone || sessionStorage.getItem('_pbr_splash')) { el.style.display='none'; return; }
+        var el=document.getElementById('pwa-splash');
+        var standalone=window.matchMedia('(display-mode: standalone)').matches||navigator.standalone;
+        if(!standalone||sessionStorage.getItem('_pbr_splash')){el.style.display='none';return;}
         sessionStorage.setItem('_pbr_splash','1');
-        setTimeout(function(){
-          el.style.animation='_splashOut .45s ease-in forwards';
-          setTimeout(function(){ el.style.display='none'; }, 450);
-        }, 1700);
+        var wrap=document.getElementById('pwaLogoWrap'),
+            dot=document.getElementById('pwadot'),
+            cover=document.getElementById('pwacover'),
+            nameEl=document.getElementById('pwaName'),
+            tagEl=document.getElementById('pwaTag');
+        var WP=[{x:35,y:80},{x:50,y:73},{x:55,y:68},{x:46,y:62},{x:32,y:51},
+                {x:40,y:46},{x:50,y:40},{x:58,y:36},{x:67,y:34},{x:72,y:33},
+                {x:75,y:31},{x:76,y:27}];
+        function crPoint(pts,t){
+          var n=pts.length-1;
+          if(t<=0)return{x:pts[0].x,y:pts[0].y};
+          if(t>=1)return{x:pts[n].x,y:pts[n].y};
+          var seg=Math.min(Math.floor(t*n),n-1),lt=t*n-seg;
+          var p0=pts[Math.max(seg-1,0)],p1=pts[seg],
+              p2=pts[Math.min(seg+1,n)],p3=pts[Math.min(seg+2,n)];
+          var t2=lt*lt,t3=t2*lt;
+          return{
+            x:.5*((2*p1.x)+(-p0.x+p2.x)*lt+(2*p0.x-5*p1.x+4*p2.x-p3.x)*t2+(-p0.x+3*p1.x-3*p2.x+p3.x)*t3),
+            y:.5*((2*p1.y)+(-p0.y+p2.y)*lt+(2*p0.y-5*p1.y+4*p2.y-p3.y)*t2+(-p0.y+3*p1.y-3*p2.y+p3.y)*t3)
+          };
+        }
+        function ease(t){return t<.5?2*t*t:-1+(4-2*t)*t;}
+        function dotR(t){return 1.5+4.0*(0.55*t+0.45*t*t);}
+        var rafId=null;
+        function cancelAnim(){if(rafId){cancelAnimationFrame(rafId);rafId=null;}}
+        function animateDot(dur,onDone){
+          cancelAnim();var start=null;
+          function frame(ts){
+            if(!start)start=ts;
+            var raw=Math.min((ts-start)/dur,1),e=ease(raw),p=crPoint(WP,e);
+            dot.setAttribute('cx',p.x.toFixed(2));dot.setAttribute('cy',p.y.toFixed(2));
+            dot.setAttribute('r',dotR(raw).toFixed(2));
+            if(raw<1){rafId=requestAnimationFrame(frame);}else{if(onDone)onDone();}
+          }
+          rafId=requestAnimationFrame(frame);
+        }
+        function pulseDot(onDone){
+          cancelAnim();var start=null,dur=320;
+          function frame(ts){
+            if(!start)start=ts;
+            var t=Math.min((ts-start)/dur,1),s=t<.5?1+t*.7:1.35-(t-.5)*.7;
+            dot.setAttribute('r',(5.5*s).toFixed(2));
+            if(t<1){rafId=requestAnimationFrame(frame);}else{dot.setAttribute('r','5.5');if(onDone)onDone();}
+          }
+          rafId=requestAnimationFrame(frame);
+        }
+        function fadeInEl(el,dur){
+          el.style.transition='opacity '+dur+'ms ease-out,transform '+dur+'ms ease-out';
+          el.style.opacity='1';el.style.transform='translateY(0)';
+        }
+        function dismissSplash(){
+          el.style.transition='opacity 400ms ease-in';el.style.opacity='0';
+          setTimeout(function(){el.style.display='none';},400);
+        }
+        function run(){
+          wrap.style.transition='opacity 350ms ease-out,transform 350ms cubic-bezier(.22,.68,0,1.15)';
+          wrap.style.opacity='1';wrap.style.transform='scale(1)';
+          setTimeout(function(){dot.setAttribute('opacity','1');},380);
+          setTimeout(function(){
+            animateDot(1200,function(){
+              pulseDot(function(){
+                cover.setAttribute('opacity','0');
+                setTimeout(function(){
+                  fadeInEl(nameEl,350);
+                  setTimeout(function(){
+                    fadeInEl(tagEl,300);
+                    setTimeout(dismissSplash,900);
+                  },460);
+                },150);
+              });
+            });
+          },570);
+        }
+        var img=el.querySelector('img');
+        if(img.complete){run();}else{img.onload=run;}
       })();
     </script>
 
