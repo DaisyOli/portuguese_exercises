@@ -14,9 +14,9 @@ class PwaController < ApplicationController
       theme_color:      "#0F3826",
       lang:             I18n.locale.to_s,
       icons: [
+        { src: "/icons/logo-mark-transparent-256x256.png", sizes: "256x256", type: "image/png" },
         { src: "/icons/android-chrome-192x192.png", sizes: "192x192", type: "image/png" },
-        { src: "/icons/android-chrome-512x512.png", sizes: "512x512", type: "image/png" },
-        { src: "/icons/android-chrome-512x512.png", sizes: "512x512", type: "image/png", purpose: "maskable" }
+        { src: "/icons/android-chrome-512x512.png", sizes: "512x512", type: "image/png" }
       ]
     }, content_type: "application/manifest+json"
   end
