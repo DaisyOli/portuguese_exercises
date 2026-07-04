@@ -125,7 +125,7 @@ class ActivitiesController < ApplicationController
       redirect_to activities_path, alert: t('messages.permission_denied') and return
     end
 
-    if @activity.update(draft: false)
+    if @activity.update(draft: false, published_at: Time.current)
       notify_students_of_new_activity(@activity)
       redirect_to activity_path(@activity), notice: "Atividade publicada com sucesso!"
     else
@@ -272,7 +272,6 @@ class ActivitiesController < ApplicationController
   def notify_students_of_new_activity(activity)
     notifiable_levels = StudentMailer.notifiable_levels_for_activity(activity.level)
     User.where(role: "student", level: notifiable_levels).find_each do |student|
-      StudentMailer.new_activity(student, activity).deliver_later
       push_body = student.language == "fr" ? "Un exercice #{activity.level} vous attend !" :
                   student.language == "en" ? "A new #{activity.level} exercise is ready!" :
                                              "Exercício #{activity.level} novo disponível!"
