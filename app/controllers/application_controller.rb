@@ -1,6 +1,7 @@
 class ApplicationController < ActionController::Base
   # Autenticação padrão
   before_action :authenticate_user!
+  before_action :suppress_redundant_flash
   before_action :configure_permitted_parameters, if: :devise_controller?
   before_action :check_trial_restrictions!
   around_action :switch_locale
@@ -27,6 +28,17 @@ class ApplicationController < ActionController::Base
   end
 
   private
+
+  def suppress_redundant_flash
+    redundant = [
+      I18n.t('devise.failure.unauthenticated'),
+      I18n.t('devise.failure.already_authenticated'),
+      I18n.t('devise.sessions.signed_in'),
+      I18n.t('devise.sessions.signed_out'),
+      I18n.t('devise.sessions.already_signed_out')
+    ]
+    [:notice, :alert].each { |k| flash.delete(k) if redundant.include?(flash[k]) }
+  end
 
   def check_trial_restrictions!
     return unless current_user&.trial?

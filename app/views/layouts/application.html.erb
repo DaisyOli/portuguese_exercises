@@ -169,25 +169,6 @@
       <div style="height:56px;"></div>
     <% end %>
 
-    <% if flash.any? %>
-      <div class="px-4 pt-3 pb-0" style="max-width:900px; margin:0 auto;">
-        <% flash.each do |type, msg| %>
-          <% css = case type.to_s
-               when 'notice'  then 'alert-success'
-               when 'alert'   then 'alert-error'
-               when 'warning' then 'alert-warning'
-               else                'alert-info'
-               end %>
-          <div class="alert <%= css %> rounded-xl py-3 mb-2"
-               style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.875rem;">
-            <span><%= msg %></span>
-            <button onclick="this.closest('.alert').remove()"
-                    class="btn btn-ghost btn-xs ml-auto">✕</button>
-          </div>
-        <% end %>
-      </div>
-    <% end %>
-
     <%= yield %>
     <!-- Toast Notifications Container -->
     <div id="toast-container" 
@@ -200,13 +181,13 @@
     <script>
       document.addEventListener('DOMContentLoaded', function() {
         // Converter flash messages em toast notifications
-        <% if flash[:notice] %>
+        <% if flash[:notice].present? %>
           document.dispatchEvent(new CustomEvent('show-toast', {
             detail: { message: '<%= j(flash[:notice]) %>', type: 'success' }
           }));
         <% end %>
-        
-        <% if flash[:alert] %>
+
+        <% if flash[:alert].present? %>
           document.dispatchEvent(new CustomEvent('show-toast', {
             detail: { message: '<%= j(flash[:alert]) %>', type: 'error' }
           }));
