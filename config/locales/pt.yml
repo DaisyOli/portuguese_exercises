@@ -312,7 +312,7 @@ pt:
     back: "Voltar"
     previous: "Anterior"
     next: "Próxima"
-    tip: "Dica"
+    tip: "Dica do professor"
     see_material: "Ver material ▼"
     open_answer_placeholder: "Escreva sua resposta aqui..."
     evaluated_by_ai: "Esta resposta será avaliada pela inteligência artificial"
