@@ -162,6 +162,13 @@
                          placeholder="Resposta correta <%= i + 1 %>">
                 </div>
               <% end %>
+              <button type="button" id="fib-add-btn-<%= question.id %>"
+                      style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.8rem; font-weight:600;
+                             color:#0F3826; padding:6px 12px; border:1.5px solid #BBF7D0; border-radius:20px;
+                             background:#E8F5EE; cursor:pointer; margin-top:6px;
+                             display:<%= fib_count >= 4 ? 'none' : 'inline-flex' %>; align-items:center; gap:5px;">
+                + Adicionar lacuna
+              </button>
             </div>
           </div>
 
@@ -238,6 +245,23 @@
                 }
               }
 
+              function initFibAddBtn() {
+                var addBtn = document.getElementById('fib-add-btn-' + qid);
+                if (!addBtn) return;
+                addBtn.addEventListener('click', function() {
+                  var form = document.getElementById('edit-form-' + qid);
+                  if (!form) return;
+                  var fields = Array.from(form.querySelectorAll('.fib-answer-field'));
+                  var nextHidden = fields.find(function(f) { return f.style.display === 'none'; });
+                  if (nextHidden) {
+                    nextHidden.style.display = 'flex';
+                    nextHidden.querySelector('input').focus();
+                  }
+                  var stillHidden = fields.some(function(f) { return f.style.display === 'none'; });
+                  if (!stillHidden) addBtn.style.display = 'none';
+                });
+              }
+
               function init() {
                 const form = document.getElementById('edit-form-' + qid);
                 if (!form) return;
@@ -251,6 +275,7 @@
                   });
                 }
                 updateEditFields();
+                initFibAddBtn();
               }
 
               if (document.readyState === 'loading') {

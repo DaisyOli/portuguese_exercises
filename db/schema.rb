@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2026_07_02_064553) do
+ActiveRecord::Schema[7.1].define(version: 2026_07_04_180000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -57,6 +57,7 @@ ActiveRecord::Schema[7.1].define(version: 2026_07_02_064553) do
     t.string "video_url"
     t.boolean "draft", default: false, null: false
     t.boolean "ai_generated"
+    t.datetime "published_at"
     t.index ["slug"], name: "index_activities_on_slug"
     t.index ["teacher_id"], name: "index_activities_on_teacher_id"
   end
