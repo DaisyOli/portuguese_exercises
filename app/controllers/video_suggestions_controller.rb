@@ -8,7 +8,9 @@ class VideoSuggestionsController < ApplicationController
   end
 
   def approve
-    transcript = params[:transcript].to_s.strip
+    transcript  = params[:transcript].to_s.strip
+    youtube_url = params[:youtube_url].presence || @suggestion.youtube_url.presence || ""
+
     if transcript.blank?
       return redirect_to video_suggestions_path,
                          alert: "Cole a transcrição do vídeo antes de aprovar."
@@ -17,15 +19,19 @@ class VideoSuggestionsController < ApplicationController
     ActiveRecord::Base.connection_pool.release_connection
 
     result = ActivityFromVideoService.new(
-      youtube_url: @suggestion.youtube_url,
+      youtube_url: youtube_url,
       transcript:  transcript,
       teacher:     current_user,
       level_hint:  @suggestion.level_hint
     ).call
 
     if result[:success]
-      @suggestion.update!(status: 'approved', transcript: transcript,
-                          activity_id: result[:activity].id)
+      @suggestion.update!(
+        status:      'approved',
+        transcript:  transcript,
+        youtube_url: youtube_url,
+        activity_id: result[:activity].id
+      )
       redirect_to review_draft_activity_path(result[:activity]),
                   notice: "Atividade gerada! Revise e publique quando estiver pronto."
     else

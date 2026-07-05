@@ -9,17 +9,13 @@ class ActivityFromVideoService
   end
 
   def call
-    svc = YoutubeTranscriptService.new(@youtube_url)
-    unless svc.valid?
-      return { success: false, error: "URL do YouTube inválida. Verifique o link do vídeo." }
-    end
-
     if @transcript.blank?
       return { success: false, error: "A transcrição está vazia. Cole o texto da transcrição do vídeo." }
     end
 
-    # Release DB connection before the long Claude API call so it doesn't
-    # time out idle on Heroku/RDS while waiting for the response.
+    svc = YoutubeTranscriptService.new(@youtube_url)
+    has_video = svc.valid?
+
     ActiveRecord::Base.connection_pool.release_connection
 
     result = ActivityGenerationService.new(
@@ -29,8 +25,9 @@ class ActivityFromVideoService
 
     return result unless result[:success]
 
-    video_url = "https://www.youtube.com/watch?v=#{svc.video_id}"
-    result[:activity].update(video_url: video_url, explanation_is_transcript: true)
+    updates = { explanation_is_transcript: true }
+    updates[:video_url] = "https://www.youtube.com/watch?v=#{svc.video_id}" if has_video
+    result[:activity].update(updates)
 
     { success: true, activity: result[:activity] }
   end

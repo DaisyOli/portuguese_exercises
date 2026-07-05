@@ -54,14 +54,15 @@ class DailyVideoSuggestionsService
     video = YoutubeSearchService.new(query: topic["search_query"]).call
 
     VideoSuggestion.create!(
-      teacher:              @teacher,
-      topic:                topic["topic"],
-      level_hint:           topic["level"],
-      thumbnail_url:        video&.dig(:thumbnail_url).to_s,
-      youtube_url:          video&.dig(:youtube_url).to_s,
-      title:                video&.dig(:title).to_s,
-      channel_name:         video&.dig(:channel_name).to_s,
-      status:               'pending'
+      teacher:       @teacher,
+      topic:         topic["topic"],
+      level_hint:    topic["level"],
+      search_query:  topic["search_query"].to_s,
+      thumbnail_url: video&.dig(:thumbnail_url).to_s,
+      youtube_url:   video&.dig(:youtube_url).to_s,
+      title:         video&.dig(:title).to_s,
+      channel_name:  video&.dig(:channel_name).to_s,
+      status:        'pending'
     )
   rescue => e
     Rails.logger.error "[DailyVideoSuggestions] Failed to create suggestion: #{e.message}"

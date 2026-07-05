@@ -4,15 +4,15 @@
   <div style="display:flex; gap:16px; padding:18px 20px; align-items:flex-start;">
 
     <%# Thumbnail %>
-    <div style="flex-shrink:0; width:120px; height:68px; border-radius:8px; overflow:hidden; background:#F0EDE8;">
+    <div style="flex-shrink:0; width:120px; height:68px; border-radius:8px; overflow:hidden; background:#F0EDE8; display:flex; align-items:center; justify-content:center;">
       <% if suggestion.thumbnail_url.present? %>
         <img src="<%= suggestion.thumbnail_url %>" alt="" style="width:100%; height:100%; object-fit:cover;">
       <% else %>
-        <div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; font-size:1.8rem;">🎬</div>
+        <span style="font-size:1.8rem;">🎬</span>
       <% end %>
     </div>
 
-    <%# Informações do vídeo %>
+    <%# Informações %>
     <div style="flex:1; min-width:0;">
       <div style="display:flex; align-items:center; gap:8px; margin-bottom:5px; flex-wrap:wrap;">
         <% if suggestion.level_hint.present? %>
@@ -30,52 +30,77 @@
       <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.88rem; font-weight:600; color:#1C1917; line-height:1.4; margin-bottom:4px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">
         <%= suggestion.title.present? ? suggestion.title : suggestion.topic %>
       </div>
-
       <% if suggestion.topic.present? %>
-        <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.78rem; color:#5C5853; line-height:1.4;">
+        <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.78rem; color:#5C5853;">
           Tema: <em><%= suggestion.topic %></em>
         </div>
       <% end %>
     </div>
 
-    <%# Botão rejeitar (X) %>
+    <%# Rejeitar %>
     <%= button_to reject_video_suggestion_path(suggestion), method: :post,
           style: "flex-shrink:0; width:28px; height:28px; border-radius:50%; border:1.5px solid #FECACA; background:#FEF2F2; color:#B91C1C; font-size:0.8rem; font-weight:700; cursor:pointer; display:flex; align-items:center; justify-content:center; padding:0;",
-          title: "Descartar" do %>
-      ✕
-    <% end %>
+          title: "Descartar" do %>✕<% end %>
   </div>
 
-  <%# Link pro YouTube %>
-  <% if suggestion.youtube_url.present? %>
-    <div style="padding:0 20px 12px;">
+  <%# Ações — link YouTube ou busca %>
+  <div style="padding:0 20px 14px; display:flex; gap:10px; flex-wrap:wrap;">
+    <% if suggestion.youtube_url.present? %>
       <%= link_to suggestion.youtube_url, target: "_blank", rel: "noopener",
             style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.78rem; font-weight:600; color:#C9952A; display:inline-flex; align-items:center; gap:5px; text-decoration:none;" do %>
-        <i class="bi bi-youtube"></i> Abrir no YouTube para copiar a transcrição ↗
+        <i class="bi bi-youtube"></i> Abrir vídeo no YouTube ↗
       <% end %>
-    </div>
-  <% end %>
+    <% elsif suggestion.search_query.present? %>
+      <%# Sem API: botão de busca pré-preenchida — não precisa de nada pago %>
+      <% yt_search = "https://www.youtube.com/results?search_query=#{CGI.escape(suggestion.search_query)}" %>
+      <%= link_to yt_search, target: "_blank", rel: "noopener",
+            style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.78rem; font-weight:600; color:#C9952A; display:inline-flex; align-items:center; gap:5px; text-decoration:none;" do %>
+        <i class="bi bi-search"></i> Buscar "<%= suggestion.search_query %>" no YouTube ↗
+      <% end %>
+    <% end %>
+  </div>
 
   <%# Formulário de transcrição + aprovar %>
   <details style="border-top:1px solid #F0EDE8;">
     <summary style="display:flex; align-items:center; gap:8px; padding:12px 20px; cursor:pointer; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.83rem; font-weight:600; color:#1A6B4A; list-style:none; user-select:none; background:#F7FDF9;">
       <i class="bi bi-clipboard-plus"></i>
       Cole a transcrição e gere a atividade
-      <span class="chevron" style="margin-left:auto; font-size:0.75rem; color:#9C9892;">▼</span>
+      <span style="margin-left:auto; font-size:0.75rem; color:#9C9892;">▼</span>
     </summary>
     <div style="padding:16px 20px 20px; background:#FAFAF9;">
       <%= form_with url: approve_video_suggestion_path(suggestion), method: :post, local: true do |f| %>
-        <label style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; font-weight:600; color:#44403C; display:block; margin-bottom:6px;">
-          Transcrição do vídeo
-          <span style="font-weight:400; color:#9C9892;">— YouTube: ⋮ → Abrir transcrição → selecionar tudo → copiar</span>
-        </label>
-        <%= text_area_tag :transcript, nil,
-              class: "pb-input",
-              rows: 8,
-              placeholder: "Cole aqui a transcrição do vídeo...",
-              spellcheck: "false",
-              style: "width:100%; padding:12px 14px; border:1.5px solid #DDD9D2; border-radius:10px; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.85rem; color:#1C1917; background:#fff; resize:vertical; min-height:140px; box-sizing:border-box; line-height:1.6;" %>
-        <div style="margin-top:10px; text-align:right;">
+
+        <%# URL do vídeo (opcional — só necessária se não veio da API) %>
+        <% unless suggestion.youtube_url.present? %>
+          <div style="margin-bottom:14px;">
+            <label style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; font-weight:600; color:#44403C; display:block; margin-bottom:5px;">
+              URL do vídeo no YouTube
+              <span style="font-weight:400; color:#9C9892;">(opcional — para o player aparecer na atividade)</span>
+            </label>
+            <%= text_field_tag :youtube_url, nil,
+                  placeholder: "https://www.youtube.com/watch?v=...",
+                  spellcheck: "false",
+                  autocomplete: "off",
+                  style: "width:100%; padding:9px 12px; border:1.5px solid #DDD9D2; border-radius:8px; font-family:'DM Mono',monospace; font-size:0.83rem; color:#1C1917; background:#fff; box-sizing:border-box;" %>
+          </div>
+        <% end %>
+
+        <%# Transcrição %>
+        <div style="margin-bottom:12px;">
+          <label style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; font-weight:600; color:#44403C; display:block; margin-bottom:4px;">
+            Transcrição do vídeo
+          </label>
+          <p style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.75rem; color:#9C9892; margin:0 0 7px; line-height:1.5;">
+            No YouTube: ⋮ → <strong style="color:#5C5853;">Abrir transcrição</strong> → selecionar tudo → copiar
+          </p>
+          <%= text_area_tag :transcript, nil,
+                rows: 7,
+                placeholder: "Cole aqui a transcrição do vídeo...",
+                spellcheck: "false",
+                style: "width:100%; padding:12px 14px; border:1.5px solid #DDD9D2; border-radius:10px; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.85rem; color:#1C1917; background:#fff; resize:vertical; min-height:130px; box-sizing:border-box; line-height:1.6;" %>
+        </div>
+
+        <div style="text-align:right;">
           <button type="submit"
                   style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.9rem; font-weight:700; color:#fff; background:#1A6B4A; padding:11px 28px; border-radius:10px; border:none; cursor:pointer; display:inline-flex; align-items:center; gap:8px;">
             ✨ Gerar atividade
