@@ -364,6 +364,7 @@ en:
     score_excellent: "Excellent work! 🌟"
     score_good: "Well done! Keep practicing."
     score_keep_going: "Keep it up — every attempt is a learning experience!"
+    see_transcript: "See transcript"
     ai_feedback: "AI Feedback"
     ai_score: "AI Score"
     ai_error: "Error evaluating response. Please try again."

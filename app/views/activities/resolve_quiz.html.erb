@@ -458,9 +458,23 @@
               <% end %>
 
               <% if @activity.explanation_text.present? %>
-                <div class="quiz-statement-block">
-                  <%= @activity.explanation_text.include?('<') ? sanitize(@activity.explanation_text, tags: %w[p br strong em u ol ul li], attributes: []) : simple_format(@activity.explanation_text) %>
-                </div>
+                <% explanation_html = @activity.explanation_text.include?('<') ? sanitize(@activity.explanation_text, tags: %w[p br strong em u ol ul li], attributes: []) : simple_format(@activity.explanation_text) %>
+                <% if @activity.explanation_is_transcript? %>
+                  <details style="border:1px solid #DDD9D2; border-radius:10px; overflow:hidden; margin-bottom:4px;">
+                    <summary style="display:flex; align-items:center; gap:8px; padding:10px 14px; cursor:pointer; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; font-weight:600; color:#5C5853; background:#FAFAF9; list-style:none; user-select:none;">
+                      <span style="font-size:1rem;">📄</span>
+                      <%= t('quiz.see_transcript', default: 'Ver transcrição') %>
+                      <span style="margin-left:auto; font-size:0.75rem; color:#9C9892;">▼</span>
+                    </summary>
+                    <div class="quiz-statement-block" style="border-top:1px solid #DDD9D2; border-radius:0;">
+                      <%= explanation_html %>
+                    </div>
+                  </details>
+                <% else %>
+                  <div class="quiz-statement-block">
+                    <%= explanation_html %>
+                  </div>
+                <% end %>
               <% end %>
 
               <% if @activity.audio_file.attached? %>

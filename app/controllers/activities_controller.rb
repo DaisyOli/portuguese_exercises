@@ -333,7 +333,7 @@ class ActivitiesController < ApplicationController
   end
 
   def activity_params
-    params.require(:activity).permit(:title, :description, :level, :media_url, :video_url, :explanation_text, :statement, :audio_file, :image_file, :video_file)
+    params.require(:activity).permit(:title, :description, :level, :media_url, :video_url, :explanation_text, :explanation_is_transcript, :statement, :audio_file, :image_file, :video_file)
   end
   
   def authorize_teacher

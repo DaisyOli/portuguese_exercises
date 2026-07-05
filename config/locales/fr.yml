@@ -326,6 +326,7 @@ fr:
     score_excellent: "Excellent travail ! 🌟"
     score_good: "Très bien ! Continuez à pratiquer."
     score_keep_going: "Continuez comme ça — chaque tentative est un apprentissage !"
+    see_transcript: "Voir la transcription"
 
   # Forms
   forms:

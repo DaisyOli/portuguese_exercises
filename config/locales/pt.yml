@@ -319,6 +319,7 @@ pt:
     score_excellent: "Excelente trabalho! 🌟"
     score_good: "Muito bem! Continue praticando."
     score_keep_going: "Continue assim — cada tentativa é um aprendizado!"
+    see_transcript: "Ver transcrição"
     ai_feedback: "Feedback da IA"
     ai_score: "Nota da IA"
     ai_error: "Erro ao avaliar a resposta. Por favor, tente novamente."

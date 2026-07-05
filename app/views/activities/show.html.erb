@@ -51,15 +51,16 @@
 
   <% if @activity.explanation_text.present? %>
     <%= render 'text_content_section',
-          activity:       @activity,
-          section_id:     'explanation',
-          title:          t('activities.explanation_text_label'),
-          content:        @activity.explanation_text,
-          delete_path:    clear_explanation_activity_path(@activity),
-          delete_method:  :patch,
-          delete_confirm: t('activities.confirm_delete_explanation'),
-          field_name:     :explanation_text,
-          field_label:    t('activities.explanation_text_label') %>
+          activity:               @activity,
+          section_id:             'explanation',
+          title:                  t('activities.explanation_text_label'),
+          content:                @activity.explanation_text,
+          delete_path:            clear_explanation_activity_path(@activity),
+          delete_method:          :patch,
+          delete_confirm:         t('activities.confirm_delete_explanation'),
+          field_name:             :explanation_text,
+          field_label:            t('activities.explanation_text_label'),
+          show_transcript_toggle: true %>
   <% end %>
 
   <% if current_user.teacher? %>

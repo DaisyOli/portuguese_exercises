@@ -30,7 +30,7 @@ class ActivityFromVideoService
     return result unless result[:success]
 
     video_url = "https://www.youtube.com/watch?v=#{svc.video_id}"
-    result[:activity].update(video_url: video_url)
+    result[:activity].update(video_url: video_url, explanation_is_transcript: true)
 
     { success: true, activity: result[:activity] }
   end
@@ -48,7 +48,7 @@ class ActivityFromVideoService
 
       INSTRUÇÕES ESPECÍFICAS PARA ATIVIDADE BASEADA EM VÍDEO:
       - Leia a transcrição e identifique o tema, vocabulário e estruturas gramaticais principais
-      - O campo "explanation_text" deve conter um trecho adaptado e limpo da transcrição (não a transcrição bruta — reescreva de forma clara e fluida, como um texto para leitura)
+      - O campo "explanation_text" deve conter a transcrição limpa do vídeo: remova timestamps e marcadores de tempo, mas mantenha o conteúdo falado original com fidelidade. Este texto aparecerá recolhido como "Ver transcrição" na interface do aluno — não o reescreva como texto literário
       - Crie entre 5 e 8 exercícios variados usando os tipos disponíveis, baseados no conteúdo real da transcrição
       - Use vocabulário e expressões que aparecem na transcrição nas questões
       - A "description" deve mencionar o tema do vídeo e o que o aluno vai praticar
