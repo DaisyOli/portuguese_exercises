@@ -317,12 +317,15 @@ fr:
     view_results: "Voir les résultats"
     completed: "Activité Terminée !"
     total_questions: "Total des Questions"
-    see_detailed_results: "Voir les Résultats Détaillés"
+    see_detailed_results: "Voir les Résultats"
     back: "Retour"
     previous: "Précédente"
     next: "Suivante"
     tip: "Conseil du professeur"
     see_material: "Voir le matériel ▼"
+    score_excellent: "Excellent travail ! 🌟"
+    score_good: "Très bien ! Continuez à pratiquer."
+    score_keep_going: "Continuez comme ça — chaque tentative est un apprentissage !"
 
   # Forms
   forms:
