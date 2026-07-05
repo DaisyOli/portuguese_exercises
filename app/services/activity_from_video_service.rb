@@ -18,6 +18,10 @@ class ActivityFromVideoService
       return { success: false, error: "A transcrição está vazia. Cole o texto da transcrição do vídeo." }
     end
 
+    # Release DB connection before the long Claude API call so it doesn't
+    # time out idle on Heroku/RDS while waiting for the response.
+    ActiveRecord::Base.connection_pool.release_connection
+
     result = ActivityGenerationService.new(
       prompt:  build_prompt,
       teacher: @teacher

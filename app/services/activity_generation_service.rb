@@ -253,6 +253,9 @@ class ActivityGenerationService
   end
 
   def call
+    # Release DB connection before the Claude API call to prevent idle
+    # connection timeouts on Heroku/RDS during long AI responses.
+    ActiveRecord::Base.connection_pool.release_connection
     response_text = call_api
     parsed = parse_json(strip_markdown(response_text))
     build_activity(parsed)
