@@ -17,6 +17,7 @@ class QuizAttempt < ApplicationRecord
 
   before_create :set_submitted_at
   after_create  :increment_trial_counter
+  after_create  :increment_daily_counter
   after_commit  :clear_user_attempts_cache, if: :user_id?
 
   def total_correct
@@ -101,6 +102,10 @@ class QuizAttempt < ApplicationRecord
 
   def increment_trial_counter
     user&.trial? && user.increment!(:trial_activities_used)
+  end
+
+  def increment_daily_counter
+    user&.increment_daily_count!
   end
   
   def clear_user_attempts_cache

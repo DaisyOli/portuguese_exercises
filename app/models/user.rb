@@ -56,8 +56,24 @@ class User < ApplicationRecord
     trial? && trial_activities_used.to_i >= 3
   end
 
+  DAILY_STUDENT_LIMIT = 3
+
   def trial_access_active?
     trial? && !trial_expired? && !trial_exhausted?
+  end
+
+  def daily_limit_reached?
+    return false unless student?
+    daily_quiz_date == Date.current && daily_quiz_count.to_i >= DAILY_STUDENT_LIMIT
+  end
+
+  def increment_daily_count!
+    return unless student?
+    if daily_quiz_date == Date.current
+      increment!(:daily_quiz_count)
+    else
+      update!(daily_quiz_count: 1, daily_quiz_date: Date.current)
+    end
   end
 
   def language_name
