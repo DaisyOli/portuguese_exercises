@@ -91,6 +91,17 @@ Rails.application.routes.draw do
   post "webhooks/stripe",      to: "webhooks#stripe"
   resources :push_subscriptions, only: [:create, :destroy]
 
+  # Sugestões diárias de vídeo
+  resources :video_suggestions, only: [:index, :destroy] do
+    member do
+      post :approve
+      post :reject
+    end
+    collection do
+      post :generate_now
+    end
+  end
+
   # Página de acesso trial encerrado
   get "acesso-encerrado", to: "home#trial_expired", as: "trial_expired"
 
