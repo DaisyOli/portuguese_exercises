@@ -1,8 +1,12 @@
 <% content_for :head do %>
   <title><%= @activity.title %> - Practice PT</title>
   <style>
-    input[type="radio"].mc-radio:focus { outline: none; }
-    input[type="radio"].mc-radio:focus-visible { outline: none; }
+    input[type="radio"].mc-radio:focus,
+    input[type="radio"].mc-radio:focus-visible,
+    input[type="radio"].mc-radio:active {
+      outline: none !important;
+      box-shadow: none !important;
+    }
   </style>
 <% end %>
 
