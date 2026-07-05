@@ -1,5 +1,9 @@
 <% content_for :head do %>
   <title><%= @activity.title %> - Practice PT</title>
+  <style>
+    input[type="radio"].mc-radio:focus { outline: none; }
+    input[type="radio"].mc-radio:focus-visible { outline: none; }
+  </style>
 <% end %>
 
 <%
@@ -137,7 +141,8 @@
                         <% question.options.each do |option| %>
                           <label class="mc-option-label" style="display:flex; align-items:center; gap:10px; padding:10px 14px; border:1.5px solid #DDD9D2; border-radius:8px; cursor:pointer; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.92rem; color:#1C1917; transition:border-color 0.15s, background 0.15s;">
                             <%= radio_button_tag "answers[#{question.id}]", option, false,
-                                  style: "width:20px; height:20px; accent-color:#1A6B4A; flex-shrink:0; cursor:pointer;" %>
+                                  class: "mc-radio",
+                                  style: "width:20px; height:20px; accent-color:#1A6B4A; flex-shrink:0; cursor:pointer; outline:none;" %>
                             <%= option %>
                           </label>
                         <% end %>
