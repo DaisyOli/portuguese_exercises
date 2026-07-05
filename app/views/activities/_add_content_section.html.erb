@@ -343,6 +343,14 @@
         <div class="quill-tall" id="quill-editor-text"></div>
         <%= f.hidden_field :explanation_text, id: "quill-input-text", value: activity.explanation_text %>
       </div>
+      <div style="margin-bottom:14px; padding:12px 14px; background:#F0EDE8; border-radius:10px; display:flex; align-items:center; gap:10px;">
+        <%= f.check_box :explanation_is_transcript, style: "width:18px; height:18px; accent-color:#1A6B4A; cursor:pointer; flex-shrink:0;" %>
+        <label for="activity_explanation_is_transcript"
+               style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.83rem; color:#44403C; cursor:pointer; margin:0; line-height:1.4;">
+          📄 Marcar como <strong>transcrição de vídeo</strong>
+          <span style="display:block; font-size:0.72rem; color:#9C9892; font-weight:400; margin-top:2px;">O aluno verá um bloco "Ver transcrição" recolhido na atividade.</span>
+        </label>
+      </div>
       <%= f.submit t('activities.save_text'), style: submit_content %>
     <% end %>
   </div>
