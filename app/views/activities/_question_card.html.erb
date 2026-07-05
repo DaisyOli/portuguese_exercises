@@ -132,9 +132,36 @@
             </div>
           </div>
 
+          <%# Questão com IA — open_ended %>
+          <div class="row mb-3 open-ended-fields" data-question-selector-target="openEnded"
+               style="display:<%= question.open_ended? ? 'block' : 'none' %>;">
+            <div class="col-md-12">
+              <div style="background:#FFF7ED; border:1px solid #FED7AA; border-radius:8px; padding:12px 14px; font-size:0.85rem; color:#7C2D12; font-family:'Plus Jakarta Sans',sans-serif; margin-bottom:12px;">
+                <strong>✨ <%= t('questions.form.open_ended_info_title') %></strong><br>
+                <%= t('questions.form.open_ended_info') %>
+              </div>
+              <%= form.label :evaluation_prompt, t('questions.form.evaluation_prompt_label'), class: "form-label" %>
+              <%= form.text_area :evaluation_prompt, class: "form-control", rows: 3,
+                  placeholder: t('questions.form.evaluation_prompt_placeholder') %>
+              <small class="form-text text-muted"><%= t('questions.form.evaluation_prompt_hint') %></small>
+              <div style="margin-top:12px;">
+                <label class="form-label"><%= t('questions.form.weight_label') %></label>
+                <div style="display:flex; gap:8px; margin-top:4px; flex-wrap:wrap;">
+                  <% [1, 2, 3].each do |w| %>
+                    <label style="display:flex; align-items:center; gap:6px; padding:7px 14px; border:1.5px solid <%= (question.weight || 1) == w ? '#C9952A' : '#DDD9D2' %>; border-radius:8px; background:<%= (question.weight || 1) == w ? '#FFF7ED' : '#fff' %>; cursor:pointer; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; font-weight:600; color:<%= (question.weight || 1) == w ? '#7C2D12' : '#5C5853' %>;">
+                      <%= form.radio_button :weight, w, style: "accent-color:#C9952A;" %>
+                      ×<%= w %><%= w == 1 ? " (#{t('questions.form.weight_normal')})" : "" %>
+                    </label>
+                  <% end %>
+                </div>
+                <small class="form-text text-muted"><%= t('questions.form.weight_hint') %></small>
+              </div>
+            </div>
+          </div>
+
           <%# Resposta única — multiple_choice %>
           <div class="row mb-3" data-question-selector-target="correctAnswer"
-               style="display:<%= question.fill_in_blank? ? 'none' : 'block' %>;">
+               style="display:<%= (question.fill_in_blank? || question.open_ended?) ? 'none' : 'block' %>;">
             <div class="col-md-12">
               <%= form.label :correct_answer, t('questions.form.correct_answer') %>
               <%= form.text_field :correct_answer, class: "form-control" %>
@@ -228,10 +255,12 @@
                 const multipleChoiceFields = form.querySelector('.multiple-choice-fields');
                 const fillInBlankHelp      = form.querySelector('.fill-in-blank-help');
                 const fillInBlankAnswers   = form.querySelector('.fill-in-blank-answers');
+                const openEndedFields      = form.querySelector('.open-ended-fields');
                 const correctAnswerField   = form.querySelector('[data-question-selector-target="correctAnswer"]');
                 if (multipleChoiceFields)  multipleChoiceFields.style.display  = 'none';
                 if (fillInBlankHelp)       fillInBlankHelp.style.display       = 'none';
                 if (fillInBlankAnswers)    fillInBlankAnswers.style.display    = 'none';
+                if (openEndedFields)       openEndedFields.style.display       = 'none';
                 if (correctAnswerField)    correctAnswerField.style.display    = 'none';
                 switch (type) {
                   case 'multiple_choice':
@@ -241,6 +270,9 @@
                   case 'fill_in_blank':
                     if (fillInBlankHelp)    fillInBlankHelp.style.display    = 'block';
                     if (fillInBlankAnswers) fillInBlankAnswers.style.display = 'block';
+                    break;
+                  case 'open_ended':
+                    if (openEndedFields) openEndedFields.style.display = 'block';
                     break;
                 }
               }
