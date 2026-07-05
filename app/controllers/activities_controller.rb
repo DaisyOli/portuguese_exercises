@@ -4,7 +4,7 @@ class ActivitiesController < ApplicationController
   before_action :authenticate_user!
   before_action :set_activity, only: [:show, :edit, :update, :destroy, :resolve_quiz, :submit_quiz, :quiz_results, :clear_statement, :clear_media, :clear_video, :clear_explanation, :clear_audio, :clear_image_file, :clear_video_file, :clear_attempt_history, :review_draft, :publish_draft]
   before_action :preload_exercise_associations, only: [:show]
-  before_action :authorize_teacher, only: [:new, :create, :edit, :update, :destroy, :generate_with_ai, :review_draft, :publish_draft]
+  before_action :authorize_teacher, only: [:new, :create, :edit, :update, :destroy, :generate_with_ai, :generate_from_video, :review_draft, :publish_draft]
   before_action :check_trial_level_restriction!, only: [:show, :resolve_quiz, :submit_quiz]
 
   def index
@@ -110,6 +110,33 @@ class ActivitiesController < ApplicationController
       flash.now[:alert] = result[:error]
       @activity = Activity.new
       render :generate_with_ai, status: :unprocessable_entity
+    end
+  end
+
+  def generate_from_video
+    if request.get?
+      return
+    end
+
+    url = params[:youtube_url].to_s.strip
+    if url.blank?
+      flash.now[:alert] = "Por favor, cole a URL do vídeo do YouTube."
+      return render :generate_from_video, status: :unprocessable_entity
+    end
+
+    result = ActivityFromVideoService.new(
+      youtube_url: url,
+      transcript:  params[:transcript].to_s,
+      teacher:     current_user,
+      level_hint:  params[:level_hint].presence
+    ).call
+
+    if result[:success]
+      redirect_to review_draft_activity_path(result[:activity]),
+                  notice: "Atividade gerada a partir do vídeo! Revise e publique quando estiver pronto."
+    else
+      flash.now[:alert] = result[:error]
+      render :generate_from_video, status: :unprocessable_entity
     end
   end
 

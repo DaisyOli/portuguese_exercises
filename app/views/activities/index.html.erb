@@ -30,6 +30,10 @@
     </div>
     <% if current_user.teacher? %>
       <div style="display:flex; align-items:center; gap:10px;">
+        <%= link_to generate_from_video_activities_path,
+              style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; font-weight:700; color:#fff; background:#C9952A; padding:8px 16px; border-radius:10px; text-decoration:none; white-space:nowrap;" do %>
+          🎬 Do Vídeo
+        <% end %>
         <%= link_to generate_with_ai_activities_path,
               style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; font-weight:700; color:#fff; background:#0F3826; padding:8px 16px; border-radius:10px; text-decoration:none; white-space:nowrap;" do %>
           ✨ Gerar com IA

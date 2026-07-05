@@ -35,6 +35,8 @@ Rails.application.routes.draw do
     collection do
       get  :generate_with_ai
       post :generate_with_ai
+      get  :generate_from_video
+      post :generate_from_video
     end
 
     member do
