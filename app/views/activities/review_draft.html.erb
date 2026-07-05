@@ -29,6 +29,13 @@
   <%# Header da atividade %>
   <%= render 'activity_header', activity: @activity %>
 
+  <%# Vídeo %>
+  <% if @activity.video_url.present? %>
+    <div style="margin-top:20px; border-radius:14px; overflow:hidden; border:1.5px solid #DDD9D2;">
+      <%= render 'activities/video_embed', url: @activity.video_url %>
+    </div>
+  <% end %>
+
   <%# Texto principal (diálogo, artigo, etc.) %>
   <% if @activity.explanation_text.present? %>
     <div style="background:#F7F9FF; border:1.5px solid #BFCFE8; border-radius:14px; padding:22px 26px; margin-top:20px;">
