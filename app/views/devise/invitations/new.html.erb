@@ -58,8 +58,8 @@
         <%= f.hidden_field :role, value: "trial" %>
       <% end %>
 
-      <%# ── Perfil Profissional ── %>
-      <div style="margin-bottom:18px;">
+      <%# ── Perfil Profissional — só para alunos ── %>
+      <div id="professional-type-field" style="margin-bottom:18px;">
         <%= f.label :professional_type, "Perfil profissional",
               style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; font-weight:600; color:#1C1917; display:block; margin-bottom:6px;" %>
         <p style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.78rem; color:#9C9892; margin:0 0 8px;">
@@ -122,10 +122,13 @@
   };
 
   function toggleLevelField() {
-    var select = document.getElementById('invite-role-select');
-    var field  = document.getElementById('level-field');
-    if (!select || !field) return;
-    field.style.display = select.value === 'trial' ? 'block' : 'none';
+    var select   = document.getElementById('invite-role-select');
+    var level    = document.getElementById('level-field');
+    var profType = document.getElementById('professional-type-field');
+    if (!select) return;
+    var isStudent = select.value === 'trial';
+    if (level)    level.style.display    = isStudent ? 'block' : 'none';
+    if (profType) profType.style.display = isStudent ? 'block' : 'none';
   }
 
   function updateLevelButtons() {
