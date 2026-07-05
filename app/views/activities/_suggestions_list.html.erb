@@ -11,7 +11,11 @@
       <% activity.suggestions.each do |suggestion| %>
         <div id="suggestion-<%= suggestion.id %>" style="display:flex; justify-content:space-between; align-items:flex-start; gap:12px; padding:12px 14px; border:1px solid #BFDBFE; border-radius:10px; background:#fff;">
           <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.9rem; color:#1C1917; line-height:1.6;">
-            <%= simple_format(suggestion.content) %>
+            <% if suggestion.content.to_s.strip.start_with?('<') %>
+              <%= sanitize(suggestion.content, tags: %w[p br strong em u], attributes: []) %>
+            <% else %>
+              <%= simple_format(suggestion.content) %>
+            <% end %>
           </div>
           <% if current_user.teacher? && activity.teacher == current_user %>
             <%= button_to activity_suggestion_path(activity, suggestion),

@@ -557,10 +557,39 @@
     <%= form_with(model: [activity, Suggestion.new], local: true) do |f| %>
       <div style="<%= field_s %>">
         <%= f.label :content, t('activities.suggestion_label'), style: label_s %>
-        <%= f.text_area :content, style: input_s, rows: 5,
-            placeholder: t('activities.suggestion_placeholder') %>
+        <div class="quill-tall" id="quill-editor-suggestion"></div>
+        <%= f.hidden_field :content, id: "quill-input-suggestion", value: "" %>
       </div>
       <%= f.submit t('activities.save_suggestion'), style: submit_content %>
     <% end %>
   </div>
 </div>
+
+<script>
+  (function() {
+    function initSuggestionQuill() {
+      var editorEl = document.getElementById('quill-editor-suggestion');
+      if (!editorEl || editorEl.dataset.quillInit) return;
+      editorEl.dataset.quillInit = '1';
+
+      var quill = new Quill(editorEl, {
+        theme: 'snow',
+        modules: { toolbar: [['bold', 'italic', 'underline']] },
+        placeholder: '<%= j(t("activities.suggestion_placeholder")) %>'
+      });
+
+      var hiddenInput = document.getElementById('quill-input-suggestion');
+      quill.on('text-change', function() { hiddenInput.value = quill.root.innerHTML; });
+
+      var form = document.querySelector('#new-suggestion-form form');
+      if (form) form.addEventListener('submit', function() { hiddenInput.value = quill.root.innerHTML; });
+    }
+
+    var collapseEl = document.getElementById('new-suggestion-form');
+    if (collapseEl) {
+      new MutationObserver(function() {
+        if (collapseEl.classList.contains('show')) initSuggestionQuill();
+      }).observe(collapseEl, { attributes: true, attributeFilter: ['class'] });
+    }
+  })();
+</script>

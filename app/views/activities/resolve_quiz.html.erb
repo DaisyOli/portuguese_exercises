@@ -440,7 +440,11 @@
               <% @activity.suggestions.each do |suggestion| %>
                 <div class="quiz-suggestion-block">
                   <span class="dica-label"><i class="bi bi-lightbulb-fill"></i> <%= t('quiz.tip') %></span>
-                  <%= simple_format(suggestion.content) %>
+                  <% if suggestion.content.to_s.strip.start_with?('<') %>
+                    <%= sanitize(suggestion.content, tags: %w[p br strong em u], attributes: []) %>
+                  <% else %>
+                    <%= simple_format(suggestion.content) %>
+                  <% end %>
                 </div>
               <% end %>
 
