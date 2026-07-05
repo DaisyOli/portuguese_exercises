@@ -2,10 +2,8 @@
   <title>Sugestões de Vídeo · Practice-BR</title>
   <style>
     .suggestion-card { transition: box-shadow 0.15s; }
-    .suggestion-card:hover { box-shadow: 0 8px 28px rgba(15,56,38,0.13); }
+    .suggestion-card:hover { box-shadow: 0 6px 24px rgba(15,56,38,0.11); }
     .pb-input:focus { border-color:#1A6B4A !important; box-shadow:0 0 0 3px rgba(26,107,74,0.1) !important; outline:none !important; }
-    details[open] summary .chevron { transform: rotate(180deg); }
-    .chevron { transition: transform 0.2s; display:inline-block; }
   </style>
 <% end %>
 
@@ -23,7 +21,7 @@
       </span>
     </div>
     <%= button_to generate_now_video_suggestions_path, method: :post,
-          style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; font-weight:700; color:#fff; background:#0F3826; padding:8px 18px; border-radius:10px; border:none; cursor:pointer; white-space:nowrap;" do %>
+          style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.85rem; font-weight:700; color:#fff; background:#0F3826; padding:9px 20px; border-radius:10px; border:none; cursor:pointer; white-space:nowrap; display:inline-flex; align-items:center; gap:7px;" do %>
       ✨ Gerar novas sugestões
     <% end %>
   </div>
@@ -40,23 +38,23 @@
   <% end %>
 
   <% if @suggestions.empty? %>
-    <div style="background:#FAFAF9; border:1.5px dashed #DDD9D2; border-radius:16px; padding:48px 32px; text-align:center;">
-      <div style="font-size:2.5rem; margin-bottom:12px;">🎬</div>
-      <div style="font-family:'Raleway',sans-serif; font-size:1rem; font-weight:700; color:#1C1917; margin-bottom:6px;">
+    <%# Estado vazio %>
+    <div style="background:#fff; border:1px solid #DDD9D2; border-radius:20px; padding:56px 32px; text-align:center;">
+      <div style="width:64px; height:64px; background:#F0EDE8; border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 16px; font-size:1.8rem;">🎬</div>
+      <div style="font-family:'Raleway',sans-serif; font-size:1.05rem; font-weight:700; color:#1C1917; margin-bottom:8px;">
         Nenhuma sugestão pendente
       </div>
-      <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.85rem; color:#9C9892; margin-bottom:20px; line-height:1.5;">
-        Clique em "Gerar novas sugestões" para que a IA pesquise 3 vídeos para você.<br>
-        O Heroku Scheduler também faz isso automaticamente todo dia às 7h.
+      <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.85rem; color:#9C9892; margin-bottom:24px; line-height:1.6; max-width:380px; margin-left:auto; margin-right:auto;">
+        Clique em "Gerar novas sugestões" e a IA vai pesquisar 3 temas de vídeo para você praticar com seus alunos.
       </div>
       <%= button_to generate_now_video_suggestions_path, method: :post,
-            style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.9rem; font-weight:700; color:#fff; background:#1A6B4A; padding:12px 28px; border-radius:12px; border:none; cursor:pointer;" do %>
+            style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.9rem; font-weight:700; color:#fff; background:#1A6B4A; padding:13px 32px; border-radius:12px; border:none; cursor:pointer;" do %>
         ✨ Gerar agora
       <% end %>
     </div>
 
   <% else %>
-    <div style="display:flex; flex-direction:column; gap:16px;">
+    <div style="display:flex; flex-direction:column; gap:14px;">
       <% @suggestions.each do |s| %>
         <%= render 'video_suggestions/suggestion_card', suggestion: s %>
       <% end %>

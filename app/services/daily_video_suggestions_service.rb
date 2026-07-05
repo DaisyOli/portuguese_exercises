@@ -32,7 +32,7 @@ class DailyVideoSuggestionsService
   def generate_topics
     ActiveRecord::Base.connection_pool.release_connection
 
-    client = Anthropic::Client.new(api_key: ENV["ANTHROPIC_API_KEY"])
+    client = Anthropic::Client.new
     response = client.messages(
       model:      "claude-opus-4-8",
       max_tokens: 800,
