@@ -5,7 +5,7 @@ class User < ApplicationRecord
          :recoverable, :rememberable, :validatable
   
   has_many :activities, foreign_key: :teacher_id, dependent: :destroy
-  has_many :students, class_name: 'User', foreign_key: :invited_by_id
+  has_many :students, -> { where(role: %w[student trial]) }, class_name: 'User', foreign_key: :invited_by_id
   has_many :quiz_attempts, dependent: :destroy
   has_many :push_subscriptions, dependent: :destroy
   
