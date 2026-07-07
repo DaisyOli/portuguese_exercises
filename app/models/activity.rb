@@ -27,7 +27,8 @@ class Activity < ApplicationRecord
   }
 
   before_validation :generate_slug, if: :should_generate_slug?
-  after_commit :clear_cache
+  after_create      :fetch_unsplash_cover
+  after_commit      :clear_cache
   
   enum level: {
     A1: 'A1',
@@ -111,5 +112,18 @@ class Activity < ApplicationRecord
     Rails.cache.delete_matched("activities*")
     Rails.cache.delete_matched("activity_questions/#{id}*")
     Rails.cache.delete_matched("activities_by_level*")
+  end
+
+  def fetch_unsplash_cover
+    return if image_file.attached? || media_url.present? || video_url.present?
+    query = [title, description].compact.join(" ").first(120)
+    result = UnsplashService.new(query).call
+    return unless result
+    update_columns(
+      unsplash_cover_url:    result[:url],
+      unsplash_cover_credit: "#{result[:photographer]} | Unsplash"
+    )
+  rescue StandardError
+    nil
   end
 end

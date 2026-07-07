@@ -56,6 +56,8 @@ module ApplicationHelper
       { type: :gradient, icon: 'bi-play-circle' }
     elsif activity.audio_file.attached?
       { type: :gradient, icon: 'bi-music-note-beamed' }
+    elsif activity.unsplash_cover_url.present?
+      { type: :image, url: activity.unsplash_cover_url, credit: activity.unsplash_cover_credit }
     else
       { type: :gradient, icon: 'bi-journal-text' }
     end
