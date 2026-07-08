@@ -32,7 +32,8 @@ class ActivitiesController < ApplicationController
     if current_user.student_like? && @activity.draft?
       redirect_to student_dashboard_path, alert: "Esta atividade ainda não está disponível." and return
     end
-    if current_user.student? && current_user.daily_limit_reached?
+    viewing_results = params[:show_score] == 'true' && session[:quiz_attempt_id].present?
+    if current_user.student? && current_user.daily_limit_reached? && !viewing_results
       redirect_to student_dashboard_path, flash: { daily_limit: true } and return
     end
     @questions = load_questions
