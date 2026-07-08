@@ -1,5 +1,24 @@
 <% content_for :head do %>
   <title>Atividades · Practice-BR</title>
+  <style>
+    .act-header      { display:flex; align-items:baseline; justify-content:space-between; margin-bottom:1.5rem; }
+    .act-filter-bar  { display:flex; align-items:flex-start; gap:12px; }
+    .act-filter-inner{ display:flex; align-items:center; gap:10px; flex-wrap:wrap; flex:1; min-width:0; }
+    .act-search      { padding:8px 12px; border:1.5px solid #DDD9D2; border-radius:8px; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; color:#1C1917; background:#fff; width:200px; }
+    .act-list-grid   { display:grid; grid-template-columns:48px 1fr 100px 80px 120px; gap:16px; align-items:center; }
+    .act-grid        { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:1rem; margin-bottom:2rem; }
+    @media (max-width:640px) {
+      .act-outer       { padding:1rem !important; }
+      .act-header      { flex-wrap:wrap; gap:10px; }
+      .act-header-btns { flex-wrap:wrap; }
+      .act-filter-bar  { flex-direction:column; }
+      .act-filter-toggle { align-self:flex-end; }
+      .act-search      { width:100%; }
+      .act-list-grid   { grid-template-columns:44px 1fr auto !important; gap:10px !important; }
+      .act-col-date,
+      .act-col-count   { display:none !important; }
+    }
+  </style>
 <% end %>
 
 <%
@@ -16,10 +35,10 @@
   view_mode = params[:view] == 'grid' ? 'grid' : 'list'
 %>
 
-<div style="max-width:1100px; margin:0 auto; padding:2rem 1.5rem;">
+<div class="act-outer" style="max-width:1100px; margin:0 auto; padding:2rem 1.5rem;">
 
   <%# ── Cabeçalho ── %>
-  <div style="display:flex; align-items:baseline; justify-content:space-between; margin-bottom:1.5rem;">
+  <div class="act-header">
     <div>
       <h1 style="font-family:'Raleway',sans-serif; font-size:1.5rem; font-weight:700; color:#1C1917; margin-bottom:4px;">
         Todas as Atividades
@@ -29,7 +48,7 @@
       </p>
     </div>
     <% if current_user.teacher? %>
-      <div style="display:flex; align-items:center; gap:10px;">
+      <div class="act-header-btns" style="display:flex; align-items:center; gap:10px;">
         <%= link_to generate_with_ai_activities_path,
               style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; font-weight:700; color:#fff; background:#0F3826; padding:8px 16px; border-radius:10px; text-decoration:none; white-space:nowrap;" do %>
           ✨ Gerar com IA
@@ -44,9 +63,9 @@
 
   <%# ── Barra de Filtros ── %>
   <%= form_with url: activities_path, method: :get, local: true do %>
-    <div style="background:#fff; border:1px solid #DDD9D2; border-radius:14px; padding:16px 20px; margin-bottom:1.5rem; display:flex; align-items:flex-start; gap:12px;">
+    <div class="act-filter-bar" style="background:#fff; border:1px solid #DDD9D2; border-radius:14px; padding:16px 20px; margin-bottom:1.5rem;">
 
-      <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap; flex:1; min-width:0;">
+      <div class="act-filter-inner">
 
         <select name="level"
                 style="padding:8px 12px; border:1.5px solid #DDD9D2; border-radius:8px; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; color:#1C1917; background:#fff; cursor:pointer;">
@@ -66,7 +85,7 @@
 
         <input type="text" name="search" value="<%= params[:search] %>"
                placeholder="Buscar atividades..."
-               style="padding:8px 12px; border:1.5px solid #DDD9D2; border-radius:8px; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; color:#1C1917; background:#fff; width:200px;">
+               class="act-search">
 
         <button type="submit"
                 style="background:#0F3826; color:#fff; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; font-weight:600; padding:8px 16px; border:none; border-radius:8px; cursor:pointer;">
@@ -109,7 +128,7 @@
       </div>
 
       <%# Toggle lista / grid %>
-      <div style="display:flex; gap:0; flex-shrink:0;">
+      <div class="act-filter-toggle" style="display:flex; gap:0; flex-shrink:0;">
         <%= link_to activities_path(level: params[:level], sort: params[:sort], search: params[:search], origem: params[:origem], competencia: params[:competencia], view: 'list'),
               style: "padding:7px 11px; border:1.5px solid #{view_mode == 'list' ? '#0F3826' : '#DDD9D2'}; background:#{view_mode == 'list' ? '#0F3826' : '#fff'}; border-radius:8px 0 0 8px; text-decoration:none; font-size:0.85rem; color:#{view_mode == 'list' ? '#fff' : '#9C9892'};" do %>
           ☰
@@ -132,18 +151,18 @@
       <div style="background:#fff; border:1px solid #DDD9D2; border-radius:16px; overflow:hidden; margin-bottom:2rem;">
 
         <%# Cabeçalho da tabela %>
-        <div style="display:grid; grid-template-columns:48px 1fr 100px 80px 120px; gap:16px; align-items:center; padding:10px 20px; background:#F7F5F0; border-bottom:1px solid #DDD9D2;">
+        <div class="act-list-grid" style="padding:10px 20px; background:#F7F5F0; border-bottom:1px solid #DDD9D2;">
           <div style="font-family:'DM Mono',monospace; font-size:0.68rem; color:#9C9892; letter-spacing:0.08em; text-transform:uppercase;">Nível</div>
           <div style="font-family:'DM Mono',monospace; font-size:0.68rem; color:#9C9892; letter-spacing:0.08em; text-transform:uppercase;">Título</div>
-          <div style="font-family:'DM Mono',monospace; font-size:0.68rem; color:#9C9892; letter-spacing:0.08em; text-transform:uppercase;">Criada em</div>
-          <div style="font-family:'DM Mono',monospace; font-size:0.68rem; color:#9C9892; letter-spacing:0.08em; text-transform:uppercase; text-align:center;">Tent.</div>
+          <div class="act-col-date" style="font-family:'DM Mono',monospace; font-size:0.68rem; color:#9C9892; letter-spacing:0.08em; text-transform:uppercase;">Criada em</div>
+          <div class="act-col-count" style="font-family:'DM Mono',monospace; font-size:0.68rem; color:#9C9892; letter-spacing:0.08em; text-transform:uppercase; text-align:center;">Tent.</div>
           <div></div>
         </div>
 
         <% @activities.each_with_index do |activity, i| %>
           <% c = cefr_colors(activity.level) %>
           <% last = i == @activities.size - 1 %>
-          <div style="display:grid; grid-template-columns:48px 1fr 100px 80px 120px; gap:16px; align-items:center; padding:14px 20px; <%= last ? '' : 'border-bottom:1px solid #F0EDE8;' %> transition:background 0.15s;"
+          <div class="act-list-grid" style="padding:14px 20px; <%= last ? '' : 'border-bottom:1px solid #F0EDE8;' %> transition:background 0.15s;"
                onmouseover="this.style.background='#FAFAF8'" onmouseout="this.style.background=''">
 
             <span style="font-family:'DM Mono',monospace; font-size:0.72rem; font-weight:700;
@@ -179,11 +198,11 @@
               <% end %>
             </div>
 
-            <div style="font-family:'DM Mono',monospace; font-size:0.75rem; color:#5C5853; white-space:nowrap;">
+            <div class="act-col-date" style="font-family:'DM Mono',monospace; font-size:0.75rem; color:#5C5853; white-space:nowrap;">
               <%= activity.created_at.strftime("%d/%m/%Y") %>
             </div>
 
-            <div style="font-family:'DM Mono',monospace; font-size:0.85rem; font-weight:600; color:#5C5853; text-align:center;">
+            <div class="act-col-count" style="font-family:'DM Mono',monospace; font-size:0.85rem; font-weight:600; color:#5C5853; text-align:center;">
               <%= @attempt_stats[:counts][activity.id] || 0 %>
             </div>
 
@@ -208,7 +227,7 @@
     <% else %>
 
       <%# VISTA EM GRID %>
-      <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:1rem; margin-bottom:2rem;">
+      <div class="act-grid">
         <% @activities.each do |activity| %>
           <% c = cefr_colors(activity.level) %>
           <% cover = activity_cover(activity) %>
