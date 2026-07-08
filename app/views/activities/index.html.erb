@@ -44,9 +44,9 @@
 
   <%# ── Barra de Filtros ── %>
   <%= form_with url: activities_path, method: :get, local: true do %>
-    <div style="background:#fff; border:1px solid #DDD9D2; border-radius:14px; padding:16px 20px; margin-bottom:1.5rem; display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap;">
+    <div style="background:#fff; border:1px solid #DDD9D2; border-radius:14px; padding:16px 20px; margin-bottom:1.5rem; display:flex; align-items:flex-start; gap:12px;">
 
-      <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+      <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap; flex:1; min-width:0;">
 
         <select name="level"
                 style="padding:8px 12px; border:1.5px solid #DDD9D2; border-radius:8px; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; color:#1C1917; background:#fff; cursor:pointer;">
@@ -109,7 +109,7 @@
       </div>
 
       <%# Toggle lista / grid %>
-      <div style="display:flex; gap:0;">
+      <div style="display:flex; gap:0; flex-shrink:0;">
         <%= link_to activities_path(level: params[:level], sort: params[:sort], search: params[:search], origem: params[:origem], competencia: params[:competencia], view: 'list'),
               style: "padding:7px 11px; border:1.5px solid #{view_mode == 'list' ? '#0F3826' : '#DDD9D2'}; background:#{view_mode == 'list' ? '#0F3826' : '#fff'}; border-radius:8px 0 0 8px; text-decoration:none; font-size:0.85rem; color:#{view_mode == 'list' ? '#fff' : '#9C9892'};" do %>
           ☰
