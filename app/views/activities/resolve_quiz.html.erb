@@ -28,7 +28,7 @@
                  @activity.video_file.attached?
 %>
 
-<div class="quiz-outer">
+<div class="quiz-outer<%= ' quiz-outer--results' if @show_score %>">
 
   <div class="quiz-page-header">
     <h1 class="quiz-title"><%= @activity.title %></h1>

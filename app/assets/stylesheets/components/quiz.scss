@@ -523,6 +523,12 @@
   padding: 1rem 1rem 1rem;
   overflow: hidden;
   box-sizing: border-box;
+
+  &--results {
+    height: auto;
+    min-height: 100vh;
+    overflow-y: auto;
+  }
 }
 
 .quiz-page-header {
