@@ -89,18 +89,18 @@
               Manual
             <% end %>
           </div>
-
-          <%# Filtro de competência: CO | CE | EE %>
-          <div style="display:flex; gap:4px;">
-            <% ApplicationHelper::COMPETENCY_META.each do |key, cm| %>
-              <% active = params[:competencia] == key.to_s %>
-              <%= link_to activities_path(params.permit(:level, :sort, :search, :view, :origem).merge(competencia: active ? nil : key)),
-                    style: "padding:5px 11px; font-family:'DM Mono',monospace; font-size:0.75rem; font-weight:800; letter-spacing:0.03em; border-radius:8px; text-decoration:none; display:inline-flex; align-items:center; gap:4px; border:1.5px solid #{active ? cm[:color] : '#DDD9D2'}; background:#{active ? cm[:bg] : '#fff'}; color:#{active ? cm[:color] : '#5C5853'};" do %>
-                <%= cm[:icon] %> <%= cm[:abbr] %>
-              <% end %>
-            <% end %>
-          </div>
         <% end %>
+
+        <%# Filtro de competência: CO | CE | EE — visível para professores e alunos %>
+        <div style="display:flex; gap:4px;">
+          <% ApplicationHelper::COMPETENCY_META.each do |key, cm| %>
+            <% active = params[:competencia] == key.to_s %>
+            <%= link_to activities_path(params.permit(:level, :sort, :search, :view, :origem).merge(competencia: active ? nil : key)),
+                  style: "padding:5px 11px; font-family:'DM Mono',monospace; font-size:0.75rem; font-weight:800; letter-spacing:0.03em; border-radius:8px; text-decoration:none; display:inline-flex; align-items:center; gap:4px; border:1.5px solid #{active ? cm[:color] : '#DDD9D2'}; background:#{active ? cm[:bg] : '#fff'}; color:#{active ? cm[:color] : '#5C5853'};" do %>
+              <%= cm[:icon] %> <%= cm[:abbr] %>
+            <% end %>
+          <% end %>
+        </div>
 
         <% if params[:level].present? || params[:search].present? || params[:origem].present? || params[:competencia].present? || (params[:sort].present? && params[:sort] != 'recentes') %>
           <%= link_to "✕ Limpar", activities_path,

@@ -240,6 +240,23 @@
     <% end %>
   </div>
 
+  <%# — Busca rápida — %>
+  <%= form_with url: activities_path, method: :get, local: true do %>
+    <div style="display:flex; gap:8px; margin-bottom:1.5rem;">
+      <div style="flex:1; display:flex; align-items:center; gap:0; background:#fff; border:1.5px solid #DDD9D2; border-radius:12px; overflow:hidden; transition:border-color 0.15s;"
+           onfocusin="this.style.borderColor='#2A9B6F'" onfocusout="this.style.borderColor='#DDD9D2'">
+        <span style="padding:0 12px; color:#9C9892; font-size:1rem; flex-shrink:0;">🔍</span>
+        <input type="text" name="search"
+               placeholder="Buscar atividades por tema ou palavra..."
+               style="flex:1; border:none; outline:none; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.88rem; color:#1C1917; padding:11px 0; background:transparent; min-width:0;">
+      </div>
+      <button type="submit"
+              style="background:#0F3826; color:#fff; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.85rem; font-weight:700; padding:0 20px; border:none; border-radius:12px; cursor:pointer; white-space:nowrap; flex-shrink:0;">
+        Buscar
+      </button>
+    </div>
+  <% end %>
+
   <%# — 4 Cards de Métricas — %>
   <div class="dash-metrics-grid" id="tour-metrics" style="margin-bottom:1.5rem;">
 
