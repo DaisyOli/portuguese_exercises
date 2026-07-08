@@ -62,6 +62,7 @@ gem "bootsnap", require: false
 
 # Cloudinary para armazenamento de mídia em produção
 gem "cloudinary"
+gem "ruby-openai", "~> 7.0"
 
 # Adiciona ostruct para compatibilidade futura
 gem 'ostruct'

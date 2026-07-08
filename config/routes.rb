@@ -42,10 +42,11 @@ Rails.application.routes.draw do
     member do
       get  :review_draft
       post :publish_draft
-      get :solve, action: :resolve_quiz  # /activities/:slug/solve
-      post :submit, action: :submit_quiz # /activities/:slug/submit
-      get :submit, to: redirect { |params, _req| "/activities/#{params[:slug]}/solve" }
-      get :results, action: :quiz_results # /activities/:slug/results
+      get  :solve,      action: :resolve_quiz
+      post :submit,     action: :submit_quiz
+      get  :submit,     to: redirect { |params, _req| "/activities/#{params[:slug]}/solve" }
+      get  :results,    action: :quiz_results
+      post :transcribe, action: :transcribe_audio
       patch :clear_statement
       match :clear_media, via: [:patch, :post]
       match :clear_video, via: [:patch, :post]

@@ -146,6 +146,7 @@ GEM
       railties (>= 6.1)
     drb (2.2.1)
     erubi (1.13.0)
+    event_stream_parser (1.0.0)
     execjs (2.10.0)
     factory_bot (6.5.3)
       activesupport (>= 6.1.0)
@@ -349,6 +350,10 @@ GEM
       rspec-mocks (~> 3.13)
       rspec-support (~> 3.13)
     rspec-support (3.13.4)
+    ruby-openai (7.4.0)
+      event_stream_parser (>= 0.3.0, < 2.0.0)
+      faraday (>= 1)
+      faraday-multipart (>= 1)
     rubyzip (2.3.2)
     sass-rails (6.0.0)
       sassc-rails (~> 2.1, >= 2.1.1)
@@ -478,6 +483,7 @@ DEPENDENCIES
   rails-i18n (~> 7.0.0)
   rails_12factor
   rspec-rails (~> 6.0)
+  ruby-openai (~> 7.0)
   sass-rails
   sassc-rails (~> 2.1)
   selenium-webdriver

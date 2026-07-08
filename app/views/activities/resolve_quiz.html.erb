@@ -336,13 +336,66 @@
                 <div class="question-text">
                   <%= sanitize(question.content.to_s, tags: %w[p br strong em u], attributes: []) %>
                 </div>
+
+                <%# Textarea de resposta %>
                 <%= text_area_tag "answers[#{question.id}]", nil,
+                      id: "open-answer-#{question.id}",
                       rows: 5,
                       placeholder: t('quiz.open_answer_placeholder'),
                       style: "width:100%; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.92rem; padding:10px 12px; border:2px solid #DDD9D2; border-radius:8px; color:#1C1917; background:#fff; resize:vertical; box-sizing:border-box; margin-top:8px;",
                       autocorrect: "off",
                       spellcheck: "false" %>
-                <p style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.75rem; color:#C9952A; margin-top:6px;">
+
+                <%# Botão de gravação de áudio %>
+                <div id="audio-recorder-<%= question.id %>" style="margin-top:10px;">
+                  <button type="button"
+                          onclick="startRecording('<%= question.id %>', '<%= transcribe_activity_path(@activity, locale: I18n.locale) %>')"
+                          id="btn-record-<%= question.id %>"
+                          style="display:inline-flex; align-items:center; gap:7px; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; font-weight:600; color:#1A6B4A; background:#E8F5EE; border:1.5px solid #2A9B6F; border-radius:9px; padding:8px 16px; cursor:pointer;">
+                    🎙️ Responder por áudio
+                  </button>
+                  <button type="button"
+                          onclick="stopRecording('<%= question.id %>')"
+                          id="btn-stop-<%= question.id %>"
+                          style="display:none; align-items:center; gap:7px; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; font-weight:600; color:#fff; background:#B91C1C; border:none; border-radius:9px; padding:8px 16px; cursor:pointer;">
+                    ⏹ Parar gravação
+                  </button>
+                  <span id="rec-timer-<%= question.id %>"
+                        style="display:none; font-family:'DM Mono',monospace; font-size:0.78rem; color:#B91C1C; margin-left:8px; vertical-align:middle;">
+                    ● 0:00
+                  </span>
+
+                  <%# Estado: transcrevendo %>
+                  <div id="rec-loading-<%= question.id %>" style="display:none; margin-top:10px; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; color:#5C5853;">
+                    <span style="display:inline-flex; align-items:center; gap:6px;">
+                      <span style="width:14px; height:14px; border:2px solid #DDD9D2; border-top-color:#1A6B4A; border-radius:50%; display:inline-block; animation:spin 0.8s linear infinite;"></span>
+                      Transcrevendo seu áudio...
+                    </span>
+                  </div>
+
+                  <%# Preview da transcrição %>
+                  <div id="rec-preview-<%= question.id %>" style="display:none; margin-top:10px; background:#F0FDF4; border:1.5px solid #86EFAC; border-radius:10px; padding:12px 14px;">
+                    <div style="font-family:'DM Mono',monospace; font-size:0.65rem; color:#15803D; text-transform:uppercase; letter-spacing:0.06em; margin-bottom:6px;">Você disse:</div>
+                    <div id="rec-text-<%= question.id %>" style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.88rem; color:#1C1917; line-height:1.5;"></div>
+                    <div style="display:flex; gap:8px; margin-top:10px;">
+                      <button type="button"
+                              onclick="acceptTranscription('<%= question.id %>')"
+                              style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.8rem; font-weight:700; color:#fff; background:#1A6B4A; border:none; border-radius:8px; padding:7px 16px; cursor:pointer;">
+                        ✓ Usar esta resposta
+                      </button>
+                      <button type="button"
+                              onclick="reRecord('<%= question.id %>')"
+                              style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.8rem; font-weight:600; color:#5C5853; background:#F0EDE8; border:none; border-radius:8px; padding:7px 14px; cursor:pointer;">
+                        🔄 Regravar
+                      </button>
+                    </div>
+                  </div>
+
+                  <%# Erro %>
+                  <div id="rec-error-<%= question.id %>" style="display:none; margin-top:8px; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.8rem; color:#B91C1C;"></div>
+                </div>
+
+                <p style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.75rem; color:#C9952A; margin-top:8px;">
                   ✨ <%= t('quiz.evaluated_by_ai') %>
                 </p>
               </div>
@@ -530,6 +583,118 @@
   document.addEventListener('DOMContentLoaded', stampStart);
   document.addEventListener('turbo:load', stampStart);
 })();
+
+// ── Gravação de áudio para questões abertas ──
+var _mediaRecorder = null;
+var _audioChunks   = [];
+var _timerInterval = null;
+var _timerSeconds  = 0;
+
+function startRecording(qId, transcribeUrl) {
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+    showRecError(qId, 'Seu navegador não suporta gravação de áudio.');
+    return;
+  }
+  navigator.mediaDevices.getUserMedia({ audio: true }).then(function(stream) {
+    _audioChunks = [];
+    _timerSeconds = 0;
+
+    var mimeType = MediaRecorder.isTypeSupported('audio/webm') ? 'audio/webm' : 'audio/mp4';
+    _mediaRecorder = new MediaRecorder(stream, { mimeType: mimeType });
+
+    _mediaRecorder.ondataavailable = function(e) {
+      if (e.data.size > 0) _audioChunks.push(e.data);
+    };
+
+    _mediaRecorder.onstop = function() {
+      stream.getTracks().forEach(function(t) { t.stop(); });
+      var blob = new Blob(_audioChunks, { type: mimeType });
+      sendAudio(qId, blob, transcribeUrl, mimeType);
+    };
+
+    _mediaRecorder.start();
+
+    // UI: mostra botão parar + timer
+    document.getElementById('btn-record-' + qId).style.display = 'none';
+    var stopBtn = document.getElementById('btn-stop-' + qId);
+    stopBtn.style.display = 'inline-flex';
+    var timer = document.getElementById('rec-timer-' + qId);
+    timer.style.display = 'inline';
+    hideRecPreview(qId);
+    hideRecError(qId);
+
+    _timerInterval = setInterval(function() {
+      _timerSeconds++;
+      var m = Math.floor(_timerSeconds / 60);
+      var s = _timerSeconds % 60;
+      timer.textContent = '● ' + m + ':' + (s < 10 ? '0' : '') + s;
+      if (_timerSeconds >= 120) stopRecording(qId); // limite de 2 min
+    }, 1000);
+
+  }).catch(function(err) {
+    showRecError(qId, 'Não foi possível acessar o microfone. Verifique as permissões do navegador.');
+  });
+}
+
+function stopRecording(qId) {
+  clearInterval(_timerInterval);
+  document.getElementById('btn-stop-' + qId).style.display = 'none';
+  document.getElementById('rec-timer-' + qId).style.display = 'none';
+  document.getElementById('btn-record-' + qId).style.display = 'none';
+  document.getElementById('rec-loading-' + qId).style.display = 'block';
+  if (_mediaRecorder && _mediaRecorder.state !== 'inactive') _mediaRecorder.stop();
+}
+
+function sendAudio(qId, blob, url, mimeType) {
+  var ext  = mimeType.includes('webm') ? 'webm' : 'm4a';
+  var form = new FormData();
+  form.append('audio', blob, 'recording.' + ext);
+  form.append('authenticity_token', document.querySelector('meta[name="csrf-token"]').content);
+
+  fetch(url, { method: 'POST', body: form })
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      document.getElementById('rec-loading-' + qId).style.display = 'none';
+      if (data.text) {
+        document.getElementById('rec-text-' + qId).textContent = data.text;
+        document.getElementById('rec-preview-' + qId).style.display = 'block';
+      } else {
+        showRecError(qId, data.error || 'Erro ao transcrever.');
+        document.getElementById('btn-record-' + qId).style.display = 'inline-flex';
+      }
+    })
+    .catch(function() {
+      document.getElementById('rec-loading-' + qId).style.display = 'none';
+      showRecError(qId, 'Erro de conexão. Tente digitar sua resposta.');
+      document.getElementById('btn-record-' + qId).style.display = 'inline-flex';
+    });
+}
+
+function acceptTranscription(qId) {
+  var text = document.getElementById('rec-text-' + qId).textContent;
+  document.getElementById('open-answer-' + qId).value = text;
+  hideRecPreview(qId);
+  document.getElementById('btn-record-' + qId).style.display = 'inline-flex';
+}
+
+function reRecord(qId) {
+  hideRecPreview(qId);
+  document.getElementById('btn-record-' + qId).style.display = 'inline-flex';
+}
+
+function hideRecPreview(qId) {
+  document.getElementById('rec-preview-' + qId).style.display = 'none';
+}
+
+function showRecError(qId, msg) {
+  var el = document.getElementById('rec-error-' + qId);
+  el.textContent = msg;
+  el.style.display = 'block';
+}
+
+function hideRecError(qId) {
+  document.getElementById('rec-error-' + qId).style.display = 'none';
+}
 </script>
 
 </div>

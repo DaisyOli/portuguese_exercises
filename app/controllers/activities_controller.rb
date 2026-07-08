@@ -2,7 +2,7 @@ class ActivitiesController < ApplicationController
   include QuizManagement
   
   before_action :authenticate_user!
-  before_action :set_activity, only: [:show, :edit, :update, :destroy, :resolve_quiz, :submit_quiz, :quiz_results, :clear_statement, :clear_media, :clear_video, :clear_explanation, :clear_audio, :clear_image_file, :clear_video_file, :clear_attempt_history, :review_draft, :publish_draft]
+  before_action :set_activity, only: [:show, :edit, :update, :destroy, :resolve_quiz, :submit_quiz, :quiz_results, :transcribe_audio, :clear_statement, :clear_media, :clear_video, :clear_explanation, :clear_audio, :clear_image_file, :clear_video_file, :clear_attempt_history, :review_draft, :publish_draft]
   before_action :preload_exercise_associations, only: [:show]
   before_action :authorize_teacher, only: [:new, :create, :edit, :update, :destroy, :generate_with_ai, :generate_from_video, :review_draft, :publish_draft]
   before_action :check_trial_level_restriction!, only: [:show, :resolve_quiz, :submit_quiz]
@@ -72,6 +72,18 @@ class ActivitiesController < ApplicationController
       redirect_to result[:redirect_path], notice: result[:notice]
     else
       redirect_to result[:redirect_path], alert: result[:alert]
+    end
+  end
+
+  def transcribe_audio
+    audio = params[:audio]
+    return render json: { error: "Nenhum áudio recebido." }, status: :unprocessable_entity unless audio
+
+    result = WhisperTranscriptionService.new(audio).call
+    if result[:success]
+      render json: { text: result[:text] }
+    else
+      render json: { error: result[:error] }, status: :unprocessable_entity
     end
   end
 
