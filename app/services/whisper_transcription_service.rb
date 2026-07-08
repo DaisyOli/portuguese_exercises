@@ -4,6 +4,8 @@ class WhisperTranscriptionService
   end
 
   def call
+    return { success: false, error: "Serviço de transcrição não configurado." } if ENV["OPENAI_API_KEY"].blank?
+
     client = OpenAI::Client.new(access_token: ENV["OPENAI_API_KEY"])
 
     response = client.audio.transcribe(
