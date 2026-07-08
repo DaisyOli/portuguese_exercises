@@ -42,6 +42,8 @@ class ActivitiesIndexService
     activities = activities.where(ai_generated: true) if @params[:origem] == 'ia'
     activities = activities.where(ai_generated: [false, nil]) if @params[:origem] == 'manual'
 
+    activities = apply_competency_filter(activities, @params[:competencia])
+
     apply_sorting(activities).page(@params[:page]).per(9)
   end
 
@@ -86,6 +88,27 @@ class ActivitiesIndexService
                               .count(:user_id)
 
     { counts: counts, unique_users: unique_users }
+  end
+
+  def apply_competency_filter(activities, competencia)
+    case competencia
+    when 'co'
+      av_ids = ActiveStorage::Attachment
+        .where(record_type: 'Activity', name: %w[video_file audio_file])
+        .pluck(:record_id)
+      activities.where("video_url IS NOT NULL AND video_url != ''")
+               .or(activities.where(id: av_ids))
+    when 'ce'
+      av_ids = ActiveStorage::Attachment
+        .where(record_type: 'Activity', name: %w[video_file audio_file])
+        .pluck(:record_id)
+      activities.where(video_url: [nil, '']).where.not(id: av_ids)
+    when 'ee'
+      oe_ids = Question.where(question_type: 'open_ended').distinct.pluck(:activity_id)
+      oe_ids.any? ? activities.where(id: oe_ids) : activities.none
+    else
+      activities
+    end
   end
 
   def fetch_best_attempts(activity_ids)

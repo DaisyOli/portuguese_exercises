@@ -76,22 +76,33 @@
         <% if current_user.teacher? %>
           <%# Filtro de origem: todas | IA | manual %>
           <div style="display:flex; gap:4px; border:1.5px solid #DDD9D2; border-radius:8px; overflow:hidden;">
-            <%= link_to activities_path(params.permit(:level, :sort, :search, :view).merge(origem: nil)),
+            <%= link_to activities_path(params.permit(:level, :sort, :search, :view, :competencia).merge(origem: nil)),
                   style: "padding:6px 11px; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.78rem; font-weight:600; text-decoration:none; background:#{params[:origem].blank? ? '#0F3826' : '#fff'}; color:#{params[:origem].blank? ? '#fff' : '#5C5853'}; border-right:1px solid #DDD9D2;" do %>
               Todas
             <% end %>
-            <%= link_to activities_path(params.permit(:level, :sort, :search, :view).merge(origem: 'ia')),
+            <%= link_to activities_path(params.permit(:level, :sort, :search, :view, :competencia).merge(origem: 'ia')),
                   style: "padding:6px 11px; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.78rem; font-weight:600; text-decoration:none; background:#{params[:origem] == 'ia' ? '#0F3826' : '#fff'}; color:#{params[:origem] == 'ia' ? '#fff' : '#5C5853'}; border-right:1px solid #DDD9D2;" do %>
               ✨ IA
             <% end %>
-            <%= link_to activities_path(params.permit(:level, :sort, :search, :view).merge(origem: 'manual')),
+            <%= link_to activities_path(params.permit(:level, :sort, :search, :view, :competencia).merge(origem: 'manual')),
                   style: "padding:6px 11px; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.78rem; font-weight:600; text-decoration:none; background:#{params[:origem] == 'manual' ? '#0F3826' : '#fff'}; color:#{params[:origem] == 'manual' ? '#fff' : '#5C5853'};" do %>
               Manual
             <% end %>
           </div>
+
+          <%# Filtro de competência: CO | CE | EE %>
+          <div style="display:flex; gap:4px;">
+            <% ApplicationHelper::COMPETENCY_META.each do |key, cm| %>
+              <% active = params[:competencia] == key.to_s %>
+              <%= link_to activities_path(params.permit(:level, :sort, :search, :view, :origem).merge(competencia: active ? nil : key)),
+                    style: "padding:5px 11px; font-family:'DM Mono',monospace; font-size:0.75rem; font-weight:800; letter-spacing:0.03em; border-radius:8px; text-decoration:none; display:inline-flex; align-items:center; gap:4px; border:1.5px solid #{active ? cm[:color] : '#DDD9D2'}; background:#{active ? cm[:bg] : '#fff'}; color:#{active ? cm[:color] : '#5C5853'};" do %>
+                <%= cm[:icon] %> <%= cm[:abbr] %>
+              <% end %>
+            <% end %>
+          </div>
         <% end %>
 
-        <% if params[:level].present? || params[:search].present? || params[:origem].present? || (params[:sort].present? && params[:sort] != 'recentes') %>
+        <% if params[:level].present? || params[:search].present? || params[:origem].present? || params[:competencia].present? || (params[:sort].present? && params[:sort] != 'recentes') %>
           <%= link_to "✕ Limpar", activities_path,
                 style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.78rem; color:#9C9892; text-decoration:none;" %>
         <% end %>
@@ -99,11 +110,11 @@
 
       <%# Toggle lista / grid %>
       <div style="display:flex; gap:0;">
-        <%= link_to activities_path(level: params[:level], sort: params[:sort], search: params[:search], view: 'list'),
+        <%= link_to activities_path(level: params[:level], sort: params[:sort], search: params[:search], origem: params[:origem], competencia: params[:competencia], view: 'list'),
               style: "padding:7px 11px; border:1.5px solid #{view_mode == 'list' ? '#0F3826' : '#DDD9D2'}; background:#{view_mode == 'list' ? '#0F3826' : '#fff'}; border-radius:8px 0 0 8px; text-decoration:none; font-size:0.85rem; color:#{view_mode == 'list' ? '#fff' : '#9C9892'};" do %>
           ☰
         <% end %>
-        <%= link_to activities_path(level: params[:level], sort: params[:sort], search: params[:search], view: 'grid'),
+        <%= link_to activities_path(level: params[:level], sort: params[:sort], search: params[:search], origem: params[:origem], competencia: params[:competencia], view: 'grid'),
               style: "padding:7px 11px; border:1.5px solid #{view_mode == 'grid' ? '#0F3826' : '#DDD9D2'}; border-left:none; background:#{view_mode == 'grid' ? '#0F3826' : '#fff'}; border-radius:0 8px 8px 0; text-decoration:none; font-size:0.85rem; color:#{view_mode == 'grid' ? '#fff' : '#9C9892'};" do %>
           ⊞
         <% end %>
@@ -326,7 +337,7 @@
     <% if @activities.total_pages > 1 %>
       <div style="display:flex; align-items:center; gap:6px;">
         <% if @activities.prev_page %>
-          <%= link_to activities_path(params.permit(:level, :sort, :search, :view).merge(page: @activities.prev_page)),
+          <%= link_to activities_path(params.permit(:level, :sort, :search, :view, :origem, :competencia).merge(page: @activities.prev_page)),
                 style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; font-weight:600; color:#fff; background:#0F3826; padding:8px 16px; border-radius:8px; text-decoration:none; display:inline-block;" do %>
             ← Anterior
           <% end %>
@@ -339,7 +350,7 @@
         </span>
 
         <% if @activities.next_page %>
-          <%= link_to activities_path(params.permit(:level, :sort, :search, :view).merge(page: @activities.next_page)),
+          <%= link_to activities_path(params.permit(:level, :sort, :search, :view, :origem, :competencia).merge(page: @activities.next_page)),
                 style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; font-weight:600; color:#fff; background:#0F3826; padding:8px 16px; border-radius:8px; text-decoration:none; display:inline-block;" do %>
             Próxima →
           <% end %>
