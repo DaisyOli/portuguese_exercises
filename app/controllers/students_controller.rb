@@ -4,6 +4,9 @@ class StudentsController < ApplicationController
   ACTIVITIES_PER_PAGE = 3
 
   def dashboard
+    @open_ended_activity_ids = Set.new
+    @av_activity_ids         = Set.new
+
     load_completed_exercises if current_user.student?
 
     if params[:level].present?
@@ -11,6 +14,15 @@ class StudentsController < ApplicationController
       load_level_activities
     else
       @activities_by_level = Activity.published.group_by(&:level)
+      all_ids = @activities_by_level.values.flatten.map(&:id)
+      if all_ids.any?
+        @open_ended_activity_ids = Question
+          .where(activity_id: all_ids, question_type: 'open_ended')
+          .distinct.pluck(:activity_id).to_set
+        @av_activity_ids = ActiveStorage::Attachment
+          .where(record_type: 'Activity', record_id: all_ids, name: %w[video_file audio_file])
+          .distinct.pluck(:record_id).to_set
+      end
     end
   end
 

@@ -32,6 +32,14 @@ module ApplicationHelper
              "padding:2px 8px; border-radius:20px; flex-shrink:0;")
   end
 
+  def activity_competencies(activity, open_ended_ids = Set.new, av_activity_ids = Set.new)
+    comps = []
+    has_av = activity.video_url.present? || av_activity_ids.include?(activity.id)
+    comps << (has_av ? :co : :ce)
+    comps << :ee if open_ended_ids.include?(activity.id)
+    comps
+  end
+
   def activity_media_badge(activity)
     if activity.image_file.attached? || (activity.media_url.present? && !activity.media_url.match?(/youtube\.com|youtu\.be/))
       { icon: 'bi-image', label: 'Imagem' }
