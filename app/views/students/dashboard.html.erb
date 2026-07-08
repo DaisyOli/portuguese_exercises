@@ -446,11 +446,7 @@
             comps.each { |c| comp_stats[c][:total] += 1; comp_stats[c][:done] += 1 if is_done }
           end
         end
-        comp_defs = [
-          { key: :co, icon: '🎧', label: 'Compreensão Oral',    color: '#0369A1', bg: '#E0F2FE', bar: '#0284C7' },
-          { key: :ce, icon: '📖', label: 'Compreensão Escrita', color: '#92400E', bg: '#FEF3C7', bar: '#D97706' },
-          { key: :ee, icon: '✍️', label: 'Expressão Escrita',   color: '#166534', bg: '#DCFCE7', bar: '#16A34A' }
-        ]
+        comp_defs = ApplicationHelper::COMPETENCY_META.values
         visible_comps = comp_defs.select { |cd| comp_stats[cd[:key]][:total] > 0 }
 
         # Competência mais fraca — só ela recebe o nudge
@@ -474,9 +470,10 @@
             %>
             <div>
               <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:5px;">
-                <div style="display:flex; align-items:center; gap:7px; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.8rem; font-weight:600; color:#5C5853;">
+                <div style="display:flex; align-items:center; gap:7px;">
                   <div style="width:24px; height:24px; border-radius:7px; background:<%= cd[:bg] %>; display:flex; align-items:center; justify-content:center; font-size:0.82rem; flex-shrink:0; line-height:1;"><%= cd[:icon] %></div>
-                  <%= cd[:label] %>
+                  <span style="font-family:'DM Mono',monospace; font-size:0.72rem; font-weight:800; color:<%= cd[:color] %>;"><%= cd[:abbr] %></span>
+                  <span style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.8rem; font-weight:600; color:#5C5853;"><%= cd[:label] %></span>
                 </div>
                 <span style="font-family:'DM Mono',monospace; font-size:0.72rem; font-weight:700; color:<%= cd[:color] %>;"><%= done %> de <%= total %></span>
               </div>

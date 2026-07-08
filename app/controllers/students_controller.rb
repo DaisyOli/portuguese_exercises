@@ -47,6 +47,15 @@ class StudentsController < ApplicationController
     total_pending = Activity.published.where(level: level).where.not(id: completed_ids).count
     has_more = (offset + ACTIVITIES_PER_PAGE) < total_pending
     
+    loaded_ids = activities.map(&:id)
+    if loaded_ids.any?
+      @open_ended_activity_ids = Question.where(activity_id: loaded_ids, question_type: 'open_ended')
+                                         .distinct.pluck(:activity_id).to_set
+      @av_activity_ids = ActiveStorage::Attachment
+        .where(record_type: 'Activity', record_id: loaded_ids, name: %w[video_file audio_file])
+        .distinct.pluck(:record_id).to_set
+    end
+
     render json: {
       html: render_to_string(partial: 'activities_grid', locals: { activities: activities }),
       has_more: has_more,

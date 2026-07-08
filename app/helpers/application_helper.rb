@@ -1,4 +1,10 @@
 module ApplicationHelper
+  COMPETENCY_META = {
+    co: { abbr: 'CO', icon: '🎧', label: 'Compreensão Oral',    color: '#0369A1', bg: '#E0F2FE', bar: '#0284C7' },
+    ce: { abbr: 'CE', icon: '📖', label: 'Compreensão Escrita', color: '#92400E', bg: '#FEF3C7', bar: '#D97706' },
+    ee: { abbr: 'EE', icon: '✍️', label: 'Expressão Escrita',   color: '#166534', bg: '#DCFCE7', bar: '#16A34A' },
+  }.freeze
+
   CEFR_COLORS = {
     'A1' => { bg: '#E8F5EE', text: '#0F3826', border: '#2A9B6F', bar: '#2A9B6F', label: 'Iniciante' },
     'A2' => { bg: '#EBF2FC', text: '#1A4A8A', border: '#2563EB', bar: '#2563EB', label: 'Básico' },

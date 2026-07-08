@@ -3,7 +3,7 @@
   <% m = cefr_colors(activity.level) %>
   <% question_count = activity.questions_count.to_i %>
   <% cover = activity_cover(activity) %>
-  <% badge = activity_media_badge(activity) %>
+  <% act_comps = activity_competencies(activity, @open_ended_activity_ids || Set.new, @av_activity_ids || Set.new) %>
 
   <div class="activity-card">
 
@@ -29,9 +29,12 @@
           <span style="font-family:'DM Mono',monospace; font-size:0.72rem; font-weight:700; background:<%= m[:bg] %>; color:<%= m[:text] %>; border:1.5px solid <%= m[:border] %>; padding:3px 9px; border-radius:20px;">
             <%= activity.level %>
           </span>
-          <span style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.7rem; font-weight:600; background:#E0F7FA; color:#00838F; border:1.5px solid #00ACC1; padding:3px 8px; border-radius:20px; display:inline-flex; align-items:center; gap:3px;">
-            <i class="bi <%= badge[:icon] %>" style="font-size:0.72rem;"></i> <%= badge[:label] %>
-          </span>
+          <% act_comps.each do |comp| %>
+            <% cm = ApplicationHelper::COMPETENCY_META[comp] %>
+            <span style="font-family:'DM Mono',monospace; font-size:0.68rem; font-weight:800; background:<%= cm[:bg] %>; color:<%= cm[:color] %>; border:1.5px solid <%= cm[:color] %>55; padding:3px 8px; border-radius:20px; display:inline-flex; align-items:center; gap:3px; letter-spacing:0.03em;">
+              <%= cm[:icon] %> <%= cm[:abbr] %>
+            </span>
+          <% end %>
         </div>
         <% if completed %>
           <span style="font-size:0.7rem; background:#E8F5EE; color:#1A6B4A; border:1px solid #2A9B6F; border-radius:99px; padding:2px 8px; font-family:'Plus Jakarta Sans',sans-serif; font-weight:700;">
