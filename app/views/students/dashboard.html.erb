@@ -446,7 +446,7 @@
             comps.each { |c| comp_stats[c][:total] += 1; comp_stats[c][:done] += 1 if is_done }
           end
         end
-        comp_defs = ApplicationHelper::COMPETENCY_META.values
+        comp_defs = ApplicationHelper::COMPETENCY_META.map { |k, v| v.merge(key: k) }
         visible_comps = comp_defs.select { |cd| comp_stats[cd[:key]][:total] > 0 }
 
         # Competência mais fraca — só ela recebe o nudge
