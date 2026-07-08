@@ -40,7 +40,7 @@ class ActivityGenerationService
       "description": "1-2 frases descrevendo o que o aluno vai praticar",
       "level": "A1",
       "explanation_text": "(OPCIONAL) O texto principal da atividade — diálogo, artigo, trecho literário, receita, etc. É o conteúdo que o aluno vai ler e consultar para responder os exercícios. Omita se não houver texto de base.",
-      "statement": "(OPCIONAL) Instrução curta que aparece logo antes dos exercícios. Máx. 2 frases. Ex: 'Leia o diálogo acima e responda as questões.' Omita se não houver instrução específica.",
+      "statement": "(OPCIONAL) Instrução curta que aparece logo antes dos exercícios. Máx. 2 frases. Ex: 'Leia o diálogo abaixo e responda as questões.' Omita se não houver instrução específica.",
       "youtube_search_query": "(OPCIONAL) Termo de busca no YouTube para encontrar vídeo relacionado ao tema. Em português, específico. Ex: 'bossa nova documentário história Brasil', 'pretérito perfeito aula português', 'carnaval Salvador axé música'. Omita para atividades puramente gramaticais sem tema cultural.",
       "exercises": [ ... ]
     }
