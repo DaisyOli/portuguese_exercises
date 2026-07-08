@@ -6,6 +6,8 @@ require "rails/all"
 # you've limited to :test, :development, or :production.
 Bundler.require(*Rails.groups)
 
+require_relative "../app/middleware/database_connection_retry"
+
 module PracticePt
   class Application < Rails::Application
     # Initialize configuration defaults for originally generated Rails version.
@@ -36,5 +38,7 @@ module PracticePt
     # Adicionar autoload para services
     config.autoload_paths += %W(#{config.root}/app/services)
     config.eager_load_paths += %W(#{config.root}/app/services)
+
+    config.middleware.use DatabaseConnectionRetry
   end
 end
