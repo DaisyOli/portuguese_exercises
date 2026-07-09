@@ -39,8 +39,24 @@ if rails_env == "production"
   end
   
   # Adiciona configuração para manter o aplicativo aquecido
+  # GoodJob roda em modo :async dentro dos workers do Puma; os hooks abaixo
+  # param/reiniciam os threadpools ao redor do fork (recomendação do README do GoodJob)
   before_fork do
     puts "Puma inicializando com #{worker_count} workers e #{max_threads_count} threads por worker"
+    GoodJob.shutdown if defined?(GoodJob)
+  end
+
+  on_worker_boot do
+    GoodJob.restart if defined?(GoodJob)
+  end
+
+  on_worker_shutdown do
+    GoodJob.shutdown if defined?(GoodJob)
+  end
+
+  MAIN_PID = Process.pid
+  at_exit do
+    GoodJob.shutdown if defined?(GoodJob) && Process.pid == MAIN_PID
   end
 end
 

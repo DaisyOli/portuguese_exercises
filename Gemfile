@@ -123,3 +123,6 @@ gem "kaminari", "~> 1.2"
 
 # IA
 gem "anthropic"
+
+# Fila de background jobs no Postgres (correção por IA fora do ciclo da requisição)
+gem "good_job", "~> 4.0"

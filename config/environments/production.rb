@@ -90,7 +90,16 @@ Rails.application.configure do
   end
 
   # Use a real queuing backend for Active Job (and separate queues per environment).
-  # config.active_job.queue_adapter = :resque
+  # GoodJob guarda a fila no próprio Postgres e roda em modo :async — threads
+  # dentro do processo web, sem dyno extra. max_threads baixo para respeitar
+  # o limite de 20 conexões do plano essential-0.
+  config.active_job.queue_adapter = :good_job
+  config.good_job = {
+    execution_mode: :async,
+    max_threads: 2,
+    poll_interval: 10,
+    shutdown_timeout: 25
+  }
   config.active_job.queue_name_prefix = "practicebr_production"
 
   config.action_mailer.perform_caching = false
