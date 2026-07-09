@@ -1,0 +1,44 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      RAILS_ENV: test
+      DATABASE_URL: postgres://postgres:postgres@localhost:5432/practice_fr_test
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Instalar Ruby e gems (com cache)
+        uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
+
+      - name: Compilar CSS (Tailwind)
+        run: bin/rails tailwindcss:build
+
+      - name: Preparar banco de testes
+        run: bin/rails db:schema:load
+
+      - name: Rodar testes
+        run: bundle exec rspec
