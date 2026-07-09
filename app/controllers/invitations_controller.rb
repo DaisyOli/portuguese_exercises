@@ -2,7 +2,7 @@ class InvitationsController < Devise::InvitationsController
   skip_before_action :authenticate_user!, only: [:edit, :update]
 
   before_action :require_teacher_or_admin!, only: [:new, :create]
-  before_action :force_student_role_for_teachers, only: [:create]
+  before_action :force_trial_role_for_teachers, only: [:create]
   before_action :configure_permitted_parameters
 
   def after_invite_path_for(resource)
@@ -30,7 +30,7 @@ class InvitationsController < Devise::InvitationsController
     end
   end
 
-  def force_student_role_for_teachers
+  def force_trial_role_for_teachers
     params[:user] ||= {}
     return if current_user.admin?
     params[:user][:role] = "trial"

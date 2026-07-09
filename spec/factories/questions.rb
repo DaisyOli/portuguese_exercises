@@ -17,11 +17,5 @@ FactoryBot.define do
       content { "O _____ é um animal doméstico." }
       correct_answer { "gato" }
     end
-    
-    trait :true_false do
-      question_type { 'true_false' }
-      content { "O Brasil é um país da América do Sul." }
-      correct_answer { "true" }
-    end
   end
 end 

@@ -40,11 +40,11 @@ RSpec.describe "Invitations", type: :request do
     end
   end
 
-  describe "POST /users/invitation — força role student para professoras" do
+  describe "POST /users/invitation — força role trial para professoras" do
     let(:invite_email) { "aluno-novo@email.com" }
 
     context "professora tentando convidar" do
-      it "cria convite com role student, mesmo se tentar enviar teacher" do
+      it "cria convite com role trial, mesmo se tentar enviar teacher" do
         sign_in teacher
         expect {
           post user_invitation_path, params: {
@@ -53,7 +53,7 @@ RSpec.describe "Invitations", type: :request do
         }.to change(User, :count).by(1)
 
         invited = User.find_by(email: invite_email)
-        expect(invited.role).to eq("student")
+        expect(invited.role).to eq("trial")
       end
     end
 

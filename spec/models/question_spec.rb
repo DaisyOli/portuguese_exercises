@@ -3,11 +3,32 @@ require 'rails_helper'
 RSpec.describe Question, type: :model do
   describe 'validations' do
     subject { build(:question) }
-    
+
     it { should validate_presence_of(:content) }
-    it { should validate_presence_of(:correct_answer) }
     it { should validate_presence_of(:question_type) }
-    it { should validate_inclusion_of(:question_type).in_array(['multiple_choice', 'fill_in_blank']) }
+    it { should validate_inclusion_of(:question_type).in_array(['multiple_choice', 'fill_in_blank', 'open_ended']) }
+
+    context 'multiple_choice' do
+      subject { build(:question, :multiple_choice) }
+
+      it { should validate_presence_of(:correct_answer) }
+    end
+
+    context 'fill_in_blank' do
+      it 'valida as respostas das lacunas, não a presença de correct_answer' do
+        question = build(:question, question_type: 'fill_in_blank',
+                                    content: 'O gato _____ no telhado.', correct_answer: nil)
+        expect(question).not_to be_valid
+        expect(question.errors[:base]).to include('Todas as lacunas precisam de uma resposta correta')
+      end
+    end
+
+    context 'open_ended' do
+      it 'não exige correct_answer' do
+        question = build(:question, question_type: 'open_ended', correct_answer: nil)
+        expect(question).to be_valid
+      end
+    end
   end
 
   describe 'associations' do
