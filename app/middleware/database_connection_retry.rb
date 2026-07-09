@@ -20,7 +20,9 @@ class DatabaseConnectionRetry
         delay = retries * 0.5
         Rails.logger.warn "[DB Retry] #{e.class} — tentativa #{retries}/#{MAX_RETRIES}, aguardando #{delay}s"
         sleep delay
-        ActiveRecord::Base.connection_pool.disconnect!
+        # Não usar connection_pool.disconnect! aqui: derrubaria conexões
+        # em uso por outras requisições. O Rails descarta sozinho a conexão
+        # quebrada e abre uma nova no próximo checkout.
         env['rack.input'].rewind if env['rack.input'].respond_to?(:rewind)
         retry
       else
