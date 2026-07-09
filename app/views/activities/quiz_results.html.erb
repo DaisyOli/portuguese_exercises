@@ -2,7 +2,12 @@
   <title><%= @activity.title %> - <%= t('quiz.results') %> - Practice PT</title>
 <% end %>
 
-<div class="results-container">
+<% grading_pending = @quiz_attempt&.ai_grading_pending? %>
+<div class="results-container"
+     <% if grading_pending %>
+       data-controller="grading-status"
+       data-grading-status-url-value="<%= grading_status_activity_path(@activity) %>"
+     <% end %>>
   <div class="results-header">
     <h1 class="results-title">
       <i class="bi bi-bar-chart-line"></i> <%= t('quiz.results') %>
@@ -34,15 +39,28 @@
           <div class="score-label"><%= t('activities.total_questions') %></div>
         </div>
       </div>
+
+      <% if grading_pending %>
+        <p style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; color:#C9952A; margin:10px 0 0; display:flex; align-items:center; gap:6px;">
+          <i class="bi bi-stars"></i> <%= t('quiz.ai_grading_note') %>
+        </p>
+      <% end %>
     </div>
 
     <%# Detailed results per exercise %>
     <% @quiz_results["results"].each_with_index do |(question_id, result), index| %>
       <div class="question-card">
-        <div class="question-header <%= result["is_correct"] ? 'correct' : 'incorrect' %>">
-          <i class="bi bi-<%= result["is_correct"] ? 'check-circle' : 'x-circle' %>"></i>
-          <span><%= t('questions.title') %> <%= index + 1 %></span>
-        </div>
+        <% if result["ai_pending"] %>
+          <div class="question-header" style="background:#FFF7ED; color:#C9952A;">
+            <i class="bi bi-hourglass-split"></i>
+            <span><%= t('questions.title') %> <%= index + 1 %></span>
+          </div>
+        <% else %>
+          <div class="question-header <%= result["is_correct"] ? 'correct' : 'incorrect' %>">
+            <i class="bi bi-<%= result["is_correct"] ? 'check-circle' : 'x-circle' %>"></i>
+            <span><%= t('questions.title') %> <%= index + 1 %></span>
+          </div>
+        <% end %>
 
         <div class="question-body">
           <% if result["exercise_type"] == "column_matching" %>
@@ -122,7 +140,14 @@
                 <%= result["given_answer"].presence || t('quiz.not_answered') %>
               </div>
 
-              <% if result["ai_unavailable"] %>
+              <% if result["ai_pending"] %>
+                <div style="background:#FFF7ED; border:1.5px dashed #FED7AA; border-radius:10px; padding:14px 16px; margin-top:8px;">
+                  <p style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.85rem; color:#C9952A; margin:0; display:flex; align-items:center; gap:8px;">
+                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" style="width:0.9rem; height:0.9rem; border-width:2px;"></span>
+                    ✨ <%= t('quiz.ai_grading_pending') %>
+                  </p>
+                </div>
+              <% elsif result["ai_unavailable"] %>
                 <div style="background:#F7F5F0; border:1.5px solid #DDD9D2; border-radius:10px; padding:14px 16px; margin-top:8px;">
                   <p style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.85rem; color:#5C5853; margin:0; display:flex; align-items:center; gap:6px;">
                     <i class="bi bi-exclamation-circle" style="color:#C9952A;"></i>

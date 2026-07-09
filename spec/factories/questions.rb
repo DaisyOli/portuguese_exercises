@@ -17,5 +17,11 @@ FactoryBot.define do
       content { "O _____ é um animal doméstico." }
       correct_answer { "gato" }
     end
+
+    trait :open_ended do
+      question_type { 'open_ended' }
+      content { "Descreva a sua rotina matinal." }
+      correct_answer { nil }
+    end
   end
 end 

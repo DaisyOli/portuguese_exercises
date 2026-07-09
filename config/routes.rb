@@ -43,6 +43,7 @@ Rails.application.routes.draw do
       get  :review_draft
       post :publish_draft
       get  :solve,      action: :resolve_quiz
+      get  :grading_status
       post :submit,     action: :submit_quiz
       get  :submit,     to: redirect { |params, _req| "/activities/#{params[:slug]}/solve" }
       get  :results,    action: :quiz_results

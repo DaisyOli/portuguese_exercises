@@ -122,6 +122,51 @@ RSpec.describe QuizSubmissionService, type: :service do
       end
     end
 
+    context 'com questão de resposta aberta (correção por IA em background)' do
+      let(:question_open) { create(:question, :open_ended, activity: activity) }
+      let(:params) do
+        {
+          answers: {
+            question_open.id.to_s => "Eu acordo às sete horas todos os dias.",
+            question_mc.id.to_s   => "Brasília"
+          }
+        }
+      end
+
+      it 'marca a resposta como pendente e enfileira o AiGradingJob' do
+        result = nil
+        expect { result = service.call }.to have_enqueued_job(AiGradingJob)
+
+        attempt = result[:quiz_attempt]
+        entry = attempt.results["results"][question_open.id.to_s]
+        expect(entry["ai_pending"]).to be true
+        expect(entry["is_correct"]).to be_nil
+        expect(attempt.ai_grading_pending?).to be true
+      end
+
+      it 'calcula o score inicial só com as questões já corrigidas' do
+        result = service.call
+        attempt = result[:quiz_attempt]
+
+        expect(attempt.score).to eq(100.0)
+        expect(attempt.results["total_questions"]).to eq(1)
+      end
+
+      it 'resposta aberta em branco ganha 0 direto, sem IA e sem job' do
+        params[:answers][question_open.id.to_s] = ""
+
+        result = nil
+        expect { result = service.call }.not_to have_enqueued_job(AiGradingJob)
+
+        attempt = result[:quiz_attempt]
+        entry = attempt.results["results"][question_open.id.to_s]
+        expect(entry["ai_pending"]).to be_nil
+        expect(entry["is_correct"]).to be false
+        expect(entry["ai_score"]).to eq(0)
+        expect(attempt.results["total_questions"]).to eq(2)
+      end
+    end
+
     context 'para usuário não autenticado' do
       let(:user) { nil }
 

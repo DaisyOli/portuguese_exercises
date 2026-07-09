@@ -366,6 +366,8 @@ en:
     score_keep_going: "Keep it up — every attempt is a learning experience!"
     see_transcript: "See transcript"
     ai_feedback: "AI Feedback"
+    ai_grading_pending: "The AI is grading your answer..."
+    ai_grading_note: "Your open answers are being graded by the AI — the score updates automatically in a moment."
     ai_score: "AI Score"
     ai_error: "Error evaluating response. Please try again."
 

@@ -321,6 +321,8 @@ pt:
     score_keep_going: "Continue assim — cada tentativa é um aprendizado!"
     see_transcript: "Ver transcrição"
     ai_feedback: "Feedback da IA"
+    ai_grading_pending: "A IA está corrigindo sua resposta..."
+    ai_grading_note: "Suas respostas abertas estão sendo corrigidas pela IA — a nota atualiza sozinha em instantes."
     ai_score: "Nota da IA"
     ai_error: "Erro ao avaliar a resposta. Por favor, tente novamente."
 

@@ -300,6 +300,8 @@ fr:
     submit: "Soumettre les Réponses"
     submitting: "Envoi en cours..."
     results: "Résultats du Quiz"
+    ai_grading_pending: "L'IA corrige votre réponse..."
+    ai_grading_note: "Vos réponses ouvertes sont en cours de correction par l'IA — la note se mettra à jour automatiquement."
     final_score: "Score Final"
     correct_answers: "Vous avez obtenu %{correct} sur %{total} questions (%{score}%)"
     your_answer: "Votre réponse"

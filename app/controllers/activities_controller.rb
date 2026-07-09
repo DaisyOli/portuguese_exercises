@@ -2,7 +2,7 @@ class ActivitiesController < ApplicationController
   include QuizManagement
   
   before_action :authenticate_user!
-  before_action :set_activity, only: [:show, :edit, :update, :destroy, :resolve_quiz, :submit_quiz, :quiz_results, :transcribe_audio, :clear_statement, :clear_media, :clear_video, :clear_explanation, :clear_audio, :clear_image_file, :clear_video_file, :clear_attempt_history, :review_draft, :publish_draft]
+  before_action :set_activity, only: [:show, :edit, :update, :destroy, :resolve_quiz, :submit_quiz, :quiz_results, :grading_status, :transcribe_audio, :clear_statement, :clear_media, :clear_video, :clear_explanation, :clear_audio, :clear_image_file, :clear_video_file, :clear_attempt_history, :review_draft, :publish_draft]
   before_action :preload_exercise_associations, only: [:show]
   before_action :authorize_teacher, only: [:new, :create, :edit, :update, :destroy, :generate_with_ai, :generate_from_video, :review_draft, :publish_draft]
   before_action :check_trial_level_restriction!, only: [:show, :resolve_quiz, :submit_quiz]
@@ -100,6 +100,12 @@ class ActivitiesController < ApplicationController
   rescue => e
     Rails.logger.error "Erro ao mostrar resultados: #{e.message}\n#{e.backtrace.join("\n")}"
     redirect_to activities_path, alert: "Ocorreu um erro ao exibir os resultados. Tente novamente."
+  end
+
+  # Consultado pela tela de resultados enquanto a correção por IA roda em background
+  def grading_status
+    attempt = find_quiz_attempt
+    render json: { pending: attempt.present? && attempt.ai_grading_pending? }
   end
 
   def generate_with_ai

@@ -1,15 +1,5 @@
 # app/services/quiz_submission_service.rb
-require "anthropic"
-
 class QuizSubmissionService
-  AI_CORRECTION_SYSTEM = <<~PROMPT
-    Você é um avaliador de respostas de estudantes de português como segunda língua.
-    Avalie a resposta do aluno de forma construtiva e encorajadora.
-    Responda SOMENTE com JSON neste formato exato (sem markdown, sem texto extra):
-    {"score": <inteiro de 0 a 100>, "feedback": "<feedback curto em português>"}
-    Score 100 = resposta perfeita; 0 = em branco ou completamente errada.
-  PROMPT
-
   attr_reader :activity, :user, :params, :session
 
   def initialize(activity:, user:, params:, session:)
@@ -58,29 +48,28 @@ class QuizSubmissionService
 
       begin
         if question.open_ended?
-          ai_result = correct_open_ended(question, given_answer)
-
-          if ai_result[:score].nil?
-            # IA indisponível — preserva a resposta mas não conta no score
-            skip_score = true
+          if given_answer.blank?
+            # Sem resposta: nota 0 direto, não precisa de IA
+            is_correct = false
             results[question.id] = {
-              "is_correct"     => nil,
-              "question_text"  => question.content,
-              "question_type"  => question.question_type,
-              "given_answer"   => given_answer.present? ? given_answer.to_s.strip : I18n.t('quiz.not_answered'),
-              "ai_score"       => nil,
-              "ai_feedback"    => ai_result[:feedback],
-              "ai_unavailable" => true
-            }
-          else
-            is_correct = ai_result[:score] >= 70
-            results[question.id] = {
-              "is_correct"    => is_correct,
+              "is_correct"    => false,
               "question_text" => question.content,
               "question_type" => question.question_type,
-              "given_answer"  => given_answer.present? ? given_answer.to_s.strip : I18n.t('quiz.not_answered'),
-              "ai_score"      => ai_result[:score],
-              "ai_feedback"   => ai_result[:feedback]
+              "given_answer"  => I18n.t('quiz.not_answered'),
+              "ai_score"      => 0,
+              "ai_feedback"   => I18n.t('quiz.not_answered')
+            }
+          else
+            # A correção por IA roda em background (AiGradingJob) para não
+            # segurar a requisição; fica fora do score até ser corrigida
+            skip_score = true
+            @has_pending_ai_grading = true
+            results[question.id] = {
+              "is_correct"    => nil,
+              "question_text" => question.content,
+              "question_type" => question.question_type,
+              "given_answer"  => given_answer.to_s.strip,
+              "ai_pending"    => true
             }
           end
 
@@ -235,45 +224,6 @@ class QuizSubmissionService
     save_quiz_attempt(quiz_results_data, score)
   end
 
-  def correct_open_ended(question, given_answer)
-    if given_answer.blank?
-      return { score: 0, feedback: I18n.t('quiz.not_answered') }
-    end
-
-    client = Anthropic::Client.new(api_key: ENV.fetch("ANTHROPIC_API_KEY"))
-
-    rubric_line = question.evaluation_prompt.present? \
-      ? "Critérios de avaliação: #{question.evaluation_prompt}\n" \
-      : ""
-
-    message = client.messages.create(
-      model: :"claude-haiku-4-5",
-      max_tokens: 256,
-      system: AI_CORRECTION_SYSTEM,
-      messages: [{
-        role: "user",
-        content: "Questão: #{ActionView::Base.full_sanitizer.sanitize(question.content.to_s)}\n#{rubric_line}Resposta do aluno: #{given_answer.to_s.strip}"
-      }]
-    )
-
-    text_block = message.content.find { |b| b.type == :text }
-    parsed = JSON.parse(text_block.text.strip.gsub(/\A```(?:json)?\s*/i, '').gsub(/\s*```\z/, ''))
-    { score: parsed["score"].to_i.clamp(0, 100), feedback: parsed["feedback"].to_s }
-
-  rescue Anthropic::Errors::RateLimitError
-    Rails.logger.warn "AI correction rate limited"
-    { score: nil, feedback: I18n.t('ai.errors.rate_limit') }
-  rescue Anthropic::Errors::APITimeoutError, Anthropic::Errors::APIConnectionError
-    Rails.logger.warn "AI correction timeout/connection error"
-    { score: nil, feedback: I18n.t('ai.errors.timeout') }
-  rescue Anthropic::Errors::APIStatusError => e
-    Rails.logger.error "AI correction API error: #{e.message}"
-    { score: nil, feedback: I18n.t('ai.errors.api', message: e.message) }
-  rescue JSON::ParserError => e
-    Rails.logger.error "AI correction JSON parse error: #{e.message}"
-    { score: nil, feedback: I18n.t('ai.errors.invalid_format') }
-  end
-
   def save_quiz_attempt(quiz_results_data, score)
     if @user
       @quiz_attempt = QuizAttempt.find_or_initialize_by(
@@ -300,6 +250,7 @@ class QuizSubmissionService
     @quiz_attempt.teacher_comments = {} if @quiz_attempt.persisted?
 
     if @quiz_attempt.save
+      AiGradingJob.perform_later(@quiz_attempt.id) if @has_pending_ai_grading
       update_session(score)
       success_response(quiz_results_data, score)
     else

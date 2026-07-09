@@ -45,6 +45,12 @@ class QuizAttempt < ApplicationRecord
     results["results"].select { |_k, v| v.is_a?(Hash) && v["question_type"] == "open_ended" }
   end
 
+  # true enquanto houver resposta aberta aguardando correção do AiGradingJob
+  def ai_grading_pending?
+    return false unless results&.dig("results").is_a?(Hash)
+    results["results"].values.any? { |v| v.is_a?(Hash) && v["ai_pending"] }
+  end
+
   def teacher_comment_for(question_id)
     (teacher_comments || {})["question_#{question_id}"].presence
   end
