@@ -70,13 +70,14 @@ Things I know need work, in priority order:
 
 ## Running locally
 
-**Prerequisites:** Ruby 3.3.5, PostgreSQL, Bundler
+**Prerequisites:** Ruby 3.3.5, PostgreSQL, Bundler, Yarn
 
 ```bash
 git clone https://github.com/DaisyOli/portuguese_exercises.git
 cd portuguese_exercises
 
 bundle install
+yarn install
 
 # Set up the database
 bin/rails db:create db:migrate db:seed
