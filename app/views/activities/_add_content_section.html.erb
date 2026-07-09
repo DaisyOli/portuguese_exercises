@@ -48,38 +48,32 @@
   <div style="display:flex; gap:7px; flex-wrap:wrap; margin-bottom:14px;">
     <button type="button" style="<%= neutral %>"
             data-action="content-form#toggle"
-            data-bs-toggle="collapse"
-            data-bs-target="#new-statement-form">
+            data-collapse-target="#new-statement-form">
       <i class="bi bi-file-text"></i> <%= t('activities.add_statement') %>
     </button>
     <button type="button" style="<%= neutral %>"
             data-action="content-form#toggle"
-            data-bs-toggle="collapse"
-            data-bs-target="#new-image-form">
+            data-collapse-target="#new-image-form">
       <i class="bi bi-image"></i> <%= t('activities.add_image') %>
     </button>
     <button type="button" style="<%= neutral %>"
             data-action="content-form#toggle"
-            data-bs-toggle="collapse"
-            data-bs-target="#new-video-form">
+            data-collapse-target="#new-video-form">
       <i class="bi bi-play-circle"></i> <%= t('activities.add_video') %>
     </button>
     <button type="button" style="<%= neutral %>"
             data-action="content-form#toggle"
-            data-bs-toggle="collapse"
-            data-bs-target="#new-text-form">
+            data-collapse-target="#new-text-form">
       <i class="bi bi-align-left"></i> <%= t('activities.add_text') %>
     </button>
     <button type="button" style="<%= neutral %>"
             data-action="content-form#toggle"
-            data-bs-toggle="collapse"
-            data-bs-target="#new-audio-form">
+            data-collapse-target="#new-audio-form">
       <i class="bi bi-music-note-beamed"></i> <%= t('activities.add_audio') %>
     </button>
     <button type="button" style="<%= neutral %>"
             data-action="content-form#toggle"
-            data-bs-toggle="collapse"
-            data-bs-target="#new-suggestion-form">
+            data-collapse-target="#new-suggestion-form">
       <i class="bi bi-lightbulb"></i> <%= t('activities.add_suggestion') %>
     </button>
   </div>
@@ -91,44 +85,38 @@
   <div style="display:flex; gap:7px; flex-wrap:wrap;">
     <button type="button" style="<%= multipla %>"
             data-action="content-form#toggle"
-            data-bs-toggle="collapse"
-            data-bs-target="#new-q-mc-form">
+            data-collapse-target="#new-q-mc-form">
       <i class="bi bi-ui-radios"></i> Múltipla escolha
     </button>
     <button type="button" style="<%= lacuna %>"
             data-action="content-form#toggle"
-            data-bs-toggle="collapse"
-            data-bs-target="#new-q-fib-form">
+            data-collapse-target="#new-q-fib-form">
       <i class="bi bi-input-cursor-text"></i> Completar lacuna
     </button>
     <button type="button" style="<%= palavras %>"
             data-action="content-form#toggle"
-            data-bs-toggle="collapse"
-            data-bs-target="#new-sentence-ordering-form">
+            data-collapse-target="#new-sentence-ordering-form">
       <i class="bi bi-sort-alpha-down"></i> <%= t('sentence_orderings.title') %>
     </button>
     <button type="button" style="<%= paras %>"
             data-action="content-form#toggle"
-            data-bs-toggle="collapse"
-            data-bs-target="#new-paragraph-ordering-form">
+            data-collapse-target="#new-paragraph-ordering-form">
       <i class="bi bi-list-ol"></i> <%= t('paragraph_orderings.title') %>
     </button>
     <button type="button" style="<%= colunas %>"
             data-action="content-form#toggle"
-            data-bs-toggle="collapse"
-            data-bs-target="#new-column-matching-form">
+            data-collapse-target="#new-column-matching-form">
       <i class="bi bi-arrow-left-right"></i> <%= t('column_matchings.title') %>
     </button>
     <button type="button" style="<%= ai_q %>"
             data-action="content-form#toggle"
-            data-bs-toggle="collapse"
-            data-bs-target="#new-q-ai-form">
+            data-collapse-target="#new-q-ai-form">
       ✨ Questão com IA
     </button>
   </div>
 </div>
 
-<div class="collapse form-collapse" id="new-statement-form" data-content-form-target="form">
+<div class="hidden form-collapse" id="new-statement-form" data-content-form-target="form">
   <div style="<%= wrap_s %>">
     <%= form_with(model: activity, local: true) do |f| %>
       <div style="<%= field_s %>">
@@ -177,7 +165,7 @@
   })();
 </script>
 
-<div class="collapse form-collapse" id="new-image-form" data-content-form-target="form">
+<div class="hidden form-collapse" id="new-image-form" data-content-form-target="form">
   <div style="<%= wrap_s %>">
 
     <%# Mini-tab: URL | Do computador %>
@@ -249,7 +237,7 @@
   </div>
 </div>
 
-<div class="collapse form-collapse" id="new-video-form" data-content-form-target="form">
+<div class="hidden form-collapse" id="new-video-form" data-content-form-target="form">
   <div style="<%= wrap_s %>">
 
     <%# Mini-tab: YouTube | Do computador %>
@@ -322,7 +310,7 @@
   </div>
 </div>
 
-<div class="collapse form-collapse" id="new-audio-form" data-content-form-target="form">
+<div class="hidden form-collapse" id="new-audio-form" data-content-form-target="form">
   <div style="<%= wrap_s %>">
     <%= form_with(model: activity, local: true, multipart: true) do |f| %>
       <div style="<%= field_s %>">
@@ -335,7 +323,7 @@
   </div>
 </div>
 
-<div class="collapse form-collapse" id="new-text-form" data-content-form-target="form">
+<div class="hidden form-collapse" id="new-text-form" data-content-form-target="form">
   <div style="<%= wrap_s %>">
     <%= form_with(model: activity, local: true) do |f| %>
       <div style="<%= field_s %>">
@@ -392,7 +380,7 @@
   })();
 </script>
 
-<div class="collapse form-collapse" id="new-q-mc-form" data-content-form-target="form">
+<div class="hidden form-collapse" id="new-q-mc-form" data-content-form-target="form">
   <div style="<%= wrap_s %>">
     <%= render "questions/form",
           question: activity.questions.build(question_type: 'multiple_choice'),
@@ -402,7 +390,7 @@
   </div>
 </div>
 
-<div class="collapse form-collapse" id="new-q-fib-form" data-content-form-target="form">
+<div class="hidden form-collapse" id="new-q-fib-form" data-content-form-target="form">
   <div style="<%= wrap_s %>">
     <%= render "questions/form",
           question: activity.questions.build(question_type: 'fill_in_blank'),
@@ -412,7 +400,7 @@
   </div>
 </div>
 
-<div class="collapse form-collapse" id="new-q-ai-form" data-content-form-target="form">
+<div class="hidden form-collapse" id="new-q-ai-form" data-content-form-target="form">
   <div style="<%= wrap_s %>">
     <%= render "questions/form",
           question: activity.questions.build(question_type: 'open_ended'),
@@ -422,7 +410,7 @@
   </div>
 </div>
 
-<div class="collapse form-collapse" id="new-sentence-ordering-form" data-content-form-target="form">
+<div class="hidden form-collapse" id="new-sentence-ordering-form" data-content-form-target="form">
   <div style="<%= wrap_s %>">
     <%= form_with(model: [activity, SentenceOrdering.new], local: true) do |f| %>
       <div style="<%= field_s %>">
@@ -441,7 +429,7 @@
   </div>
 </div>
 
-<div class="collapse form-collapse" id="new-paragraph-ordering-form" data-content-form-target="form">
+<div class="hidden form-collapse" id="new-paragraph-ordering-form" data-content-form-target="form">
   <div style="<%= wrap_s %>">
     <%= form_with(model: [activity, ParagraphOrdering.new], local: true,
           data: { controller: "dynamic-fields" }) do |f| %>
@@ -493,7 +481,7 @@
   </div>
 </div>
 
-<div class="collapse form-collapse" id="new-column-matching-form" data-content-form-target="form">
+<div class="hidden form-collapse" id="new-column-matching-form" data-content-form-target="form">
   <div style="<%= wrap_s %>">
     <%= form_with(model: [activity, ColumnMatching.new], local: true,
           data: { controller: "dynamic-fields" }) do |f| %>
@@ -560,7 +548,7 @@
   </div>
 </div>
 
-<div class="collapse form-collapse" id="new-suggestion-form" data-content-form-target="form">
+<div class="hidden form-collapse" id="new-suggestion-form" data-content-form-target="form">
   <div style="<%= wrap_s %>">
     <%= form_with(model: [activity, Suggestion.new], local: true) do |f| %>
       <div style="<%= field_s %>">

@@ -48,13 +48,8 @@ Rails.application.routes.draw do
       get  :submit,     to: redirect { |params, _req| "/activities/#{params[:slug]}/solve" }
       get  :results,    action: :quiz_results
       post :transcribe, action: :transcribe_audio
-      patch :clear_statement
-      match :clear_media, via: [:patch, :post]
-      match :clear_video, via: [:patch, :post]
-      patch :clear_explanation
-      match :clear_audio, via: [:patch, :post]
-      match :clear_image_file, via: [:patch, :post]
-      match :clear_video_file, via: [:patch, :post]
+      match "clear/:content", action: :clear_content, via: [:patch, :post], as: :clear_content,
+            constraints: { content: /statement|media|video|explanation|audio|image_file|video_file/ }
       delete :clear_attempt_history
     end
 

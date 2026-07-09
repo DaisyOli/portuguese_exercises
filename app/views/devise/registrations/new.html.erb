@@ -1,5 +1,5 @@
-<div class="container d-flex justify-content-center align-items-center vh-100">
-  <div class="card shadow-lg p-4" style="width: 100%; max-width: 400px;">
+<div class="container mx-auto flex justify-center items-center min-h-screen">
+  <div class="card bg-white shadow-lg p-4" style="width: 100%; max-width: 400px;">
     <div class="card-body">
       <h2 class="card-title text-center mb-4">Sign Up</h2>
 
@@ -8,20 +8,20 @@
         <!-- Campo de Email -->
         <div class="mb-3">
           <%= f.input :email, required: true, autofocus: true, autocomplete: "email", 
-                      label: "Email", input_html: { class: "form-control", placeholder: "Enter your email" } %>
+                      label: "Email", input_html: { class: "form-input", placeholder: "Enter your email" } %>
         </div>
 
         <!-- Campo de Senha -->
         <div class="mb-3">
           <%= f.input :password, required: true, autocomplete: "new-password", 
                       label: "Password", hint: (@minimum_password_length ? "#{@minimum_password_length} characters minimum" : nil), 
-                      input_html: { class: "form-control", placeholder: "Enter your password" } %>
+                      input_html: { class: "form-input", placeholder: "Enter your password" } %>
         </div>
 
         <!-- Campo de Confirmação de Senha -->
         <div class="mb-3">
           <%= f.input :password_confirmation, required: true, autocomplete: "new-password", 
-                      label: "Password Confirmation", input_html: { class: "form-control", placeholder: "Confirm your password" } %>
+                      label: "Password Confirmation", input_html: { class: "form-input", placeholder: "Confirm your password" } %>
         </div>
 
         <!-- Botão de Sign Up -->

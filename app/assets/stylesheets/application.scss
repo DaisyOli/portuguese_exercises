@@ -6,9 +6,6 @@
 @import "variables";              // CSS variables centralizadas
 @import "globals";                // Reset, tipografia, utilities
 
-// 🎨 2. BOOTSTRAP (depois das nossas variáveis)
-@import "bootstrap";
-
 // 🔮 3. COMPONENTES
 @import "components/buttons";         // ✅ Fase 2 - ATIVO
 @import "components/headers";         // ✅ Fase 2 - ATIVO  

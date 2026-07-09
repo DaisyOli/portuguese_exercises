@@ -1,21 +1,16 @@
 import { Controller } from "@hotwired/stimulus"
-import * as bootstrap from "bootstrap"
 
 export default class extends Controller {
   static targets = ["form"]
-
-  connect() {
-  }
 
   toggle(event) {
     event.preventDefault()
     event.stopPropagation()
 
-    // Usa data-bs-target no padrão Bootstrap 5
-    const targetId = event.currentTarget.getAttribute('data-bs-target')
+    const targetId = event.currentTarget.getAttribute('data-collapse-target')
 
     if (!targetId) {
-      console.error("Atributo data-bs-target não encontrado no botão")
+      console.error("Atributo data-collapse-target não encontrado no botão")
       return
     }
 
@@ -26,28 +21,19 @@ export default class extends Controller {
       return
     }
 
-    // Fecha todos os outros formulários primeiro
+    // Comportamento de acordeão: fecha os outros formulários primeiro
     this.formTargets.forEach(form => {
-      if (form !== targetForm && form.classList.contains('show')) {
-        const instance = bootstrap.Collapse.getInstance(form)
-        if (instance) {
-          instance.hide()
-        }
-      }
+      if (form !== targetForm) form.classList.add('hidden')
     })
 
-    // Toggle do formulário atual — { toggle: false } evita toggle duplo no constructor
-    try {
-      const collapse = bootstrap.Collapse.getOrCreateInstance(targetForm, { toggle: false })
-      collapse.toggle()
-    } catch (error) {
-      console.error("Erro ao alternar collapse:", error)
-    }
+    targetForm.classList.toggle('hidden')
 
-    // Inicializa Quill após a animação do collapse (350ms Bootstrap + margem)
-    setTimeout(() => {
-      this._initQuillInForm(targetForm)
-    }, 400)
+    // Inicializa Quill quando o formulário fica visível
+    if (!targetForm.classList.contains('hidden')) {
+      setTimeout(() => {
+        this._initQuillInForm(targetForm)
+      }, 50)
+    }
   }
 
   _initQuillInForm(form) {

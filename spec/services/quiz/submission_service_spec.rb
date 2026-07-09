@@ -218,8 +218,7 @@ RSpec.describe QuizSubmissionService, type: :service do
         },
         answers_raw: {},
         answers_alt: {},
-        answers_order: {},
-        answers_sentences: {}
+        answers_order: {}
       }
       
       service = QuizSubmissionService.new(

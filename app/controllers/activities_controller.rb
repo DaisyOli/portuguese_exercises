@@ -2,7 +2,7 @@ class ActivitiesController < ApplicationController
   include QuizManagement
   
   before_action :authenticate_user!
-  before_action :set_activity, only: [:show, :edit, :update, :destroy, :resolve_quiz, :submit_quiz, :quiz_results, :grading_status, :transcribe_audio, :clear_statement, :clear_media, :clear_video, :clear_explanation, :clear_audio, :clear_image_file, :clear_video_file, :clear_attempt_history, :review_draft, :publish_draft]
+  before_action :set_activity, only: [:show, :edit, :update, :destroy, :resolve_quiz, :submit_quiz, :quiz_results, :grading_status, :transcribe_audio, :clear_content, :clear_attempt_history, :review_draft, :publish_draft]
   before_action :preload_exercise_associations, only: [:show]
   before_action :authorize_teacher, only: [:new, :create, :edit, :update, :destroy, :generate_with_ai, :generate_from_video, :review_draft, :publish_draft]
   before_action :check_trial_level_restriction!, only: [:show, :resolve_quiz, :submit_quiz]
@@ -242,62 +242,31 @@ class ActivitiesController < ApplicationController
     end
   end
 
-  def clear_statement
-    if @activity.teacher != current_user
-      redirect_to activities_path, alert: t('messages.permission_denied')
-      return
-    end
+  # Conteúdos da activity que a professora pode excluir individualmente.
+  # attribute: coluna que vira nil | attachment: Active Storage que é purgado
+  CLEARABLE_CONTENTS = {
+    "statement"   => { attribute: :statement,        notice: "statement_deleted" },
+    "media"       => { attribute: :media_url,        notice: "media_deleted" },
+    "video"       => { attribute: :video_url,        notice: "video_deleted" },
+    "explanation" => { attribute: :explanation_text, notice: "explanation_deleted" },
+    "audio"       => { attachment: :audio_file,      notice: "audio_deleted" },
+    "image_file"  => { attachment: :image_file,      notice: "image_file_deleted" },
+    "video_file"  => { attachment: :video_file,      notice: "video_file_deleted" }
+  }.freeze
 
-    @activity.update(statement: nil)
-    # Redirecionar para a parte superior da página ou para outro conteúdo
-    redirect_to activity_path(@activity, ultima_acao: 'conteudo_excluido'), notice: t('messages.statement_deleted')
-  end
-
-  def clear_media
-    if @activity.teacher != current_user
-      redirect_to activities_path, alert: t('messages.permission_denied') and return
-    end
-
-    @activity.update(media_url: nil)
-    redirect_to activity_path(@activity, ultima_acao: 'conteudo_excluido'), notice: t('messages.media_deleted')
-  end
-
-  def clear_video
+  def clear_content
     if @activity.teacher != current_user
       redirect_to activities_path, alert: t('messages.permission_denied') and return
     end
 
-    @activity.update(video_url: nil)
-    redirect_to activity_path(@activity, ultima_acao: 'conteudo_excluido'), notice: t('messages.video_deleted')
-  end
-
-  def clear_explanation
-    if @activity.teacher != current_user
-      redirect_to activities_path, alert: t('messages.permission_denied')
-      return
+    config = CLEARABLE_CONTENTS.fetch(params[:content])
+    if config[:attribute]
+      @activity.update(config[:attribute] => nil)
+    else
+      @activity.public_send(config[:attachment]).purge
     end
 
-    @activity.update(explanation_text: nil)
-    # Redirecionar para a parte superior da página ou para outro conteúdo
-    redirect_to activity_path(@activity, ultima_acao: 'conteudo_excluido'), notice: t('messages.explanation_deleted')
-  end
-
-  def clear_audio
-    redirect_to activities_path, alert: t('messages.permission_denied') and return unless @activity.teacher == current_user
-    @activity.audio_file.purge
-    redirect_to activity_path(@activity, ultima_acao: 'conteudo_excluido'), notice: t('messages.audio_deleted')
-  end
-
-  def clear_image_file
-    redirect_to activities_path, alert: t('messages.permission_denied') and return unless @activity.teacher == current_user
-    @activity.image_file.purge
-    redirect_to activity_path(@activity, ultima_acao: 'conteudo_excluido'), notice: t('messages.image_file_deleted')
-  end
-
-  def clear_video_file
-    redirect_to activities_path, alert: t('messages.permission_denied') and return unless @activity.teacher == current_user
-    @activity.video_file.purge
-    redirect_to activity_path(@activity, ultima_acao: 'conteudo_excluido'), notice: t('messages.video_file_deleted')
+    redirect_to activity_path(@activity, ultima_acao: 'conteudo_excluido'), notice: t("messages.#{config[:notice]}")
   end
 
   def clear_attempt_history

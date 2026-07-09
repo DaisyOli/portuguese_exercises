@@ -30,8 +30,7 @@
     <% if current_user.teacher? && activity.teacher == current_user %>
       <div style="display:flex; gap:6px;">
         <button type="button"
-                data-bs-toggle="collapse"
-                data-bs-target="#edit-<%= section_id %>-form"
+                data-controller="collapse" data-collapse-target-value="#edit-<%= section_id %>-form" data-action="collapse#toggle"
                 style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.75rem; font-weight:600; color:#5C5853; padding:5px 10px; border:1.5px solid #DDD9D2; border-radius:7px; background:#fff; cursor:pointer;">
           Editar
         </button>
@@ -52,7 +51,7 @@
 
   <%# Inline edit form (Bootstrap collapse) %>
   <% if current_user.teacher? && activity.teacher == current_user %>
-    <div class="collapse" id="edit-<%= section_id %>-form">
+    <div class="hidden" id="edit-<%= section_id %>-form">
       <div style="padding:20px; border-top:1px solid #E8C97A; background:#FAFAF9;">
         <%= form_with(model: activity, local: true) do |f| %>
           <div style="margin-bottom:12px;">

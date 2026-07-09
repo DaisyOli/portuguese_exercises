@@ -11,13 +11,13 @@
       </span>
       <% if current_user.teacher? && activity.teacher == current_user %>
         <div style="display:flex; gap:6px;">
-          <button type="button" data-bs-toggle="collapse" data-bs-target="#edit-audio-form"
+          <button type="button" data-controller="collapse" data-collapse-target-value="#edit-audio-form" data-action="collapse#toggle"
                   style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.75rem; font-weight:600;
                          color:#5C5853; padding:4px 10px; border:1.5px solid #DDD9D2;
                          border-radius:7px; background:#fff; cursor:pointer;">
             <%= t('common.edit') %>
           </button>
-          <%= button_to clear_audio_activity_path(activity), method: :post,
+          <%= button_to clear_content_activity_path(activity, content: "audio"), method: :post,
                 data: { turbo_confirm: t('activities.confirm_delete_audio') },
                 style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.75rem; font-weight:600;
                         color:#B91C1C; padding:4px 10px; border:1.5px solid #FECACA;
@@ -36,7 +36,7 @@
     </div>
 
     <% if current_user.teacher? && activity.teacher == current_user %>
-      <div class="collapse" id="edit-audio-form">
+      <div class="hidden" id="edit-audio-form">
         <div style="padding:16px 20px; border-top:1px solid #E8C97A; background:#FAFAF9;">
           <%= form_with(model: activity, local: true, multipart: true) do |f| %>
             <%= f.label :audio_file, t('activities.audio_file_label'),

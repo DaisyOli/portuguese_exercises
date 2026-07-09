@@ -8,12 +8,11 @@
       <% if current_user.teacher? && activity.teacher == current_user %>
         <div style="display:flex; gap:6px;">
           <button type="button"
-                  data-bs-toggle="collapse"
-                  data-bs-target="#edit-image-form"
+                  data-controller="collapse" data-collapse-target-value="#edit-image-form" data-action="collapse#toggle"
                   style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.75rem; font-weight:600; color:#5C5853; padding:5px 10px; border:1.5px solid #DDD9D2; border-radius:7px; background:#fff; cursor:pointer;">
             Editar
           </button>
-          <%= button_to clear_media_activity_path(activity),
+          <%= button_to clear_content_activity_path(activity, content: "media"),
               method: :post,
               data: { turbo_confirm: t('activities.confirm_delete_media') },
               style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.75rem; font-weight:600; color:#B91C1C; padding:5px 10px; border:1.5px solid #FECACA; border-radius:7px; background:#FEF2F2; cursor:pointer;" do %>
@@ -34,12 +33,12 @@
     </div>
 
     <% if current_user.teacher? && activity.teacher == current_user %>
-      <div class="collapse" id="edit-image-form">
+      <div class="hidden" id="edit-image-form">
         <div style="padding:20px; border-top:1px solid #E8C97A; background:#FAFAF9;">
           <%= form_with(model: activity, local: true) do |f| %>
             <div class="mb-3">
               <%= f.label :media_url, t('activities.image_url_label'), class: "form-label" %>
-              <%= f.text_field :media_url, class: "form-control", placeholder: t('activities.image_url_placeholder') %>
+              <%= f.text_field :media_url, class: "form-input", placeholder: t('activities.image_url_placeholder') %>
             </div>
             <div class="d-grid">
               <%= f.submit t('common.save'), class: "btn btn-primary" %>
@@ -62,12 +61,11 @@
       <% if current_user.teacher? && activity.teacher == current_user %>
         <div style="display:flex; gap:6px;">
           <button type="button"
-                  data-bs-toggle="collapse"
-                  data-bs-target="#edit-image-file-form"
+                  data-controller="collapse" data-collapse-target-value="#edit-image-file-form" data-action="collapse#toggle"
                   style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.75rem; font-weight:600; color:#5C5853; padding:5px 10px; border:1.5px solid #DDD9D2; border-radius:7px; background:#fff; cursor:pointer;">
             <%= t('common.edit') %>
           </button>
-          <%= button_to clear_image_file_activity_path(activity),
+          <%= button_to clear_content_activity_path(activity, content: "image_file"),
               method: :post,
               data: { turbo_confirm: t('activities.confirm_delete_image_file') },
               style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.75rem; font-weight:600; color:#B91C1C; padding:5px 10px; border:1.5px solid #FECACA; border-radius:7px; background:#FEF2F2; cursor:pointer;" do %>
@@ -84,7 +82,7 @@
     </div>
 
     <% if current_user.teacher? && activity.teacher == current_user %>
-      <div class="collapse" id="edit-image-file-form">
+      <div class="hidden" id="edit-image-file-form">
         <div style="padding:16px 20px; border-top:1px solid #E8C97A; background:#FAFAF9;">
 
           <%# Mini-tab: URL | Do computador %>
@@ -177,12 +175,11 @@
       <% if current_user.teacher? && activity.teacher == current_user %>
         <div style="display:flex; gap:6px;">
           <button type="button"
-                  data-bs-toggle="collapse"
-                  data-bs-target="#edit-video-form"
+                  data-controller="collapse" data-collapse-target-value="#edit-video-form" data-action="collapse#toggle"
                   style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.75rem; font-weight:600; color:#5C5853; padding:5px 10px; border:1.5px solid #DDD9D2; border-radius:7px; background:#fff; cursor:pointer;">
             Editar
           </button>
-          <%= button_to clear_video_activity_path(activity),
+          <%= button_to clear_content_activity_path(activity, content: "video"),
               method: :post,
               data: { turbo_confirm: t('activities.confirm_delete_video') },
               style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.75rem; font-weight:600; color:#B91C1C; padding:5px 10px; border:1.5px solid #FECACA; border-radius:7px; background:#FEF2F2; cursor:pointer;" do %>
@@ -197,12 +194,12 @@
     </div>
 
     <% if current_user.teacher? && activity.teacher == current_user %>
-      <div class="collapse" id="edit-video-form">
+      <div class="hidden" id="edit-video-form">
         <div style="padding:20px; border-top:1px solid #E8C97A; background:#FAFAF9;">
           <%= form_with(model: activity, local: true) do |f| %>
             <div class="mb-3">
               <%= f.label :video_url, t('activities.video_url_label'), class: "form-label" %>
-              <%= f.text_field :video_url, class: "form-control", placeholder: t('activities.video_url_placeholder') %>
+              <%= f.text_field :video_url, class: "form-input", placeholder: t('activities.video_url_placeholder') %>
             </div>
             <div class="d-grid">
               <%= f.submit t('common.save'), class: "btn btn-primary" %>
@@ -225,12 +222,11 @@
       <% if current_user.teacher? && activity.teacher == current_user %>
         <div style="display:flex; gap:6px;">
           <button type="button"
-                  data-bs-toggle="collapse"
-                  data-bs-target="#edit-video-file-form"
+                  data-controller="collapse" data-collapse-target-value="#edit-video-file-form" data-action="collapse#toggle"
                   style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.75rem; font-weight:600; color:#5C5853; padding:5px 10px; border:1.5px solid #DDD9D2; border-radius:7px; background:#fff; cursor:pointer;">
             <%= t('common.edit') %>
           </button>
-          <%= button_to clear_video_file_activity_path(activity),
+          <%= button_to clear_content_activity_path(activity, content: "video_file"),
               method: :post,
               data: { turbo_confirm: t('activities.confirm_delete_video_file') },
               style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.75rem; font-weight:600; color:#B91C1C; padding:5px 10px; border:1.5px solid #FECACA; border-radius:7px; background:#FEF2F2; cursor:pointer;" do %>
@@ -247,7 +243,7 @@
     </div>
 
     <% if current_user.teacher? && activity.teacher == current_user %>
-      <div class="collapse" id="edit-video-file-form">
+      <div class="hidden" id="edit-video-file-form">
         <div style="padding:16px 20px; border-top:1px solid #E8C97A; background:#FAFAF9;">
 
           <%# Mini-tab: YouTube | Do computador %>

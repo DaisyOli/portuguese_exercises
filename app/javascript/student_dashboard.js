@@ -151,7 +151,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Mostrar loading
         this.style.display = 'none';
-        spinner.classList.remove('d-none');
+        spinner.classList.remove('hidden');
 
         // Fazer requisição
         const url = `/students/load_more?level=${level}&offset=${offset}&locale=pt`;
@@ -168,7 +168,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
 
             // Atualizar estado do botão
-            spinner.classList.add('d-none');
+            spinner.classList.add('hidden');
 
             if (data.has_more) {
               this.dataset.offset = data.next_offset;
@@ -180,30 +180,12 @@ document.addEventListener('DOMContentLoaded', function() {
           })
           .catch(error => {
             console.error('Erro:', error);
-            spinner.classList.add('d-none');
+            spinner.classList.add('hidden');
             this.style.display = 'inline-block';
           });
       });
     }
 
-    // ✅ BOTÃO TOGGLE ATIVIDADES COMPLETADAS
-    const toggleBtn = document.querySelector('.btn-toggle-completed');
-    if (toggleBtn) {
-      
-      toggleBtn.addEventListener('click', function() {
-        const icon = this.querySelector('.toggle-icon');
-        const target = document.querySelector(this.dataset.bsTarget);
-        
-        setTimeout(() => {
-          if (target && target.classList.contains('show')) {
-            icon.style.transform = 'rotate(180deg)';
-          } else {
-            icon.style.transform = 'rotate(0deg)';
-          }
-        }, 100);
-      });
-    }
-    
     // ✅ ANIMAÇÕES DAS BARRAS DE PROGRESSO
     const progressBars = document.querySelectorAll('.progress-fill');
     progressBars.forEach(bar => {
@@ -252,13 +234,13 @@ document.addEventListener('turbo:load', function() {
         const spinner = document.querySelector('.loading-spinner');
         
         this.style.display = 'none';
-        spinner.classList.remove('d-none');
+        spinner.classList.remove('hidden');
         
         fetch(`/students/load_more?level=${level}&offset=${offset}&locale=pt`)
           .then(r => r.json())
           .then(data => {
             document.getElementById('activities-container').insertAdjacentHTML('beforeend', data.html);
-            spinner.classList.add('d-none');
+            spinner.classList.add('hidden');
             
             if (data.has_more) {
               this.dataset.offset = data.next_offset;
@@ -270,7 +252,7 @@ document.addEventListener('turbo:load', function() {
           })
           .catch(error => {
             console.error('Erro:', error);
-            spinner.classList.add('d-none');
+            spinner.classList.add('hidden');
             this.style.display = 'inline-block';
           });
       });

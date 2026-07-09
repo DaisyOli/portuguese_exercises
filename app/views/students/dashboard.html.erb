@@ -156,7 +156,7 @@
                   data-total="<%= @total_pending %>">
             + Carregar mais (<%= [@total_pending - 3, 0].max %> restantes)
           </button>
-          <div class="loading-spinner d-none">Carregando...</div>
+          <div class="loading-spinner hidden">Carregando...</div>
         </div>
       <% end %>
 
@@ -165,10 +165,10 @@
           <button style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.85rem; font-weight:600;
                          color:#5C5853; background:transparent; border:1.5px solid #DDD9D2;
                          padding:8px 18px; border-radius:10px; cursor:pointer;"
-                  data-bs-toggle="collapse" data-bs-target="#completed-activities">
+                  data-controller="collapse" data-collapse-target-value="#completed-activities" data-action="collapse#toggle">
             ✓ Ver atividades concluídas (<%= @completed_activities.length %>)
           </button>
-          <div class="collapse mt-3" id="completed-activities">
+          <div class="hidden mt-3" id="completed-activities">
             <div class="activities-grid">
               <%= render 'activities_grid', activities: @completed_activities %>
             </div>
@@ -189,10 +189,10 @@
           <button style="margin-top:16px; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.85rem;
                          font-weight:600; color:#0F3826; background:transparent; border:1.5px solid #2A9B6F;
                          padding:8px 20px; border-radius:10px; cursor:pointer;"
-                  data-bs-toggle="collapse" data-bs-target="#completed-activities">
+                  data-controller="collapse" data-collapse-target-value="#completed-activities" data-action="collapse#toggle">
             Revisar atividades →
           </button>
-          <div class="collapse mt-3" id="completed-activities">
+          <div class="hidden mt-3" id="completed-activities">
             <div class="activities-grid">
               <%= render 'activities_grid', activities: @completed_activities %>
             </div>

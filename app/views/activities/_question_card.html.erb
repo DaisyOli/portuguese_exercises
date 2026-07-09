@@ -38,8 +38,7 @@
     <% if activity.teacher == current_user %>
       <div style="display:flex; gap:6px;">
         <button type="button"
-                data-bs-toggle="collapse"
-                data-bs-target="#edit-question-form-<%= question.id %>"
+                data-controller="collapse" data-collapse-target-value="#edit-question-form-<%= question.id %>" data-action="collapse#toggle"
                 style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.72rem; font-weight:600; color:#5C5853; padding:4px 9px; border:1.5px solid #DDD9D2; border-radius:6px; background:#fff; cursor:pointer;">
           Editar
         </button>
@@ -90,60 +89,60 @@
 </div>
 
 <% if activity.teacher == current_user %>
-  <div class="collapse" id="edit-question-form-<%= question.id %>">
+  <div class="hidden" id="edit-question-form-<%= question.id %>">
     <div style="padding:20px; border:1px solid #D1EAD9; border-top:none; border-radius:0 0 10px 10px; background:#FAFAF9; margin-top:-1px;">
       <div data-controller="question-selector">
         <%= form_with model: [question.activity, question], html: { id: "edit-form-#{question.id}" } do |form| %>
-          <div class="row mb-3">
-            <div class="col-md-12">
+          <div class="mb-4">
+            <div>
               <%= form.label :question_type, t('questions.form.question_type') %>
               <%= form.select :question_type,
                   Question::QUESTION_TYPES.map { |type| [t("questions.types.#{type}"), type] },
                   { selected: question.question_type || 'multiple_choice' },
-                  { class: "form-control",
+                  { class: "form-select",
                     data: { question_selector_target: "selector",
                             action: "change->question-selector#change" } } %>
             </div>
           </div>
 
-          <div class="row mb-3">
-            <div class="col-md-12">
+          <div class="mb-4">
+            <div>
               <%= form.label :content, t('questions.form.question_content') %>
               <div id="quill-editor-edit-<%= question.id %>"></div>
               <%= form.hidden_field :content, id: "quill-content-edit-#{question.id}", value: question.content %>
             </div>
           </div>
 
-          <div class="row mb-3 fill-in-blank-help" data-question-selector-target="fillInBlank"
+          <div class="mb-4 fill-in-blank-help" data-question-selector-target="fillInBlank"
                style="display: <%= question.fill_in_blank? ? 'block' : 'none' %>;">
-            <div class="col-md-12">
+            <div>
               <div class="alert alert-info">
                 <%= t('questions.form.fill_in_blank_help_html') %>
               </div>
             </div>
           </div>
 
-          <div class="row mb-3 multiple-choice-fields" data-question-selector-target="multipleChoice"
+          <div class="mb-4 multiple-choice-fields" data-question-selector-target="multipleChoice"
                style="display: <%= question.multiple_choice? ? 'block' : 'none' %>;">
-            <div class="col-md-12">
+            <div>
               <%= form.label :options, t('questions.form.options') %>
-              <%= form.text_area :options_text, value: question.options&.join(','), class: "form-control", rows: 3 %>
-              <small class="form-text text-muted"><%= t('questions.form.options_help') %></small>
+              <%= form.text_area :options_text, value: question.options&.join(','), class: "form-textarea", rows: 3 %>
+              <small class="form-hint"><%= t('questions.form.options_help') %></small>
             </div>
           </div>
 
           <%# Questão com IA — open_ended %>
-          <div class="row mb-3 open-ended-fields" data-question-selector-target="openEnded"
+          <div class="mb-4 open-ended-fields" data-question-selector-target="openEnded"
                style="display:<%= question.open_ended? ? 'block' : 'none' %>;">
-            <div class="col-md-12">
+            <div>
               <div style="background:#FFF7ED; border:1px solid #FED7AA; border-radius:8px; padding:12px 14px; font-size:0.85rem; color:#7C2D12; font-family:'Plus Jakarta Sans',sans-serif; margin-bottom:12px;">
                 <strong>✨ <%= t('questions.form.open_ended_info_title') %></strong><br>
                 <%= t('questions.form.open_ended_info') %>
               </div>
               <%= form.label :evaluation_prompt, t('questions.form.evaluation_prompt_label'), class: "form-label" %>
-              <%= form.text_area :evaluation_prompt, class: "form-control", rows: 3,
+              <%= form.text_area :evaluation_prompt, class: "form-textarea", rows: 3,
                   placeholder: t('questions.form.evaluation_prompt_placeholder') %>
-              <small class="form-text text-muted"><%= t('questions.form.evaluation_prompt_hint') %></small>
+              <small class="form-hint"><%= t('questions.form.evaluation_prompt_hint') %></small>
               <div style="margin-top:12px;">
                 <label class="form-label"><%= t('questions.form.weight_label') %></label>
                 <div style="display:flex; gap:8px; margin-top:4px; flex-wrap:wrap;">
@@ -154,26 +153,26 @@
                     </label>
                   <% end %>
                 </div>
-                <small class="form-text text-muted"><%= t('questions.form.weight_hint') %></small>
+                <small class="form-hint"><%= t('questions.form.weight_hint') %></small>
               </div>
             </div>
           </div>
 
           <%# Resposta única — multiple_choice %>
-          <div class="row mb-3" data-question-selector-target="correctAnswer"
+          <div class="mb-4" data-question-selector-target="correctAnswer"
                style="display:<%= (question.fill_in_blank? || question.open_ended?) ? 'none' : 'block' %>;">
-            <div class="col-md-12">
+            <div>
               <%= form.label :correct_answer, t('questions.form.correct_answer') %>
-              <%= form.text_field :correct_answer, class: "form-control" %>
+              <%= form.text_field :correct_answer, class: "form-input" %>
             </div>
           </div>
 
           <%# Respostas múltiplas — fill_in_blank %>
           <% fib_answers = question.fill_in_blank? ? question.all_correct_answers.reject(&:blank?) : [] %>
           <% fib_count   = [fib_answers.length, 1].max %>
-          <div class="row mb-3 fill-in-blank-answers" data-question-selector-target="fillInBlankAnswers"
+          <div class="mb-4 fill-in-blank-answers" data-question-selector-target="fillInBlankAnswers"
                style="display:<%= question.fill_in_blank? ? 'block' : 'none' %>;">
-            <div class="col-md-12">
+            <div>
               <label class="form-label">Respostas</label>
               <% 4.times do |i| %>
                 <div class="fib-answer-field" data-blank-index="<%= i %>"
@@ -184,7 +183,7 @@
                   <input type="text"
                          name="question[correct_answers][]"
                          value="<%= fib_answers[i] %>"
-                         class="form-control"
+                         class="form-input"
                          style="margin-bottom:0; flex:1;"
                          placeholder="Resposta correta <%= i + 1 %>">
                 </div>
@@ -199,8 +198,8 @@
             </div>
           </div>
 
-          <div class="row">
-            <div class="col-md-12" style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+          <div>
+            <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
               <%= form.submit t('common.save'),
                     style: "background:#1A4A8A; color:#fff; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.88rem; font-weight:700; border:none; border-radius:12px; padding:9px 24px; cursor:pointer;" %>
               <% if question.persisted? %>

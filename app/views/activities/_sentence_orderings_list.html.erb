@@ -21,8 +21,7 @@
             </div>
             <div style="display:flex; gap:6px;">
               <button type="button"
-                      data-bs-toggle="collapse"
-                      data-bs-target="#edit-ordering-<%= ordering.id %>"
+                      data-controller="collapse" data-collapse-target-value="#edit-ordering-<%= ordering.id %>" data-action="collapse#toggle"
                       style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.72rem; font-weight:600; color:#5C5853; padding:4px 9px; border:1.5px solid #DDD9D2; border-radius:6px; background:#fff; cursor:pointer;">
                 Editar
               </button>
@@ -43,17 +42,17 @@
             <div style="margin-top:4px; font-size:0.77rem; color:#9C9892;"><%= ordering.sentence_words_count %> palavras · embaralhadas para o aluno</div>
           </div>
 
-          <div class="collapse" id="edit-ordering-<%= ordering.id %>">
+          <div class="hidden" id="edit-ordering-<%= ordering.id %>">
             <div style="padding:16px; border-top:1px solid #D1EAD9; background:#FAFAF9;">
               <%= form_with(model: [activity, ordering], local: true) do |f| %>
                 <div class="mb-3">
                   <%= f.label :sentence, "Frase completa", class: "form-label" %>
-                  <%= f.text_area :sentence, class: "form-control", rows: 2 %>
-                  <small class="form-text text-muted">Ao salvar, as palavras serão re-embaralhadas automaticamente.</small>
+                  <%= f.text_area :sentence, class: "form-textarea", rows: 2 %>
+                  <small class="form-hint">Ao salvar, as palavras serão re-embaralhadas automaticamente.</small>
                 </div>
                 <div class="mb-3">
                   <%= f.label :instruction, "Instrução para o aluno (opcional)", class: "form-label" %>
-                  <%= f.text_field :instruction, class: "form-control" %>
+                  <%= f.text_field :instruction, class: "form-input" %>
                 </div>
                 <%= f.submit t('common.save'), style: "background:#1A4A8A; color:#fff; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.88rem; font-weight:700; border:none; border-radius:12px; padding:9px 24px; cursor:pointer;" %>
               <% end %>
