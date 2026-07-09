@@ -5,6 +5,9 @@ RSpec.describe WhisperTranscriptionService do
   let(:client)     { instance_double(OpenAI::Client) }
 
   before do
+    # Não depender da OPENAI_API_KEY real do ambiente (o CI não tem .env)
+    allow(ENV).to receive(:[]).and_call_original
+    allow(ENV).to receive(:[]).with("OPENAI_API_KEY").and_return("chave-de-teste")
     allow(OpenAI::Client).to receive(:new).and_return(client)
     allow(client).to receive_message_chain(:audio, :transcribe)
       .and_return({ "text" => "Eu fui ao mercado ontem." })
