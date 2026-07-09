@@ -23,7 +23,8 @@ class ActivitiesIndexService
 
   def fetch_activities
     if @current_user.student?
-      return Activity.none unless @current_user.level_assigned?
+      # .page para a view poder chamar total_pages mesmo na coleção vazia
+      return Activity.none.page(@params[:page]).per(9) unless @current_user.level_assigned?
       activities = Activity.published.where(level: @current_user.accessible_levels)
     else
       activities = Activity.all
