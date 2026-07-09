@@ -127,7 +127,8 @@
       counts_by_level[lvl] = { total: lvl_acts.size, comps: tally }
     end
     # Máximo global para escalar as barras de forma comparável entre níveis
-    bar_max = counts_by_level.values.flat_map { |d| d[:comps].values }.max || 1
+    # (mínimo 1 para evitar divisão por zero quando ainda não há atividades)
+    bar_max = [counts_by_level.values.flat_map { |d| d[:comps].values }.max.to_i, 1].max
   %>
   <div style="background:#fff; border:1px solid #DDD9D2; border-radius:16px; padding:28px; margin-bottom:1.5rem;">
 

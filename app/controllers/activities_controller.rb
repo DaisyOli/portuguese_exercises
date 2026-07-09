@@ -24,7 +24,7 @@ class ActivitiesController < ApplicationController
     @questions = load_questions
     
     if current_user.student_like?
-      redirect_to resolve_quiz_activity_path(@activity)
+      redirect_to solve_activity_path(@activity)
     end
   end
 
@@ -90,7 +90,7 @@ class ActivitiesController < ApplicationController
 
   def quiz_results
     @quiz_attempt = find_quiz_attempt
-    return redirect_to resolve_quiz_activity_path(@activity, locale: I18n.locale),
+    return redirect_to solve_activity_path(@activity, locale: I18n.locale),
                         alert: t('messages.answer_quiz_first') if @quiz_attempt.nil?
 
     @questions      = @activity.questions.index_by(&:id)
