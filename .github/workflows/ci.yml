@@ -47,7 +47,7 @@ jobs:
         run: bin/rails tailwindcss:build
 
       - name: Preparar banco de testes
-        run: bin/rails db:schema:load
+        run: bin/rails db:prepare
 
       - name: Rodar testes
         run: bundle exec rspec
