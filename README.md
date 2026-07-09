@@ -42,6 +42,7 @@ Live in private beta at [app.practicebr.com](https://app.practicebr.com), with r
 | Database | PostgreSQL |
 | Frontend | Hotwire (Turbo + Stimulus), Tailwind CSS + DaisyUI |
 | AI | Anthropic Claude (activity generation, grading), OpenAI Whisper (speech-to-text) |
+| Background jobs | GoodJob (Postgres-backed, async mode) |
 | Auth | Devise + Devise Invitable |
 | Payments | Stripe subscriptions + webhooks |
 | Media & email | Cloudinary, Unsplash, YouTube Data API, Resend |
@@ -53,6 +54,7 @@ Live in private beta at [app.practicebr.com](https://app.practicebr.com), with r
 ## Architecture notes
 
 - **Service objects** keep controllers thin: quiz submission and AI grading, activity generation (prompt- and video-based), transcription, push notifications and analytics each live in their own service under `app/services`.
+- **AI grading runs in background jobs** (GoodJob, backed by Postgres — no Redis): students get instant results while open answers are graded asynchronously, with retry + graceful degradation when the AI is unavailable, and the results page updates itself via a polling Stimulus controller.
 - **Server-rendered UI with Hotwire** — no SPA, no API layer to maintain; Turbo handles interactivity.
 - **Role-based access** (admin / teacher / student / trial) enforced at controller level, with students scoped to the teacher who invited them.
 - **Graceful degradation**: AI, YouTube and Unsplash integrations are optional — the platform works without their API keys.
@@ -61,7 +63,7 @@ Live in private beta at [app.practicebr.com](https://app.practicebr.com), with r
 
 Things I know need work, in priority order:
 
-- [ ] Move AI grading calls out of the request cycle into background jobs
+- [x] Move AI grading calls out of the request cycle into background jobs (GoodJob + async UI updates)
 - [ ] Finish migrating the remaining Bootstrap views to Tailwind/DaisyUI and remove inline styles
 - [ ] Raise request-spec coverage on the billing and quiz-submission flows
 - [ ] Consolidate the repetitive `clear_*` controller actions into a single parameterized action
