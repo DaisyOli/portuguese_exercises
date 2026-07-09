@@ -98,7 +98,11 @@ Rails.application.configure do
     execution_mode: :async,
     max_threads: 2,
     poll_interval: 10,
-    shutdown_timeout: 25
+    shutdown_timeout: 25,
+    # LISTEN/NOTIFY desligado: no essential-0 a conexão dedicada do Notifier
+    # cai e ele entra em loop de reconexão (visto em 2026-07-09). O poller
+    # de 10s acima é quem pega os jobs — comprovado nos logs de produção.
+    enable_listen_notify: false
   }
   config.active_job.queue_name_prefix = "practicebr_production"
 
