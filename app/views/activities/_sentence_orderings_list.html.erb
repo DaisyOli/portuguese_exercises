@@ -1,8 +1,8 @@
 <% if activity.sentence_orderings.any? %>
-  <div style="background:#F0FAF5; border:1px solid #BBF7D0; border-left:4px solid #1A6B4A; border-radius:14px; margin-bottom:14px; overflow:hidden;">
+  <div style="background:var(--brand-mist); border:1px solid var(--success-border); border-left:4px solid var(--brand); border-radius:14px; margin-bottom:14px; overflow:hidden;">
 
-    <div style="display:flex; align-items:center; padding:12px 18px; border-bottom:1px solid #BBF7D0; background:rgba(26,107,74,0.06);">
-      <span style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; color:#1A6B4A; display:flex; align-items:center; gap:6px;">
+    <div style="display:flex; align-items:center; padding:12px 18px; border-bottom:1px solid var(--success-border); background:var(--brand-veil);">
+      <span style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; color:var(--brand); display:flex; align-items:center; gap:6px;">
         <i class="bi bi-sort-alpha-down"></i> Organizar palavras (<%= activity.sentence_orderings.size %>)
       </span>
     </div>
@@ -10,40 +10,40 @@
     <div style="padding:14px 16px; display:flex; flex-direction:column; gap:10px;">
       <% activity.sentence_orderings.sort_by { |o| [o.display_order.to_i, o.created_at] }.each_with_index do |ordering, index| %>
 
-        <div id="sentence-ordering-<%= ordering.id %>" style="border:1px solid #D1EAD9; border-radius:10px; overflow:hidden; background:#fff;">
+        <div id="sentence-ordering-<%= ordering.id %>" style="border:1px solid var(--brand-tint-2); border-radius:10px; overflow:hidden; background:var(--surface);">
 
-          <div style="display:flex; align-items:center; justify-content:space-between; padding:9px 14px; background:#E8F5EE; border-bottom:1px solid #D1EAD9;">
+          <div style="display:flex; align-items:center; justify-content:space-between; padding:9px 14px; background:var(--brand-tint); border-bottom:1px solid var(--brand-tint-2);">
             <div style="display:flex; align-items:center; gap:8px;">
-              <span style="font-family:'DM Mono',monospace; font-size:0.7rem; font-weight:700; color:#1A6B4A;"><%= "%02d" % (index + 1) %></span>
-              <span style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.7rem; font-weight:700; padding:3px 9px; border:1px solid #BBF7D0; border-radius:6px; background:#E8F5EE; color:#0F3826;">
+              <span style="font-family:'DM Mono',monospace; font-size:0.7rem; font-weight:700; color:var(--brand);"><%= "%02d" % (index + 1) %></span>
+              <span style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.7rem; font-weight:700; padding:3px 9px; border:1px solid var(--success-border); border-radius:6px; background:var(--brand-tint); color:var(--brand-deep);">
                 <i class="bi bi-sort-alpha-down"></i> Ordenar palavras
               </span>
             </div>
             <div style="display:flex; gap:6px;">
               <button type="button"
                       data-controller="collapse" data-collapse-target-value="#edit-ordering-<%= ordering.id %>" data-action="collapse#toggle"
-                      style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.72rem; font-weight:600; color:#5C5853; padding:4px 9px; border:1.5px solid #DDD9D2; border-radius:6px; background:#fff; cursor:pointer;">
+                      style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.72rem; font-weight:600; color:var(--ink-soft); padding:4px 9px; border:1.5px solid var(--line); border-radius:6px; background:var(--surface); cursor:pointer;">
                 Editar
               </button>
               <%= button_to activity_sentence_ordering_path(activity, ordering),
                     method: :delete,
                     data: { turbo_confirm: "Remover este exercício?" },
-                    style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.72rem; font-weight:600; color:#B91C1C; padding:4px 9px; border:1.5px solid #FECACA; border-radius:6px; background:#FEF2F2; cursor:pointer;" do %>
+                    style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.72rem; font-weight:600; color:var(--error); padding:4px 9px; border:1.5px solid var(--error-border); border-radius:6px; background:var(--error-tint); cursor:pointer;" do %>
                 Remover
               <% end %>
             </div>
           </div>
 
-          <div style="padding:12px 14px; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.88rem; color:#5C5853; line-height:1.5;">
-            <span style="font-weight:600; color:#0F3826;">Frase:</span> <%= ordering.sentence %>
+          <div style="padding:12px 14px; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.88rem; color:var(--ink-soft); line-height:1.5;">
+            <span style="font-weight:600; color:var(--brand-deep);">Frase:</span> <%= ordering.sentence %>
             <% if ordering.instruction.present? %>
-              <div style="margin-top:4px; font-size:0.82rem; color:#9C9892; font-style:italic;"><%= ordering.instruction %></div>
+              <div style="margin-top:4px; font-size:0.82rem; color:var(--ink-faint); font-style:italic;"><%= ordering.instruction %></div>
             <% end %>
-            <div style="margin-top:4px; font-size:0.77rem; color:#9C9892;"><%= ordering.sentence_words_count %> palavras · embaralhadas para o aluno</div>
+            <div style="margin-top:4px; font-size:0.77rem; color:var(--ink-faint);"><%= ordering.sentence_words_count %> palavras · embaralhadas para o aluno</div>
           </div>
 
           <div class="hidden" id="edit-ordering-<%= ordering.id %>">
-            <div style="padding:16px; border-top:1px solid #D1EAD9; background:#FAFAF9;">
+            <div style="padding:16px; border-top:1px solid var(--brand-tint-2); background:var(--surface-2);">
               <%= form_with(model: [activity, ordering], local: true) do |f| %>
                 <div class="mb-3">
                   <%= f.label :sentence, "Frase completa", class: "form-label" %>
@@ -54,7 +54,7 @@
                   <%= f.label :instruction, "Instrução para o aluno (opcional)", class: "form-label" %>
                   <%= f.text_field :instruction, class: "form-input" %>
                 </div>
-                <%= f.submit t('common.save'), style: "background:#1A4A8A; color:#fff; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.88rem; font-weight:700; border:none; border-radius:12px; padding:9px 24px; cursor:pointer;" %>
+                <%= f.submit t('common.save'), style: "background:var(--info-deep); color:var(--surface); font-family:'Plus Jakarta Sans',sans-serif; font-size:0.88rem; font-weight:700; border:none; border-radius:12px; padding:9px 24px; cursor:pointer;" %>
               <% end %>
             </div>
           </div>

@@ -6,7 +6,7 @@
 
 /* 🌟 BACKGROUND LIMPO E PROFISSIONAL */
 .student-dashboard-page {
-  background: #ffffff;
+  background: var(--surface);
   min-height: 100vh;
   font-family: var(--font-primary);
   color: var(--texto-escuro);
@@ -189,7 +189,7 @@
       display: block;
       font-size: 0.7rem;
       font-style: italic;
-      color: #666;
+      color: var(--ink-soft);
       line-height: 1.2;
     }
   }
@@ -213,7 +213,7 @@
     .days-remaining {
       font-size: 0.75rem;
       text-align: center;
-      color: #666;
+      color: var(--ink-soft);
       margin-bottom: var(--spacing-xs);
     }
   }

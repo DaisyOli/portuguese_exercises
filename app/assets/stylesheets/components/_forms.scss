@@ -119,7 +119,7 @@
 .form-hint {
   display: block;
   font-size: 0.8rem;
-  color: #9C9892;
+  color: var(--ink-faint);
   margin-top: 4px;
 }
 
@@ -260,7 +260,7 @@
 // 💡 DICAS E AJUDA
 .form-help {
   font-size: 0.85rem;
-  color: #666;
+  color: var(--ink-soft);
   margin-top: var(--spacing-xs);
   font-style: italic;
 }

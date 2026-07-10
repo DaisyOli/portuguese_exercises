@@ -1,19 +1,19 @@
 <% content_for :head do %>
   <title>Recuperar senha · Practice-BR</title>
   <style>
-    .auth-input:focus { border-color:#2A9B6F !important; box-shadow:0 0 0 3px rgba(42,155,111,0.12) !important; outline:none !important; }
+    .auth-input:focus { border-color:var(--brand-bright) !important; box-shadow:0 0 0 3px var(--brand-glow) !important; outline:none !important; }
   </style>
 <% end %>
 
 <div style="min-height:100vh; display:flex; align-items:center; justify-content:center; padding:24px 16px;">
-  <div style="background:#fff; border:1px solid #DDD9D2; border-radius:20px; padding:40px 36px; width:100%; max-width:400px; box-shadow:0 4px 32px rgba(0,0,0,0.07);">
+  <div style="background:var(--surface); border:1px solid var(--line); border-radius:20px; padding:40px 36px; width:100%; max-width:400px; box-shadow:0 4px 32px rgba(0,0,0,0.07);">
 
     <div style="text-align:center; margin-bottom:28px;">
-      <div style="width:48px; height:48px; background:#EBF2FC; border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 14px; font-size:1.4rem;">🔑</div>
-      <h1 style="font-family:'Raleway',sans-serif; font-size:1.2rem; font-weight:700; color:#1C1917; margin-bottom:6px;">
+      <div style="width:48px; height:48px; background:var(--info-tint); border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 14px; font-size:1.4rem;">🔑</div>
+      <h1 style="font-family:'Raleway',sans-serif; font-size:1.2rem; font-weight:700; color:var(--ink); margin-bottom:6px;">
         Recuperar senha
       </h1>
-      <p style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.85rem; color:#5C5853; margin:0;">
+      <p style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.85rem; color:var(--ink-soft); margin:0;">
         Enviaremos um link para redefinir sua senha.
       </p>
     </div>
@@ -23,20 +23,20 @@
 
       <div style="margin-bottom:28px;">
         <%= f.label :email, "Email",
-              style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; font-weight:600; color:#1C1917; display:block; margin-bottom:6px;" %>
+              style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; font-weight:600; color:var(--ink); display:block; margin-bottom:6px;" %>
         <%= f.email_field :email, autofocus: true, autocomplete: "email",
               placeholder: "seu@email.com",
               class: "auth-input",
-              style: "width:100%; padding:11px 14px; border:1.5px solid #DDD9D2; border-radius:10px; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.9rem; color:#1C1917; background:#fff; box-sizing:border-box;" %>
+              style: "width:100%; padding:11px 14px; border:1.5px solid var(--line); border-radius:10px; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.9rem; color:var(--ink); background:var(--surface); box-sizing:border-box;" %>
       </div>
 
       <%= f.submit "Enviar instruções",
-            style: "width:100%; background:#C9952A; color:#fff; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.9rem; font-weight:700; padding:12px; border:none; border-radius:12px; cursor:pointer; margin-bottom:20px; display:block;" %>
+            style: "width:100%; background:var(--action); color:var(--surface); font-family:'Plus Jakarta Sans',sans-serif; font-size:0.9rem; font-weight:700; padding:12px; border:none; border-radius:12px; cursor:pointer; margin-bottom:20px; display:block;" %>
     <% end %>
 
     <div style="text-align:center;">
       <%= link_to "← Voltar ao login", new_session_path(resource_name),
-            style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; color:#9C9892; text-decoration:none;" %>
+            style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; color:var(--ink-faint); text-decoration:none;" %>
     </div>
 
   </div>

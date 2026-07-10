@@ -1,9 +1,9 @@
 <% if resource.errors.any? %>
-  <div style="background:#FEF2F2; border:1.5px solid #FCA5A5; border-radius:10px; padding:14px 16px; margin-bottom:20px;" data-turbo-cache="false">
-    <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; font-weight:600; color:#991B1B; margin-bottom:6px;">
+  <div style="background:var(--error-tint); border:1.5px solid var(--error-border); border-radius:10px; padding:14px 16px; margin-bottom:20px;" data-turbo-cache="false">
+    <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; font-weight:600; color:var(--error-deep); margin-bottom:6px;">
       Corrija os erros abaixo:
     </div>
-    <ul style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; color:#B91C1C; margin:0; padding-left:18px;">
+    <ul style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; color:var(--error); margin:0; padding-left:18px;">
       <% resource.errors.full_messages.each do |message| %>
         <li><%= message %></li>
       <% end %>

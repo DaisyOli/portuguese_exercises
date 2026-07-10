@@ -1,12 +1,12 @@
 <%
   ac       = cefr_colors(attempt.activity.level)
   s        = attempt.score.round
-  sc_color = s >= 70 ? '#1A6B4A' : s >= 40 ? '#C9952A' : '#B91C1C'
-  sc_bg    = s >= 70 ? '#E8F5EE' : s >= 40 ? '#FFF8E7' : '#FEF2F2'
+  sc_color = s >= 70 ? 'var(--brand)' : s >= 40 ? 'var(--action)' : 'var(--error)'
+  sc_bg    = s >= 70 ? 'var(--brand-tint)' : s >= 40 ? 'var(--action-tint)' : 'var(--error-tint)'
   oe       = attempt.open_ended_results
 %>
 <div id="attempt-<%= attempt.id %>"
-     style="border:1px solid #F0EDE8; border-radius:12px; padding:18px 20px; margin-bottom:14px;">
+     style="border:1px solid var(--line-soft); border-radius:12px; padding:18px 20px; margin-bottom:14px;">
 
   <%# Linha do título %>
   <div style="display:flex; align-items:center; gap:12px; margin-bottom:12px; flex-wrap:wrap;">
@@ -15,14 +15,14 @@
                  padding:2px 9px; border-radius:20px; flex-shrink:0;">
       <%= attempt.activity.level %>
     </span>
-    <span style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.9rem; font-weight:700; color:#1C1917; flex:1;">
+    <span style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.9rem; font-weight:700; color:var(--ink); flex:1;">
       <%= attempt.activity.title %>
     </span>
     <span style="font-family:'DM Mono',monospace; font-size:1rem; font-weight:800;
                  background:<%= sc_bg %>; color:<%= sc_color %>; padding:3px 12px; border-radius:20px; flex-shrink:0;">
       <%= s %>%
     </span>
-    <span style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.78rem; color:#9C9892; flex-shrink:0;">
+    <span style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.78rem; color:var(--ink-faint); flex-shrink:0;">
       <%= attempt.submitted_at.strftime("%d/%m/%Y") %>
     </span>
   </div>
@@ -36,41 +36,41 @@
       existing_comment = attempt.teacher_comment_for(q_id)
       form_id          = "feedback-form-#{attempt.id}-#{q_id}"
     %>
-    <div style="background:#FAFAF9; border:1px solid #EAE7E2; border-radius:10px; padding:16px; margin-bottom:10px;">
+    <div style="background:var(--surface-2); border:1px solid var(--paper-2); border-radius:10px; padding:16px; margin-bottom:10px;">
       <div style="font-family:'DM Mono',monospace; font-size:0.68rem; font-weight:700; text-transform:uppercase;
-                  letter-spacing:0.08em; color:#C9952A; margin-bottom:8px;">
+                  letter-spacing:0.08em; color:var(--action); margin-bottom:8px;">
         ✨ Questão aberta
       </div>
 
       <% if result["question_text"].present? %>
         <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.85rem; font-weight:600;
-                    color:#1C1917; margin-bottom:8px;">
+                    color:var(--ink); margin-bottom:8px;">
           <%= result["question_text"].gsub(/<\/?[^>]+>/, '').strip %>
         </div>
       <% end %>
 
-      <div style="background:#fff; border:1px solid #E8E5E0; border-radius:8px; padding:10px 12px; margin-bottom:10px;">
-        <div style="font-family:'DM Mono',monospace; font-size:0.68rem; color:#9C9892; margin-bottom:4px;
+      <div style="background:var(--surface); border:1px solid var(--paper-2); border-radius:8px; padding:10px 12px; margin-bottom:10px;">
+        <div style="font-family:'DM Mono',monospace; font-size:0.68rem; color:var(--ink-faint); margin-bottom:4px;
                     text-transform:uppercase; letter-spacing:0.06em;">Resposta do aluno</div>
-        <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.88rem; color:#1C1917; line-height:1.55;">
+        <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.88rem; color:var(--ink); line-height:1.55;">
           <%= given_answer.presence || "(sem resposta)" %>
         </div>
       </div>
 
       <% if ai_score || ai_feedback %>
-        <div style="background:#FFF7ED; border:1px solid #FED7AA; border-radius:8px; padding:10px 12px; margin-bottom:12px;">
+        <div style="background:var(--warning-tint); border:1px solid var(--warning-border); border-radius:8px; padding:10px 12px; margin-bottom:12px;">
           <div style="display:flex; align-items:center; gap:8px; margin-bottom:4px;">
             <span style="font-family:'DM Mono',monospace; font-size:0.68rem; text-transform:uppercase;
-                         letter-spacing:0.06em; color:#7C2D12;">✨ Avaliação da IA</span>
+                         letter-spacing:0.06em; color:var(--warning-ink);">✨ Avaliação da IA</span>
             <% if ai_score %>
               <span style="font-family:'DM Mono',monospace; font-size:0.82rem; font-weight:800;
-                           color:<%= ai_score.to_i >= 70 ? '#1A6B4A' : ai_score.to_i >= 40 ? '#C9952A' : '#B91C1C' %>;">
+                           color:<%= ai_score.to_i >= 70 ? 'var(--brand)' : ai_score.to_i >= 40 ? 'var(--action)' : 'var(--error)' %>;">
                 <%= ai_score %>/100
               </span>
             <% end %>
           </div>
           <% if ai_feedback %>
-            <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.85rem; color:#7C2D12; line-height:1.55;">
+            <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.85rem; color:var(--warning-ink); line-height:1.55;">
               <%= ai_feedback %>
             </div>
           <% end %>
@@ -80,12 +80,12 @@
       <%# Feedback do professor — exibição %>
       <% if existing_comment %>
         <div id="<%= "display-#{form_id}" %>"
-             style="background:#E8F5EE; border:1px solid #BBF7D0; border-radius:8px; padding:10px 12px; margin-bottom:10px;">
+             style="background:var(--brand-tint); border:1px solid var(--success-border); border-radius:8px; padding:10px 12px; margin-bottom:10px;">
           <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:8px;">
             <div style="flex:1;">
               <div style="font-family:'DM Mono',monospace; font-size:0.68rem; text-transform:uppercase;
-                           letter-spacing:0.06em; color:#0F3826; margin-bottom:4px;">✍️ Seu feedback</div>
-              <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.88rem; color:#0F3826; line-height:1.55;">
+                           letter-spacing:0.06em; color:var(--brand-deep); margin-bottom:4px;">✍️ Seu feedback</div>
+              <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.88rem; color:var(--brand-deep); line-height:1.55;">
                 <%= existing_comment %>
               </div>
             </div>
@@ -94,7 +94,7 @@
                       onclick="document.getElementById('<%= form_id %>').style.display='block'; document.getElementById('<%= "display-#{form_id}" %>').style.display='none';"
                       title="Editar feedback"
                       style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.72rem; font-weight:600;
-                             background:transparent; color:#1A6B4A; border:1.5px solid #BBF7D0;
+                             background:transparent; color:var(--brand); border:1.5px solid var(--success-border);
                              border-radius:6px; padding:3px 8px; cursor:pointer;">
                 ✏️
               </button>
@@ -104,7 +104,7 @@
                 <button type="submit"
                         title="Apagar este feedback"
                         style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.72rem; font-weight:600;
-                               background:transparent; color:#B91C1C; border:1.5px solid #FECACA;
+                               background:transparent; color:var(--error); border:1.5px solid var(--error-border);
                                border-radius:6px; padding:3px 8px; cursor:pointer;">
                   ✕
                 </button>
@@ -125,20 +125,20 @@
                 rows: 2,
                 placeholder: "Deixe seu feedback para este aluno...",
                 style: "width:100%; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.85rem;
-                        padding:8px 11px; border:1.5px solid #DDD9D2; border-radius:8px;
-                        color:#1C1917; background:#fff; box-sizing:border-box; resize:vertical;" %>
+                        padding:8px 11px; border:1.5px solid var(--line); border-radius:8px;
+                        color:var(--ink); background:var(--surface); box-sizing:border-box; resize:vertical;" %>
           <div style="display:flex; gap:8px; margin-top:6px;">
             <button type="submit"
                     style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.78rem; font-weight:700;
-                           background:#1A6B4A; color:#fff; border:none; border-radius:8px;
+                           background:var(--brand); color:var(--surface); border:none; border-radius:8px;
                            padding:6px 16px; cursor:pointer;">
               <%= existing_comment ? "Atualizar feedback" : "Salvar feedback" %>
             </button>
             <% if existing_comment %>
               <button type="button"
                       onclick="document.getElementById('<%= form_id %>').style.display='none'; document.getElementById('<%= "display-#{form_id}" %>').style.display='block';"
-                      style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.78rem; color:#9C9892;
-                             background:transparent; border:1.5px solid #DDD9D2; border-radius:8px;
+                      style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.78rem; color:var(--ink-faint);
+                             background:transparent; border:1.5px solid var(--line); border-radius:8px;
                              padding:6px 12px; cursor:pointer;">
                 Cancelar
               </button>

@@ -1,8 +1,8 @@
 <% if activity.column_matchings.any? %>
-  <div style="background:#F0FAF5; border:1px solid #BBF7D0; border-left:4px solid #1A6B4A; border-radius:14px; margin-bottom:14px; overflow:hidden;">
+  <div style="background:var(--brand-mist); border:1px solid var(--success-border); border-left:4px solid var(--brand); border-radius:14px; margin-bottom:14px; overflow:hidden;">
 
-    <div style="display:flex; align-items:center; padding:12px 18px; border-bottom:1px solid #BBF7D0; background:rgba(26,107,74,0.06);">
-      <span style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; color:#1A6B4A; display:flex; align-items:center; gap:6px;">
+    <div style="display:flex; align-items:center; padding:12px 18px; border-bottom:1px solid var(--success-border); background:var(--brand-veil);">
+      <span style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; color:var(--brand); display:flex; align-items:center; gap:6px;">
         <i class="bi bi-arrow-left-right"></i> <%= t('column_matchings.title') %> (<%= activity.column_matchings.size %>)
       </span>
     </div>
@@ -10,85 +10,85 @@
     <div style="padding:14px 16px; display:flex; flex-direction:column; gap:10px;">
       <% activity.column_matchings.sort_by { |m| [m.display_order.to_i, m.created_at] }.each_with_index do |matching, index| %>
 
-        <div id="column-matching-<%= matching.id %>" style="border:1px solid #D1EAD9; border-radius:10px; overflow:hidden; background:#fff;">
+        <div id="column-matching-<%= matching.id %>" style="border:1px solid var(--brand-tint-2); border-radius:10px; overflow:hidden; background:var(--surface);">
 
-          <div style="display:flex; align-items:center; justify-content:space-between; padding:9px 14px; background:#E8F5EE; border-bottom:1px solid #D1EAD9;">
+          <div style="display:flex; align-items:center; justify-content:space-between; padding:9px 14px; background:var(--brand-tint); border-bottom:1px solid var(--brand-tint-2);">
             <div style="display:flex; align-items:center; gap:8px;">
-              <span style="font-family:'DM Mono',monospace; font-size:0.7rem; font-weight:700; color:#1A6B4A;"><%= "%02d" % (index + 1) %></span>
-              <span style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.7rem; font-weight:700; padding:3px 9px; border:1px solid #FED7AA; border-radius:6px; background:#FFF7ED; color:#7C2D12;">
+              <span style="font-family:'DM Mono',monospace; font-size:0.7rem; font-weight:700; color:var(--brand);"><%= "%02d" % (index + 1) %></span>
+              <span style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.7rem; font-weight:700; padding:3px 9px; border:1px solid var(--warning-border); border-radius:6px; background:var(--warning-tint); color:var(--warning-ink);">
                 <i class="bi bi-arrow-left-right"></i> Associar colunas
               </span>
             </div>
             <div style="display:flex; gap:6px;">
               <button type="button"
                       data-controller="collapse" data-collapse-target-value="#edit-column-matching-<%= matching.id %>" data-action="collapse#toggle"
-                      style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.72rem; font-weight:600; color:#5C5853; padding:4px 9px; border:1.5px solid #DDD9D2; border-radius:6px; background:#fff; cursor:pointer;">
+                      style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.72rem; font-weight:600; color:var(--ink-soft); padding:4px 9px; border:1.5px solid var(--line); border-radius:6px; background:var(--surface); cursor:pointer;">
                 <%= t('common.edit') %>
               </button>
               <%= button_to activity_column_matching_path(activity, matching),
                     method: :delete,
                     data: { turbo_confirm: t('column_matchings.confirm_destroy') },
-                    style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.72rem; font-weight:600; color:#B91C1C; padding:4px 9px; border:1.5px solid #FECACA; border-radius:6px; background:#FEF2F2; cursor:pointer;" do %>
+                    style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.72rem; font-weight:600; color:var(--error); padding:4px 9px; border:1.5px solid var(--error-border); border-radius:6px; background:var(--error-tint); cursor:pointer;" do %>
                 <%= t('common.delete') %>
               <% end %>
             </div>
           </div>
 
           <div style="padding:12px 14px;">
-            <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.88rem; font-weight:600; color:#0F3826; margin-bottom:6px;">
+            <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.88rem; font-weight:600; color:var(--brand-deep); margin-bottom:6px;">
               <%= matching.title.presence || t('column_matchings.title') %>
-              <span style="font-family:'DM Mono',monospace; font-size:0.72rem; font-weight:400; color:#9C9892; margin-left:8px;">
+              <span style="font-family:'DM Mono',monospace; font-size:0.72rem; font-weight:400; color:var(--ink-faint); margin-left:8px;">
                 <%= matching.matching_pairs.size %> <%= t('column_matchings.pair_label') %>s
               </span>
             </div>
 
             <% if matching.instruction.present? %>
-              <p style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; color:#9C9892; font-style:italic; margin-bottom:8px;"><%= matching.instruction %></p>
+              <p style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; color:var(--ink-faint); font-style:italic; margin-bottom:8px;"><%= matching.instruction %></p>
             <% end %>
 
             <% if matching.matching_pairs.any? %>
               <div style="margin-bottom:10px;">
                 <div style="display:flex; gap:8px; margin-bottom:4px; padding:4px 6px;">
-                  <span style="flex:5; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.7rem; font-weight:700; color:#9C9892; text-transform:uppercase; letter-spacing:0.05em;"><%= t('column_matchings.column_a') %></span>
-                  <span style="width:24px; text-align:center; font-size:0.7rem; color:#9C9892;">↔</span>
-                  <span style="flex:5; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.7rem; font-weight:700; color:#9C9892; text-transform:uppercase; letter-spacing:0.05em;"><%= t('column_matchings.column_b') %></span>
+                  <span style="flex:5; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.7rem; font-weight:700; color:var(--ink-faint); text-transform:uppercase; letter-spacing:0.05em;"><%= t('column_matchings.column_a') %></span>
+                  <span style="width:24px; text-align:center; font-size:0.7rem; color:var(--ink-faint);">↔</span>
+                  <span style="flex:5; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.7rem; font-weight:700; color:var(--ink-faint); text-transform:uppercase; letter-spacing:0.05em;"><%= t('column_matchings.column_b') %></span>
                   <span style="width:28px;"></span>
                 </div>
                 <% matching.matching_pairs.sort_by(&:position).each do |pair| %>
                   <div style="display:flex; align-items:center; gap:8px; padding:5px 6px; border-radius:6px; margin-bottom:3px;">
-                    <span style="flex:5; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.85rem; color:#1C1917;"><%= pair.left_item %></span>
-                    <span style="width:24px; text-align:center; color:#9C9892; font-size:0.85rem;">↔</span>
-                    <span style="flex:5; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.85rem; color:#1C1917;"><%= pair.right_item %></span>
+                    <span style="flex:5; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.85rem; color:var(--ink);"><%= pair.left_item %></span>
+                    <span style="width:24px; text-align:center; color:var(--ink-faint); font-size:0.85rem;">↔</span>
+                    <span style="flex:5; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.85rem; color:var(--ink);"><%= pair.right_item %></span>
                     <%= button_to activity_column_matching_matching_pair_path(activity, matching, pair),
                           method: :delete,
                           data: { turbo_confirm: t('column_matchings.confirm_remove_pair') },
-                          style: "width:28px; font-size:0.72rem; color:#B91C1C; padding:2px 6px; border:1px solid #FECACA; border-radius:5px; background:#FEF2F2; cursor:pointer; flex-shrink:0;" do %>
+                          style: "width:28px; font-size:0.72rem; color:var(--error); padding:2px 6px; border:1px solid var(--error-border); border-radius:5px; background:var(--error-tint); cursor:pointer; flex-shrink:0;" do %>
                       ✕
                     <% end %>
                   </div>
                 <% end %>
               </div>
             <% else %>
-              <p style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.85rem; color:#9C9892; margin-bottom:8px;"><%= t('column_matchings.no_pairs') %></p>
+              <p style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.85rem; color:var(--ink-faint); margin-bottom:8px;"><%= t('column_matchings.no_pairs') %></p>
             <% end %>
 
             <%= form_with(model: [activity, matching, MatchingPair.new], local: true) do |f| %>
               <div style="display:flex; align-items:center; gap:6px; margin-top:6px;">
                 <%= f.text_field :left_item,
                       placeholder: t('column_matchings.item_a_placeholder'),
-                      style: "flex:5; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; padding:6px 10px; border:1.5px solid #DDD9D2; border-radius:7px; color:#1C1917;" %>
-                <span style="color:#9C9892; font-size:0.9rem; flex-shrink:0;">↔</span>
+                      style: "flex:5; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; padding:6px 10px; border:1.5px solid var(--line); border-radius:7px; color:var(--ink);" %>
+                <span style="color:var(--ink-faint); font-size:0.9rem; flex-shrink:0;">↔</span>
                 <%= f.text_field :right_item,
                       placeholder: t('column_matchings.item_b_placeholder'),
-                      style: "flex:5; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; padding:6px 10px; border:1.5px solid #DDD9D2; border-radius:7px; color:#1C1917;" %>
+                      style: "flex:5; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; padding:6px 10px; border:1.5px solid var(--line); border-radius:7px; color:var(--ink);" %>
                 <%= f.submit t('column_matchings.add_pair'),
-                      style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.78rem; font-weight:600; color:#0F3826; padding:6px 12px; border:1.5px solid #BBF7D0; border-radius:7px; background:#E8F5EE; cursor:pointer; white-space:nowrap; flex-shrink:0;" %>
+                      style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.78rem; font-weight:600; color:var(--brand-deep); padding:6px 12px; border:1.5px solid var(--success-border); border-radius:7px; background:var(--brand-tint); cursor:pointer; white-space:nowrap; flex-shrink:0;" %>
               </div>
             <% end %>
           </div>
 
           <div class="hidden" id="edit-column-matching-<%= matching.id %>">
-            <div style="padding:16px; border-top:1px solid #D1EAD9; background:#FAFAF9;">
+            <div style="padding:16px; border-top:1px solid var(--brand-tint-2); background:var(--surface-2);">
               <%= form_with(model: [activity, matching], local: true) do |f| %>
                 <div class="mb-2">
                   <%= f.label :title, t('column_matchings.title_label'), class: "form-label" %>
@@ -98,7 +98,7 @@
                   <%= f.label :instruction, t('column_matchings.instruction_label'), class: "form-label" %>
                   <%= f.text_field :instruction, class: "form-input" %>
                 </div>
-                <%= f.submit t('common.save'), style: "background:#1A4A8A; color:#fff; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.88rem; font-weight:700; border:none; border-radius:12px; padding:9px 24px; cursor:pointer;" %>
+                <%= f.submit t('common.save'), style: "background:var(--info-deep); color:var(--surface); font-family:'Plus Jakarta Sans',sans-serif; font-size:0.88rem; font-weight:700; border:none; border-radius:12px; padding:9px 24px; cursor:pointer;" %>
               <% end %>
             </div>
           </div>

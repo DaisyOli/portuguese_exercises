@@ -1,23 +1,23 @@
 <%= link_to activity_path(rating.activity),
-      style: "display:block; padding:12px 14px; background:#fff; border:1px solid #BAE6FD; border-radius:10px; text-decoration:none;" do %>
+      style: "display:block; padding:12px 14px; background:var(--surface); border:1px solid var(--sky-border); border-radius:10px; text-decoration:none;" do %>
   <div style="display:flex; align-items:center; gap:10px; margin-bottom:5px; flex-wrap:wrap;">
-    <div style="width:26px; height:26px; border-radius:50%; background:#0369A1; display:flex; align-items:center; justify-content:center;
-                font-family:'Raleway',sans-serif; font-size:0.7rem; font-weight:800; color:#fff; flex-shrink:0;">
+    <div style="width:26px; height:26px; border-radius:50%; background:var(--sky); display:flex; align-items:center; justify-content:center;
+                font-family:'Raleway',sans-serif; font-size:0.7rem; font-weight:800; color:var(--surface); flex-shrink:0;">
       <%= rating.user.display_name[0].upcase %>
     </div>
-    <span style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.85rem; font-weight:700; color:#1C1917;">
+    <span style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.85rem; font-weight:700; color:var(--ink);">
       <%= rating.user.display_name %>
     </span>
     <span style="font-size:0.82rem; letter-spacing:1px;">
       <% 5.times do |i| %>
-        <i class="bi bi-star<%= i < rating.stars ? '-fill' : '' %>" style="color:#C9952A;"></i>
+        <i class="bi bi-star<%= i < rating.stars ? '-fill' : '' %>" style="color:var(--action);"></i>
       <% end %>
     </span>
-    <span style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.75rem; color:#9C9892; margin-left:auto;">
+    <span style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.75rem; color:var(--ink-faint); margin-left:auto;">
       <%= rating.activity.title %> · <%= rating.created_at.strftime("%d/%m") %>
     </span>
   </div>
-  <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.83rem; color:#5C5853; line-height:1.5;
+  <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.83rem; color:var(--ink-soft); line-height:1.5;
               padding-left:36px; font-style:italic;">
     "<%= truncate(rating.comment, length: 120) %>"
   </div>

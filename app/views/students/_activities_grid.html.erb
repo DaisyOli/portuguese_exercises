@@ -37,47 +37,47 @@
           <% end %>
         </div>
         <% if completed %>
-          <span style="font-size:0.7rem; background:#E8F5EE; color:#1A6B4A; border:1px solid #2A9B6F; border-radius:99px; padding:2px 8px; font-family:'Plus Jakarta Sans',sans-serif; font-weight:700;">
+          <span style="font-size:0.7rem; background:var(--brand-tint); color:var(--brand); border:1px solid var(--brand-bright); border-radius:99px; padding:2px 8px; font-family:'Plus Jakarta Sans',sans-serif; font-weight:700;">
             ✓ Feita
           </span>
         <% end %>
       </div>
 
-      <h3 style="font-family:'Raleway',sans-serif; font-size:1rem; font-weight:700; color:#1C1917; margin:0 0 6px 0; line-height:1.35;">
+      <h3 style="font-family:'Raleway',sans-serif; font-size:1rem; font-weight:700; color:var(--ink); margin:0 0 6px 0; line-height:1.35;">
         <%= activity.title %>
       </h3>
 
-      <p style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.83rem; color:#5C5853; margin:0 0 12px 0; line-height:1.5; flex:1;">
+      <p style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.83rem; color:var(--ink-soft); margin:0 0 12px 0; line-height:1.5; flex:1;">
         <%= truncate(activity.description.presence || "Pratique português com exercícios interativos.", length: 80) %>
       </p>
 
       <div style="display:flex; gap:12px; flex-wrap:wrap; margin-bottom:14px;">
-        <span style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.77rem; color:#9C9892; display:flex; align-items:center; gap:4px;">
+        <span style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.77rem; color:var(--ink-faint); display:flex; align-items:center; gap:4px;">
           <i class="bi bi-patch-question" style="color:<%= m[:border] %>;"></i>
           <%= question_count %> <%= question_count == 1 ? 'questão' : 'questões' %>
         </span>
-        <span style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.77rem; color:#9C9892; display:flex; align-items:center; gap:4px;">
+        <span style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.77rem; color:var(--ink-faint); display:flex; align-items:center; gap:4px;">
           <i class="bi bi-clock" style="color:<%= m[:border] %>;"></i>
           ~<%= [1, (question_count * 1.5).round].max %> min
         </span>
-        <span style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.77rem; color:#9C9892; display:flex; align-items:center; gap:4px;">
+        <span style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.77rem; color:var(--ink-faint); display:flex; align-items:center; gap:4px;">
           <i class="bi bi-bar-chart-line" style="color:<%= m[:border] %>;"></i>
           <%= m[:label] %>
         </span>
         <% rc = activity.ratings_count; avg = activity.average_rating %>
         <% if rc > 0 %>
-          <span style="font-family:'DM Mono',monospace; font-size:0.77rem; font-weight:700; color:#C9952A; display:flex; align-items:center; gap:3px;">
+          <span style="font-family:'DM Mono',monospace; font-size:0.77rem; font-weight:700; color:var(--action); display:flex; align-items:center; gap:3px;">
             <i class="bi bi-star-fill" style="font-size:0.68rem;"></i> <%= avg %>
           </span>
         <% end %>
       </div>
 
-      <div style="display:flex; align-items:center; justify-content:space-between; gap:10px; padding-top:12px; border-top:1px solid #F0EDE8;">
-        <span style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.77rem; color:#9C9892; display:flex; align-items:center; gap:4px; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">
+      <div style="display:flex; align-items:center; justify-content:space-between; gap:10px; padding-top:12px; border-top:1px solid var(--line-soft);">
+        <span style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.77rem; color:var(--ink-faint); display:flex; align-items:center; gap:4px; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">
           <i class="bi bi-person" style="flex-shrink:0;"></i> Prof. <%= activity.teacher&.display_name %>
         </span>
         <%= link_to solve_activity_path(activity),
-              style: "flex-shrink:0; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.85rem; font-weight:700; padding:9px 20px; border-radius:10px; text-decoration:none; display:inline-flex; align-items:center; gap:6px; #{completed ? 'background:#F7F5F0; color:#5C5853; border:1.5px solid #DDD9D2;' : "background:#{m[:border]}; color:#fff;"}" do %>
+              style: "flex-shrink:0; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.85rem; font-weight:700; padding:9px 20px; border-radius:10px; text-decoration:none; display:inline-flex; align-items:center; gap:6px; #{completed ? 'background:var(--paper); color:var(--ink-soft); border:1.5px solid var(--line);' : "background:#{m[:border]}; color:var(--surface);"}" do %>
           <% if completed %>
             <i class="bi bi-arrow-clockwise"></i> <%= t('student_dashboard.actions.retry_quiz') %>
           <% else %>

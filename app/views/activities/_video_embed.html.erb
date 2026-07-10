@@ -19,7 +19,7 @@
     <% if defined?(link_label) && link_label.present? %>
       <div style="margin-top:8px; text-align:right;">
         <%= link_to url, target: "_blank", rel: "noopener noreferrer",
-              style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.78rem; color:#C9952A; text-decoration:none; display:inline-flex; align-items:center; gap:4px;" do %>
+              style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.78rem; color:var(--action); text-decoration:none; display:inline-flex; align-items:center; gap:4px;" do %>
           <i class="bi bi-box-arrow-up-right"></i> <%= link_label %>
         <% end %>
       </div>
@@ -39,7 +39,7 @@
     <% if defined?(link_label) && link_label.present? %>
       <div style="margin-top:8px; text-align:right;">
         <%= link_to url, target: "_blank", rel: "noopener noreferrer",
-              style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.78rem; color:#C9952A; text-decoration:none; display:inline-flex; align-items:center; gap:4px;" do %>
+              style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.78rem; color:var(--action); text-decoration:none; display:inline-flex; align-items:center; gap:4px;" do %>
           <i class="bi bi-box-arrow-up-right"></i> <%= link_label %>
         <% end %>
       </div>
@@ -52,7 +52,7 @@
   </video>
 
 <% else %>
-  <p style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.88rem; color:#9C9892;">
+  <p style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.88rem; color:var(--ink-faint);">
     <%= t('activities.invalid_video_url') %>
   </p>
 <% end %>

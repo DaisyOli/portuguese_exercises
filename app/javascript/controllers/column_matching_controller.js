@@ -1,14 +1,14 @@
 import { Controller } from "@hotwired/stimulus"
 
 const PAIR_COLORS = [
-  { bg: '#EBF2FC', border: '#2563EB' },
-  { bg: '#E8F5EE', border: '#1A6B4A' },
-  { bg: '#FFF7ED', border: '#C9952A' },
-  { bg: '#F5F3FF', border: '#7C3AED' },
-  { bg: '#FEF2F2', border: '#B91C1C' },
-  { bg: '#ECFDF5', border: '#065F46' },
-  { bg: '#FFF9C4', border: '#D97706' },
-  { bg: '#EDE9FE', border: '#6D28D9' },
+  { bg: 'var(--info-tint)', border: 'var(--info)' },
+  { bg: 'var(--brand-tint)', border: 'var(--brand)' },
+  { bg: 'var(--warning-tint)', border: 'var(--action)' },
+  { bg: 'var(--violet-tint)', border: 'var(--violet)' },
+  { bg: 'var(--error-tint)', border: 'var(--error)' },
+  { bg: 'var(--success-tint)', border: 'var(--success-deep)' },
+  { bg: 'var(--amber-tint)', border: 'var(--amber)' },
+  { bg: 'var(--violet-tint)', border: 'var(--violet)' },
 ]
 
 export default class extends Controller {

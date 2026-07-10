@@ -261,7 +261,7 @@
 
   .sentence-preview {
     font-weight: 600;
-    color: #333;
+    color: var(--ink);
     font-size: 0.95rem;
 
     i { color: var(--verde-destaque); margin-right: 0.4rem; }
@@ -277,7 +277,7 @@
 
   .ordering-instruction {
     font-size: 0.85rem;
-    color: #666;
+    color: var(--ink-soft);
     margin-bottom: 0.5rem;
   }
 

@@ -2,22 +2,22 @@
   <title>Pagamento confirmado · Practice-BR</title>
 <% end %>
 
-<div style="min-height:100vh; display:flex; align-items:center; justify-content:center; background:#F7F5F0; padding:2rem 1rem;">
+<div style="min-height:100vh; display:flex; align-items:center; justify-content:center; background:var(--paper); padding:2rem 1rem;">
   <div style="max-width:420px; width:100%; text-align:center;">
 
     <div style="font-size:4rem; margin-bottom:1rem;">🎉</div>
 
-    <h1 style="font-family:'Raleway',sans-serif; font-size:1.6rem; font-weight:800; color:#1C1917; margin-bottom:12px;">
+    <h1 style="font-family:'Raleway',sans-serif; font-size:1.6rem; font-weight:800; color:var(--ink); margin-bottom:12px;">
       Pagamento confirmado!
     </h1>
 
-    <p style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.95rem; color:#5C5853; line-height:1.6; margin-bottom:2rem;">
+    <p style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.95rem; color:var(--ink-soft); line-height:1.6; margin-bottom:2rem;">
       Bem-vindo ao Practice-BR. Seu acesso completo está ativo —<br>
       você pode começar a estudar agora mesmo.
     </p>
 
     <%= link_to student_dashboard_path,
-          style: "display:inline-block; background:#1A6B4A; color:#fff; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.95rem; font-weight:700; padding:14px 36px; border-radius:12px; text-decoration:none;" do %>
+          style: "display:inline-block; background:var(--brand); color:var(--surface); font-family:'Plus Jakarta Sans',sans-serif; font-size:0.95rem; font-weight:700; padding:14px 36px; border-radius:12px; text-decoration:none;" do %>
       Ir para meu dashboard →
     <% end %>
 

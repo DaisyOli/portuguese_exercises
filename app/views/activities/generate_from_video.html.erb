@@ -1,14 +1,14 @@
 <% content_for :head do %>
   <title>Criar Atividade a partir de Vídeo · Practice-BR</title>
   <style>
-    .pb-input:focus { border-color:#1A6B4A !important; box-shadow:0 0 0 3px rgba(26,107,74,0.1) !important; outline:none !important; }
+    .pb-input:focus { border-color:var(--brand) !important; box-shadow:0 0 0 3px var(--brand-veil-2) !important; outline:none !important; }
     .level-btn { cursor:pointer; transition:all 0.12s; }
-    .level-btn:hover { border-color:#1A6B4A !important; color:#1A6B4A !important; }
-    .level-btn.selected { background:#0F3826 !important; border-color:#0F3826 !important; color:#fff !important; }
+    .level-btn:hover { border-color:var(--brand) !important; color:var(--brand) !important; }
+    .level-btn.selected { background:var(--brand-deep) !important; border-color:var(--brand-deep) !important; color:var(--surface) !important; }
     .step-num {
       display:inline-flex; align-items:center; justify-content:center;
       width:24px; height:24px; border-radius:50%;
-      background:#0F3826; color:#fff;
+      background:var(--brand-deep); color:var(--surface);
       font-family:'DM Mono',monospace; font-size:0.72rem; font-weight:700;
       flex-shrink:0;
     }
@@ -25,15 +25,15 @@
   display:none; position:fixed; inset:0; z-index:9999;
   background:rgba(15,56,38,0.55); backdrop-filter:blur(6px);
   align-items:center; justify-content:center;">
-  <div style="background:#fff; border-radius:24px; padding:48px 40px;
+  <div style="background:var(--surface); border-radius:24px; padding:48px 40px;
               max-width:380px; width:90%; text-align:center;
               box-shadow:0 32px 80px rgba(0,0,0,0.22); animation:ai-fade-in 0.3s ease;">
     <div style="position:relative; width:96px; height:96px; margin:0 auto 28px;">
       <div style="position:absolute; inset:0; border-radius:50%;
-                  border:3px solid #E8F5EE; border-top-color:#1A6B4A; border-right-color:#2A9B6F;
+                  border:3px solid var(--brand-tint); border-top-color:var(--brand); border-right-color:var(--brand-bright);
                   animation:ai-spin 1.1s linear infinite;"></div>
       <div style="position:absolute; inset:8px; border-radius:50%;
-                  border:2px solid transparent; border-bottom-color:#C9952A;
+                  border:2px solid transparent; border-bottom-color:var(--action);
                   animation:ai-spin 1.8s linear infinite reverse;"></div>
       <div style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center;">
         <img src="/icons/logo-mark-transparent-64x64.png"
@@ -42,8 +42,8 @@
     </div>
     <p id="ai-loading-msg"
        style="font-family:'Raleway',sans-serif; font-size:1.02rem; font-weight:700;
-              color:#0F3826; margin:0 0 10px; min-height:2.2em; line-height:1.4;"></p>
-    <p style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.8rem; color:#9C9892; margin:0;">
+              color:var(--brand-deep); margin:0 0 10px; min-height:2.2em; line-height:1.4;"></p>
+    <p style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.8rem; color:var(--ink-faint); margin:0;">
       Criando sua atividade... ✨
     </p>
   </div>
@@ -86,43 +86,43 @@
   <%# Cabeçalho %>
   <div style="display:flex; align-items:center; gap:12px; margin-bottom:1.5rem;">
     <%= link_to activities_path,
-          style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; font-weight:600; color:#5C5853; padding:7px 14px; border:1.5px solid #DDD9D2; border-radius:8px; text-decoration:none; background:#fff; white-space:nowrap;" do %>
+          style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; font-weight:600; color:var(--ink-soft); padding:7px 14px; border:1.5px solid var(--line); border-radius:8px; text-decoration:none; background:var(--surface); white-space:nowrap;" do %>
       ← Voltar
     <% end %>
-    <span style="font-family:'Raleway',sans-serif; font-size:1.2rem; font-weight:700; color:#1C1917;">
+    <span style="font-family:'Raleway',sans-serif; font-size:1.2rem; font-weight:700; color:var(--ink);">
       🎬 Criar Atividade a partir de Vídeo
     </span>
   </div>
 
   <% if flash[:alert] %>
-    <div style="background:#FEF2F2; border:1.5px solid #FCA5A5; border-radius:10px; padding:14px 16px; margin-bottom:18px; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.85rem; color:#991B1B;">
+    <div style="background:var(--error-tint); border:1.5px solid var(--error-border); border-radius:10px; padding:14px 16px; margin-bottom:18px; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.85rem; color:var(--error-deep);">
       <%= flash[:alert] %>
     </div>
   <% end %>
 
   <%# Passo a passo — antes do formulário %>
-  <div style="background:#fff; border:1px solid #DDD9D2; border-radius:16px; padding:20px 24px; margin-bottom:16px;">
-    <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; font-weight:700; color:#1C1917; margin-bottom:14px; letter-spacing:0.01em;">
+  <div style="background:var(--surface); border:1px solid var(--line); border-radius:16px; padding:20px 24px; margin-bottom:16px;">
+    <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; font-weight:700; color:var(--ink); margin-bottom:14px; letter-spacing:0.01em;">
       Como funciona — 3 passos:
     </div>
     <div style="display:flex; flex-direction:column; gap:12px;">
       <div style="display:flex; align-items:flex-start; gap:12px;">
         <span class="step-num">1</span>
-        <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.84rem; color:#1C1917; line-height:1.55;">
+        <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.84rem; color:var(--ink); line-height:1.55;">
           <strong>Escolha um vídeo</strong> no YouTube com legendas — podcast, noticiário, entrevista, vlog brasileiro.
           Cole a URL abaixo.
         </div>
       </div>
       <div style="display:flex; align-items:flex-start; gap:12px;">
         <span class="step-num">2</span>
-        <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.84rem; color:#1C1917; line-height:1.55;">
+        <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.84rem; color:var(--ink); line-height:1.55;">
           <strong>Copie a transcrição</strong> do YouTube: clique em <strong>⋮ → Abrir transcrição</strong>
           → selecione tudo → copie. Cole no campo abaixo.
         </div>
       </div>
       <div style="display:flex; align-items:flex-start; gap:12px;">
         <span class="step-num">3</span>
-        <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.84rem; color:#1C1917; line-height:1.55;">
+        <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.84rem; color:var(--ink); line-height:1.55;">
           <strong>Clique em Gerar</strong>. A IA cria título, descrição, exercícios e salva o vídeo na atividade.
           Você revisa e publica.
         </div>
@@ -130,36 +130,36 @@
     </div>
   </div>
 
-  <div style="background:#fff; border:1px solid #DDD9D2; border-radius:20px; padding:32px 36px;">
+  <div style="background:var(--surface); border:1px solid var(--line); border-radius:20px; padding:32px 36px;">
 
     <%= form_tag generate_from_video_activities_path, method: :post do %>
 
       <%# URL do vídeo %>
       <div style="margin-bottom:22px;">
         <label for="youtube_url"
-               style="display:block; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; font-weight:600; color:#1C1917; margin-bottom:8px;">
+               style="display:block; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; font-weight:600; color:var(--ink); margin-bottom:8px;">
           URL do vídeo no YouTube
         </label>
         <div style="display:flex; align-items:center; gap:10px;">
-          <span style="font-size:1.1rem; flex-shrink:0; color:#C9952A;">▶</span>
+          <span style="font-size:1.1rem; flex-shrink:0; color:var(--action);">▶</span>
           <%= text_field_tag :youtube_url, params[:youtube_url],
                 id: "youtube_url",
                 class: "pb-input",
                 placeholder: "https://www.youtube.com/watch?v=...",
                 autocomplete: "off",
                 spellcheck: "false",
-                style: "flex:1; padding:11px 14px; border:1.5px solid #DDD9D2; border-radius:10px; font-family:'DM Mono',monospace; font-size:0.85rem; color:#1C1917; background:#fff; box-sizing:border-box;" %>
+                style: "flex:1; padding:11px 14px; border:1.5px solid var(--line); border-radius:10px; font-family:'DM Mono',monospace; font-size:0.85rem; color:var(--ink); background:var(--surface); box-sizing:border-box;" %>
         </div>
       </div>
 
       <%# Transcrição %>
       <div style="margin-bottom:22px;">
         <label for="transcript"
-               style="display:block; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; font-weight:600; color:#1C1917; margin-bottom:4px;">
+               style="display:block; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; font-weight:600; color:var(--ink); margin-bottom:4px;">
           Transcrição do vídeo
         </label>
-        <p style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.75rem; color:#9C9892; margin:0 0 8px; line-height:1.5;">
-          No YouTube: clique em <strong style="color:#5C5853;">⋮ abaixo do vídeo → Abrir transcrição</strong>.
+        <p style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.75rem; color:var(--ink-faint); margin:0 0 8px; line-height:1.5;">
+          No YouTube: clique em <strong style="color:var(--ink-soft);">⋮ abaixo do vídeo → Abrir transcrição</strong>.
           Selecione e copie todo o texto, cole aqui.
         </p>
         <%= text_area_tag :transcript, params[:transcript],
@@ -168,23 +168,23 @@
               placeholder: "Cole aqui a transcrição do vídeo...",
               rows: 10,
               spellcheck: "false",
-              style: "width:100%; padding:13px 16px; border:1.5px solid #DDD9D2; border-radius:12px; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.85rem; color:#1C1917; background:#fff; resize:vertical; min-height:160px; box-sizing:border-box; line-height:1.6;" %>
-        <div id="char-counter" style="font-family:'DM Mono',monospace; font-size:0.7rem; color:#9C9892; margin-top:5px; text-align:right;">
+              style: "width:100%; padding:13px 16px; border:1.5px solid var(--line); border-radius:12px; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.85rem; color:var(--ink); background:var(--surface); resize:vertical; min-height:160px; box-sizing:border-box; line-height:1.6;" %>
+        <div id="char-counter" style="font-family:'DM Mono',monospace; font-size:0.7rem; color:var(--ink-faint); margin-top:5px; text-align:right;">
           0 / 8000 caracteres
         </div>
       </div>
 
       <%# Nível %>
       <div style="margin-bottom:28px;">
-        <label style="display:block; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; font-weight:600; color:#1C1917; margin-bottom:10px;">
+        <label style="display:block; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; font-weight:600; color:var(--ink); margin-bottom:10px;">
           Nível CEFR
-          <span style="font-weight:400; color:#9C9892;">(opcional — a IA infere pelo conteúdo)</span>
+          <span style="font-weight:400; color:var(--ink-faint);">(opcional — a IA infere pelo conteúdo)</span>
         </label>
         <div style="display:flex; gap:8px; flex-wrap:wrap;">
           <% %w[A1 A2 B1 B2 C1].each do |lvl| %>
             <button type="button" class="level-btn" data-level="<%= lvl %>"
                     onclick="selectLevel('<%= lvl %>')"
-                    style="padding:7px 18px; border:1.5px solid #DDD9D2; border-radius:8px; background:#fff; font-family:'DM Mono',monospace; font-size:0.85rem; font-weight:700; color:#5C5853;">
+                    style="padding:7px 18px; border:1.5px solid var(--line); border-radius:8px; background:var(--surface); font-family:'DM Mono',monospace; font-size:0.85rem; font-weight:700; color:var(--ink-soft);">
               <%= lvl %>
             </button>
           <% end %>
@@ -193,7 +193,7 @@
       </div>
 
       <button type="submit"
-              style="width:100%; padding:14px; background:#1A6B4A; color:#fff; border:none; border-radius:12px; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.95rem; font-weight:700; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px;">
+              style="width:100%; padding:14px; background:var(--brand); color:var(--surface); border:none; border-radius:12px; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.95rem; font-weight:700; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px;">
         🎬 Gerar atividade a partir do vídeo
       </button>
 
@@ -219,7 +219,7 @@ function selectLevel(level) {
     var len = textarea.value.length;
     var capped = Math.min(len, 8000);
     counter.textContent = capped.toLocaleString('pt-BR') + ' / 8.000 caracteres';
-    counter.style.color = len > 8000 ? '#B91C1C' : '#9C9892';
+    counter.style.color = len > 8000 ? 'var(--error)' : 'var(--ink-faint)';
   }
   textarea.addEventListener('input', updateCounter);
   updateCounter();

@@ -5,7 +5,7 @@
 // 🎯 BASE PARA TODOS OS HEADERS TEMÁTICOS
 .header-base {
   background: var(--madeira-clara);
-  color: #333;
+  color: var(--ink);
   padding: 1.5rem 2rem;
   border-radius: 15px 15px 5px 5px;
   margin-bottom: 2rem;
@@ -162,7 +162,7 @@
       gap: var(--spacing-lg);
       flex-wrap: wrap;
       font-size: 0.9rem;
-      color: #666;
+      color: var(--ink-soft);
       
       .meta-item {
         display: flex;

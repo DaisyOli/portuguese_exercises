@@ -2,10 +2,10 @@
 <% regular_qs = activity.questions.where.not(question_type: 'open_ended').order(:created_at) %>
 
 <% if regular_qs.any? %>
-  <div id="questions-section" style="background:#F0FAF5; border:1px solid #BBF7D0; border-left:4px solid #1A6B4A; border-radius:14px; margin-bottom:14px; overflow:hidden; <%= has_other_content ? '' : 'margin-top:8px;' %>">
+  <div id="questions-section" style="background:var(--brand-mist); border:1px solid var(--success-border); border-left:4px solid var(--brand); border-radius:14px; margin-bottom:14px; overflow:hidden; <%= has_other_content ? '' : 'margin-top:8px;' %>">
 
-    <div style="display:flex; align-items:center; padding:12px 18px; border-bottom:1px solid #BBF7D0; background:rgba(26,107,74,0.06);">
-      <span style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; color:#1A6B4A; display:flex; align-items:center; gap:6px;">
+    <div style="display:flex; align-items:center; padding:12px 18px; border-bottom:1px solid var(--success-border); background:var(--brand-veil);">
+      <span style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; color:var(--brand); display:flex; align-items:center; gap:6px;">
         <i class="bi bi-list-check"></i> Questões (<%= regular_qs.count %>)
       </span>
     </div>
@@ -18,7 +18,7 @@
 
   </div>
 <% elsif activity.questions.none? %>
-  <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.85rem; color:#9C9892; padding:14px 20px; background:#FAFAF9; border:1px solid #F0EDE8; border-radius:12px; margin-bottom:14px;">
+  <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.85rem; color:var(--ink-faint); padding:14px 20px; background:var(--surface-2); border:1px solid var(--line-soft); border-radius:12px; margin-bottom:14px;">
     <%= t('activities.no_questions') %>
   </div>
 <% end %>

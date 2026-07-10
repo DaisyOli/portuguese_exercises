@@ -5,23 +5,23 @@
 <div style="max-width:900px; margin:0 auto;">
 
   <%# ── Breadcrumb ── %>
-  <div style="display:flex; align-items:center; gap:8px; margin-bottom:1.5rem; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; color:#9C9892;">
-    <%= link_to "Dashboard", teacher_dashboard_path, style: "color:#9C9892; text-decoration:none;" %>
+  <div style="display:flex; align-items:center; gap:8px; margin-bottom:1.5rem; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; color:var(--ink-faint);">
+    <%= link_to "Dashboard", teacher_dashboard_path, style: "color:var(--ink-faint); text-decoration:none;" %>
     <span>›</span>
-    <%= link_to "Meus Alunos", teacher_students_path, style: "color:#9C9892; text-decoration:none;" %>
+    <%= link_to "Meus Alunos", teacher_students_path, style: "color:var(--ink-faint); text-decoration:none;" %>
     <span>›</span>
-    <span style="color:#1C1917; font-weight:600;"><%= @student.display_name %></span>
+    <span style="color:var(--ink); font-weight:600;"><%= @student.display_name %></span>
   </div>
 
   <%# ── Cabeçalho do aluno ── %>
-  <div style="background:#fff; border:1px solid #DDD9D2; border-radius:16px; padding:24px 28px; margin-bottom:1.5rem; display:flex; align-items:center; gap:20px; flex-wrap:wrap;">
-    <div style="width:56px; height:56px; border-radius:50%; background:#1A6B4A; display:flex; align-items:center; justify-content:center;
-                font-family:'Raleway',sans-serif; font-size:1.4rem; font-weight:800; color:#fff; flex-shrink:0;">
+  <div style="background:var(--surface); border:1px solid var(--line); border-radius:16px; padding:24px 28px; margin-bottom:1.5rem; display:flex; align-items:center; gap:20px; flex-wrap:wrap;">
+    <div style="width:56px; height:56px; border-radius:50%; background:var(--brand); display:flex; align-items:center; justify-content:center;
+                font-family:'Raleway',sans-serif; font-size:1.4rem; font-weight:800; color:var(--surface); flex-shrink:0;">
       <%= @student.display_name[0].upcase %>
     </div>
     <div style="flex:1; min-width:180px;">
       <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:4px;">
-        <h1 style="font-family:'Raleway',sans-serif; font-size:1.3rem; font-weight:700; color:#1C1917; margin:0;">
+        <h1 style="font-family:'Raleway',sans-serif; font-size:1.3rem; font-weight:700; color:var(--ink); margin:0;">
           <%= @student.display_name %>
         </h1>
         <%= professional_badge_html(@student) %>
@@ -34,20 +34,20 @@
           </span>
         <% else %>
           <span style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.72rem; font-weight:700;
-                       background:#FEF2F2; color:#B91C1C; border:1.5px solid #FECACA;
+                       background:var(--error-tint); color:var(--error); border:1.5px solid var(--error-border);
                        padding:2px 9px; border-radius:20px;">
             ⚠️ Sem nível
           </span>
         <% end %>
         <% if @pending_count > 0 %>
           <span style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.72rem; font-weight:700;
-                       background:#FFF7ED; color:#7C2D12; border:1.5px solid #FED7AA;
+                       background:var(--warning-tint); color:var(--warning-ink); border:1.5px solid var(--warning-border);
                        padding:2px 9px; border-radius:20px;">
             ✍️ <%= @pending_count %> aguardando feedback
           </span>
         <% end %>
       </div>
-      <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; color:#9C9892;">
+      <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; color:var(--ink-faint);">
         <%= @student.email %> · aluno desde <%= @student.created_at.strftime("%b %Y") %>
       </div>
     </div>
@@ -62,14 +62,14 @@
           <button type="submit" name="level" value="<%= lvl %>"
                   style="font-family:'DM Mono',monospace; font-size:0.72rem; font-weight:700;
                          padding:5px 12px; border-radius:20px; cursor:pointer;
-                         border:1.5px solid <%= @student.level == lvl ? lc[:border] : '#DDD9D2' %>;
-                         background:<%= @student.level == lvl ? lc[:bg] : '#fff' %>;
-                         color:<%= @student.level == lvl ? lc[:text] : '#9C9892' %>;">
+                         border:1.5px solid <%= @student.level == lvl ? lc[:border] : 'var(--line)' %>;
+                         background:<%= @student.level == lvl ? lc[:bg] : 'var(--surface)' %>;
+                         color:<%= @student.level == lvl ? lc[:text] : 'var(--ink-faint)' %>;">
             <%= lvl %>
           </button>
         <% end %>
       </div>
-      <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.7rem; color:#9C9892; margin-top:2px;">
+      <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.7rem; color:var(--ink-faint); margin-top:2px;">
         Nível do aluno &nbsp;·&nbsp; C1 = acesso total
       </div>
     <% end %>
@@ -81,7 +81,7 @@
       <button type="submit"
               onclick="return confirm('Remover <%= j @student.display_name %> da sua lista? O aluno perde acesso às atividades.');"
               style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.78rem; font-weight:600;
-                     background:#FEF2F2; color:#B91C1C; border:1.5px solid #FECACA;
+                     background:var(--error-tint); color:var(--error); border:1.5px solid var(--error-border);
                      border-radius:8px; padding:7px 14px; cursor:pointer;">
         🗑 Remover aluno
       </button>
@@ -90,31 +90,31 @@
 
   <%# ── 4 Métricas ── %>
   <div class="dash-metrics-grid" style="margin-bottom:1.5rem;">
-    <div style="background:#fff; border:1px solid #DDD9D2; border-radius:14px; padding:20px 22px;">
-      <div style="font-family:'DM Mono',monospace; font-size:0.68rem; color:#9C9892; letter-spacing:0.08em; margin-bottom:8px; text-transform:uppercase;">Atividades</div>
-      <div style="font-family:'Raleway',sans-serif; font-size:2rem; font-weight:800; color:#0F3826; line-height:1;"><%= @total_activities %></div>
-      <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.78rem; color:#5C5853; margin-top:6px;">realizadas</div>
+    <div style="background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:20px 22px;">
+      <div style="font-family:'DM Mono',monospace; font-size:0.68rem; color:var(--ink-faint); letter-spacing:0.08em; margin-bottom:8px; text-transform:uppercase;">Atividades</div>
+      <div style="font-family:'Raleway',sans-serif; font-size:2rem; font-weight:800; color:var(--brand-deep); line-height:1;"><%= @total_activities %></div>
+      <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.78rem; color:var(--ink-soft); margin-top:6px;">realizadas</div>
     </div>
-    <div style="background:#fff; border:1px solid #DDD9D2; border-radius:14px; padding:20px 22px;">
-      <% avg_color = @avg_score >= 70 ? '#1A6B4A' : @avg_score >= 40 ? '#C9952A' : '#B91C1C' %>
-      <div style="font-family:'DM Mono',monospace; font-size:0.68rem; color:#9C9892; letter-spacing:0.08em; margin-bottom:8px; text-transform:uppercase;">Média</div>
+    <div style="background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:20px 22px;">
+      <% avg_color = @avg_score >= 70 ? 'var(--brand)' : @avg_score >= 40 ? 'var(--action)' : 'var(--error)' %>
+      <div style="font-family:'DM Mono',monospace; font-size:0.68rem; color:var(--ink-faint); letter-spacing:0.08em; margin-bottom:8px; text-transform:uppercase;">Média</div>
       <div style="font-family:'Raleway',sans-serif; font-size:2rem; font-weight:800; color:<%= avg_color %>; line-height:1;"><%= @avg_score %>%</div>
-      <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.78rem; color:#5C5853; margin-top:6px;">score médio</div>
+      <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.78rem; color:var(--ink-soft); margin-top:6px;">score médio</div>
     </div>
-    <div style="background:#fff; border:1px solid #DDD9D2; border-radius:14px; padding:20px 22px;">
-      <div style="font-family:'DM Mono',monospace; font-size:0.68rem; color:#9C9892; letter-spacing:0.08em; margin-bottom:8px; text-transform:uppercase;">Melhor Score</div>
-      <div style="font-family:'Raleway',sans-serif; font-size:2rem; font-weight:800; color:#1A6B4A; line-height:1;"><%= @best_score %>%</div>
-      <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.78rem; color:#5C5853; margin-top:6px;">máximo atingido</div>
+    <div style="background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:20px 22px;">
+      <div style="font-family:'DM Mono',monospace; font-size:0.68rem; color:var(--ink-faint); letter-spacing:0.08em; margin-bottom:8px; text-transform:uppercase;">Melhor Score</div>
+      <div style="font-family:'Raleway',sans-serif; font-size:2rem; font-weight:800; color:var(--brand); line-height:1;"><%= @best_score %>%</div>
+      <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.78rem; color:var(--ink-soft); margin-top:6px;">máximo atingido</div>
     </div>
-    <div style="background:#fff; border:1px solid #DDD9D2; border-radius:14px; padding:20px 22px;">
-      <div style="font-family:'DM Mono',monospace; font-size:0.68rem; color:#9C9892; letter-spacing:0.08em; margin-bottom:8px; text-transform:uppercase;">Assiduidade</div>
-      <div style="font-family:'Raleway',sans-serif; font-size:2rem; font-weight:800; color:#2563EB; line-height:1;"><%= @days_active %></div>
-      <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.78rem; color:#5C5853; margin-top:6px;">dias ativos (30 dias)</div>
+    <div style="background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:20px 22px;">
+      <div style="font-family:'DM Mono',monospace; font-size:0.68rem; color:var(--ink-faint); letter-spacing:0.08em; margin-bottom:8px; text-transform:uppercase;">Assiduidade</div>
+      <div style="font-family:'Raleway',sans-serif; font-size:2rem; font-weight:800; color:var(--info); line-height:1;"><%= @days_active %></div>
+      <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.78rem; color:var(--ink-soft); margin-top:6px;">dias ativos (30 dias)</div>
     </div>
-    <div style="background:#fff; border:1px solid #DDD9D2; border-radius:14px; padding:20px 22px;">
-      <div style="font-family:'DM Mono',monospace; font-size:0.68rem; color:#9C9892; letter-spacing:0.08em; margin-bottom:8px; text-transform:uppercase;">Formação</div>
-      <div style="font-family:'Raleway',sans-serif; font-size:2rem; font-weight:800; color:#7C3AED; line-height:1;"><%= format_training_duration(@training_minutes) %></div>
-      <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.78rem; color:#5C5853; margin-top:6px;">tempo registado</div>
+    <div style="background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:20px 22px;">
+      <div style="font-family:'DM Mono',monospace; font-size:0.68rem; color:var(--ink-faint); letter-spacing:0.08em; margin-bottom:8px; text-transform:uppercase;">Formação</div>
+      <div style="font-family:'Raleway',sans-serif; font-size:2rem; font-weight:800; color:var(--violet); line-height:1;"><%= format_training_duration(@training_minutes) %></div>
+      <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.78rem; color:var(--ink-soft); margin-top:6px;">tempo registado</div>
     </div>
   </div>
 
@@ -122,29 +122,29 @@
     <div style="margin-bottom:1.5rem; text-align:right;">
       <%= link_to teacher_student_attestation_path(@student), target: '_blank',
             style: "display:inline-flex; align-items:center; gap:6px; font-family:'Plus Jakarta Sans',sans-serif;
-                    font-size:0.85rem; font-weight:700; color:#7C3AED; text-decoration:none;
-                    background:#F5F3FF; border:1.5px solid #DDD6FE; border-radius:10px; padding:8px 16px;" do %>
+                    font-size:0.85rem; font-weight:700; color:var(--violet); text-decoration:none;
+                    background:var(--violet-tint); border:1.5px solid var(--violet-border); border-radius:10px; padding:8px 16px;" do %>
         📄 Attestation de formation
       <% end %>
     </div>
   <% end %>
 
   <%# ── Seção: Atividades realizadas ── %>
-  <div style="background:#fff; border:1px solid #DDD9D2; border-radius:16px; overflow:hidden; margin-bottom:1rem;">
+  <div style="background:var(--surface); border:1px solid var(--line); border-radius:16px; overflow:hidden; margin-bottom:1rem;">
     <div onclick="toggleSection('activities')"
          style="display:flex; align-items:center; justify-content:space-between; padding:20px 24px; cursor:pointer; user-select:none;">
       <div style="display:flex; align-items:center; gap:10px;">
-        <h2 style="font-family:'Raleway',sans-serif; font-size:1rem; font-weight:700; color:#1C1917; margin:0;">
+        <h2 style="font-family:'Raleway',sans-serif; font-size:1rem; font-weight:700; color:var(--ink); margin:0;">
           Atividades realizadas
         </h2>
         <span style="font-family:'DM Mono',monospace; font-size:0.78rem; font-weight:700;
-                     background:#F0FAF4; color:#1A6B4A; border:1.5px solid #A7F3D0;
+                     background:var(--brand-mist); color:var(--brand); border:1.5px solid var(--success-border);
                      padding:2px 8px; border-radius:20px;">
           <%= @total_activities %>
         </span>
       </div>
       <span id="activities-icon"
-            style="font-family:'Raleway',sans-serif; font-size:1.4rem; font-weight:700; color:#1A6B4A; line-height:1; transition:transform 0.15s; display:inline-block;">
+            style="font-family:'Raleway',sans-serif; font-size:1.4rem; font-weight:700; color:var(--brand); line-height:1; transition:transform 0.15s; display:inline-block;">
         +
       </span>
     </div>
@@ -155,7 +155,7 @@
         <button id="activities-more-btn"
                 onclick="loadMoreSection('activities')"
                 style="display:none; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.85rem; font-weight:600;
-                       background:#F0FAF4; color:#1A6B4A; border:1.5px solid #A7F3D0;
+                       background:var(--brand-mist); color:var(--brand); border:1.5px solid var(--success-border);
                        border-radius:8px; padding:8px 22px; cursor:pointer;">
           Ver mais
         </button>
@@ -164,21 +164,21 @@
   </div>
 
   <%# ── Seção: Expressão escrita ── %>
-  <div style="background:#fff; border:1px solid #DDD9D2; border-radius:16px; overflow:hidden; margin-bottom:2rem;">
+  <div style="background:var(--surface); border:1px solid var(--line); border-radius:16px; overflow:hidden; margin-bottom:2rem;">
     <div style="display:flex; align-items:center; justify-content:space-between; padding:20px 24px;">
       <div onclick="toggleSection('written')"
            style="display:flex; align-items:center; gap:10px; flex:1; cursor:pointer; user-select:none;">
-        <h2 style="font-family:'Raleway',sans-serif; font-size:1rem; font-weight:700; color:#1C1917; margin:0;">
+        <h2 style="font-family:'Raleway',sans-serif; font-size:1rem; font-weight:700; color:var(--ink); margin:0;">
           Expressão escrita
         </h2>
         <span style="font-family:'DM Mono',monospace; font-size:0.78rem; font-weight:700;
-                     background:#FFF7ED; color:#7C2D12; border:1.5px solid #FED7AA;
+                     background:var(--warning-tint); color:var(--warning-ink); border:1.5px solid var(--warning-border);
                      padding:2px 8px; border-radius:20px;">
           <%= @total_written %>
         </span>
         <% if @pending_count > 0 %>
           <span style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.72rem; font-weight:700;
-                       background:#FFF7ED; color:#7C2D12; border:1.5px solid #FED7AA;
+                       background:var(--warning-tint); color:var(--warning-ink); border:1.5px solid var(--warning-border);
                        padding:2px 9px; border-radius:20px;">
             ✍️ <%= @pending_count %> aguardando
           </span>
@@ -191,7 +191,7 @@
             <button type="submit"
                     onclick="event.stopPropagation(); return confirm('Apagar todos os seus feedbacks para <%= j @student.display_name %>?');"
                     style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.75rem; font-weight:600;
-                           background:#FFF7ED; color:#7C2D12; border:1.5px solid #FED7AA;
+                           background:var(--warning-tint); color:var(--warning-ink); border:1.5px solid var(--warning-border);
                            border-radius:8px; padding:5px 12px; cursor:pointer;">
               🗑 Limpar feedbacks
             </button>
@@ -199,7 +199,7 @@
         <% end %>
         <span id="written-icon"
               onclick="toggleSection('written')"
-              style="font-family:'Raleway',sans-serif; font-size:1.4rem; font-weight:700; color:#C9952A; line-height:1; transition:transform 0.15s; display:inline-block; cursor:pointer;">
+              style="font-family:'Raleway',sans-serif; font-size:1.4rem; font-weight:700; color:var(--action); line-height:1; transition:transform 0.15s; display:inline-block; cursor:pointer;">
           +
         </span>
       </div>
@@ -211,7 +211,7 @@
         <button id="written-more-btn"
                 onclick="loadMoreSection('written')"
                 style="display:none; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.85rem; font-weight:600;
-                       background:#FFF7ED; color:#7C2D12; border:1.5px solid #FED7AA;
+                       background:var(--warning-tint); color:var(--warning-ink); border:1.5px solid var(--warning-border);
                        border-radius:8px; padding:8px 22px; cursor:pointer;">
           Ver mais
         </button>

@@ -17,7 +17,7 @@ export default class extends Controller {
     this.pillTargets.forEach(pill => {
       const radio = this.radioTargets.find(r => pill.contains(r))
       const active = radio?.checked
-      pill.style.borderColor = active ? pill.dataset.border : "#DDD9D2"
+      pill.style.borderColor = active ? pill.dataset.border : "var(--line)"
       pill.style.boxShadow   = active ? `0 0 0 3px ${pill.dataset.ring}` : "none"
     })
   }

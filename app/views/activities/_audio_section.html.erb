@@ -1,11 +1,11 @@
 <% if activity.audio_file.attached? %>
-  <div id="audio" style="background:#FBF3E0; border:1px solid #E8C97A;
-       border-left:4px solid #C9952A; border-radius:14px; margin-bottom:14px; overflow:hidden;">
+  <div id="audio" style="background:var(--action-tint); border:1px solid var(--action-border);
+       border-left:4px solid var(--action); border-radius:14px; margin-bottom:14px; overflow:hidden;">
 
     <div style="display:flex; align-items:center; justify-content:space-between;
-                padding:10px 16px; border-bottom:1px solid #E8C97A; background:rgba(201,149,42,0.07);">
+                padding:10px 16px; border-bottom:1px solid var(--action-border); background:var(--action-veil);">
       <span style="font-family:'DM Mono',monospace; font-size:0.72rem; font-weight:700;
-                   text-transform:uppercase; letter-spacing:0.06em; color:#C9952A;">
+                   text-transform:uppercase; letter-spacing:0.06em; color:var(--action);">
         <i class="bi bi-music-note-beamed" style="margin-right:5px;"></i>
         <%= t('activities.audio_label') %>
       </span>
@@ -13,15 +13,15 @@
         <div style="display:flex; gap:6px;">
           <button type="button" data-controller="collapse" data-collapse-target-value="#edit-audio-form" data-action="collapse#toggle"
                   style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.75rem; font-weight:600;
-                         color:#5C5853; padding:4px 10px; border:1.5px solid #DDD9D2;
-                         border-radius:7px; background:#fff; cursor:pointer;">
+                         color:var(--ink-soft); padding:4px 10px; border:1.5px solid var(--line);
+                         border-radius:7px; background:var(--surface); cursor:pointer;">
             <%= t('common.edit') %>
           </button>
           <%= button_to clear_content_activity_path(activity, content: "audio"), method: :post,
                 data: { turbo_confirm: t('activities.confirm_delete_audio') },
                 style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.75rem; font-weight:600;
-                        color:#B91C1C; padding:4px 10px; border:1.5px solid #FECACA;
-                        border-radius:7px; background:#FEF2F2; cursor:pointer; border:1.5px solid #FECACA;" do %>
+                        color:var(--error); padding:4px 10px; border:1.5px solid var(--error-border);
+                        border-radius:7px; background:var(--error-tint); cursor:pointer; border:1.5px solid var(--error-border);" do %>
             <%= t('common.remove') %>
           <% end %>
         </div>
@@ -37,15 +37,15 @@
 
     <% if current_user.teacher? && activity.teacher == current_user %>
       <div class="hidden" id="edit-audio-form">
-        <div style="padding:16px 20px; border-top:1px solid #E8C97A; background:#FAFAF9;">
+        <div style="padding:16px 20px; border-top:1px solid var(--action-border); background:var(--surface-2);">
           <%= form_with(model: activity, local: true, multipart: true) do |f| %>
             <%= f.label :audio_file, t('activities.audio_file_label'),
-                  style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; font-weight:600; color:#5C5853; display:block; margin-bottom:6px;" %>
+                  style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; font-weight:600; color:var(--ink-soft); display:block; margin-bottom:6px;" %>
             <%= f.file_field :audio_file, accept: "audio/*",
                   style: "display:block; width:100%; font-size:0.85rem; margin-bottom:12px;" %>
             <%= f.submit t('common.save'),
                   style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.85rem; font-weight:700;
-                          background:#1A6B4A; color:#fff; padding:9px 22px; border-radius:10px;
+                          background:var(--brand); color:var(--surface); padding:9px 22px; border-radius:10px;
                           border:none; cursor:pointer;" %>
           <% end %>
         </div>

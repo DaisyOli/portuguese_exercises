@@ -144,7 +144,7 @@
   // 📝 Conteúdo do card
   .card-content {
     .card-description {
-      color: #666;
+      color: var(--ink-soft);
       font-size: 0.95rem;
       line-height: 1.5;
       margin-bottom: var(--spacing-md);
@@ -154,7 +154,7 @@
       display: flex;
       gap: var(--spacing-lg);
       font-size: 0.85rem;
-      color: #666;
+      color: var(--ink-soft);
       margin-bottom: var(--spacing-md);
       flex-wrap: wrap;
       
@@ -267,7 +267,7 @@
     
     .acao-description {
       font-size: 0.85rem;
-      color: #666;
+      color: var(--ink-soft);
       margin: 0;
     }
   }
@@ -310,7 +310,7 @@
       display: flex;
       gap: var(--spacing-md);
       font-size: 0.85rem;
-      color: #666;
+      color: var(--ink-soft);
       
       span {
         display: flex;
@@ -393,8 +393,8 @@
 
 // ── CARDS COM CAPA VISUAL ──
 .activity-card {
-  background: #fff;
-  border: 1px solid #DDD9D2;
+  background: var(--surface);
+  border: 1px solid var(--line);
   border-radius: 14px;
   overflow: hidden;
   display: flex;

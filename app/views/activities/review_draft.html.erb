@@ -5,24 +5,24 @@
 <div style="max-width:900px; margin:1.5rem auto 3rem; padding:0 1.5rem;">
 
   <%# Banner de rascunho %>
-  <div style="background:linear-gradient(135deg,#FFF7ED 0%,#FFFBF0 100%); border:2px solid #C9952A; border-radius:16px; padding:20px 24px; margin-bottom:24px; display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap;">
+  <div style="background:linear-gradient(135deg,var(--warning-tint) 0%,var(--action-tint) 100%); border:2px solid var(--action); border-radius:16px; padding:20px 24px; margin-bottom:24px; display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap;">
     <div>
-      <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.92rem; font-weight:700; color:#7C4A00; margin-bottom:4px;">
+      <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.92rem; font-weight:700; color:var(--action-ink); margin-bottom:4px;">
         ✨ Rascunho gerado por IA — aguardando sua aprovação
       </div>
-      <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; color:#A06000; line-height:1.5;">
+      <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; color:var(--action-ink); line-height:1.5;">
         Revise o conteúdo abaixo. Esta atividade <strong>não está visível para os alunos</strong> até você publicar.
         Você pode editá-la normalmente depois de publicar.
       </div>
     </div>
     <div style="display:flex; gap:10px; flex-shrink:0;">
       <%= link_to activity_path(@activity),
-            style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.85rem; font-weight:600; color:#5C5853; padding:9px 18px; border:1.5px solid #DDD9D2; border-radius:10px; text-decoration:none; background:#fff; white-space:nowrap;" do %>
+            style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.85rem; font-weight:600; color:var(--ink-soft); padding:9px 18px; border:1.5px solid var(--line); border-radius:10px; text-decoration:none; background:var(--surface); white-space:nowrap;" do %>
         Editar / Adicionar exercícios
       <% end %>
       <%= button_to "✓ Publicar atividade", publish_draft_activity_path(@activity),
             method: :post,
-            style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.9rem; font-weight:700; color:#fff; background:#1A6B4A; padding:9px 22px; border-radius:10px; border:none; cursor:pointer; white-space:nowrap;" %>
+            style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.9rem; font-weight:700; color:var(--surface); background:var(--brand); padding:9px 22px; border-radius:10px; border:none; cursor:pointer; white-space:nowrap;" %>
     </div>
   </div>
 
@@ -31,28 +31,28 @@
 
   <%# Vídeo %>
   <% if @activity.video_url.present? %>
-    <div style="margin-top:20px; border-radius:14px; overflow:hidden; border:1.5px solid #DDD9D2;">
+    <div style="margin-top:20px; border-radius:14px; overflow:hidden; border:1.5px solid var(--line);">
       <%= render 'activities/video_embed', url: @activity.video_url %>
     </div>
   <% end %>
 
   <%# Texto principal (diálogo, artigo, etc.) %>
   <% if @activity.explanation_text.present? %>
-    <div style="background:#F7F9FF; border:1.5px solid #BFCFE8; border-radius:14px; padding:22px 26px; margin-top:20px;">
-      <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.72rem; font-weight:700; color:#1E3A5F; text-transform:uppercase; letter-spacing:0.06em; margin-bottom:12px;">
+    <div style="background:var(--info-tint); border:1.5px solid var(--info-border); border-radius:14px; padding:22px 26px; margin-top:20px;">
+      <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.72rem; font-weight:700; color:var(--info-deep); text-transform:uppercase; letter-spacing:0.06em; margin-bottom:12px;">
         Texto da atividade
       </div>
-      <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.9rem; color:#1C1917; line-height:1.75; white-space:pre-wrap;"><%= @activity.explanation_text %></div>
+      <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.9rem; color:var(--ink); line-height:1.75; white-space:pre-wrap;"><%= @activity.explanation_text %></div>
     </div>
   <% end %>
 
   <%# Enunciado (instrução curta antes dos exercícios) %>
   <% if @activity.statement.present? %>
-    <div style="background:#FFFDF5; border:1.5px solid #C9952A; border-radius:14px; padding:22px 26px; margin-top:16px;">
-      <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.72rem; font-weight:700; color:#7C4A00; text-transform:uppercase; letter-spacing:0.06em; margin-bottom:12px;">
+    <div style="background:var(--action-tint); border:1.5px solid var(--action); border-radius:14px; padding:22px 26px; margin-top:16px;">
+      <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.72rem; font-weight:700; color:var(--action-ink); text-transform:uppercase; letter-spacing:0.06em; margin-bottom:12px;">
         Enunciado
       </div>
-      <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.9rem; color:#1C1917; line-height:1.75; white-space:pre-wrap;"><%= @activity.statement %></div>
+      <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.9rem; color:var(--ink); line-height:1.75; white-space:pre-wrap;"><%= @activity.statement %></div>
     </div>
   <% end %>
 
@@ -62,10 +62,10 @@
     exercise_index = 0
   %>
   <% if total_exercises > 0 %>
-    <div style="background:#fff; border:1px solid #DDD9D2; border-radius:16px; padding:24px 28px; margin-top:24px;">
-      <div style="font-family:'Raleway',sans-serif; font-size:1rem; font-weight:700; color:#1C1917; margin-bottom:18px; display:flex; align-items:center; gap:8px;">
+    <div style="background:var(--surface); border:1px solid var(--line); border-radius:16px; padding:24px 28px; margin-top:24px;">
+      <div style="font-family:'Raleway',sans-serif; font-size:1rem; font-weight:700; color:var(--ink); margin-bottom:18px; display:flex; align-items:center; gap:8px;">
         Exercícios gerados
-        <span style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.78rem; font-weight:600; background:#E8F5EE; color:#1A6B4A; border:1.5px solid #2A9B6F; border-radius:20px; padding:3px 10px;">
+        <span style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.78rem; font-weight:600; background:var(--brand-tint); color:var(--brand); border:1.5px solid var(--brand-bright); border-radius:20px; padding:3px 10px;">
           <%= total_exercises %> <%= total_exercises == 1 ? 'exercício' : 'exercícios' %>
         </span>
       </div>
@@ -75,18 +75,18 @@
         <%# Questões (multiple_choice + fill_in_blank) %>
         <% @questions.each do |q| %>
           <% exercise_index += 1 %>
-          <div style="background:#FAFAF9; border:1px solid #F0EDE8; border-radius:12px; padding:18px 20px;">
+          <div style="background:var(--surface-2); border:1px solid var(--line-soft); border-radius:12px; padding:18px 20px;">
             <div style="display:flex; align-items:flex-start; gap:12px;">
-              <span style="font-family:'DM Mono',monospace; font-size:0.72rem; font-weight:700; background:#F0EDE8; color:#5C5853; border-radius:6px; padding:3px 8px; flex-shrink:0; margin-top:2px;">#<%= exercise_index %></span>
+              <span style="font-family:'DM Mono',monospace; font-size:0.72rem; font-weight:700; background:var(--line-soft); color:var(--ink-soft); border-radius:6px; padding:3px 8px; flex-shrink:0; margin-top:2px;">#<%= exercise_index %></span>
               <div style="flex:1;">
-                <span style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.72rem; font-weight:600; color:#5C5853; background:#F0EDE8; border-radius:20px; padding:2px 9px; display:inline-block; margin-bottom:8px;">
+                <span style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.72rem; font-weight:600; color:var(--ink-soft); background:var(--line-soft); border-radius:20px; padding:2px 9px; display:inline-block; margin-bottom:8px;">
                   <%= q.question_type == 'multiple_choice' ? 'Múltipla escolha' : 'Preencher lacuna' %>
                 </span>
-                <p style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.9rem; color:#1C1917; margin:0 0 10px 0; line-height:1.55; font-weight:500;"><%= q.content %></p>
+                <p style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.9rem; color:var(--ink); margin:0 0 10px 0; line-height:1.55; font-weight:500;"><%= q.content %></p>
                 <% if q.multiple_choice? && q.options.present? %>
                   <div style="display:flex; flex-direction:column; gap:5px;">
                     <% q.options.each do |opt| %>
-                      <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.83rem; padding:7px 12px; border-radius:8px; <%= opt == q.correct_answer ? "background:#E8F5EE; border:1.5px solid #2A9B6F; color:#0F3826; font-weight:600;" : "background:#fff; border:1px solid #F0EDE8; color:#5C5853;" %>">
+                      <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.83rem; padding:7px 12px; border-radius:8px; <%= opt == q.correct_answer ? "background:var(--brand-tint); border:1.5px solid var(--brand-bright); color:var(--brand-deep); font-weight:600;" : "background:var(--surface); border:1px solid var(--line-soft); color:var(--ink-soft);" %>">
                         <%= opt == q.correct_answer ? "✓ #{opt}" : opt %>
                       </div>
                     <% end %>
@@ -94,8 +94,8 @@
                 <% elsif q.fill_in_blank? %>
                   <div style="display:flex; flex-wrap:wrap; gap:6px;">
                     <% q.all_correct_answers.each_with_index do |ans, i| %>
-                      <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.83rem; color:#1A6B4A; background:#E8F5EE; border:1.5px solid #2A9B6F; border-radius:8px; padding:5px 12px; display:inline-flex; align-items:center; gap:6px;">
-                        <span style="font-size:0.7rem; font-weight:700; color:#2A9B6F;">Lacuna <%= i + 1 %></span>
+                      <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.83rem; color:var(--brand); background:var(--brand-tint); border:1.5px solid var(--brand-bright); border-radius:8px; padding:5px 12px; display:inline-flex; align-items:center; gap:6px;">
+                        <span style="font-size:0.7rem; font-weight:700; color:var(--brand-bright);">Lacuna <%= i + 1 %></span>
                         ✓ <strong><%= ans %></strong>
                       </div>
                     <% end %>
@@ -109,15 +109,15 @@
         <%# Ordenar palavras %>
         <% @sentence_orderings.each do |so| %>
           <% exercise_index += 1 %>
-          <div style="background:#FAFAF9; border:1px solid #F0EDE8; border-radius:12px; padding:18px 20px;">
+          <div style="background:var(--surface-2); border:1px solid var(--line-soft); border-radius:12px; padding:18px 20px;">
             <div style="display:flex; align-items:flex-start; gap:12px;">
-              <span style="font-family:'DM Mono',monospace; font-size:0.72rem; font-weight:700; background:#F0EDE8; color:#5C5853; border-radius:6px; padding:3px 8px; flex-shrink:0; margin-top:2px;">#<%= exercise_index %></span>
+              <span style="font-family:'DM Mono',monospace; font-size:0.72rem; font-weight:700; background:var(--line-soft); color:var(--ink-soft); border-radius:6px; padding:3px 8px; flex-shrink:0; margin-top:2px;">#<%= exercise_index %></span>
               <div style="flex:1;">
-                <span style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.72rem; font-weight:600; color:#5C5853; background:#F0EDE8; border-radius:20px; padding:2px 9px; display:inline-block; margin-bottom:8px;">Ordenar palavras</span>
+                <span style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.72rem; font-weight:600; color:var(--ink-soft); background:var(--line-soft); border-radius:20px; padding:2px 9px; display:inline-block; margin-bottom:8px;">Ordenar palavras</span>
                 <% if so.instruction.present? %>
-                  <p style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; color:#5C5853; margin:0 0 8px 0;"><em><%= so.instruction %></em></p>
+                  <p style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; color:var(--ink-soft); margin:0 0 8px 0;"><em><%= so.instruction %></em></p>
                 <% end %>
-                <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.83rem; color:#1A6B4A; background:#E8F5EE; border:1.5px solid #2A9B6F; border-radius:8px; padding:7px 12px;">
+                <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.83rem; color:var(--brand); background:var(--brand-tint); border:1.5px solid var(--brand-bright); border-radius:8px; padding:7px 12px;">
                   ✓ <strong><%= so.sentence %></strong>
                 </div>
               </div>
@@ -128,17 +128,17 @@
         <%# Ordenar parágrafos %>
         <% @paragraph_orderings.each do |po| %>
           <% exercise_index += 1 %>
-          <div style="background:#FAFAF9; border:1px solid #F0EDE8; border-radius:12px; padding:18px 20px;">
+          <div style="background:var(--surface-2); border:1px solid var(--line-soft); border-radius:12px; padding:18px 20px;">
             <div style="display:flex; align-items:flex-start; gap:12px;">
-              <span style="font-family:'DM Mono',monospace; font-size:0.72rem; font-weight:700; background:#F0EDE8; color:#5C5853; border-radius:6px; padding:3px 8px; flex-shrink:0; margin-top:2px;">#<%= exercise_index %></span>
+              <span style="font-family:'DM Mono',monospace; font-size:0.72rem; font-weight:700; background:var(--line-soft); color:var(--ink-soft); border-radius:6px; padding:3px 8px; flex-shrink:0; margin-top:2px;">#<%= exercise_index %></span>
               <div style="flex:1;">
-                <span style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.72rem; font-weight:600; color:#5C5853; background:#F0EDE8; border-radius:20px; padding:2px 9px; display:inline-block; margin-bottom:8px;">Ordenar frases</span>
+                <span style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.72rem; font-weight:600; color:var(--ink-soft); background:var(--line-soft); border-radius:20px; padding:2px 9px; display:inline-block; margin-bottom:8px;">Ordenar frases</span>
                 <% if po.instruction.present? %>
-                  <p style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; color:#5C5853; margin:0 0 8px 0;"><em><%= po.instruction %></em></p>
+                  <p style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; color:var(--ink-soft); margin:0 0 8px 0;"><em><%= po.instruction %></em></p>
                 <% end %>
                 <div style="display:flex; flex-direction:column; gap:4px;">
                   <% po.paragraph_sentences.sort_by(&:correct_position).each_with_index do |s, idx| %>
-                    <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.83rem; padding:6px 12px; border-radius:8px; background:#E8F5EE; border:1px solid #2A9B6F; color:#0F3826; display:flex; gap:8px;">
+                    <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.83rem; padding:6px 12px; border-radius:8px; background:var(--brand-tint); border:1px solid var(--brand-bright); color:var(--brand-deep); display:flex; gap:8px;">
                       <span style="font-weight:700; flex-shrink:0;"><%= idx + 1 %>.</span> <%= s.sentence %>
                     </div>
                   <% end %>
@@ -151,19 +151,19 @@
         <%# Associar colunas %>
         <% @column_matchings.each do |cm| %>
           <% exercise_index += 1 %>
-          <div style="background:#FAFAF9; border:1px solid #F0EDE8; border-radius:12px; padding:18px 20px;">
+          <div style="background:var(--surface-2); border:1px solid var(--line-soft); border-radius:12px; padding:18px 20px;">
             <div style="display:flex; align-items:flex-start; gap:12px;">
-              <span style="font-family:'DM Mono',monospace; font-size:0.72rem; font-weight:700; background:#F0EDE8; color:#5C5853; border-radius:6px; padding:3px 8px; flex-shrink:0; margin-top:2px;">#<%= exercise_index %></span>
+              <span style="font-family:'DM Mono',monospace; font-size:0.72rem; font-weight:700; background:var(--line-soft); color:var(--ink-soft); border-radius:6px; padding:3px 8px; flex-shrink:0; margin-top:2px;">#<%= exercise_index %></span>
               <div style="flex:1;">
-                <span style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.72rem; font-weight:600; color:#5C5853; background:#F0EDE8; border-radius:20px; padding:2px 9px; display:inline-block; margin-bottom:8px;">Associar colunas</span>
+                <span style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.72rem; font-weight:600; color:var(--ink-soft); background:var(--line-soft); border-radius:20px; padding:2px 9px; display:inline-block; margin-bottom:8px;">Associar colunas</span>
                 <% if cm.instruction.present? %>
-                  <p style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; color:#5C5853; margin:0 0 8px 0;"><em><%= cm.instruction %></em></p>
+                  <p style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; color:var(--ink-soft); margin:0 0 8px 0;"><em><%= cm.instruction %></em></p>
                 <% end %>
                 <div style="display:flex; flex-direction:column; gap:4px;">
                   <% cm.matching_pairs.sort_by(&:position).each do |pair| %>
-                    <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.83rem; padding:6px 12px; border-radius:8px; background:#E8F5EE; border:1px solid #2A9B6F; color:#0F3826; display:flex; align-items:center; gap:10px;">
+                    <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.83rem; padding:6px 12px; border-radius:8px; background:var(--brand-tint); border:1px solid var(--brand-bright); color:var(--brand-deep); display:flex; align-items:center; gap:10px;">
                       <span style="font-weight:600; flex:1;"><%= pair.left_item %></span>
-                      <span style="color:#2A9B6F; flex-shrink:0;">→</span>
+                      <span style="color:var(--brand-bright); flex-shrink:0;">→</span>
                       <span style="flex:1;"><%= pair.right_item %></span>
                     </div>
                   <% end %>
@@ -178,13 +178,13 @@
   <% end %>
 
   <%# Botão publicar (rodapé) %>
-  <div style="margin-top:28px; padding:24px 0; border-top:1px solid #F0EDE8; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px;">
-    <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.83rem; color:#9C9892;">
-      Quer ajustar algo? <%= link_to "Edite a atividade", edit_activity_path(@activity), style: "color:#1A6B4A; font-weight:600;" %> antes de publicar.
+  <div style="margin-top:28px; padding:24px 0; border-top:1px solid var(--line-soft); display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px;">
+    <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.83rem; color:var(--ink-faint);">
+      Quer ajustar algo? <%= link_to "Edite a atividade", edit_activity_path(@activity), style: "color:var(--brand); font-weight:600;" %> antes de publicar.
     </div>
     <%= button_to "✓ Publicar atividade para os alunos", publish_draft_activity_path(@activity),
           method: :post,
-          style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.9rem; font-weight:700; color:#fff; background:#1A6B4A; padding:12px 28px; border-radius:12px; border:none; cursor:pointer;" %>
+          style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.9rem; font-weight:700; color:var(--surface); background:var(--brand); padding:12px 28px; border-radius:12px; border:none; cursor:pointer;" %>
   </div>
 
 </div>

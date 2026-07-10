@@ -1,21 +1,21 @@
 <% if activity.media_url.present? %>
-  <div id="media" style="background:#FBF3E0; border:1px solid #E8C97A; border-left:4px solid #C9952A; border-radius:14px; margin-bottom:14px; overflow:hidden;">
+  <div id="media" style="background:var(--action-tint); border:1px solid var(--action-border); border-left:4px solid var(--action); border-radius:14px; margin-bottom:14px; overflow:hidden;">
 
-    <div style="display:flex; align-items:center; justify-content:space-between; padding:12px 18px; border-bottom:1px solid #E8C97A; background:rgba(201,149,42,0.07);">
-      <span style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; color:#C9952A;">
+    <div style="display:flex; align-items:center; justify-content:space-between; padding:12px 18px; border-bottom:1px solid var(--action-border); background:var(--action-veil);">
+      <span style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; color:var(--action);">
         <i class="bi bi-image" style="margin-right:5px;"></i><%= t('activities.image_label') %>
       </span>
       <% if current_user.teacher? && activity.teacher == current_user %>
         <div style="display:flex; gap:6px;">
           <button type="button"
                   data-controller="collapse" data-collapse-target-value="#edit-image-form" data-action="collapse#toggle"
-                  style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.75rem; font-weight:600; color:#5C5853; padding:5px 10px; border:1.5px solid #DDD9D2; border-radius:7px; background:#fff; cursor:pointer;">
+                  style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.75rem; font-weight:600; color:var(--ink-soft); padding:5px 10px; border:1.5px solid var(--line); border-radius:7px; background:var(--surface); cursor:pointer;">
             Editar
           </button>
           <%= button_to clear_content_activity_path(activity, content: "media"),
               method: :post,
               data: { turbo_confirm: t('activities.confirm_delete_media') },
-              style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.75rem; font-weight:600; color:#B91C1C; padding:5px 10px; border:1.5px solid #FECACA; border-radius:7px; background:#FEF2F2; cursor:pointer;" do %>
+              style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.75rem; font-weight:600; color:var(--error); padding:5px 10px; border:1.5px solid var(--error-border); border-radius:7px; background:var(--error-tint); cursor:pointer;" do %>
             Remover
           <% end %>
         </div>
@@ -34,7 +34,7 @@
 
     <% if current_user.teacher? && activity.teacher == current_user %>
       <div class="hidden" id="edit-image-form">
-        <div style="padding:20px; border-top:1px solid #E8C97A; background:#FAFAF9;">
+        <div style="padding:20px; border-top:1px solid var(--action-border); background:var(--surface-2);">
           <%= form_with(model: activity, local: true) do |f| %>
             <div class="mb-3">
               <%= f.label :media_url, t('activities.image_url_label'), class: "form-label" %>
@@ -52,23 +52,23 @@
 <% end %>
 
 <% if activity.image_file.attached? %>
-  <div id="image_file" style="background:#FBF3E0; border:1px solid #E8C97A; border-left:4px solid #C9952A; border-radius:14px; margin-bottom:14px; overflow:hidden;">
+  <div id="image_file" style="background:var(--action-tint); border:1px solid var(--action-border); border-left:4px solid var(--action); border-radius:14px; margin-bottom:14px; overflow:hidden;">
 
-    <div style="display:flex; align-items:center; justify-content:space-between; padding:12px 18px; border-bottom:1px solid #E8C97A; background:rgba(201,149,42,0.07);">
-      <span style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; color:#C9952A;">
+    <div style="display:flex; align-items:center; justify-content:space-between; padding:12px 18px; border-bottom:1px solid var(--action-border); background:var(--action-veil);">
+      <span style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; color:var(--action);">
         <i class="bi bi-image" style="margin-right:5px;"></i><%= t('activities.image_label') %>
       </span>
       <% if current_user.teacher? && activity.teacher == current_user %>
         <div style="display:flex; gap:6px;">
           <button type="button"
                   data-controller="collapse" data-collapse-target-value="#edit-image-file-form" data-action="collapse#toggle"
-                  style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.75rem; font-weight:600; color:#5C5853; padding:5px 10px; border:1.5px solid #DDD9D2; border-radius:7px; background:#fff; cursor:pointer;">
+                  style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.75rem; font-weight:600; color:var(--ink-soft); padding:5px 10px; border:1.5px solid var(--line); border-radius:7px; background:var(--surface); cursor:pointer;">
             <%= t('common.edit') %>
           </button>
           <%= button_to clear_content_activity_path(activity, content: "image_file"),
               method: :post,
               data: { turbo_confirm: t('activities.confirm_delete_image_file') },
-              style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.75rem; font-weight:600; color:#B91C1C; padding:5px 10px; border:1.5px solid #FECACA; border-radius:7px; background:#FEF2F2; cursor:pointer;" do %>
+              style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.75rem; font-weight:600; color:var(--error); padding:5px 10px; border:1.5px solid var(--error-border); border-radius:7px; background:var(--error-tint); cursor:pointer;" do %>
             <%= t('common.remove') %>
           <% end %>
         </div>
@@ -83,30 +83,30 @@
 
     <% if current_user.teacher? && activity.teacher == current_user %>
       <div class="hidden" id="edit-image-file-form">
-        <div style="padding:16px 20px; border-top:1px solid #E8C97A; background:#FAFAF9;">
+        <div style="padding:16px 20px; border-top:1px solid var(--action-border); background:var(--surface-2);">
 
           <%# Mini-tab: URL | Do computador %>
           <div style="display:flex; gap:6px; margin-bottom:14px;">
             <button type="button" id="edit-img-tab-url"
                     onclick="document.getElementById('edit-img-section-url').style.display='block';
                              document.getElementById('edit-img-section-file').style.display='none';
-                             this.style.background='#0F3826'; this.style.color='#fff'; this.style.borderColor='#0F3826';
-                             document.getElementById('edit-img-tab-file').style.background='#fff';
-                             document.getElementById('edit-img-tab-file').style.color='#5C5853'; document.getElementById('edit-img-tab-file').style.borderColor='#DDD9D2';"
+                             this.style.background='var(--brand-deep)'; this.style.color='var(--surface)'; this.style.borderColor='var(--brand-deep)';
+                             document.getElementById('edit-img-tab-file').style.background='var(--surface)';
+                             document.getElementById('edit-img-tab-file').style.color='var(--ink-soft)'; document.getElementById('edit-img-tab-file').style.borderColor='var(--line)';"
                     style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.78rem; font-weight:600;
-                           padding:5px 14px; border-radius:8px; border:1.5px solid #0F3826;
-                           background:#0F3826; color:#fff; cursor:pointer;">
+                           padding:5px 14px; border-radius:8px; border:1.5px solid var(--brand-deep);
+                           background:var(--brand-deep); color:var(--surface); cursor:pointer;">
               <i class="bi bi-link-45deg"></i> URL
             </button>
             <button type="button" id="edit-img-tab-file"
                     onclick="document.getElementById('edit-img-section-url').style.display='none';
                              document.getElementById('edit-img-section-file').style.display='block';
-                             this.style.background='#0F3826'; this.style.color='#fff'; this.style.borderColor='#0F3826';
-                             document.getElementById('edit-img-tab-url').style.background='#fff';
-                             document.getElementById('edit-img-tab-url').style.color='#5C5853'; document.getElementById('edit-img-tab-url').style.borderColor='#DDD9D2';"
+                             this.style.background='var(--brand-deep)'; this.style.color='var(--surface)'; this.style.borderColor='var(--brand-deep)';
+                             document.getElementById('edit-img-tab-url').style.background='var(--surface)';
+                             document.getElementById('edit-img-tab-url').style.color='var(--ink-soft)'; document.getElementById('edit-img-tab-url').style.borderColor='var(--line)';"
                     style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.78rem; font-weight:600;
-                           padding:5px 14px; border-radius:8px; border:1.5px solid #DDD9D2;
-                           background:#fff; color:#5C5853; cursor:pointer;">
+                           padding:5px 14px; border-radius:8px; border:1.5px solid var(--line);
+                           background:var(--surface); color:var(--ink-soft); cursor:pointer;">
               <i class="bi bi-upload"></i> <%= t('activities.upload_from_computer') %>
             </button>
           </div>
@@ -116,13 +116,13 @@
             <%= form_with(model: activity, local: true) do |f| %>
               <div style="margin-bottom:12px;">
                 <%= f.label :media_url, t('activities.image_url_label'),
-                      style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; font-weight:600; color:#5C5853; display:block; margin-bottom:6px;" %>
+                      style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; font-weight:600; color:var(--ink-soft); display:block; margin-bottom:6px;" %>
                 <%= f.text_field :media_url,
                       placeholder: t('activities.image_url_placeholder'),
-                      style: "display:block; width:100%; font-size:0.88rem; padding:9px 12px; border:1.5px solid #DDD9D2; border-radius:8px; font-family:'Plus Jakarta Sans',sans-serif;" %>
+                      style: "display:block; width:100%; font-size:0.88rem; padding:9px 12px; border:1.5px solid var(--line); border-radius:8px; font-family:'Plus Jakarta Sans',sans-serif;" %>
               </div>
               <%= f.submit t('common.save'),
-                    style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.85rem; font-weight:700; background:#1A6B4A; color:#fff; padding:9px 22px; border-radius:10px; border:none; cursor:pointer; width:100%;" %>
+                    style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.85rem; font-weight:700; background:var(--brand); color:var(--surface); padding:9px 22px; border-radius:10px; border:none; cursor:pointer; width:100%;" %>
             <% end %>
           </div>
 
@@ -131,7 +131,7 @@
             <%= form_with(model: activity, local: true, multipart: true) do |f| %>
               <div style="margin-bottom:12px;">
                 <%= f.label :image_file, t('activities.image_file_label'),
-                      style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; font-weight:600; color:#5C5853; display:block; margin-bottom:6px;" %>
+                      style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; font-weight:600; color:var(--ink-soft); display:block; margin-bottom:6px;" %>
                 <div style="display:flex; align-items:center; gap:10px;">
                   <%= f.file_field :image_file, accept: "image/*",
                         id: "img-file-input-edit",
@@ -139,22 +139,22 @@
                         onchange: "document.getElementById('img-file-name-edit').textContent = this.files[0]?.name || #{t('activities.no_file_chosen').to_json}" %>
                   <label for="img-file-input-edit"
                          style="display:inline-flex; align-items:center; gap:6px; padding:8px 14px;
-                                border:1.5px solid #DDD9D2; border-radius:8px; cursor:pointer;
-                                background:#fff; font-family:'Plus Jakarta Sans',sans-serif;
-                                font-size:0.83rem; font-weight:600; color:#5C5853; white-space:nowrap;">
+                                border:1.5px solid var(--line); border-radius:8px; cursor:pointer;
+                                background:var(--surface); font-family:'Plus Jakarta Sans',sans-serif;
+                                font-size:0.83rem; font-weight:600; color:var(--ink-soft); white-space:nowrap;">
                     <i class="bi bi-paperclip"></i> <%= t('activities.choose_file') %>
                   </label>
                   <span id="img-file-name-edit"
-                        style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; color:#9C9892; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">
+                        style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; color:var(--ink-faint); overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">
                     <%= t('activities.no_file_chosen') %>
                   </span>
                 </div>
-                <small style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.78rem; color:#9C9892; margin-top:4px; display:block;">
+                <small style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.78rem; color:var(--ink-faint); margin-top:4px; display:block;">
                   <%= t('activities.image_file_hint') %>
                 </small>
               </div>
               <%= f.submit t('common.save'),
-                    style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.85rem; font-weight:700; background:#1A6B4A; color:#fff; padding:9px 22px; border-radius:10px; border:none; cursor:pointer; width:100%;" %>
+                    style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.85rem; font-weight:700; background:var(--brand); color:var(--surface); padding:9px 22px; border-radius:10px; border:none; cursor:pointer; width:100%;" %>
             <% end %>
           </div>
 
@@ -166,23 +166,23 @@
 <% end %>
 
 <% if activity.video_url.present? %>
-  <div id="video" style="background:#FBF3E0; border:1px solid #E8C97A; border-left:4px solid #C9952A; border-radius:14px; margin-bottom:14px; overflow:hidden;">
+  <div id="video" style="background:var(--action-tint); border:1px solid var(--action-border); border-left:4px solid var(--action); border-radius:14px; margin-bottom:14px; overflow:hidden;">
 
-    <div style="display:flex; align-items:center; justify-content:space-between; padding:12px 18px; border-bottom:1px solid #E8C97A; background:rgba(201,149,42,0.07);">
-      <span style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; color:#C9952A;">
+    <div style="display:flex; align-items:center; justify-content:space-between; padding:12px 18px; border-bottom:1px solid var(--action-border); background:var(--action-veil);">
+      <span style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; color:var(--action);">
         <i class="bi bi-play-circle" style="margin-right:5px;"></i><%= t('activities.video_label') %>
       </span>
       <% if current_user.teacher? && activity.teacher == current_user %>
         <div style="display:flex; gap:6px;">
           <button type="button"
                   data-controller="collapse" data-collapse-target-value="#edit-video-form" data-action="collapse#toggle"
-                  style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.75rem; font-weight:600; color:#5C5853; padding:5px 10px; border:1.5px solid #DDD9D2; border-radius:7px; background:#fff; cursor:pointer;">
+                  style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.75rem; font-weight:600; color:var(--ink-soft); padding:5px 10px; border:1.5px solid var(--line); border-radius:7px; background:var(--surface); cursor:pointer;">
             Editar
           </button>
           <%= button_to clear_content_activity_path(activity, content: "video"),
               method: :post,
               data: { turbo_confirm: t('activities.confirm_delete_video') },
-              style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.75rem; font-weight:600; color:#B91C1C; padding:5px 10px; border:1.5px solid #FECACA; border-radius:7px; background:#FEF2F2; cursor:pointer;" do %>
+              style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.75rem; font-weight:600; color:var(--error); padding:5px 10px; border:1.5px solid var(--error-border); border-radius:7px; background:var(--error-tint); cursor:pointer;" do %>
             Remover
           <% end %>
         </div>
@@ -195,7 +195,7 @@
 
     <% if current_user.teacher? && activity.teacher == current_user %>
       <div class="hidden" id="edit-video-form">
-        <div style="padding:20px; border-top:1px solid #E8C97A; background:#FAFAF9;">
+        <div style="padding:20px; border-top:1px solid var(--action-border); background:var(--surface-2);">
           <%= form_with(model: activity, local: true) do |f| %>
             <div class="mb-3">
               <%= f.label :video_url, t('activities.video_url_label'), class: "form-label" %>
@@ -213,23 +213,23 @@
 <% end %>
 
 <% if activity.video_file.attached? %>
-  <div id="video_file" style="background:#FBF3E0; border:1px solid #E8C97A; border-left:4px solid #C9952A; border-radius:14px; margin-bottom:14px; overflow:hidden;">
+  <div id="video_file" style="background:var(--action-tint); border:1px solid var(--action-border); border-left:4px solid var(--action); border-radius:14px; margin-bottom:14px; overflow:hidden;">
 
-    <div style="display:flex; align-items:center; justify-content:space-between; padding:12px 18px; border-bottom:1px solid #E8C97A; background:rgba(201,149,42,0.07);">
-      <span style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; color:#C9952A;">
+    <div style="display:flex; align-items:center; justify-content:space-between; padding:12px 18px; border-bottom:1px solid var(--action-border); background:var(--action-veil);">
+      <span style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; color:var(--action);">
         <i class="bi bi-play-circle" style="margin-right:5px;"></i><%= t('activities.video_label') %>
       </span>
       <% if current_user.teacher? && activity.teacher == current_user %>
         <div style="display:flex; gap:6px;">
           <button type="button"
                   data-controller="collapse" data-collapse-target-value="#edit-video-file-form" data-action="collapse#toggle"
-                  style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.75rem; font-weight:600; color:#5C5853; padding:5px 10px; border:1.5px solid #DDD9D2; border-radius:7px; background:#fff; cursor:pointer;">
+                  style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.75rem; font-weight:600; color:var(--ink-soft); padding:5px 10px; border:1.5px solid var(--line); border-radius:7px; background:var(--surface); cursor:pointer;">
             <%= t('common.edit') %>
           </button>
           <%= button_to clear_content_activity_path(activity, content: "video_file"),
               method: :post,
               data: { turbo_confirm: t('activities.confirm_delete_video_file') },
-              style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.75rem; font-weight:600; color:#B91C1C; padding:5px 10px; border:1.5px solid #FECACA; border-radius:7px; background:#FEF2F2; cursor:pointer;" do %>
+              style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.75rem; font-weight:600; color:var(--error); padding:5px 10px; border:1.5px solid var(--error-border); border-radius:7px; background:var(--error-tint); cursor:pointer;" do %>
             <%= t('common.remove') %>
           <% end %>
         </div>
@@ -244,30 +244,30 @@
 
     <% if current_user.teacher? && activity.teacher == current_user %>
       <div class="hidden" id="edit-video-file-form">
-        <div style="padding:16px 20px; border-top:1px solid #E8C97A; background:#FAFAF9;">
+        <div style="padding:16px 20px; border-top:1px solid var(--action-border); background:var(--surface-2);">
 
           <%# Mini-tab: YouTube | Do computador %>
           <div style="display:flex; gap:6px; margin-bottom:14px;">
             <button type="button" id="edit-vid-tab-url"
                     onclick="document.getElementById('edit-vid-section-url').style.display='block';
                              document.getElementById('edit-vid-section-file').style.display='none';
-                             this.style.background='#0F3826'; this.style.color='#fff'; this.style.borderColor='#0F3826';
-                             document.getElementById('edit-vid-tab-file').style.background='#fff';
-                             document.getElementById('edit-vid-tab-file').style.color='#5C5853'; document.getElementById('edit-vid-tab-file').style.borderColor='#DDD9D2';"
+                             this.style.background='var(--brand-deep)'; this.style.color='var(--surface)'; this.style.borderColor='var(--brand-deep)';
+                             document.getElementById('edit-vid-tab-file').style.background='var(--surface)';
+                             document.getElementById('edit-vid-tab-file').style.color='var(--ink-soft)'; document.getElementById('edit-vid-tab-file').style.borderColor='var(--line)';"
                     style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.78rem; font-weight:600;
-                           padding:5px 14px; border-radius:8px; border:1.5px solid #0F3826;
-                           background:#0F3826; color:#fff; cursor:pointer;">
+                           padding:5px 14px; border-radius:8px; border:1.5px solid var(--brand-deep);
+                           background:var(--brand-deep); color:var(--surface); cursor:pointer;">
               <i class="bi bi-youtube"></i> YouTube
             </button>
             <button type="button" id="edit-vid-tab-file"
                     onclick="document.getElementById('edit-vid-section-url').style.display='none';
                              document.getElementById('edit-vid-section-file').style.display='block';
-                             this.style.background='#0F3826'; this.style.color='#fff'; this.style.borderColor='#0F3826';
-                             document.getElementById('edit-vid-tab-url').style.background='#fff';
-                             document.getElementById('edit-vid-tab-url').style.color='#5C5853'; document.getElementById('edit-vid-tab-url').style.borderColor='#DDD9D2';"
+                             this.style.background='var(--brand-deep)'; this.style.color='var(--surface)'; this.style.borderColor='var(--brand-deep)';
+                             document.getElementById('edit-vid-tab-url').style.background='var(--surface)';
+                             document.getElementById('edit-vid-tab-url').style.color='var(--ink-soft)'; document.getElementById('edit-vid-tab-url').style.borderColor='var(--line)';"
                     style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.78rem; font-weight:600;
-                           padding:5px 14px; border-radius:8px; border:1.5px solid #DDD9D2;
-                           background:#fff; color:#5C5853; cursor:pointer;">
+                           padding:5px 14px; border-radius:8px; border:1.5px solid var(--line);
+                           background:var(--surface); color:var(--ink-soft); cursor:pointer;">
               <i class="bi bi-upload"></i> <%= t('activities.upload_from_computer') %>
             </button>
           </div>
@@ -277,16 +277,16 @@
             <%= form_with(model: activity, local: true) do |f| %>
               <div style="margin-bottom:12px;">
                 <%= f.label :video_url, t('activities.video_url_label'),
-                      style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; font-weight:600; color:#5C5853; display:block; margin-bottom:6px;" %>
+                      style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; font-weight:600; color:var(--ink-soft); display:block; margin-bottom:6px;" %>
                 <%= f.text_field :video_url,
                       placeholder: t('activities.video_url_placeholder'),
-                      style: "display:block; width:100%; font-size:0.88rem; padding:9px 12px; border:1.5px solid #DDD9D2; border-radius:8px; font-family:'Plus Jakarta Sans',sans-serif;" %>
-                <small style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.78rem; color:#9C9892; margin-top:4px; display:block;">
+                      style: "display:block; width:100%; font-size:0.88rem; padding:9px 12px; border:1.5px solid var(--line); border-radius:8px; font-family:'Plus Jakarta Sans',sans-serif;" %>
+                <small style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.78rem; color:var(--ink-faint); margin-top:4px; display:block;">
                   <%= t('activities.video_url_hint') %>
                 </small>
               </div>
               <%= f.submit t('common.save'),
-                    style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.85rem; font-weight:700; background:#1A6B4A; color:#fff; padding:9px 22px; border-radius:10px; border:none; cursor:pointer; width:100%;" %>
+                    style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.85rem; font-weight:700; background:var(--brand); color:var(--surface); padding:9px 22px; border-radius:10px; border:none; cursor:pointer; width:100%;" %>
             <% end %>
           </div>
 
@@ -295,7 +295,7 @@
             <%= form_with(model: activity, local: true, multipart: true) do |f| %>
               <div style="margin-bottom:12px;">
                 <%= f.label :video_file, t('activities.video_file_label'),
-                      style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; font-weight:600; color:#5C5853; display:block; margin-bottom:6px;" %>
+                      style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; font-weight:600; color:var(--ink-soft); display:block; margin-bottom:6px;" %>
                 <div style="display:flex; align-items:center; gap:10px;">
                   <%= f.file_field :video_file, accept: "video/*",
                         id: "vid-file-input-edit",
@@ -303,22 +303,22 @@
                         onchange: "document.getElementById('vid-file-name-edit').textContent = this.files[0]?.name || #{t('activities.no_file_chosen').to_json}" %>
                   <label for="vid-file-input-edit"
                          style="display:inline-flex; align-items:center; gap:6px; padding:8px 14px;
-                                border:1.5px solid #DDD9D2; border-radius:8px; cursor:pointer;
-                                background:#fff; font-family:'Plus Jakarta Sans',sans-serif;
-                                font-size:0.83rem; font-weight:600; color:#5C5853; white-space:nowrap;">
+                                border:1.5px solid var(--line); border-radius:8px; cursor:pointer;
+                                background:var(--surface); font-family:'Plus Jakarta Sans',sans-serif;
+                                font-size:0.83rem; font-weight:600; color:var(--ink-soft); white-space:nowrap;">
                     <i class="bi bi-paperclip"></i> <%= t('activities.choose_file') %>
                   </label>
                   <span id="vid-file-name-edit"
-                        style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; color:#9C9892; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">
+                        style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; color:var(--ink-faint); overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">
                     <%= t('activities.no_file_chosen') %>
                   </span>
                 </div>
-                <small style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.78rem; color:#9C9892; margin-top:4px; display:block;">
+                <small style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.78rem; color:var(--ink-faint); margin-top:4px; display:block;">
                   <%= t('activities.video_file_hint') %>
                 </small>
               </div>
               <%= f.submit t('common.save'),
-                    style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.85rem; font-weight:700; background:#1A6B4A; color:#fff; padding:9px 22px; border-radius:10px; border:none; cursor:pointer; width:100%;" %>
+                    style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.85rem; font-weight:700; background:var(--brand); color:var(--surface); padding:9px 22px; border-radius:10px; border:none; cursor:pointer; width:100%;" %>
             <% end %>
           </div>
 

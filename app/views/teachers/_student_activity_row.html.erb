@@ -1,29 +1,29 @@
 <%
   ac       = cefr_colors(attempt.activity.level)
   s        = attempt.score.round
-  sc_color = s >= 70 ? '#1A6B4A' : s >= 40 ? '#C9952A' : '#B91C1C'
-  sc_bg    = s >= 70 ? '#E8F5EE' : s >= 40 ? '#FFF8E7' : '#FEF2F2'
+  sc_color = s >= 70 ? 'var(--brand)' : s >= 40 ? 'var(--action)' : 'var(--error)'
+  sc_bg    = s >= 70 ? 'var(--brand-tint)' : s >= 40 ? 'var(--action-tint)' : 'var(--error-tint)'
 %>
-<div style="border:1px solid #F0EDE8; border-radius:10px; padding:14px 16px; margin-bottom:8px;
-            display:flex; align-items:center; gap:10px; flex-wrap:wrap; background:#FAFAF9;">
+<div style="border:1px solid var(--line-soft); border-radius:10px; padding:14px 16px; margin-bottom:8px;
+            display:flex; align-items:center; gap:10px; flex-wrap:wrap; background:var(--surface-2);">
   <span style="font-family:'DM Mono',monospace; font-size:0.7rem; font-weight:700;
                background:<%= ac[:bg] %>; color:<%= ac[:text] %>; border:1.5px solid <%= ac[:border] %>;
                padding:2px 9px; border-radius:20px; flex-shrink:0;">
     <%= attempt.activity.level %>
   </span>
   <span style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.88rem; font-weight:600;
-               color:#1C1917; flex:1; min-width:120px;">
+               color:var(--ink); flex:1; min-width:120px;">
     <%= attempt.activity.title %>
   </span>
   <span style="font-family:'DM Mono',monospace; font-size:0.88rem; font-weight:800;
                background:<%= sc_bg %>; color:<%= sc_color %>; padding:3px 10px; border-radius:20px; flex-shrink:0;">
     <%= s %>%
   </span>
-  <span style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.75rem; color:#9C9892; flex-shrink:0;">
+  <span style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.75rem; color:var(--ink-faint); flex-shrink:0;">
     <%= attempt.submitted_at.strftime("%d/%m/%Y") %>
     <% if attempt.started_at && attempt.submitted_at %>
       <% mins = [(attempt.submitted_at - attempt.started_at) / 60, 120].min.to_i %>
-      · <span style="color:#7C3AED;">~<%= mins %>min</span>
+      · <span style="color:var(--violet);">~<%= mins %>min</span>
     <% end %>
   </span>
 </div>

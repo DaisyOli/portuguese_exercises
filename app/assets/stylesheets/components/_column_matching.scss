@@ -23,15 +23,15 @@
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.05em;
-    color: #9C9892;
+    color: var(--ink-faint);
     padding: 0 0.25rem 0.25rem;
-    border-bottom: 2px solid #DDD9D2;
+    border-bottom: 2px solid var(--line);
     margin-bottom: 0.25rem;
   }
 
   .matching-item {
     padding: 0.6rem 0.75rem;
-    border: 2px solid #DDD9D2;
+    border: 2px solid var(--line);
     border-radius: 8px;
     cursor: pointer;
     min-height: 44px; // minimum touch target
@@ -50,7 +50,7 @@
     }
 
     &:hover {
-      border-color: #9C9892;
+      border-color: var(--ink-faint);
     }
 
     &:active {
@@ -58,8 +58,8 @@
     }
 
     &.matching-selected {
-      border-color: #2563EB;
-      background-color: #EBF2FC;
+      border-color: var(--info);
+      background-color: var(--info-tint);
       box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
       font-weight: 600;
     }

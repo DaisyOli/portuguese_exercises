@@ -54,7 +54,7 @@
 // Card "Continue estudando"
 .continue-card {
   display: flex;
-  border: 1px solid #F0EDE8;
+  border: 1px solid var(--line-soft);
   border-radius: 14px;
   overflow: hidden;
 }
@@ -82,7 +82,7 @@
   font-family: 'Raleway', sans-serif;
   font-size: 1rem;
   font-weight: 700;
-  color: #1C1917;
+  color: var(--ink);
   margin-bottom: 6px;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -92,7 +92,7 @@
 }
 
 .continue-card-bottom {
-  border-top: 1px solid #F0EDE8;
+  border-top: 1px solid var(--line-soft);
   padding-top: 10px;
   display: flex;
   align-items: center;

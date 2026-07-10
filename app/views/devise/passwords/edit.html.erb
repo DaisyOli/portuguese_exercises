@@ -1,19 +1,19 @@
 <% content_for :head do %>
   <title>Nova senha · Practice-BR</title>
   <style>
-    .auth-input:focus { border-color:#2A9B6F !important; box-shadow:0 0 0 3px rgba(42,155,111,0.12) !important; outline:none !important; }
+    .auth-input:focus { border-color:var(--brand-bright) !important; box-shadow:0 0 0 3px var(--brand-glow) !important; outline:none !important; }
   </style>
 <% end %>
 
 <div style="min-height:100vh; display:flex; align-items:center; justify-content:center; padding:24px 16px;">
-  <div style="background:#fff; border:1px solid #DDD9D2; border-radius:20px; padding:40px 36px; width:100%; max-width:400px; box-shadow:0 4px 32px rgba(0,0,0,0.07);">
+  <div style="background:var(--surface); border:1px solid var(--line); border-radius:20px; padding:40px 36px; width:100%; max-width:400px; box-shadow:0 4px 32px rgba(0,0,0,0.07);">
 
     <div style="text-align:center; margin-bottom:28px;">
-      <div style="width:48px; height:48px; background:#E8F5EE; border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 14px; font-size:1.4rem;">🔒</div>
-      <h1 style="font-family:'Raleway',sans-serif; font-size:1.2rem; font-weight:700; color:#1C1917; margin-bottom:6px;">
+      <div style="width:48px; height:48px; background:var(--brand-tint); border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 14px; font-size:1.4rem;">🔒</div>
+      <h1 style="font-family:'Raleway',sans-serif; font-size:1.2rem; font-weight:700; color:var(--ink); margin-bottom:6px;">
         Criar nova senha
       </h1>
-      <p style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.85rem; color:#5C5853; margin:0;">
+      <p style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.85rem; color:var(--ink-soft); margin:0;">
         Escolha uma senha segura para sua conta.
       </p>
     </div>
@@ -24,13 +24,13 @@
 
       <div style="margin-bottom:16px;">
         <%= f.label :password, "Nova senha",
-              style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; font-weight:600; color:#1C1917; display:block; margin-bottom:6px;" %>
+              style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; font-weight:600; color:var(--ink); display:block; margin-bottom:6px;" %>
         <%= f.password_field :password, autofocus: true, autocomplete: "new-password",
               placeholder: "Mínimo 6 caracteres",
               class: "auth-input",
-              style: "width:100%; padding:11px 14px; border:1.5px solid #DDD9D2; border-radius:10px; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.9rem; color:#1C1917; background:#fff; box-sizing:border-box;" %>
+              style: "width:100%; padding:11px 14px; border:1.5px solid var(--line); border-radius:10px; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.9rem; color:var(--ink); background:var(--surface); box-sizing:border-box;" %>
         <% if @minimum_password_length %>
-          <div style="font-family:'DM Mono',monospace; font-size:0.68rem; color:#9C9892; margin-top:4px;">
+          <div style="font-family:'DM Mono',monospace; font-size:0.68rem; color:var(--ink-faint); margin-top:4px;">
             mínimo <%= @minimum_password_length %> caracteres
           </div>
         <% end %>
@@ -38,15 +38,15 @@
 
       <div style="margin-bottom:28px;">
         <%= f.label :password_confirmation, "Confirmar nova senha",
-              style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; font-weight:600; color:#1C1917; display:block; margin-bottom:6px;" %>
+              style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; font-weight:600; color:var(--ink); display:block; margin-bottom:6px;" %>
         <%= f.password_field :password_confirmation, autocomplete: "new-password",
               placeholder: "Repita a senha",
               class: "auth-input",
-              style: "width:100%; padding:11px 14px; border:1.5px solid #DDD9D2; border-radius:10px; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.9rem; color:#1C1917; background:#fff; box-sizing:border-box;" %>
+              style: "width:100%; padding:11px 14px; border:1.5px solid var(--line); border-radius:10px; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.9rem; color:var(--ink); background:var(--surface); box-sizing:border-box;" %>
       </div>
 
       <%= f.submit "Salvar nova senha",
-            style: "width:100%; background:#C9952A; color:#fff; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.9rem; font-weight:700; padding:12px; border:none; border-radius:12px; cursor:pointer; display:block;" %>
+            style: "width:100%; background:var(--action); color:var(--surface); font-family:'Plus Jakarta Sans',sans-serif; font-size:0.9rem; font-weight:700; padding:12px; border:none; border-radius:12px; cursor:pointer; display:block;" %>
     <% end %>
 
   </div>

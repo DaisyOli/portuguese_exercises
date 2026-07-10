@@ -1,23 +1,23 @@
 <% content_for :head do %>
   <title>Entrar · Practice-BR</title>
   <style>
-    .auth-input:focus { border-color:#2A9B6F !important; box-shadow:0 0 0 3px rgba(42,155,111,0.12) !important; outline:none !important; }
+    .auth-input:focus { border-color:var(--brand-bright) !important; box-shadow:0 0 0 3px var(--brand-glow) !important; outline:none !important; }
   </style>
 <% end %>
 
 <div style="min-height:100vh; display:flex; align-items:center; justify-content:center; padding:24px 16px;">
-  <div style="background:#fff; border:1px solid #DDD9D2; border-radius:20px; padding:40px 36px; width:100%; max-width:400px; box-shadow:0 4px 32px rgba(0,0,0,0.07);">
+  <div style="background:var(--surface); border:1px solid var(--line); border-radius:20px; padding:40px 36px; width:100%; max-width:400px; box-shadow:0 4px 32px rgba(0,0,0,0.07);">
 
     <%# Logo %>
     <div style="text-align:center; margin-bottom:28px;">
       <div style="display:inline-flex; align-items:center; gap:10px; margin-bottom:10px;">
         <%= image_tag "practice-br-logo-mark-color.svg", alt:"Practice-BR", style:"height:38px;" %>
         <div style="text-align:left;">
-          <div style="font-family:'Raleway',sans-serif; font-size:1.2rem; font-weight:800; color:#0F3826; line-height:1.1;">Practice-BR</div>
-          <div style="font-family:'DM Mono',monospace; font-size:0.58rem; color:#9C9892; letter-spacing:0.06em;">PORTUGUÊS PARA ESTRANGEIROS</div>
+          <div style="font-family:'Raleway',sans-serif; font-size:1.2rem; font-weight:800; color:var(--brand-deep); line-height:1.1;">Practice-BR</div>
+          <div style="font-family:'DM Mono',monospace; font-size:0.58rem; color:var(--ink-faint); letter-spacing:0.06em;">PORTUGUÊS PARA ESTRANGEIROS</div>
         </div>
       </div>
-      <p style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.88rem; color:#5C5853; margin:0;">
+      <p style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.88rem; color:var(--ink-soft); margin:0;">
         Seja bem-vindo! Entre para continuar.
       </p>
     </div>
@@ -29,40 +29,40 @@
 
       <div style="margin-bottom:16px;">
         <%= f.label :email, "Email",
-              style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; font-weight:600; color:#1C1917; display:block; margin-bottom:6px;" %>
+              style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; font-weight:600; color:var(--ink); display:block; margin-bottom:6px;" %>
         <%= f.email_field :email, autofocus: true, autocomplete: "email",
               placeholder: "seu@email.com",
               class: "auth-input",
-              style: "width:100%; padding:11px 14px; border:1.5px solid #DDD9D2; border-radius:10px; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.9rem; color:#1C1917; background:#fff; box-sizing:border-box;" %>
+              style: "width:100%; padding:11px 14px; border:1.5px solid var(--line); border-radius:10px; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.9rem; color:var(--ink); background:var(--surface); box-sizing:border-box;" %>
       </div>
 
       <div style="margin-bottom:8px;">
         <%= f.label :password, "Senha",
-              style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; font-weight:600; color:#1C1917; display:block; margin-bottom:6px;" %>
+              style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; font-weight:600; color:var(--ink); display:block; margin-bottom:6px;" %>
         <%= f.password_field :password, autocomplete: "current-password",
               placeholder: "••••••••",
               class: "auth-input",
-              style: "width:100%; padding:11px 14px; border:1.5px solid #DDD9D2; border-radius:10px; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.9rem; color:#1C1917; background:#fff; box-sizing:border-box;" %>
+              style: "width:100%; padding:11px 14px; border:1.5px solid var(--line); border-radius:10px; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.9rem; color:var(--ink); background:var(--surface); box-sizing:border-box;" %>
       </div>
 
       <% if devise_mapping.rememberable? %>
         <div style="display:flex; align-items:center; gap:8px; margin-bottom:24px;">
-          <%= f.check_box :remember_me, style: "accent-color:#2A9B6F; width:15px; height:15px;" %>
+          <%= f.check_box :remember_me, style: "accent-color:var(--brand-bright); width:15px; height:15px;" %>
           <%= f.label :remember_me, "Lembrar-me",
-                style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; color:#5C5853; cursor:pointer;" %>
+                style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; color:var(--ink-soft); cursor:pointer;" %>
         </div>
       <% else %>
         <div style="height:24px;"></div>
       <% end %>
 
       <%= f.submit "Entrar",
-            style: "width:100%; background:#C9952A; color:#fff; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.9rem; font-weight:700; padding:12px; border:none; border-radius:12px; cursor:pointer; margin-bottom:20px; display:block;" %>
+            style: "width:100%; background:var(--action); color:var(--surface); font-family:'Plus Jakarta Sans',sans-serif; font-size:0.9rem; font-weight:700; padding:12px; border:none; border-radius:12px; cursor:pointer; margin-bottom:20px; display:block;" %>
 
     <% end %>
 
     <div style="text-align:center;">
       <%= link_to "Esqueceu a senha?", new_password_path(resource_name),
-            style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; color:#2563EB; text-decoration:none; font-weight:500;" %>
+            style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; color:var(--info); text-decoration:none; font-weight:500;" %>
     </div>
 
   </div>

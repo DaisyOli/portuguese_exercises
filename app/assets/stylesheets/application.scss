@@ -3,7 +3,8 @@
 // ==============================================
 
 // 🎯 1. FUNDAÇÕES (ordem importa!)
-@import "variables";              // CSS variables centralizadas
+@import "tokens";                 // 🎨 Design tokens da franquia Practice (fonte de verdade)
+@import "variables";              // CSS variables legadas (tema escolar antigo — aposentar junto com components/)
 @import "globals";                // Reset, tipografia, utilities
 
 // 🔮 3. COMPONENTES
@@ -20,24 +21,24 @@
 // Shepherd.js onboarding tour — design system customization
 .shepherd-element {
   border-radius: 14px !important;
-  border: 1px solid #DDD9D2 !important;
+  border: 1px solid var(--line) !important;
   box-shadow: 0 8px 32px rgba(0,0,0,0.12) !important;
 }
 .shepherd-header {
-  background: #0F3826 !important;
+  background: var(--brand-deep) !important;
   border-radius: 14px 14px 0 0 !important;
   padding: 14px 18px !important;
 }
 .shepherd-title {
   font-family: 'Raleway', sans-serif !important;
-  color: #fff !important;
+  color: var(--surface) !important;
   font-weight: 700 !important;
   font-size: 0.95rem !important;
 }
 .shepherd-text {
   font-family: 'Plus Jakarta Sans', sans-serif !important;
   font-size: 0.88rem !important;
-  color: #1C1917 !important;
+  color: var(--ink) !important;
   padding: 16px 18px !important;
   line-height: 1.6 !important;
 }
@@ -54,21 +55,21 @@
   border: none !important;
 }
 .shepherd-button:not(.shepherd-button-secondary) {
-  background: #1A6B4A !important;
-  color: #fff !important;
+  background: var(--brand) !important;
+  color: var(--surface) !important;
 }
 .shepherd-button:not(.shepherd-button-secondary):hover {
-  background: #0F3826 !important;
+  background: var(--brand-deep) !important;
 }
 .shepherd-button.shepherd-button-secondary {
   background: transparent !important;
-  color: #9C9892 !important;
+  color: var(--ink-faint) !important;
 }
 .shepherd-cancel-icon {
   color: rgba(255,255,255,0.7) !important;
 }
 .shepherd-cancel-icon:hover {
-  color: #fff !important;
+  color: var(--surface) !important;
 }
 
 /*

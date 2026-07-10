@@ -128,7 +128,7 @@
   
   &.editar {
     background: var(--card-branco);
-    color: #666;
+    color: var(--ink-soft);
     border: 2px solid #e0e0e0;
     
     &:hover {
@@ -225,7 +225,7 @@
   
   &.secondary {
     background: #f5f5f5;
-    color: #666;
+    color: var(--ink-soft);
     border: 2px solid #e0e0e0;
     
     &:hover {

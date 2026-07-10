@@ -1,10 +1,10 @@
 .quiz-container,
 .results-container,
 .quiz-outer {
-  background: #F7F5F2;
+  background: var(--paper);
   min-height: 100vh;
   font-family: 'Plus Jakarta Sans', sans-serif;
-  color: #1C1917;
+  color: var(--ink);
   line-height: 1.6;
 }
 
@@ -30,38 +30,38 @@
   font-family: 'Raleway', sans-serif;
   font-size: 1.5rem;
   font-weight: 800;
-  color: #0F3826;
+  color: var(--brand-deep);
   margin: 0 0 8px;
   line-height: 1.3;
 }
 
 .quiz-paper,
 .results-paper {
-  background: #fff;
+  background: var(--surface);
   max-width: 900px;
   width: 100%;
   border-radius: 14px;
-  border: 1px solid #DDD9D2;
+  border: 1px solid var(--line);
   padding: 28px 24px;
   margin-bottom: 2rem;
 }
 
 .content-section {
-  background: #fff;
-  border: 1px solid #E5E2DE;
+  background: var(--surface);
+  border: 1px solid var(--line);
   border-radius: 12px;
   padding: 16px 18px;
   margin-bottom: 14px;
   font-family: 'Plus Jakarta Sans', sans-serif;
   font-size: 0.95rem;
-  color: #1C1917;
+  color: var(--ink);
   line-height: 1.75;
 }
 
 .score-section {
-  background: #F0FAF5;
-  border: 1px solid #BBF7D0;
-  border-left: 4px solid #1A6B4A;
+  background: var(--brand-mist);
+  border: 1px solid var(--success-border);
+  border-left: 4px solid var(--brand);
   border-radius: 12px;
   padding: 24px;
   margin-bottom: 24px;
@@ -72,7 +72,7 @@
   font-family: 'Raleway', sans-serif;
   font-size: 1.15rem;
   font-weight: 700;
-  color: #1A6B4A;
+  color: var(--brand);
   margin-bottom: 20px;
   display: flex;
   align-items: center;
@@ -88,8 +88,8 @@
 }
 
 .score-card {
-  background: #fff;
-  border: 1px solid #D1EAD9;
+  background: var(--surface);
+  border: 1px solid var(--brand-tint-2);
   border-radius: 12px;
   padding: 14px 6px;
   text-align: center;
@@ -108,7 +108,7 @@
   font-family: 'Plus Jakarta Sans', sans-serif;
   font-size: 0.64rem;
   font-weight: 700;
-  color: #9C9892;
+  color: var(--ink-faint);
   text-transform: uppercase;
   letter-spacing: 0.04em;
   word-break: break-word;
@@ -117,11 +117,11 @@
 }
 
 .question-card {
-  border: 1px solid #E5E2DE;
+  border: 1px solid var(--line);
   border-radius: 12px;
   overflow: hidden;
   margin-bottom: 14px;
-  background: #fff;
+  background: var(--surface);
 }
 
 .question-header {
@@ -129,24 +129,24 @@
   align-items: center;
   gap: 8px;
   padding: 9px 16px;
-  background: #F7F5F2;
-  border-bottom: 1px solid #E5E2DE;
+  background: var(--paper);
+  border-bottom: 1px solid var(--line);
   font-family: 'Plus Jakarta Sans', sans-serif;
   font-size: 0.78rem;
   font-weight: 600;
-  color: #5C5853;
+  color: var(--ink-soft);
 }
 
 .question-header.correct {
-  background: #E8F5EE;
-  color: #1A6B4A;
-  border-bottom-color: #D1EAD9;
+  background: var(--brand-tint);
+  color: var(--brand);
+  border-bottom-color: var(--brand-tint-2);
 }
 
 .question-header.incorrect {
-  background: #FEF2F2;
-  color: #B91C1C;
-  border-bottom-color: #FECACA;
+  background: var(--error-tint);
+  color: var(--error);
+  border-bottom-color: var(--error-border);
 }
 
 .question-body {
@@ -156,14 +156,14 @@
 .question-text {
   font-family: 'Plus Jakarta Sans', sans-serif;
   font-size: 0.92rem;
-  color: #1C1917;
+  color: var(--ink);
   line-height: 1.65;
   margin-bottom: 10px;
 }
 
 .btn-quiz-primary {
-  background: #1A6B4A;
-  color: #fff;
+  background: var(--brand);
+  color: var(--surface);
   font-family: 'Plus Jakarta Sans', sans-serif;
   font-size: 0.92rem;
   font-weight: 700;
@@ -182,18 +182,18 @@
 }
 
 .btn-quiz-primary:hover {
-  background: #0F3826;
-  color: #fff;
+  background: var(--brand-deep);
+  color: var(--surface);
   text-decoration: none;
 }
 
 .btn-quiz-secondary {
-  background: #fff;
-  color: #5C5853;
+  background: var(--surface);
+  color: var(--ink-soft);
   font-family: 'Plus Jakarta Sans', sans-serif;
   font-size: 0.92rem;
   font-weight: 600;
-  border: 1.5px solid #DDD9D2;
+  border: 1.5px solid var(--line);
   border-radius: 12px;
   padding: 8px 16px;
   cursor: pointer;
@@ -207,21 +207,21 @@
 }
 
 .btn-quiz-secondary:hover {
-  border-color: #1A6B4A;
-  color: #1A6B4A;
+  border-color: var(--brand);
+  color: var(--brand);
   text-decoration: none;
 }
 
 .ordering-instruction-text {
   font-family: 'Plus Jakarta Sans', sans-serif;
   font-size: 0.8rem;
-  color: #9C9892;
+  color: var(--ink-faint);
   font-style: italic;
   margin-bottom: 10px;
 }
 
 .answer-area {
-  background: #F7F5F2;
+  background: var(--paper);
   border: 1.5px dashed #C9C4BC;
   border-radius: 10px;
   padding: 10px 12px;
@@ -235,7 +235,7 @@
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: #9C9892;
+  color: var(--ink-faint);
   margin-bottom: 8px;
 }
 
@@ -254,9 +254,9 @@
   justify-content: center;
   min-width: 44px;
   min-height: 40px;
-  border: 2px dashed #DDD9D2;
+  border: 2px dashed var(--line);
   border-radius: 8px;
-  background: #fff;
+  background: var(--surface);
   padding: 4px;
   transition: border-color 0.15s;
 }
@@ -272,7 +272,7 @@
 
 .answer-slot.filled {
   border-style: solid;
-  border-color: #1A6B4A;
+  border-color: var(--brand);
   padding: 4px 4px 4px 18px;
 }
 
@@ -281,7 +281,7 @@
   top: 2px;
   left: 4px;
   font-size: 0.58rem;
-  color: #9C9892;
+  color: var(--ink-faint);
 }
 
 .word-bank {
@@ -289,17 +289,17 @@
   flex-wrap: wrap;
   gap: 7px;
   padding: 10px;
-  background: #fff;
-  border: 1.5px solid #E5E2DE;
+  background: var(--surface);
+  border: 1.5px solid var(--line);
   border-radius: 10px;
   min-height: 50px;
   align-items: center;
 }
 
 .word-chip {
-  background: #fff;
-  border: 2px solid #1A6B4A;
-  color: #1A6B4A;
+  background: var(--surface);
+  border: 2px solid var(--brand);
+  color: var(--brand);
   border-radius: 7px;
   padding: 5px 10px;
   font-family: 'Plus Jakarta Sans', sans-serif;
@@ -316,19 +316,19 @@
 }
 
 .word-chip:hover {
-  background: #E8F5EE;
+  background: var(--brand-tint);
 }
 
 .answer-slot .word-chip {
-  border-color: #0F3826;
-  color: #0F3826;
+  border-color: var(--brand-deep);
+  color: var(--brand-deep);
   font-weight: 700;
 }
 
 .para-ordering-list {
   display: flex;
   flex-direction: column;
-  border: 1.5px solid #E5E2DE;
+  border: 1.5px solid var(--line);
   border-radius: 10px;
   overflow: hidden;
 }
@@ -337,8 +337,8 @@
   display: grid;
   grid-template-columns: 34px 1fr auto;
   align-items: stretch;
-  border-bottom: 1px solid #E5E2DE;
-  background: #fff;
+  border-bottom: 1px solid var(--line);
+  background: var(--surface);
   transition: background 0.12s;
 }
 
@@ -347,15 +347,15 @@
 }
 
 .para-ordering-item:hover {
-  background: #FAFAF9;
+  background: var(--surface-2);
 }
 
 .para-item-num {
   font-family: 'DM Mono', monospace;
   font-size: 0.78rem;
   font-weight: 700;
-  color: #fff;
-  background: #1A6B4A;
+  color: var(--surface);
+  background: var(--brand);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -366,7 +366,7 @@
   padding: 10px 12px;
   font-family: 'Plus Jakarta Sans', sans-serif;
   font-size: 0.88rem;
-  color: #1C1917;
+  color: var(--ink);
   line-height: 1.55;
   display: flex;
   align-items: center;
@@ -383,12 +383,12 @@
 .order-btn {
   width: 30px;
   height: 26px;
-  border: 1.5px solid #DDD9D2;
+  border: 1.5px solid var(--line);
   border-radius: 5px;
-  background: #fff;
+  background: var(--surface);
   cursor: pointer;
   font-size: 0.76rem;
-  color: #5C5853;
+  color: var(--ink-soft);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -397,9 +397,9 @@
 }
 
 .order-btn:hover:not(:disabled) {
-  background: #E8F5EE;
-  border-color: #1A6B4A;
-  color: #1A6B4A;
+  background: var(--brand-tint);
+  border-color: var(--brand);
+  color: var(--brand);
 }
 
 .order-btn:disabled {
@@ -421,21 +421,21 @@
 }
 
 .your-answer {
-  background: #FEF2F2;
-  border-left: 3px solid #B91C1C;
-  color: #7F1D1D;
+  background: var(--error-tint);
+  border-left: 3px solid var(--error);
+  color: var(--error-deep);
 }
 
 .your-answer.correct {
-  background: #F0FAF5;
-  border-left-color: #1A6B4A;
-  color: #0F3826;
+  background: var(--brand-mist);
+  border-left-color: var(--brand);
+  color: var(--brand-deep);
 }
 
 .correct-answer {
-  background: #F0FAF5;
-  border-left: 3px solid #1A6B4A;
-  color: #0F3826;
+  background: var(--brand-mist);
+  border-left: 3px solid var(--brand);
+  color: var(--brand-deep);
 }
 
 .answer-label {
@@ -453,9 +453,9 @@
   font-weight: 600;
   padding: 3px 8px;
   border-radius: 6px;
-  background: #F7F5F2;
-  color: #9C9892;
-  border: 1px solid #DDD9D2;
+  background: var(--paper);
+  color: var(--ink-faint);
+  border: 1px solid var(--line);
   display: inline-block;
   margin-bottom: 10px;
 }
@@ -463,7 +463,7 @@
 .loading-section {
   text-align: center;
   padding: 20px;
-  color: #9C9892;
+  color: var(--ink-faint);
   font-family: 'Plus Jakarta Sans', sans-serif;
   font-size: 0.9rem;
 }
@@ -471,8 +471,8 @@
 .loading-spinner {
   width: 28px;
   height: 28px;
-  border: 3px solid #DDD9D2;
-  border-top-color: #1A6B4A;
+  border: 3px solid var(--line);
+  border-top-color: var(--brand);
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
   margin: 0 auto 8px;
@@ -543,8 +543,8 @@
   display: flex;
   max-width: 1100px;
   width: 100%;
-  background: #fff;
-  border: 1px solid #DDD9D2;
+  background: var(--surface);
+  border: 1px solid var(--line);
   border-radius: 14px;
   overflow: hidden;
   margin-bottom: 0;
@@ -557,7 +557,7 @@
   flex: 0 0 50%;
   min-width: 0;
   padding: 18px 20px;
-  border-right: 1px solid #E5E2DE;
+  border-right: 1px solid var(--line);
   overflow-y: auto;
   display: flex;
   flex-direction: column;
@@ -578,12 +578,12 @@
 .quiz-statement-block {
   font-family: 'Plus Jakarta Sans', sans-serif;
   font-size: 0.88rem;
-  color: #44403C;
+  color: var(--ink);
   line-height: 1.65;
   padding: 10px 12px;
-  background: #F7F5F2;
+  background: var(--paper);
   border-radius: 8px;
-  border-left: 3px solid #DDD9D2;
+  border-left: 3px solid var(--line);
 }
 
 .quiz-statement-block p {
@@ -596,9 +596,9 @@
   color: #6B4A0E;
   line-height: 1.6;
   padding: 10px 12px;
-  background: #FBF3E0;
+  background: var(--action-tint);
   border-radius: 8px;
-  border-left: 3px solid #C9952A;
+  border-left: 3px solid var(--action);
 }
 
 .quiz-suggestion-block .dica-label {
@@ -607,7 +607,7 @@
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  color: #C9952A;
+  color: var(--action);
   margin-bottom: 3px;
 }
 
@@ -623,14 +623,14 @@
 
 .quiz-progress-bar-track {
   height: 3px;
-  background: #F0EDE8;
+  background: var(--line-soft);
   border-radius: 2px;
   margin-bottom: 16px;
 }
 
 .quiz-progress-bar-fill {
   height: 100%;
-  background: #1A6B4A;
+  background: var(--brand);
   border-radius: 2px;
   transition: width 0.3s ease;
 }
@@ -647,9 +647,9 @@
 }
 
 .mc-option-label:has(input[type="radio"]:checked) {
-  border-color: #1A6B4A !important;
-  background: #F0FAF5 !important;
-  color: #0F3826 !important;
+  border-color: var(--brand) !important;
+  background: var(--brand-mist) !important;
+  color: var(--brand-deep) !important;
   font-weight: 600 !important;
 }
 
@@ -673,14 +673,14 @@
   max-width: 1100px;
   width: 100%;
   margin-bottom: 10px;
-  background: #fff;
-  border: 1.5px solid #DDD9D2;
+  background: var(--surface);
+  border: 1.5px solid var(--line);
   border-radius: 10px;
   padding: 9px 16px;
   font-family: 'Plus Jakarta Sans', sans-serif;
   font-size: 0.88rem;
   font-weight: 600;
-  color: #5C5853;
+  color: var(--ink-soft);
   cursor: pointer;
   text-align: left;
 }
@@ -710,7 +710,7 @@
   .quiz-material-col {
     flex: 0 0 auto;
     border-right: none;
-    border-bottom: 1px solid #E5E2DE;
+    border-bottom: 1px solid var(--line);
   }
 
   .quiz-material-col.collapsed {
@@ -742,10 +742,10 @@
     position: sticky;
     top: 56px;
     z-index: 20;
-    background: #fff;
+    background: var(--surface);
     padding-bottom: 8px;
     margin-bottom: 4px;
-    border-bottom: 1px solid #F0EDE8;
+    border-bottom: 1px solid var(--line-soft);
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
   }
 
@@ -753,8 +753,8 @@
     position: sticky;
     bottom: 0;
     z-index: 20;
-    background: #fff;
-    border-top: 1px solid #E5E2DE;
+    background: var(--surface);
+    border-top: 1px solid var(--line);
     box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.06);
     padding: 10px 0;
     margin-top: 8px;

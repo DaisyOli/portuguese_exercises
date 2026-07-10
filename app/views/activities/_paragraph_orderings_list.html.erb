@@ -1,8 +1,8 @@
 <% if activity.paragraph_orderings.any? %>
-  <div style="background:#F0FAF5; border:1px solid #BBF7D0; border-left:4px solid #1A6B4A; border-radius:14px; margin-bottom:14px; overflow:hidden;">
+  <div style="background:var(--brand-mist); border:1px solid var(--success-border); border-left:4px solid var(--brand); border-radius:14px; margin-bottom:14px; overflow:hidden;">
 
-    <div style="display:flex; align-items:center; padding:12px 18px; border-bottom:1px solid #BBF7D0; background:rgba(26,107,74,0.06);">
-      <span style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; color:#1A6B4A; display:flex; align-items:center; gap:6px;">
+    <div style="display:flex; align-items:center; padding:12px 18px; border-bottom:1px solid var(--success-border); background:var(--brand-veil);">
+      <span style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; color:var(--brand); display:flex; align-items:center; gap:6px;">
         <i class="bi bi-list-ol"></i> <%= t('paragraph_orderings.title') %> (<%= activity.paragraph_orderings.size %>)
       </span>
     </div>
@@ -10,58 +10,58 @@
     <div style="padding:14px 16px; display:flex; flex-direction:column; gap:10px;">
       <% activity.paragraph_orderings.sort_by { |o| [o.display_order.to_i, o.created_at] }.each_with_index do |ordering, index| %>
 
-        <div id="paragraph-ordering-<%= ordering.id %>" style="border:1px solid #D1EAD9; border-radius:10px; overflow:hidden; background:#fff;">
+        <div id="paragraph-ordering-<%= ordering.id %>" style="border:1px solid var(--brand-tint-2); border-radius:10px; overflow:hidden; background:var(--surface);">
 
-          <div style="display:flex; align-items:center; justify-content:space-between; padding:9px 14px; background:#E8F5EE; border-bottom:1px solid #D1EAD9;">
+          <div style="display:flex; align-items:center; justify-content:space-between; padding:9px 14px; background:var(--brand-tint); border-bottom:1px solid var(--brand-tint-2);">
             <div style="display:flex; align-items:center; gap:8px;">
-              <span style="font-family:'DM Mono',monospace; font-size:0.7rem; font-weight:700; color:#1A6B4A;"><%= "%02d" % (index + 1) %></span>
-              <span style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.7rem; font-weight:700; padding:3px 9px; border:1px solid #A7F3D0; border-radius:6px; background:#ECFDF5; color:#065F46;">
+              <span style="font-family:'DM Mono',monospace; font-size:0.7rem; font-weight:700; color:var(--brand);"><%= "%02d" % (index + 1) %></span>
+              <span style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.7rem; font-weight:700; padding:3px 9px; border:1px solid var(--success-border); border-radius:6px; background:var(--success-tint); color:var(--success-deep);">
                 <i class="bi bi-list-ol"></i> Ordenar parágrafos
               </span>
             </div>
             <div style="display:flex; gap:6px;">
               <button type="button"
                       data-controller="collapse" data-collapse-target-value="#edit-paragraph-<%= ordering.id %>" data-action="collapse#toggle"
-                      style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.72rem; font-weight:600; color:#5C5853; padding:4px 9px; border:1.5px solid #DDD9D2; border-radius:6px; background:#fff; cursor:pointer;">
+                      style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.72rem; font-weight:600; color:var(--ink-soft); padding:4px 9px; border:1.5px solid var(--line); border-radius:6px; background:var(--surface); cursor:pointer;">
                 <%= t('common.edit') %>
               </button>
               <%= button_to activity_paragraph_ordering_path(activity, ordering),
                     method: :delete,
                     data: { turbo_confirm: "Remover este exercício e todas as frases?" },
-                    style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.72rem; font-weight:600; color:#B91C1C; padding:4px 9px; border:1.5px solid #FECACA; border-radius:6px; background:#FEF2F2; cursor:pointer;" do %>
+                    style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.72rem; font-weight:600; color:var(--error); padding:4px 9px; border:1.5px solid var(--error-border); border-radius:6px; background:var(--error-tint); cursor:pointer;" do %>
                 <%= t('common.delete') %>
               <% end %>
             </div>
           </div>
 
           <div style="padding:12px 14px;">
-            <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.88rem; font-weight:600; color:#0F3826; margin-bottom:6px;">
+            <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.88rem; font-weight:600; color:var(--brand-deep); margin-bottom:6px;">
               <%= ordering.title.presence || t('paragraph_orderings.title') %>
-              <span style="font-family:'DM Mono',monospace; font-size:0.72rem; font-weight:400; color:#9C9892; margin-left:8px;">
+              <span style="font-family:'DM Mono',monospace; font-size:0.72rem; font-weight:400; color:var(--ink-faint); margin-left:8px;">
                 <%= ordering.paragraph_sentences_count %> <%= t('paragraph_orderings.sentence_label').downcase %>s
               </span>
             </div>
 
             <% if ordering.instruction.present? %>
-              <p style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; color:#9C9892; font-style:italic; margin-bottom:8px;"><%= ordering.instruction %></p>
+              <p style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; color:var(--ink-faint); font-style:italic; margin-bottom:8px;"><%= ordering.instruction %></p>
             <% end %>
 
             <% if ordering.paragraph_sentences.any? %>
               <ol style="padding-left:1.2rem; margin:0 0 10px 0; display:flex; flex-direction:column; gap:4px;">
                 <% ordering.paragraph_sentences.sort_by(&:correct_position).each do |ps| %>
-                  <li style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.85rem; color:#1C1917; display:flex; align-items:center; justify-content:space-between; gap:8px;">
+                  <li style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.85rem; color:var(--ink); display:flex; align-items:center; justify-content:space-between; gap:8px;">
                     <span><%= ps.sentence %></span>
                     <%= button_to activity_paragraph_ordering_paragraph_sentence_path(activity, ordering, ps),
                           method: :delete,
                           data: { turbo_confirm: "Remover esta frase?" },
-                          style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.7rem; color:#B91C1C; padding:2px 6px; border:1px solid #FECACA; border-radius:5px; background:#FEF2F2; cursor:pointer; flex-shrink:0;" do %>
+                          style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.7rem; color:var(--error); padding:2px 6px; border:1px solid var(--error-border); border-radius:5px; background:var(--error-tint); cursor:pointer; flex-shrink:0;" do %>
                       ✕
                     <% end %>
                   </li>
                 <% end %>
               </ol>
             <% else %>
-              <p style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.85rem; color:#9C9892; margin-bottom:8px;"><%= t('paragraph_orderings.no_sentences') %></p>
+              <p style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.85rem; color:var(--ink-faint); margin-bottom:8px;"><%= t('paragraph_orderings.no_sentences') %></p>
             <% end %>
 
             <div style="display:flex; gap:6px; margin-top:8px;">
@@ -69,16 +69,16 @@
                 <div style="display:flex; gap:6px; width:100%;">
                   <%= f.text_field :sentence,
                         placeholder: t('paragraph_orderings.sentence_placeholder'),
-                        style: "flex:1; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; padding:6px 10px; border:1.5px solid #DDD9D2; border-radius:7px; color:#1C1917;" %>
+                        style: "flex:1; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; padding:6px 10px; border:1.5px solid var(--line); border-radius:7px; color:var(--ink);" %>
                   <%= f.submit t('paragraph_orderings.add_sentence'),
-                        style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.78rem; font-weight:600; color:#0F3826; padding:6px 12px; border:1.5px solid #BBF7D0; border-radius:7px; background:#E8F5EE; cursor:pointer; white-space:nowrap;" %>
+                        style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.78rem; font-weight:600; color:var(--brand-deep); padding:6px 12px; border:1.5px solid var(--success-border); border-radius:7px; background:var(--brand-tint); cursor:pointer; white-space:nowrap;" %>
                 </div>
               <% end %>
             </div>
           </div>
 
           <div class="hidden" id="edit-paragraph-<%= ordering.id %>">
-            <div style="padding:16px; border-top:1px solid #D1EAD9; background:#FAFAF9;">
+            <div style="padding:16px; border-top:1px solid var(--brand-tint-2); background:var(--surface-2);">
               <%= form_with(model: [activity, ordering], local: true) do |f| %>
                 <div class="mb-2">
                   <%= f.label :title, "Título (opcional)", class: "form-label" %>
@@ -88,7 +88,7 @@
                   <%= f.label :instruction, "Instrução para o aluno (opcional)", class: "form-label" %>
                   <%= f.text_field :instruction, class: "form-input" %>
                 </div>
-                <%= f.submit t('common.save'), style: "background:#1A4A8A; color:#fff; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.88rem; font-weight:700; border:none; border-radius:12px; padding:9px 24px; cursor:pointer;" %>
+                <%= f.submit t('common.save'), style: "background:var(--info-deep); color:var(--surface); font-family:'Plus Jakarta Sans',sans-serif; font-size:0.88rem; font-weight:700; border:none; border-radius:12px; padding:9px 24px; cursor:pointer;" %>
               <% end %>
             </div>
           </div>

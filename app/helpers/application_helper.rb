@@ -1,21 +1,21 @@
 module ApplicationHelper
   COMPETENCY_META = {
-    co: { abbr: 'CO', icon: '🎧', label: 'Compreensão Oral',    color: '#0369A1', bg: '#E0F2FE', bar: '#0284C7' },
-    ce: { abbr: 'CE', icon: '📖', label: 'Compreensão Escrita', color: '#92400E', bg: '#FEF3C7', bar: '#D97706' },
-    ee: { abbr: 'EE', icon: '✍️', label: 'Expressão Escrita',   color: '#166534', bg: '#DCFCE7', bar: '#16A34A' },
+    co: { abbr: 'CO', icon: '🎧', label: 'Compreensão Oral',    color: 'var(--sky)', bg: 'var(--sky-tint)', bar: 'var(--sky-bright)' },
+    ce: { abbr: 'CE', icon: '📖', label: 'Compreensão Escrita', color: 'var(--amber-ink)', bg: 'var(--amber-tint)', bar: 'var(--amber)' },
+    ee: { abbr: 'EE', icon: '✍️', label: 'Expressão Escrita',   color: 'var(--success-deep)', bg: 'var(--success-tint)', bar: 'var(--success)' },
   }.freeze
 
   CEFR_COLORS = {
-    'A1' => { bg: '#E8F5EE', text: '#0F3826', border: '#2A9B6F', bar: '#2A9B6F', label: 'Iniciante' },
-    'A2' => { bg: '#EBF2FC', text: '#1A4A8A', border: '#2563EB', bar: '#2563EB', label: 'Básico' },
-    'B1' => { bg: '#F5F3FF', text: '#4C1D95', border: '#7C3AED', bar: '#7C3AED', label: 'Intermediário' },
-    'B2' => { bg: '#FFF7ED', text: '#7C2D12', border: '#EA580C', bar: '#EA580C', label: 'Avançado' },
-    'C1' => { bg: '#F3F4F6', text: '#1C1917', border: '#374151', bar: '#374151', label: 'Proficiente' },
+    'A1' => { bg: 'var(--brand-tint)', text: 'var(--brand-deep)', border: 'var(--brand-bright)', bar: 'var(--brand-bright)', label: 'Iniciante' },
+    'A2' => { bg: 'var(--info-tint)', text: 'var(--info-deep)', border: 'var(--info)', bar: 'var(--info)', label: 'Básico' },
+    'B1' => { bg: 'var(--violet-tint)', text: 'var(--violet-deep)', border: 'var(--violet)', bar: 'var(--violet)', label: 'Intermediário' },
+    'B2' => { bg: 'var(--warning-tint)', text: 'var(--warning-ink)', border: 'var(--warning)', bar: 'var(--warning)', label: 'Avançado' },
+    'C1' => { bg: 'var(--neutral-tint)', text: 'var(--ink)', border: 'var(--neutral-ink)', bar: 'var(--neutral-ink)', label: 'Proficiente' },
   }.freeze
 
   PROFESSIONAL_COLORS = {
-    'OPCO' => { bg: '#EFF6FF', text: '#1D4ED8', border: '#BFDBFE' },
-    'eCPF' => { bg: '#F5F3FF', text: '#7C3AED', border: '#DDD6FE' },
+    'OPCO' => { bg: 'var(--info-tint)', text: 'var(--info)', border: 'var(--info-border)' },
+    'eCPF' => { bg: 'var(--violet-tint)', text: 'var(--violet)', border: 'var(--violet-border)' },
   }.freeze
 
   def cefr_colors(level)
@@ -31,7 +31,7 @@ module ApplicationHelper
 
   def professional_badge_html(user)
     return '' if user.professional_type.blank?
-    c = PROFESSIONAL_COLORS[user.professional_type] || { bg: '#F3F4F6', text: '#374151', border: '#D1D5DB' }
+    c = PROFESSIONAL_COLORS[user.professional_type] || { bg: 'var(--neutral-tint)', text: 'var(--neutral-ink)', border: 'var(--line)' }
     content_tag(:span, user.professional_type,
       style: "font-family:'DM Mono',monospace; font-size:0.68rem; font-weight:700; letter-spacing:0.04em; " \
              "background:#{c[:bg]}; color:#{c[:text]}; border:1.5px solid #{c[:border]}; " \

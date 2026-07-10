@@ -10,41 +10,40 @@ module.exports = {
   ],
   theme: {
     extend: {
+      // Cores lêem os design tokens (app/assets/stylesheets/_tokens.scss).
+      // Nomes de classe iguais em toda a franquia Practice; a paleta muda por app.
       colors: {
-        'br-verde': {
-          floresta: '#0F3826',
-          medio:    '#1A6B4A',
-          principal:'#2A9B6F',
-          sage:     '#6B8F71',
-          pale:     '#E8F5EE',
-          mint:     '#F0FAF5',
+        brand: {
+          deep:     'var(--brand-deep)',
+          DEFAULT:  'var(--brand)',
+          bright:   'var(--brand-bright)',
+          soft:     'var(--brand-soft)',
+          'tint-2': 'var(--brand-tint-2)',
+          tint:     'var(--brand-tint)',
+          mist:     'var(--brand-mist)',
         },
-        'br-dourado': {
-          DEFAULT: '#C9952A',
-          hover:   '#B8841E',
-          claro:   '#E6B65C',
-          pale:    '#FBF3E0',
-          border:  '#E8C97A',
+        action: {
+          DEFAULT: 'var(--action)',
+          hover:   'var(--action-hover)',
+          bright:  'var(--action-bright)',
+          border:  'var(--action-border)',
+          soft:    'var(--action-soft)',
+          tint:    'var(--action-tint)',
+          ink:     'var(--action-ink)',
         },
-        'br-azul': {
-          DEFAULT: '#1A4A8A',
-          medio:   '#2563EB',
-          hover:   '#1D4ED8',
-          pale:    '#EBF2FC',
-          border:  '#BFDBFE',
+        ink: {
+          DEFAULT: 'var(--ink)',
+          soft:    'var(--ink-soft)',
+          faint:   'var(--ink-faint)',
         },
-        'br-bg':      '#F7F5F0',
-        'br-bg2':     '#EDEAE4',
-        'br-surface': '#FFFFFF',
-        'br-border':  '#DDD9D2',
-        'br-texto':   '#1C1917',
-        'br-texto2':  '#5C5853',
-        'br-texto3':  '#9C9892',
-        'cefr-a1': '#2A9B6F',
-        'cefr-a2': '#2563EB',
-        'cefr-b1': '#7C3AED',
-        'cefr-b2': '#EA580C',
-        'cefr-c1': '#1C1917',
+        paper:     { DEFAULT: 'var(--paper)', 2: 'var(--paper-2)' },
+        surface:   { DEFAULT: 'var(--surface)', 2: 'var(--surface-2)' },
+        line:      { DEFAULT: 'var(--line)', soft: 'var(--line-soft)' },
+        'cefr-a1': 'var(--brand-bright)',
+        'cefr-a2': 'var(--info)',
+        'cefr-b1': 'var(--violet)',
+        'cefr-b2': 'var(--warning)',
+        'cefr-c1': 'var(--ink)',
       },
       fontFamily: {
         display: ['Raleway', 'sans-serif'],
@@ -61,6 +60,8 @@ module.exports = {
   },
   plugins: [daisyui],
   daisyui: {
+    // DaisyUI exige valores literais (converte para oklch no build).
+    // Esta paleta ESPELHA _tokens.scss — mudou lá, muda aqui.
     themes: [
       {
         'practice-br': {

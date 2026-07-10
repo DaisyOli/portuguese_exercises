@@ -1,7 +1,7 @@
 <% content_for :head do %>
   <title>Nova Atividade · Practice-BR</title>
   <style>
-    .pb-input:focus { border-color:#1A6B4A !important; box-shadow:0 0 0 3px rgba(26,107,74,0.1) !important; outline:none !important; }
+    .pb-input:focus { border-color:var(--brand) !important; box-shadow:0 0 0 3px var(--brand-veil-2) !important; outline:none !important; }
   </style>
 <% end %>
 
@@ -10,21 +10,21 @@
   <%# Cabeçalho %>
   <div style="display:flex; align-items:center; gap:12px; margin-bottom:1.25rem;">
     <%= link_to activities_path,
-          style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; font-weight:600; color:#5C5853; padding:7px 14px; border:1.5px solid #DDD9D2; border-radius:8px; text-decoration:none; background:#fff; white-space:nowrap;" do %>
+          style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; font-weight:600; color:var(--ink-soft); padding:7px 14px; border:1.5px solid var(--line); border-radius:8px; text-decoration:none; background:var(--surface); white-space:nowrap;" do %>
       ← Voltar
     <% end %>
-    <span style="font-family:'Raleway',sans-serif; font-size:1.2rem; font-weight:700; color:#1C1917;">Nova Atividade</span>
+    <span style="font-family:'Raleway',sans-serif; font-size:1.2rem; font-weight:700; color:var(--ink);">Nova Atividade</span>
   </div>
 
-  <div style="background:#fff; border:1px solid #DDD9D2; border-radius:20px; padding:32px 36px;">
+  <div style="background:var(--surface); border:1px solid var(--line); border-radius:20px; padding:32px 36px;">
 
     <%= form_with model: @activity, local: true do |f| %>
 
       <%# Erros %>
       <% if @activity.errors.any? %>
-        <div style="background:#FEF2F2; border:1.5px solid #FCA5A5; border-radius:10px; padding:14px 16px; margin-bottom:24px;">
-          <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; font-weight:600; color:#991B1B; margin-bottom:6px;">Corrija os erros abaixo:</div>
-          <ul style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; color:#B91C1C; margin:0; padding-left:18px;">
+        <div style="background:var(--error-tint); border:1.5px solid var(--error-border); border-radius:10px; padding:14px 16px; margin-bottom:24px;">
+          <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; font-weight:600; color:var(--error-deep); margin-bottom:6px;">Corrija os erros abaixo:</div>
+          <ul style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; color:var(--error); margin:0; padding-left:18px;">
             <% @activity.errors.full_messages.each do |msg| %>
               <li><%= msg %></li>
             <% end %>
@@ -34,42 +34,42 @@
 
       <%# Título %>
       <div style="margin-bottom:22px;">
-        <%= f.label :title, style: "display:block; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; font-weight:600; color:#1C1917; margin-bottom:6px;" do %>
-          Título <span style="color:#EA580C;">*</span>
+        <%= f.label :title, style: "display:block; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; font-weight:600; color:var(--ink); margin-bottom:6px;" do %>
+          Título <span style="color:var(--warning);">*</span>
         <% end %>
         <%= f.text_field :title,
               class: "pb-input",
               placeholder: "Ex: Verbos no presente do indicativo",
-              style: "width:100%; padding:11px 14px; border:1.5px solid #DDD9D2; border-radius:10px; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.9rem; color:#1C1917; background:#fff; box-sizing:border-box;" %>
-        <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.75rem; color:#9C9892; margin-top:5px;">Escolha um título claro — ele aparece nos cards dos alunos</div>
+              style: "width:100%; padding:11px 14px; border:1.5px solid var(--line); border-radius:10px; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.9rem; color:var(--ink); background:var(--surface); box-sizing:border-box;" %>
+        <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.75rem; color:var(--ink-faint); margin-top:5px;">Escolha um título claro — ele aparece nos cards dos alunos</div>
       </div>
 
       <%# Descrição %>
       <div style="margin-bottom:22px;">
-        <%= f.label :description, style: "display:block; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; font-weight:600; color:#1C1917; margin-bottom:6px;" do %>
-          Descrição <span style="color:#EA580C;">*</span>
+        <%= f.label :description, style: "display:block; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; font-weight:600; color:var(--ink); margin-bottom:6px;" do %>
+          Descrição <span style="color:var(--warning);">*</span>
         <% end %>
         <%= f.text_area :description,
               class: "pb-input",
               placeholder: "Descreva os objetivos desta atividade...",
               rows: 3,
-              style: "width:100%; padding:11px 14px; border:1.5px solid #DDD9D2; border-radius:10px; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.9rem; color:#1C1917; background:#fff; resize:vertical; min-height:90px; box-sizing:border-box;" %>
-        <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.75rem; color:#9C9892; margin-top:5px;">Explique o que os alunos vão praticar</div>
+              style: "width:100%; padding:11px 14px; border:1.5px solid var(--line); border-radius:10px; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.9rem; color:var(--ink); background:var(--surface); resize:vertical; min-height:90px; box-sizing:border-box;" %>
+        <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.75rem; color:var(--ink-faint); margin-top:5px;">Explique o que os alunos vão praticar</div>
       </div>
 
       <%# Nível CEFR %>
       <%
         cefr_opts = {
-          'A1' => { bg:'#E8F5EE', text:'#0F3826', border:'#2A9B6F', ring:'rgba(42,155,111,0.15)' },
-          'A2' => { bg:'#EBF2FC', text:'#1A4A8A', border:'#2563EB', ring:'rgba(37,99,235,0.12)' },
-          'B1' => { bg:'#F5F3FF', text:'#4C1D95', border:'#7C3AED', ring:'rgba(124,58,237,0.12)' },
-          'B2' => { bg:'#FFF7ED', text:'#7C2D12', border:'#EA580C', ring:'rgba(234,88,12,0.12)' },
-          'C1' => { bg:'#F3F4F6', text:'#1C1917', border:'#374151', ring:'rgba(55,65,81,0.12)' },
+          'A1' => { bg:'var(--brand-tint)', text:'var(--brand-deep)', border:'var(--brand-bright)', ring:'rgba(42,155,111,0.15)' },
+          'A2' => { bg:'var(--info-tint)', text:'var(--info-deep)', border:'var(--info)', ring:'rgba(37,99,235,0.12)' },
+          'B1' => { bg:'var(--violet-tint)', text:'var(--violet-deep)', border:'var(--violet)', ring:'rgba(124,58,237,0.12)' },
+          'B2' => { bg:'var(--warning-tint)', text:'var(--warning-ink)', border:'var(--warning)', ring:'rgba(234,88,12,0.12)' },
+          'C1' => { bg:'var(--neutral-tint)', text:'var(--ink)', border:'var(--neutral-ink)', ring:'rgba(55,65,81,0.12)' },
         }
       %>
       <div style="margin-bottom:0;">
-        <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; font-weight:600; color:#1C1917; margin-bottom:8px;">
-          Nível CEFR <span style="color:#EA580C;">*</span>
+        <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; font-weight:600; color:var(--ink); margin-bottom:8px;">
+          Nível CEFR <span style="color:var(--warning);">*</span>
         </div>
         <div data-controller="level-picker" style="display:flex; gap:8px; flex-wrap:wrap;">
           <% cefr_opts.each do |lvl, c| %>
@@ -78,7 +78,7 @@
                    data-action="click->level-picker#select"
                    data-border="<%= c[:border] %>"
                    data-ring="<%= c[:ring] %>"
-                   style="display:inline-block; cursor:pointer; font-family:'DM Mono',monospace; font-size:0.8rem; font-weight:700; padding:7px 18px; border-radius:20px; background:<%= c[:bg] %>; color:<%= c[:text] %>; border:1.5px solid #DDD9D2; transition:all 0.12s;">
+                   style="display:inline-block; cursor:pointer; font-family:'DM Mono',monospace; font-size:0.8rem; font-weight:700; padding:7px 18px; border-radius:20px; background:<%= c[:bg] %>; color:<%= c[:text] %>; border:1.5px solid var(--line); transition:all 0.12s;">
               <%= f.radio_button :level, lvl,
                     class: "level-radio",
                     data: { "level-picker-target": "radio" },
@@ -89,13 +89,13 @@
         </div>
       </div>
 
-      <hr style="border:none; border-top:1px solid #F0EDE8; margin:28px 0;">
+      <hr style="border:none; border-top:1px solid var(--line-soft); margin:28px 0;">
 
       <div style="display:flex; align-items:center; justify-content:space-between;">
         <%= link_to "Cancelar", activities_path,
-              style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.85rem; color:#9C9892; text-decoration:none; padding:8px 4px;" %>
+              style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.85rem; color:var(--ink-faint); text-decoration:none; padding:8px 4px;" %>
         <%= f.submit "Criar Atividade →",
-              style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.9rem; font-weight:700; color:#fff; background:#C9952A; padding:12px 32px; border-radius:12px; border:none; cursor:pointer;" %>
+              style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.9rem; font-weight:700; color:var(--surface); background:var(--action); padding:12px 32px; border-radius:12px; border:none; cursor:pointer;" %>
       </div>
 
     <% end %>

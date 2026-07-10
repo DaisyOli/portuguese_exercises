@@ -3,28 +3,28 @@
 <% end %>
 
 <div class="container mx-auto flex justify-center" style="padding-top:12vh;">
-  <div style="max-width:520px; width:100%; background:#fff; border:1px solid #DDD9D2; border-radius:16px; padding:36px 32px; text-align:center;">
+  <div style="max-width:520px; width:100%; background:var(--surface); border:1px solid var(--line); border-radius:16px; padding:36px 32px; text-align:center;">
 
     <% if @generation.failed? %>
       <div style="font-size:2.2rem; margin-bottom:10px;">😕</div>
-      <h1 style="font-family:'Raleway',sans-serif; font-size:1.15rem; font-weight:700; color:#1C1917; margin:0 0 8px;">
+      <h1 style="font-family:'Raleway',sans-serif; font-size:1.15rem; font-weight:700; color:var(--ink); margin:0 0 8px;">
         <%= t('ai_generation.failed_title') %>
       </h1>
-      <p style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.9rem; color:#5C5853; margin:0 0 20px;">
+      <p style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.9rem; color:var(--ink-soft); margin:0 0 20px;">
         <%= @generation.error_message.presence || t('ai.errors.generic') %>
       </p>
       <%= link_to t('ai_generation.try_again'),
             (@generation.kind == "video" ? generate_from_video_activities_path : generate_with_ai_activities_path),
-            style: "display:inline-block; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.88rem; font-weight:700; color:#fff; background:#1A6B4A; padding:10px 24px; border-radius:12px; text-decoration:none;" %>
+            style: "display:inline-block; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.88rem; font-weight:700; color:var(--surface); background:var(--brand); padding:10px 24px; border-radius:12px; text-decoration:none;" %>
 
     <% else %>
       <div data-controller="generation-status"
            data-generation-status-url-value="<%= generation_status_activities_path(id: @generation.id) %>">
-        <span class="loading loading-spinner" style="width:2.4rem; height:2.4rem; color:#1A6B4A;" aria-hidden="true"></span>
-        <h1 style="font-family:'Raleway',sans-serif; font-size:1.15rem; font-weight:700; color:#1C1917; margin:16px 0 8px;">
+        <span class="loading loading-spinner" style="width:2.4rem; height:2.4rem; color:var(--brand);" aria-hidden="true"></span>
+        <h1 style="font-family:'Raleway',sans-serif; font-size:1.15rem; font-weight:700; color:var(--ink); margin:16px 0 8px;">
           ✨ <%= t('ai_generation.wait_title') %>
         </h1>
-        <p style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.9rem; color:#5C5853; margin:0; line-height:1.6;">
+        <p style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.9rem; color:var(--ink-soft); margin:0; line-height:1.6;">
           <%= @generation.kind == "video" ? t('ai_generation.wait_hint_video') : t('ai_generation.wait_hint_prompt') %>
         </p>
       </div>

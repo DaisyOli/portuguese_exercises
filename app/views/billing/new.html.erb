@@ -2,7 +2,7 @@
   <title>Practice-BR · Ativar acesso</title>
 <% end %>
 
-<div style="min-height:100vh; display:flex; align-items:center; justify-content:center; background:#F7F5F0; padding:2rem 1rem;">
+<div style="min-height:100vh; display:flex; align-items:center; justify-content:center; background:var(--paper); padding:2rem 1rem;">
   <div style="max-width:480px; width:100%;">
 
     <%# Logo %>
@@ -13,10 +13,10 @@
     </div>
 
     <%# Card %>
-    <div style="background:#fff; border:1px solid #DDD9D2; border-radius:20px; overflow:hidden; box-shadow:0 4px 24px rgba(0,0,0,0.06);">
+    <div style="background:var(--surface); border:1px solid var(--line); border-radius:20px; overflow:hidden; box-shadow:0 4px 24px rgba(0,0,0,0.06);">
 
       <%# Header verde %>
-      <div style="background:linear-gradient(135deg,#1A6B4A 0%,#0F3826 100%); padding:28px 32px; color:#fff;">
+      <div style="background:linear-gradient(135deg,var(--brand) 0%,var(--brand-deep) 100%); padding:28px 32px; color:var(--surface);">
         <div class="billing-label" style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.75rem; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; opacity:0.7; margin-bottom:8px;">
           Acesso completo
         </div>
@@ -38,16 +38,16 @@
         <%= form_with url: billing_checkout_path, method: :post, local: true, data: { turbo: false } do |f| %>
           <%= hidden_field_tag :plan, "monthly" %>
           <button type="submit"
-                  style="width:100%; background:#fff; border:2px solid #DDD9D2; border-radius:14px; padding:16px 20px; cursor:pointer; text-align:left;"
-                  onmouseover="this.style.borderColor='#1A6B4A'" onmouseout="this.style.borderColor='#DDD9D2'">
+                  style="width:100%; background:var(--surface); border:2px solid var(--line); border-radius:14px; padding:16px 20px; cursor:pointer; text-align:left;"
+                  onmouseover="this.style.borderColor='var(--brand)'" onmouseout="this.style.borderColor='var(--line)'">
             <div style="display:flex; align-items:center; justify-content:space-between;">
               <div>
-                <div class="billing-monthly-label" style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.9rem; font-weight:700; color:#1C1917;">Mensal</div>
-                <div class="billing-monthly-sub" style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.78rem; color:#9C9892; margin-top:2px;">Renovação automática a cada mês</div>
+                <div class="billing-monthly-label" style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.9rem; font-weight:700; color:var(--ink);">Mensal</div>
+                <div class="billing-monthly-sub" style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.78rem; color:var(--ink-faint); margin-top:2px;">Renovação automática a cada mês</div>
               </div>
               <div style="text-align:right; flex-shrink:0;">
-                <div style="font-family:'Raleway',sans-serif; font-size:1.4rem; font-weight:800; color:#1C1917;">€9,99</div>
-                <div class="billing-per-month" style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.72rem; color:#9C9892;">por mês</div>
+                <div style="font-family:'Raleway',sans-serif; font-size:1.4rem; font-weight:800; color:var(--ink);">€9,99</div>
+                <div class="billing-per-month" style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.72rem; color:var(--ink-faint);">por mês</div>
               </div>
             </div>
           </button>
@@ -57,19 +57,19 @@
         <%= form_with url: billing_checkout_path, method: :post, local: true, data: { turbo: false } do |f| %>
           <%= hidden_field_tag :plan, "annual" %>
           <button type="submit"
-                  style="width:100%; background:#F0FAF4; border:2px solid #2A9B6F; border-radius:14px; padding:16px 20px; cursor:pointer; text-align:left; position:relative;"
-                  onmouseover="this.style.borderColor='#1A6B4A'" onmouseout="this.style.borderColor='#2A9B6F'">
-            <div class="billing-badge" style="position:absolute; top:-10px; right:16px; background:#C9952A; color:#fff; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.68rem; font-weight:700; padding:3px 10px; border-radius:20px; letter-spacing:0.04em;">
+                  style="width:100%; background:var(--brand-mist); border:2px solid var(--brand-bright); border-radius:14px; padding:16px 20px; cursor:pointer; text-align:left; position:relative;"
+                  onmouseover="this.style.borderColor='var(--brand)'" onmouseout="this.style.borderColor='var(--brand-bright)'">
+            <div class="billing-badge" style="position:absolute; top:-10px; right:16px; background:var(--action); color:var(--surface); font-family:'Plus Jakarta Sans',sans-serif; font-size:0.68rem; font-weight:700; padding:3px 10px; border-radius:20px; letter-spacing:0.04em;">
               ÉCONOMIE 25%
             </div>
             <div style="display:flex; align-items:center; justify-content:space-between;">
               <div>
-                <div class="billing-annual-label" style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.9rem; font-weight:700; color:#1C1917;">Anual</div>
-                <div class="billing-annual-sub" style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.78rem; color:#5C5853; margin-top:2px;">Equivale a €7,49/mês</div>
+                <div class="billing-annual-label" style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.9rem; font-weight:700; color:var(--ink);">Anual</div>
+                <div class="billing-annual-sub" style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.78rem; color:var(--ink-soft); margin-top:2px;">Equivale a €7,49/mês</div>
               </div>
               <div style="text-align:right; flex-shrink:0;">
-                <div style="font-family:'Raleway',sans-serif; font-size:1.4rem; font-weight:800; color:#1A6B4A;">€89,90</div>
-                <div class="billing-per-year" style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.72rem; color:#9C9892;">por ano</div>
+                <div style="font-family:'Raleway',sans-serif; font-size:1.4rem; font-weight:800; color:var(--brand);">€89,90</div>
+                <div class="billing-per-year" style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.72rem; color:var(--ink-faint);">por ano</div>
               </div>
             </div>
           </button>
@@ -77,14 +77,14 @@
 
       </div>
 
-      <div class="billing-footer" style="padding:0 32px 24px; text-align:center; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.75rem; color:#9C9892;">
+      <div class="billing-footer" style="padding:0 32px 24px; text-align:center; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.75rem; color:var(--ink-faint);">
         Pagamento seguro via Stripe · Cancele a qualquer momento · Sem taxas ocultas
       </div>
     </div>
 
     <div style="text-align:center; margin-top:16px;">
       <%= link_to "← Sair", destroy_user_session_path, data: { turbo: false },
-            style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; color:#9C9892; text-decoration:none;" %>
+            style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; color:var(--ink-faint); text-decoration:none;" %>
     </div>
 
   </div>

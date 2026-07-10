@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Practice · Design System da Franquia</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Raleway:wght@600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap">
+<style>
+  /* ============================================================
+     TOKENS — cópia de app/assets/stylesheets/_tokens.scss
+     (fonte de verdade é o _tokens.scss; ao mudar lá, atualize aqui)
+     Para visualizar outra marca (ex.: practice-fr), troque só
+     os valores deste bloco. Os nomes NUNCA mudam.
+     ============================================================ */
+  :root {
+    --ink:          #1C1917;
+    --ink-soft:     #5C5853;
+    --ink-faint:    #9C9892;
+    --paper:        #F7F5F0;
+    --paper-2:      #EDEAE4;
+    --surface:      #FFFFFF;
+    --surface-2:    #FAFAF9;
+    --line:         #DDD9D2;
+    --line-soft:    #F0EDE8;
+    --neutral-tint: #F3F4F6;
+    --neutral-ink:  #374151;
+
+    --brand-deep:   #0F3826;
+    --brand:        #1A6B4A;
+    --brand-bright: #2A9B6F;
+    --brand-soft:   #6EBD96;
+    --brand-tint-2: #D1EAD9;
+    --brand-tint:   #E8F5EE;
+    --brand-mist:   #F0FAF5;
+
+    --action:        #C9952A;
+    --action-hover:  #B8841E;
+    --action-bright: #E6B65C;
+    --action-border: #E8C97A;
+    --action-soft:   #F5D478;
+    --action-tint:   #FBF3E0;
+    --action-ink:    #7C4A00;
+
+    --success:        #15803D;
+    --success-deep:   #166534;
+    --success-border: #BBF7D0;
+    --success-tint:   #DCFCE7;
+    --error:          #B91C1C;
+    --error-deep:     #991B1B;
+    --error-border:   #FECACA;
+    --error-tint:     #FEF2F2;
+    --warning:        #EA580C;
+    --warning-ink:    #7C2D12;
+    --warning-border: #FED7AA;
+    --warning-tint:   #FFF7ED;
+    --info:           #2563EB;
+    --info-deep:      #1A4A8A;
+    --info-border:    #BFDBFE;
+    --info-tint:      #EBF2FC;
+
+    --sky:        #0369A1;
+    --sky-bright: #0284C7;
+    --sky-border: #BAE6FD;
+    --sky-tint:   #E0F2FE;
+    --amber:      #D97706;
+    --amber-ink:  #92400E;
+    --amber-tint: #FEF3C7;
+    --violet:        #7C3AED;
+    --violet-deep:   #4C1D95;
+    --violet-border: #DDD6FE;
+    --violet-tint:   #F5F3FF;
+
+    --brand-veil:   rgba(26, 107, 74, 0.06);
+    --brand-veil-2: rgba(26, 107, 74, 0.10);
+    --brand-glow:   rgba(42, 155, 111, 0.12);
+    --action-veil:  rgba(201, 149, 42, 0.07);
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    font-family:'Plus Jakarta Sans', system-ui, sans-serif;
+    background:var(--paper); color:var(--ink);
+    line-height:1.6; padding:40px 20px 80px;
+  }
+  h1,h2,h3 { font-family:'Raleway', sans-serif; }
+  main { max-width:960px; margin:0 auto; }
+
+  .hero {
+    background:var(--brand-deep); color:var(--surface);
+    border-radius:18px; padding:36px 40px; margin-bottom:40px;
+  }
+  .hero h1 { font-size:1.9rem; font-weight:800; }
+  .hero p  { color:var(--brand-tint); margin-top:8px; max-width:640px; }
+  .hero code { font-family:'DM Mono',monospace; background:rgba(255,255,255,.12); padding:1px 7px; border-radius:6px; font-size:.85em; }
+
+  section { margin-bottom:44px; }
+  section > h2 {
+    font-size:1.15rem; font-weight:700; margin-bottom:6px;
+    padding-bottom:8px; border-bottom:2px solid var(--line);
+  }
+  section > p.lead { color:var(--ink-soft); font-size:.9rem; margin-bottom:18px; }
+
+  .swatches { display:grid; grid-template-columns:repeat(auto-fill, minmax(150px,1fr)); gap:10px; }
+  .swatch { background:var(--surface); border:1px solid var(--line); border-radius:12px; overflow:hidden; }
+  .swatch .chip { height:56px; border-bottom:1px solid var(--line-soft); }
+  .swatch .meta { padding:8px 10px; }
+  .swatch .name { font-family:'DM Mono',monospace; font-size:.72rem; font-weight:500; }
+  .swatch .role { font-size:.7rem; color:var(--ink-faint); display:block; }
+
+  .btn { font-family:'Plus Jakarta Sans',sans-serif; font-weight:600; border:none; border-radius:10px; cursor:pointer; }
+  .btn-cta      { background:var(--brand); color:var(--surface); font-size:1rem; padding:13px 30px; }
+  .btn-cta:hover{ background:var(--brand-deep); }
+  .btn-compact  { background:var(--brand-deep); color:var(--surface); font-size:.82rem; padding:7px 16px; border-radius:8px; }
+  .btn-submit   { background:var(--action); color:var(--surface); font-size:.95rem; padding:11px 26px; }
+  .btn-submit:hover { background:var(--action-hover); }
+  .btn-row { display:flex; flex-wrap:wrap; gap:14px; align-items:center; }
+  .btn-note { font-size:.75rem; color:var(--ink-faint); margin-top:6px; }
+
+  .card { background:var(--surface); border:1px solid var(--line); border-radius:12px; padding:20px 22px; }
+  .cards { display:grid; grid-template-columns:repeat(auto-fit, minmax(260px,1fr)); gap:14px; }
+  .panel { background:var(--surface-2); border:1px solid var(--line-soft); border-radius:12px; padding:14px 16px; }
+
+  .badge { font-size:.72rem; font-weight:700; padding:3px 12px; border-radius:20px; display:inline-block; border:1.5px solid; }
+  .badges { display:flex; flex-wrap:wrap; gap:10px; }
+
+  .alert { border-radius:10px; padding:12px 16px; font-size:.88rem; border:1px solid; margin-bottom:10px; }
+
+  .type-display { font-family:'Raleway',sans-serif; font-weight:800; font-size:1.7rem; }
+  .type-body    { font-size:.95rem; color:var(--ink-soft); }
+  .type-mono    { font-family:'DM Mono',monospace; font-size:.85rem; color:var(--brand); }
+  .type-row { display:grid; grid-template-columns:130px 1fr; gap:14px; align-items:baseline; padding:10px 0; border-bottom:1px dashed var(--line-soft); }
+  .type-label { font-size:.72rem; color:var(--ink-faint); font-family:'DM Mono',monospace; }
+</style>
+</head>
+<body>
+<main>
+
+  <div class="hero">
+    <h1>Practice · Design System</h1>
+    <p>Referência permanente da <strong>franquia Practice</strong> (BR, FR, ...).
+       A estrutura desta página é igual em todos os apps; só o bloco
+       <code>:root</code> de tokens muda de um app para o outro.
+       Fonte de verdade: <code>app/assets/stylesheets/_tokens.scss</code> ·
+       Regras de uso: <code>docs/DESIGN_SYSTEM.md</code></p>
+  </div>
+
+  <section>
+    <h2>Neutros</h2>
+    <p class="lead">Escala "stone" quente. Texto sempre em <code>ink</code>; nunca cinza puro.</p>
+    <div class="swatches">
+      <div class="swatch"><div class="chip" style="background:var(--ink)"></div><div class="meta"><span class="name">--ink</span><span class="role">texto principal</span></div></div>
+      <div class="swatch"><div class="chip" style="background:var(--ink-soft)"></div><div class="meta"><span class="name">--ink-soft</span><span class="role">texto secundário</span></div></div>
+      <div class="swatch"><div class="chip" style="background:var(--ink-faint)"></div><div class="meta"><span class="name">--ink-faint</span><span class="role">terciário, placeholder</span></div></div>
+      <div class="swatch"><div class="chip" style="background:var(--paper)"></div><div class="meta"><span class="name">--paper</span><span class="role">fundo da página</span></div></div>
+      <div class="swatch"><div class="chip" style="background:var(--paper-2)"></div><div class="meta"><span class="name">--paper-2</span><span class="role">fundo rebaixado</span></div></div>
+      <div class="swatch"><div class="chip" style="background:var(--surface)"></div><div class="meta"><span class="name">--surface</span><span class="role">cards</span></div></div>
+      <div class="swatch"><div class="chip" style="background:var(--surface-2)"></div><div class="meta"><span class="name">--surface-2</span><span class="role">painel suave</span></div></div>
+      <div class="swatch"><div class="chip" style="background:var(--line)"></div><div class="meta"><span class="name">--line</span><span class="role">bordas</span></div></div>
+      <div class="swatch"><div class="chip" style="background:var(--line-soft)"></div><div class="meta"><span class="name">--line-soft</span><span class="role">divisores internos</span></div></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Marca &amp; Ação</h2>
+    <p class="lead">No BR: verdes (marca) e dourado (ação). No FR estes slots recebem a paleta francesa — os nomes não mudam.</p>
+    <div class="swatches">
+      <div class="swatch"><div class="chip" style="background:var(--brand-deep)"></div><div class="meta"><span class="name">--brand-deep</span><span class="role">botão compacto, headers</span></div></div>
+      <div class="swatch"><div class="chip" style="background:var(--brand)"></div><div class="meta"><span class="name">--brand</span><span class="role">CTA, links fortes</span></div></div>
+      <div class="swatch"><div class="chip" style="background:var(--brand-bright)"></div><div class="meta"><span class="name">--brand-bright</span><span class="role">progresso, hover</span></div></div>
+      <div class="swatch"><div class="chip" style="background:var(--brand-soft)"></div><div class="meta"><span class="name">--brand-soft</span><span class="role">realce claro</span></div></div>
+      <div class="swatch"><div class="chip" style="background:var(--brand-tint)"></div><div class="meta"><span class="name">--brand-tint</span><span class="role">fundo de marca</span></div></div>
+      <div class="swatch"><div class="chip" style="background:var(--brand-mist)"></div><div class="meta"><span class="name">--brand-mist</span><span class="role">fundo sutil</span></div></div>
+      <div class="swatch"><div class="chip" style="background:var(--action)"></div><div class="meta"><span class="name">--action</span><span class="role">submit de formulário</span></div></div>
+      <div class="swatch"><div class="chip" style="background:var(--action-border)"></div><div class="meta"><span class="name">--action-border</span><span class="role">borda dourada</span></div></div>
+      <div class="swatch"><div class="chip" style="background:var(--action-tint)"></div><div class="meta"><span class="name">--action-tint</span><span class="role">fundo dourado</span></div></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Hierarquia de botões</h2>
+    <p class="lead">Três papéis, três pesos. Consultar antes de criar qualquer botão novo.</p>
+    <div class="card">
+      <div class="btn-row">
+        <div><button class="btn btn-cta">Começar atividade</button><div class="btn-note">CTA de rodapé — <code>--brand</code></div></div>
+        <div><button class="btn btn-compact">Editar</button><div class="btn-note">compacto — <code>--brand-deep</code></div></div>
+        <div><button class="btn btn-submit">Salvar atividade</button><div class="btn-note">submit de form — <code>--action</code></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Tipografia</h2>
+    <div class="card">
+      <div class="type-row"><span class="type-label">Raleway 800</span><span class="type-display">Títulos e display</span></div>
+      <div class="type-row"><span class="type-label">Plus Jakarta</span><span class="type-body">Corpo de texto, formulários, botões — o dia a dia do app.</span></div>
+      <div class="type-row" style="border-bottom:none"><span class="type-label">DM Mono</span><span class="type-mono">badges técnicos, códigos, contadores</span></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Badges de nível (CEFR)</h2>
+    <p class="lead">Mesmo mapa de cores em toda a franquia: alunos reconhecem seu nível em qualquer app Practice.</p>
+    <div class="card badges">
+      <span class="badge" style="background:var(--brand-tint); color:var(--brand-deep); border-color:var(--brand-bright)">A1 · Iniciante</span>
+      <span class="badge" style="background:var(--info-tint); color:var(--info-deep); border-color:var(--info)">A2 · Básico</span>
+      <span class="badge" style="background:var(--violet-tint); color:var(--violet-deep); border-color:var(--violet)">B1 · Intermediário</span>
+      <span class="badge" style="background:var(--warning-tint); color:var(--warning-ink); border-color:var(--warning)">B2 · Avançado</span>
+      <span class="badge" style="background:var(--neutral-tint); color:var(--ink); border-color:var(--neutral-ink)">C1 · Proficiente</span>
+    </div>
+  </section>
+
+  <section>
+    <h2>Habilidades</h2>
+    <div class="card badges">
+      <span class="badge" style="background:var(--sky-tint); color:var(--sky); border-color:var(--sky-border)">🎧 CO · Compreensão Oral</span>
+      <span class="badge" style="background:var(--amber-tint); color:var(--amber-ink); border-color:var(--amber)">📖 CE · Compreensão Escrita</span>
+      <span class="badge" style="background:var(--success-tint); color:var(--success-deep); border-color:var(--success-border)">✍️ EE · Expressão Escrita</span>
+    </div>
+  </section>
+
+  <section>
+    <h2>Estados</h2>
+    <div class="alert" style="background:var(--success-tint); border-color:var(--success-border); color:var(--success-deep)"><strong>Acertou!</strong> Resposta correta no quiz.</div>
+    <div class="alert" style="background:var(--error-tint); border-color:var(--error-border); color:var(--error-deep)"><strong>Ops.</strong> Resposta incorreta ou erro de validação.</div>
+    <div class="alert" style="background:var(--warning-tint); border-color:var(--warning-border); color:var(--warning-ink)"><strong>Atenção:</strong> algo precisa da sua revisão.</div>
+    <div class="alert" style="background:var(--info-tint); border-color:var(--info-border); color:var(--info-deep)"><strong>Dica:</strong> informação neutra para orientar.</div>
+  </section>
+
+  <section>
+    <h2>Superfícies &amp; contraste</h2>
+    <p class="lead">Lição aprendida: página sem hierarquia fica "sem graça". Alternar paper → surface → surface-2 e usar a marca com coragem.</p>
+    <div class="cards">
+      <div class="card">
+        <h3 style="font-size:1rem; margin-bottom:6px">Card padrão</h3>
+        <p style="font-size:.85rem; color:var(--ink-soft)">surface sobre paper, borda line.</p>
+        <div class="panel" style="margin-top:12px"><span style="font-size:.8rem; color:var(--ink-soft)">Painel interno em surface-2 + line-soft.</span></div>
+      </div>
+      <div class="card" style="background:var(--brand-deep); border-color:var(--brand-deep); color:var(--surface)">
+        <h3 style="font-size:1rem; margin-bottom:6px">Card de destaque</h3>
+        <p style="font-size:.85rem; color:var(--brand-tint)">brand-deep para blocos que merecem peso — headers, resumo do aluno, hero.</p>
+      </div>
+      <div class="card" style="background:var(--brand-tint); border-color:var(--brand-tint-2)">
+        <h3 style="font-size:1rem; margin-bottom:6px; color:var(--brand-deep)">Card tintado</h3>
+        <p style="font-size:.85rem; color:var(--brand)">brand-tint para agrupar conteúdo da marca sem gritar.</p>
+      </div>
+    </div>
+  </section>
+
+</main>
+</body>
+</html>

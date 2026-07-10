@@ -4,7 +4,7 @@
     .act-header      { display:flex; align-items:baseline; justify-content:space-between; margin-bottom:1.5rem; }
     .act-filter-bar  { display:flex; align-items:flex-start; gap:12px; }
     .act-filter-inner{ display:flex; align-items:center; gap:10px; flex-wrap:wrap; flex:1; min-width:0; }
-    .act-search      { padding:8px 12px; border:1.5px solid #DDD9D2; border-radius:8px; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; color:#1C1917; background:#fff; width:200px; }
+    .act-search      { padding:8px 12px; border:1.5px solid var(--line); border-radius:8px; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; color:var(--ink); background:var(--surface); width:200px; }
     .act-list-grid   { display:grid; grid-template-columns:48px 1fr 100px 80px 120px; gap:16px; align-items:center; }
     .act-grid        { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:1rem; margin-bottom:2rem; }
     @media (max-width:640px) {
@@ -40,21 +40,21 @@
   <%# ── Cabeçalho ── %>
   <div class="act-header">
     <div>
-      <h1 style="font-family:'Raleway',sans-serif; font-size:1.5rem; font-weight:700; color:#1C1917; margin-bottom:4px;">
+      <h1 style="font-family:'Raleway',sans-serif; font-size:1.5rem; font-weight:700; color:var(--ink); margin-bottom:4px;">
         Todas as Atividades
       </h1>
-      <p style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.85rem; color:#5C5853;">
+      <p style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.85rem; color:var(--ink-soft);">
         <%= @activities.count %> <%= @activities.count == 1 ? 'atividade encontrada' : 'atividades encontradas' %>
       </p>
     </div>
     <% if current_user.teacher? %>
       <div class="act-header-btns" style="display:flex; align-items:center; gap:10px;">
         <%= link_to generate_with_ai_activities_path,
-              style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; font-weight:700; color:#fff; background:#0F3826; padding:8px 16px; border-radius:10px; text-decoration:none; white-space:nowrap;" do %>
+              style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; font-weight:700; color:var(--surface); background:var(--brand-deep); padding:8px 16px; border-radius:10px; text-decoration:none; white-space:nowrap;" do %>
           ✨ Gerar com IA
         <% end %>
         <%= link_to teacher_dashboard_path,
-              style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; color:#9C9892; text-decoration:none;" do %>
+              style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; color:var(--ink-faint); text-decoration:none;" do %>
           ← Dashboard
         <% end %>
       </div>
@@ -63,12 +63,12 @@
 
   <%# ── Barra de Filtros ── %>
   <%= form_with url: activities_path, method: :get, local: true do %>
-    <div class="act-filter-bar" style="background:#fff; border:1px solid #DDD9D2; border-radius:14px; padding:16px 20px; margin-bottom:1.5rem;">
+    <div class="act-filter-bar" style="background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:16px 20px; margin-bottom:1.5rem;">
 
       <div class="act-filter-inner">
 
         <select name="level"
-                style="padding:8px 12px; border:1.5px solid #DDD9D2; border-radius:8px; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; color:#1C1917; background:#fff; cursor:pointer;">
+                style="padding:8px 12px; border:1.5px solid var(--line); border-radius:8px; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; color:var(--ink); background:var(--surface); cursor:pointer;">
           <option value="">Todos os níveis</option>
           <% ['A1','A2','B1','B2','C1'].each do |lvl| %>
             <option value="<%= lvl %>" <%= 'selected' if params[:level] == lvl %>><%= lvl %></option>
@@ -76,7 +76,7 @@
         </select>
 
         <select name="sort"
-                style="padding:8px 12px; border:1.5px solid #DDD9D2; border-radius:8px; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; color:#1C1917; background:#fff; cursor:pointer;">
+                style="padding:8px 12px; border:1.5px solid var(--line); border-radius:8px; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; color:var(--ink); background:var(--surface); cursor:pointer;">
           <option value="recentes" <%= 'selected' if params[:sort].blank? || params[:sort] == 'recentes' %>>Mais recentes</option>
           <option value="antigos"  <%= 'selected' if params[:sort] == 'antigos' %>>Mais antigos</option>
           <option value="titulo"   <%= 'selected' if params[:sort] == 'titulo' %>>Título A–Z</option>
@@ -88,23 +88,23 @@
                class="act-search">
 
         <button type="submit"
-                style="background:#0F3826; color:#fff; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; font-weight:600; padding:8px 16px; border:none; border-radius:8px; cursor:pointer;">
+                style="background:var(--brand-deep); color:var(--surface); font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; font-weight:600; padding:8px 16px; border:none; border-radius:8px; cursor:pointer;">
           Buscar
         </button>
 
         <% if current_user.teacher? %>
           <%# Filtro de origem: todas | IA | manual %>
-          <div style="display:flex; gap:4px; border:1.5px solid #DDD9D2; border-radius:8px; overflow:hidden;">
+          <div style="display:flex; gap:4px; border:1.5px solid var(--line); border-radius:8px; overflow:hidden;">
             <%= link_to activities_path(params.permit(:level, :sort, :search, :view, :competencia).merge(origem: nil)),
-                  style: "padding:6px 11px; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.78rem; font-weight:600; text-decoration:none; background:#{params[:origem].blank? ? '#0F3826' : '#fff'}; color:#{params[:origem].blank? ? '#fff' : '#5C5853'}; border-right:1px solid #DDD9D2;" do %>
+                  style: "padding:6px 11px; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.78rem; font-weight:600; text-decoration:none; background:#{params[:origem].blank? ? 'var(--brand-deep)' : 'var(--surface)'}; color:#{params[:origem].blank? ? 'var(--surface)' : 'var(--ink-soft)'}; border-right:1px solid var(--line);" do %>
               Todas
             <% end %>
             <%= link_to activities_path(params.permit(:level, :sort, :search, :view, :competencia).merge(origem: 'ia')),
-                  style: "padding:6px 11px; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.78rem; font-weight:600; text-decoration:none; background:#{params[:origem] == 'ia' ? '#0F3826' : '#fff'}; color:#{params[:origem] == 'ia' ? '#fff' : '#5C5853'}; border-right:1px solid #DDD9D2;" do %>
+                  style: "padding:6px 11px; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.78rem; font-weight:600; text-decoration:none; background:#{params[:origem] == 'ia' ? 'var(--brand-deep)' : 'var(--surface)'}; color:#{params[:origem] == 'ia' ? 'var(--surface)' : 'var(--ink-soft)'}; border-right:1px solid var(--line);" do %>
               ✨ IA
             <% end %>
             <%= link_to activities_path(params.permit(:level, :sort, :search, :view, :competencia).merge(origem: 'manual')),
-                  style: "padding:6px 11px; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.78rem; font-weight:600; text-decoration:none; background:#{params[:origem] == 'manual' ? '#0F3826' : '#fff'}; color:#{params[:origem] == 'manual' ? '#fff' : '#5C5853'};" do %>
+                  style: "padding:6px 11px; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.78rem; font-weight:600; text-decoration:none; background:#{params[:origem] == 'manual' ? 'var(--brand-deep)' : 'var(--surface)'}; color:#{params[:origem] == 'manual' ? 'var(--surface)' : 'var(--ink-soft)'};" do %>
               Manual
             <% end %>
           </div>
@@ -115,7 +115,7 @@
           <% ApplicationHelper::COMPETENCY_META.each do |key, cm| %>
             <% active = params[:competencia] == key.to_s %>
             <%= link_to activities_path(params.permit(:level, :sort, :search, :view, :origem).merge(competencia: active ? nil : key)),
-                  style: "padding:5px 11px; font-family:'DM Mono',monospace; font-size:0.75rem; font-weight:800; letter-spacing:0.03em; border-radius:8px; text-decoration:none; display:inline-flex; align-items:center; gap:4px; border:1.5px solid #{active ? cm[:color] : '#DDD9D2'}; background:#{active ? cm[:bg] : '#fff'}; color:#{active ? cm[:color] : '#5C5853'};" do %>
+                  style: "padding:5px 11px; font-family:'DM Mono',monospace; font-size:0.75rem; font-weight:800; letter-spacing:0.03em; border-radius:8px; text-decoration:none; display:inline-flex; align-items:center; gap:4px; border:1.5px solid #{active ? cm[:color] : 'var(--line)'}; background:#{active ? cm[:bg] : 'var(--surface)'}; color:#{active ? cm[:color] : 'var(--ink-soft)'};" do %>
               <%= cm[:icon] %> <%= cm[:abbr] %>
             <% end %>
           <% end %>
@@ -123,18 +123,18 @@
 
         <% if params[:level].present? || params[:search].present? || params[:origem].present? || params[:competencia].present? || (params[:sort].present? && params[:sort] != 'recentes') %>
           <%= link_to "✕ Limpar", activities_path,
-                style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.78rem; color:#9C9892; text-decoration:none;" %>
+                style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.78rem; color:var(--ink-faint); text-decoration:none;" %>
         <% end %>
       </div>
 
       <%# Toggle lista / grid %>
       <div class="act-filter-toggle" style="display:flex; gap:0; flex-shrink:0;">
         <%= link_to activities_path(level: params[:level], sort: params[:sort], search: params[:search], origem: params[:origem], competencia: params[:competencia], view: 'list'),
-              style: "padding:7px 11px; border:1.5px solid #{view_mode == 'list' ? '#0F3826' : '#DDD9D2'}; background:#{view_mode == 'list' ? '#0F3826' : '#fff'}; border-radius:8px 0 0 8px; text-decoration:none; font-size:0.85rem; color:#{view_mode == 'list' ? '#fff' : '#9C9892'};" do %>
+              style: "padding:7px 11px; border:1.5px solid #{view_mode == 'list' ? 'var(--brand-deep)' : 'var(--line)'}; background:#{view_mode == 'list' ? 'var(--brand-deep)' : 'var(--surface)'}; border-radius:8px 0 0 8px; text-decoration:none; font-size:0.85rem; color:#{view_mode == 'list' ? 'var(--surface)' : 'var(--ink-faint)'};" do %>
           ☰
         <% end %>
         <%= link_to activities_path(level: params[:level], sort: params[:sort], search: params[:search], origem: params[:origem], competencia: params[:competencia], view: 'grid'),
-              style: "padding:7px 11px; border:1.5px solid #{view_mode == 'grid' ? '#0F3826' : '#DDD9D2'}; border-left:none; background:#{view_mode == 'grid' ? '#0F3826' : '#fff'}; border-radius:0 8px 8px 0; text-decoration:none; font-size:0.85rem; color:#{view_mode == 'grid' ? '#fff' : '#9C9892'};" do %>
+              style: "padding:7px 11px; border:1.5px solid #{view_mode == 'grid' ? 'var(--brand-deep)' : 'var(--line)'}; border-left:none; background:#{view_mode == 'grid' ? 'var(--brand-deep)' : 'var(--surface)'}; border-radius:0 8px 8px 0; text-decoration:none; font-size:0.85rem; color:#{view_mode == 'grid' ? 'var(--surface)' : 'var(--ink-faint)'};" do %>
           ⊞
         <% end %>
       </div>
@@ -148,22 +148,22 @@
     <% if view_mode == 'list' %>
 
       <%# VISTA EM LISTA %>
-      <div style="background:#fff; border:1px solid #DDD9D2; border-radius:16px; overflow:hidden; margin-bottom:2rem;">
+      <div style="background:var(--surface); border:1px solid var(--line); border-radius:16px; overflow:hidden; margin-bottom:2rem;">
 
         <%# Cabeçalho da tabela %>
-        <div class="act-list-grid" style="padding:10px 20px; background:#F7F5F0; border-bottom:1px solid #DDD9D2;">
-          <div style="font-family:'DM Mono',monospace; font-size:0.68rem; color:#9C9892; letter-spacing:0.08em; text-transform:uppercase;">Nível</div>
-          <div style="font-family:'DM Mono',monospace; font-size:0.68rem; color:#9C9892; letter-spacing:0.08em; text-transform:uppercase;">Título</div>
-          <div class="act-col-date" style="font-family:'DM Mono',monospace; font-size:0.68rem; color:#9C9892; letter-spacing:0.08em; text-transform:uppercase;">Criada em</div>
-          <div class="act-col-count" style="font-family:'DM Mono',monospace; font-size:0.68rem; color:#9C9892; letter-spacing:0.08em; text-transform:uppercase; text-align:center;">Tent.</div>
+        <div class="act-list-grid" style="padding:10px 20px; background:var(--paper); border-bottom:1px solid var(--line);">
+          <div style="font-family:'DM Mono',monospace; font-size:0.68rem; color:var(--ink-faint); letter-spacing:0.08em; text-transform:uppercase;">Nível</div>
+          <div style="font-family:'DM Mono',monospace; font-size:0.68rem; color:var(--ink-faint); letter-spacing:0.08em; text-transform:uppercase;">Título</div>
+          <div class="act-col-date" style="font-family:'DM Mono',monospace; font-size:0.68rem; color:var(--ink-faint); letter-spacing:0.08em; text-transform:uppercase;">Criada em</div>
+          <div class="act-col-count" style="font-family:'DM Mono',monospace; font-size:0.68rem; color:var(--ink-faint); letter-spacing:0.08em; text-transform:uppercase; text-align:center;">Tent.</div>
           <div></div>
         </div>
 
         <% @activities.each_with_index do |activity, i| %>
           <% c = cefr_colors(activity.level) %>
           <% last = i == @activities.size - 1 %>
-          <div class="act-list-grid" style="padding:14px 20px; <%= last ? '' : 'border-bottom:1px solid #F0EDE8;' %> transition:background 0.15s;"
-               onmouseover="this.style.background='#FAFAF8'" onmouseout="this.style.background=''">
+          <div class="act-list-grid" style="padding:14px 20px; <%= last ? '' : 'border-bottom:1px solid var(--line-soft);' %> transition:background 0.15s;"
+               onmouseover="this.style.background='var(--paper)'" onmouseout="this.style.background=''">
 
             <span style="font-family:'DM Mono',monospace; font-size:0.72rem; font-weight:700;
                          background:<%= c[:bg] %>; color:<%= c[:text] %>; border:1.5px solid <%= c[:border] %>;
@@ -173,50 +173,50 @@
 
             <div style="min-width:0;">
               <div style="display:flex; align-items:center; gap:6px; flex-wrap:wrap;">
-                <span style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.9rem; font-weight:600; color:#1C1917; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
+                <span style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.9rem; font-weight:600; color:var(--ink); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
                   <%= activity.title %>
                 </span>
                 <% if current_user.teacher? && activity.draft? %>
-                  <span style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.7rem; font-weight:600; background:#FFF7ED; color:#7C4A00; border:1.5px solid #C9952A; border-radius:20px; padding:2px 8px; white-space:nowrap; flex-shrink:0;">
+                  <span style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.7rem; font-weight:600; background:var(--warning-tint); color:var(--action-ink); border:1.5px solid var(--action); border-radius:20px; padding:2px 8px; white-space:nowrap; flex-shrink:0;">
                     Rascunho
                   </span>
                 <% elsif current_user.teacher? && activity.ai_generated? %>
-                  <span style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.7rem; font-weight:600; background:#FFF7ED; color:#7C4A00; border:1.5px solid #C9952A; border-radius:20px; padding:2px 8px; white-space:nowrap; flex-shrink:0;">
+                  <span style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.7rem; font-weight:600; background:var(--warning-tint); color:var(--action-ink); border:1.5px solid var(--action); border-radius:20px; padding:2px 8px; white-space:nowrap; flex-shrink:0;">
                     ✨ IA
                   </span>
                 <% end %>
                 <% if activity.ratings_count > 0 %>
-                  <span style="font-family:'DM Mono',monospace; font-size:0.7rem; font-weight:700; color:#C9952A; white-space:nowrap; flex-shrink:0; display:inline-flex; align-items:center; gap:2px;">
+                  <span style="font-family:'DM Mono',monospace; font-size:0.7rem; font-weight:700; color:var(--action); white-space:nowrap; flex-shrink:0; display:inline-flex; align-items:center; gap:2px;">
                     <i class="bi bi-star-fill" style="font-size:0.62rem;"></i> <%= activity.average_rating %>
                   </span>
                 <% end %>
               </div>
               <% if activity.content_type.present? %>
-                <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.75rem; color:#9C9892; margin-top:2px;">
+                <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.75rem; color:var(--ink-faint); margin-top:2px;">
                   <%= type_labels[activity.content_type] || activity.content_type.humanize %>
                 </div>
               <% end %>
             </div>
 
-            <div class="act-col-date" style="font-family:'DM Mono',monospace; font-size:0.75rem; color:#5C5853; white-space:nowrap;">
+            <div class="act-col-date" style="font-family:'DM Mono',monospace; font-size:0.75rem; color:var(--ink-soft); white-space:nowrap;">
               <%= activity.created_at.strftime("%d/%m/%Y") %>
             </div>
 
-            <div class="act-col-count" style="font-family:'DM Mono',monospace; font-size:0.85rem; font-weight:600; color:#5C5853; text-align:center;">
+            <div class="act-col-count" style="font-family:'DM Mono',monospace; font-size:0.85rem; font-weight:600; color:var(--ink-soft); text-align:center;">
               <%= @attempt_stats[:counts][activity.id] || 0 %>
             </div>
 
             <div style="display:flex; gap:6px; justify-content:flex-end;">
               <% if current_user.teacher? && activity.draft? %>
                 <%= link_to "Revisar", review_draft_activity_path(activity),
-                      style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.78rem; font-weight:600; color:#7C4A00; padding:5px 12px; border:1.5px solid #C9952A; border-radius:8px; text-decoration:none; background:#FFF7ED; white-space:nowrap;" %>
+                      style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.78rem; font-weight:600; color:var(--action-ink); padding:5px 12px; border:1.5px solid var(--action); border-radius:8px; text-decoration:none; background:var(--warning-tint); white-space:nowrap;" %>
               <% else %>
                 <%= link_to "Ver", activity_path(activity),
-                      style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.78rem; font-weight:600; color:#2563EB; padding:5px 12px; border:1.5px solid #BFDBFE; border-radius:8px; text-decoration:none; background:#EBF2FC; white-space:nowrap;" %>
+                      style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.78rem; font-weight:600; color:var(--info); padding:5px 12px; border:1.5px solid var(--info-border); border-radius:8px; text-decoration:none; background:var(--info-tint); white-space:nowrap;" %>
               <% end %>
               <% if current_user.teacher? %>
                 <%= link_to "Editar", edit_activity_path(activity),
-                      style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.78rem; font-weight:500; color:#5C5853; padding:5px 12px; border:1.5px solid #DDD9D2; border-radius:8px; text-decoration:none; white-space:nowrap;" %>
+                      style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.78rem; font-weight:500; color:var(--ink-soft); padding:5px 12px; border:1.5px solid var(--line); border-radius:8px; text-decoration:none; white-space:nowrap;" %>
               <% end %>
             </div>
 
@@ -254,20 +254,20 @@
                   <span style="font-family:'DM Mono',monospace; font-size:0.72rem; font-weight:700; background:<%= c[:bg] %>; color:<%= c[:text] %>; border:1.5px solid <%= c[:border] %>; padding:3px 10px; border-radius:20px;">
                     <%= activity.level %>
                   </span>
-                  <span style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.7rem; font-weight:600; background:#E0F7FA; color:#00838F; border:1.5px solid #00ACC1; padding:3px 8px; border-radius:20px; display:inline-flex; align-items:center; gap:3px;">
+                  <span style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.7rem; font-weight:600; background:var(--sky-tint); color:var(--sky); border:1.5px solid var(--sky-bright); padding:3px 8px; border-radius:20px; display:inline-flex; align-items:center; gap:3px;">
                     <i class="bi <%= badge[:icon] %>" style="font-size:0.72rem;"></i> <%= badge[:label] %>
                   </span>
                 </div>
-                <span style="font-family:'DM Mono',monospace; font-size:0.7rem; color:#9C9892;">
+                <span style="font-family:'DM Mono',monospace; font-size:0.7rem; color:var(--ink-faint);">
                   <%= activity.created_at.strftime("%d/%m/%Y") %>
                 </span>
               </div>
 
-              <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.9rem; font-weight:600; color:#1C1917; margin-bottom:4px; line-height:1.35; flex:1;">
+              <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.9rem; font-weight:600; color:var(--ink); margin-bottom:4px; line-height:1.35; flex:1;">
                 <%= activity.title %>
               </div>
               <% if activity.content_type.present? %>
-                <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.75rem; color:#9C9892; margin-bottom:10px;">
+                <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.75rem; color:var(--ink-faint); margin-bottom:10px;">
                   <%= type_labels[activity.content_type] || activity.content_type.humanize %>
                 </div>
               <% else %>
@@ -276,33 +276,33 @@
 
               <div style="display:flex; gap:16px; margin-bottom:12px; align-items:flex-end;">
                 <div>
-                  <div style="font-family:'DM Mono',monospace; font-size:0.95rem; font-weight:700; color:#2563EB; line-height:1;">
+                  <div style="font-family:'DM Mono',monospace; font-size:0.95rem; font-weight:700; color:var(--info); line-height:1;">
                     <%= @attempt_stats[:counts][activity.id] || 0 %>
                   </div>
-                  <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.68rem; color:#9C9892; margin-top:2px;">tentativas</div>
+                  <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.68rem; color:var(--ink-faint); margin-top:2px;">tentativas</div>
                 </div>
                 <div>
-                  <div style="font-family:'DM Mono',monospace; font-size:0.95rem; font-weight:700; color:#2A9B6F; line-height:1;">
+                  <div style="font-family:'DM Mono',monospace; font-size:0.95rem; font-weight:700; color:var(--brand-bright); line-height:1;">
                     <%= @attempt_stats[:unique_users][activity.id] || 0 %>
                   </div>
-                  <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.68rem; color:#9C9892; margin-top:2px;">estudantes</div>
+                  <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.68rem; color:var(--ink-faint); margin-top:2px;">estudantes</div>
                 </div>
                 <% if activity.ratings_count > 0 %>
                   <div>
-                    <div style="font-family:'DM Mono',monospace; font-size:0.95rem; font-weight:700; color:#C9952A; line-height:1; display:flex; align-items:center; gap:3px;">
+                    <div style="font-family:'DM Mono',monospace; font-size:0.95rem; font-weight:700; color:var(--action); line-height:1; display:flex; align-items:center; gap:3px;">
                       <i class="bi bi-star-fill" style="font-size:0.75rem;"></i> <%= activity.average_rating %>
                     </div>
-                    <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.68rem; color:#9C9892; margin-top:2px;">média</div>
+                    <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.68rem; color:var(--ink-faint); margin-top:2px;">média</div>
                   </div>
                 <% end %>
               </div>
 
-              <div style="display:flex; gap:6px; border-top:1px solid #F0EDE8; padding-top:12px; margin-top:auto;">
+              <div style="display:flex; gap:6px; border-top:1px solid var(--line-soft); padding-top:12px; margin-top:auto;">
                 <%= link_to "Ver", activity_path(activity),
-                      style: "flex:1; text-align:center; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.78rem; font-weight:600; color:#2563EB; padding:7px; border:1.5px solid #BFDBFE; border-radius:8px; text-decoration:none; background:#EBF2FC;" %>
+                      style: "flex:1; text-align:center; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.78rem; font-weight:600; color:var(--info); padding:7px; border:1.5px solid var(--info-border); border-radius:8px; text-decoration:none; background:var(--info-tint);" %>
                 <% if current_user.teacher? %>
                   <%= link_to "Editar", edit_activity_path(activity),
-                        style: "flex:1; text-align:center; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.78rem; font-weight:500; color:#5C5853; padding:7px; border:1.5px solid #DDD9D2; border-radius:8px; text-decoration:none;" %>
+                        style: "flex:1; text-align:center; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.78rem; font-weight:500; color:var(--ink-soft); padding:7px; border:1.5px solid var(--line); border-radius:8px; text-decoration:none;" %>
                 <% end %>
               </div>
 
@@ -316,25 +316,25 @@
   <% else %>
 
     <%# ESTADO VAZIO %>
-    <div style="background:#fff; border:1px solid #DDD9D2; border-radius:16px; padding:48px; text-align:center;">
+    <div style="background:var(--surface); border:1px solid var(--line); border-radius:16px; padding:48px; text-align:center;">
       <div style="font-size:2.5rem; margin-bottom:14px;">📝</div>
-      <div style="font-family:'Raleway',sans-serif; font-size:1.1rem; font-weight:700; color:#1C1917; margin-bottom:8px;">
+      <div style="font-family:'Raleway',sans-serif; font-size:1.1rem; font-weight:700; color:var(--ink); margin-bottom:8px;">
         <% if params[:search].present? || params[:level].present? %>
           Nenhuma atividade encontrada
         <% else %>
           Nenhuma atividade ainda
         <% end %>
       </div>
-      <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.85rem; color:#5C5853; margin-bottom:20px;">
+      <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.85rem; color:var(--ink-soft); margin-bottom:20px;">
         <% if params[:search].present? || params[:level].present? %>
-          Tente outros filtros ou <%= link_to "limpe a busca", activities_path, style: "color:#2563EB; text-decoration:none; font-weight:600;" %>.
+          Tente outros filtros ou <%= link_to "limpe a busca", activities_path, style: "color:var(--info); text-decoration:none; font-weight:600;" %>.
         <% else %>
           Comece criando sua primeira atividade.
         <% end %>
       </div>
       <% if current_user.teacher? && params[:search].blank? && params[:level].blank? %>
         <%= link_to new_activity_path,
-              style: "background:#C9952A; color:#fff; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.85rem; font-weight:700; padding:10px 24px; border-radius:10px; text-decoration:none; display:inline-block;" do %>
+              style: "background:var(--action); color:var(--surface); font-family:'Plus Jakarta Sans',sans-serif; font-size:0.85rem; font-weight:700; padding:10px 24px; border-radius:10px; text-decoration:none; display:inline-block;" do %>
           + Nova Atividade
         <% end %>
       <% end %>
@@ -348,7 +348,7 @@
     <%# Voltar %>
     <% dashboard_path = current_user.teacher? ? teacher_dashboard_path : student_dashboard_path %>
     <%= link_to dashboard_path,
-          style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; font-weight:600; color:#fff; background:#1A6B4A; padding:8px 18px; border:none; border-radius:8px; text-decoration:none; display:inline-block;" do %>
+          style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; font-weight:600; color:var(--surface); background:var(--brand); padding:8px 18px; border:none; border-radius:8px; text-decoration:none; display:inline-block;" do %>
       ← Voltar
     <% end %>
 
@@ -357,24 +357,24 @@
       <div style="display:flex; align-items:center; gap:6px;">
         <% if @activities.prev_page %>
           <%= link_to activities_path(params.permit(:level, :sort, :search, :view, :origem, :competencia).merge(page: @activities.prev_page)),
-                style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; font-weight:600; color:#fff; background:#0F3826; padding:8px 16px; border-radius:8px; text-decoration:none; display:inline-block;" do %>
+                style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; font-weight:600; color:var(--surface); background:var(--brand-deep); padding:8px 16px; border-radius:8px; text-decoration:none; display:inline-block;" do %>
             ← Anterior
           <% end %>
         <% else %>
-          <span style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; font-weight:600; color:#9C9892; background:#F0EDE8; padding:8px 16px; border-radius:8px; cursor:default; display:inline-block;">← Anterior</span>
+          <span style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; font-weight:600; color:var(--ink-faint); background:var(--line-soft); padding:8px 16px; border-radius:8px; cursor:default; display:inline-block;">← Anterior</span>
         <% end %>
 
-        <span style="font-family:'DM Mono',monospace; font-size:0.78rem; color:#5C5853; background:#F7F5F0; padding:8px 14px; border-radius:8px;">
+        <span style="font-family:'DM Mono',monospace; font-size:0.78rem; color:var(--ink-soft); background:var(--paper); padding:8px 14px; border-radius:8px;">
           <%= @activities.current_page %>&nbsp;/&nbsp;<%= @activities.total_pages %>
         </span>
 
         <% if @activities.next_page %>
           <%= link_to activities_path(params.permit(:level, :sort, :search, :view, :origem, :competencia).merge(page: @activities.next_page)),
-                style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; font-weight:600; color:#fff; background:#0F3826; padding:8px 16px; border-radius:8px; text-decoration:none; display:inline-block;" do %>
+                style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; font-weight:600; color:var(--surface); background:var(--brand-deep); padding:8px 16px; border-radius:8px; text-decoration:none; display:inline-block;" do %>
             Próxima →
           <% end %>
         <% else %>
-          <span style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; font-weight:600; color:#9C9892; background:#F0EDE8; padding:8px 16px; border-radius:8px; cursor:default; display:inline-block;">Próxima →</span>
+          <span style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; font-weight:600; color:var(--ink-faint); background:var(--line-soft); padding:8px 16px; border-radius:8px; cursor:default; display:inline-block;">Próxima →</span>
         <% end %>
       </div>
     <% end %>

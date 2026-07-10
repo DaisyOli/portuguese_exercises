@@ -6,12 +6,12 @@
   question_text   = result["question_text"]
   teacher_comment = attempt.teacher_comment_for(q_id)
   score_int       = ai_score.to_i
-  score_color     = score_int >= 70 ? '#1A6B4A' : (score_int >= 40 ? '#C9952A' : '#B91C1C')
-  score_bg        = score_int >= 70 ? '#E8F5EE' : (score_int >= 40 ? '#FFF8E7' : '#FEF2F2')
+  score_color     = score_int >= 70 ? 'var(--brand)' : (score_int >= 40 ? 'var(--action)' : 'var(--error)')
+  score_bg        = score_int >= 70 ? 'var(--brand-tint)' : (score_int >= 40 ? 'var(--action-tint)' : 'var(--error-tint)')
   m               = cefr_colors(attempt.activity.level)
 %>
 
-<div style="border:1px solid #F0EDE8; border-radius:12px; padding:14px 16px; background:#FAFAF9;">
+<div style="border:1px solid var(--line-soft); border-radius:12px; padding:14px 16px; background:var(--surface-2);">
 
   <%# cabeçalho: nível + título + data %>
   <div class="oe-card-header">
@@ -20,36 +20,36 @@
                  padding:2px 8px; border-radius:20px; flex-shrink:0;">
       <%= attempt.activity.level %>
     </span>
-    <span class="oe-title" style="font-family:'Plus Jakarta Sans',sans-serif; font-weight:700; color:#1C1917;">
+    <span class="oe-title" style="font-family:'Plus Jakarta Sans',sans-serif; font-weight:700; color:var(--ink);">
       <%= attempt.activity.title %>
     </span>
-    <span style="font-family:'DM Mono',monospace; font-size:0.72rem; color:#9C9892; flex-shrink:0;">
+    <span style="font-family:'DM Mono',monospace; font-size:0.72rem; color:var(--ink-faint); flex-shrink:0;">
       <%= attempt.submitted_at.strftime("%d/%m") %>
     </span>
   </div>
 
   <%# enunciado da questão %>
   <% if question_text.present? %>
-  <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.8rem; color:#5C5853;
+  <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.8rem; color:var(--ink-soft);
               font-style:italic; margin-bottom:8px; line-height:1.5;">
     "<%= strip_tags(question_text).truncate(140) %>"
   </div>
   <% end %>
 
   <%# resposta do aluno %>
-  <div style="background:#fff; border:1px solid #E8E5DF; border-radius:8px; padding:10px 12px; margin-bottom:8px;">
-    <div style="font-family:'DM Mono',monospace; font-size:0.63rem; color:#9C9892; letter-spacing:0.08em;
+  <div style="background:var(--surface); border:1px solid var(--paper-2); border-radius:8px; padding:10px 12px; margin-bottom:8px;">
+    <div style="font-family:'DM Mono',monospace; font-size:0.63rem; color:var(--ink-faint); letter-spacing:0.08em;
                 text-transform:uppercase; margin-bottom:5px;">Sua resposta</div>
-    <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.85rem; color:#1C1917; line-height:1.5;">
+    <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.85rem; color:var(--ink); line-height:1.5;">
       <%= given_answer.presence || "(sem resposta)" %>
     </div>
   </div>
 
   <%# avaliação da IA %>
   <% if ai_score.present? || ai_feedback.present? %>
-  <div style="background:#FFF8E7; border:1px solid #F5D478; border-radius:8px; padding:10px 12px; margin-bottom:8px;">
+  <div style="background:var(--action-tint); border:1px solid var(--action-soft); border-radius:8px; padding:10px 12px; margin-bottom:8px;">
     <div style="display:flex; align-items:center; gap:8px; margin-bottom:<%= ai_feedback.present? ? '6px' : '0' %>;">
-      <span style="font-family:'DM Mono',monospace; font-size:0.63rem; color:#9C7A30; letter-spacing:0.08em; text-transform:uppercase;">✨ Avaliação IA</span>
+      <span style="font-family:'DM Mono',monospace; font-size:0.63rem; color:var(--action-ink); letter-spacing:0.08em; text-transform:uppercase;">✨ Avaliação IA</span>
       <% if ai_score.present? %>
       <span style="font-family:'DM Mono',monospace; font-size:0.75rem; font-weight:800;
                    color:<%= score_color %>; background:<%= score_bg %>; padding:2px 8px; border-radius:12px;">
@@ -58,7 +58,7 @@
       <% end %>
     </div>
     <% if ai_feedback.present? %>
-    <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; color:#5C5853; line-height:1.5;">
+    <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; color:var(--ink-soft); line-height:1.5;">
       <%= ai_feedback %>
     </div>
     <% end %>
@@ -67,15 +67,15 @@
 
   <%# feedback do professor %>
   <% if teacher_comment.present? %>
-  <div style="background:#E8F5EE; border:1.5px solid #2A9B6F; border-radius:8px; padding:10px 12px;">
-    <div style="font-family:'DM Mono',monospace; font-size:0.63rem; color:#1A6B4A; letter-spacing:0.08em;
+  <div style="background:var(--brand-tint); border:1.5px solid var(--brand-bright); border-radius:8px; padding:10px 12px;">
+    <div style="font-family:'DM Mono',monospace; font-size:0.63rem; color:var(--brand); letter-spacing:0.08em;
                 text-transform:uppercase; margin-bottom:5px;">✍️ Feedback do professor</div>
-    <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.85rem; color:#0F3826; line-height:1.5;">
+    <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.85rem; color:var(--brand-deep); line-height:1.5;">
       <%= teacher_comment %>
     </div>
   </div>
   <% else %>
-  <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.75rem; color:#9C9892; font-style:italic;">
+  <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.75rem; color:var(--ink-faint); font-style:italic;">
     Aguardando feedback do professor...
   </div>
   <% end %>

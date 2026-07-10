@@ -1,9 +1,9 @@
 <%
   type_styles = {
-    'multiple_choice' => { bg:'#EBF2FC', text:'#1A4A8A', border:'#BFDBFE' },
-    'fill_in_blank'   => { bg:'#F5F3FF', text:'#4C1D95', border:'#DDD6FE' },
+    'multiple_choice' => { bg:'var(--info-tint)', text:'var(--info-deep)', border:'var(--info-border)' },
+    'fill_in_blank'   => { bg:'var(--violet-tint)', text:'var(--violet-deep)', border:'var(--violet-border)' },
   }
-  ts = type_styles[question.question_type] || { bg:'#F3F4F6', text:'#1C1917', border:'#DDD9D2' }
+  ts = type_styles[question.question_type] || { bg:'var(--neutral-tint)', text:'var(--ink)', border:'var(--line)' }
 %>
 
 <% unless @quill_loaded %>
@@ -12,23 +12,23 @@
     <link href="https://cdn.quilljs.com/1.3.7/quill.snow.css" rel="stylesheet">
     <script src="https://cdn.quilljs.com/1.3.7/quill.min.js"></script>
     <style>
-      .ql-toolbar.ql-snow { border-radius: 8px 8px 0 0; border-color: #DDD9D2; font-family: 'Plus Jakarta Sans', sans-serif; padding: 3px 8px; }
+      .ql-toolbar.ql-snow { border-radius: 8px 8px 0 0; border-color: var(--line); font-family: 'Plus Jakarta Sans', sans-serif; padding: 3px 8px; }
       .ql-toolbar.ql-snow button { padding: 2px; width: 22px; height: 20px; }
       .ql-toolbar.ql-snow .ql-formats { margin-right: 8px; line-height: 1; }
-      .ql-container.ql-snow { border-radius: 0 0 8px 8px; border-color: #DDD9D2; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 0.9rem; }
-      .ql-editor { min-height: 80px; padding: 6px 10px 4px; line-height: 1.65; color: #1C1917; }
+      .ql-container.ql-snow { border-radius: 0 0 8px 8px; border-color: var(--line); font-family: 'Plus Jakarta Sans', sans-serif; font-size: 0.9rem; }
+      .ql-editor { min-height: 80px; padding: 6px 10px 4px; line-height: 1.65; color: var(--ink); }
       .quill-tall .ql-editor { min-height: 140px; padding: 12px 15px 6px; }
-      .ql-editor.ql-blank::before { color: #9C9892; font-style: normal; }
+      .ql-editor.ql-blank::before { color: var(--ink-faint); font-style: normal; }
     </style>
   <% end %>
 <% end %>
 
-<div id="question-<%= question.id %>" style="border:1px solid #D1EAD9; border-radius:10px; overflow:hidden; background:#fff;">
+<div id="question-<%= question.id %>" style="border:1px solid var(--brand-tint-2); border-radius:10px; overflow:hidden; background:var(--surface);">
 
   <%# Question header %>
-  <div style="display:flex; align-items:center; justify-content:space-between; padding:9px 14px; background:#E8F5EE; border-bottom:1px solid #D1EAD9;">
+  <div style="display:flex; align-items:center; justify-content:space-between; padding:9px 14px; background:var(--brand-tint); border-bottom:1px solid var(--brand-tint-2);">
     <div style="display:flex; align-items:center; gap:8px;">
-      <span style="font-family:'DM Mono',monospace; font-size:0.7rem; font-weight:700; color:#1A6B4A;">
+      <span style="font-family:'DM Mono',monospace; font-size:0.7rem; font-weight:700; color:var(--brand);">
         <%= "%02d" % (index + 1) %>
       </span>
       <span style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.7rem; font-weight:700; padding:3px 9px; border:1px solid <%= ts[:border] %>; border-radius:6px; background:<%= ts[:bg] %>; color:<%= ts[:text] %>;">
@@ -39,13 +39,13 @@
       <div style="display:flex; gap:6px;">
         <button type="button"
                 data-controller="collapse" data-collapse-target-value="#edit-question-form-<%= question.id %>" data-action="collapse#toggle"
-                style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.72rem; font-weight:600; color:#5C5853; padding:4px 9px; border:1.5px solid #DDD9D2; border-radius:6px; background:#fff; cursor:pointer;">
+                style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.72rem; font-weight:600; color:var(--ink-soft); padding:4px 9px; border:1.5px solid var(--line); border-radius:6px; background:var(--surface); cursor:pointer;">
           Editar
         </button>
         <%= button_to activity_question_path(activity, question),
             method: :delete,
             data: { confirm: t('questions.confirm_delete') },
-            style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.72rem; font-weight:600; color:#B91C1C; padding:4px 9px; border:1.5px solid #FECACA; border-radius:6px; background:#FEF2F2; cursor:pointer;" do %>
+            style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.72rem; font-weight:600; color:var(--error); padding:4px 9px; border:1.5px solid var(--error-border); border-radius:6px; background:var(--error-tint); cursor:pointer;" do %>
           Remover
         <% end %>
       </div>
@@ -54,10 +54,10 @@
 
   <%# Question content %>
   <div style="padding:14px;">
-    <p style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.92rem; color:#1C1917; margin:0 0 12px 0; line-height:1.55;">
+    <p style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.92rem; color:var(--ink); margin:0 0 12px 0; line-height:1.55;">
       <% if question.fill_in_blank? %>
         <% safe_c = sanitize(question.content.to_s, tags: %w[p br strong em u], attributes: []) %>
-        <%= safe_c.gsub('_____', '<span style="display:inline-block; width:140px; border-bottom:2px solid #4C1D95;">&nbsp;</span>').html_safe %>
+        <%= safe_c.gsub('_____', '<span style="display:inline-block; width:140px; border-bottom:2px solid var(--violet-deep);">&nbsp;</span>').html_safe %>
       <% else %>
         <%= sanitize(question.content.to_s, tags: %w[p br strong em u], attributes: []) %>
       <% end %>
@@ -67,14 +67,14 @@
       <ul style="list-style:none; margin:0 0 10px 0; padding:0; display:flex; flex-direction:column; gap:5px;">
         <% question.options.each do |option| %>
           <% is_correct = question.correct_answer == option %>
-          <li style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.85rem; padding:7px 12px; border-radius:8px; border:1px solid <%= is_correct ? '#2A9B6F' : '#DDD9D2' %>; background:<%= is_correct ? '#E8F5EE' : '#fff' %>; color:<%= is_correct ? '#0F3826' : '#1C1917' %>; font-weight:<%= is_correct ? '600' : '400' %>;">
+          <li style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.85rem; padding:7px 12px; border-radius:8px; border:1px solid <%= is_correct ? 'var(--brand-bright)' : 'var(--line)' %>; background:<%= is_correct ? 'var(--brand-tint)' : 'var(--surface)' %>; color:<%= is_correct ? 'var(--brand-deep)' : 'var(--ink)' %>; font-weight:<%= is_correct ? '600' : '400' %>;">
             <%= option %>
           </li>
         <% end %>
       </ul>
     <% end %>
 
-    <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.78rem; font-weight:600; color:#1A6B4A;">
+    <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.78rem; font-weight:600; color:var(--brand);">
       <% all_answers = question.fill_in_blank? ? question.all_correct_answers.reject(&:blank?) : [] %>
       <% if all_answers.length > 1 %>
         <% all_answers.each_with_index do |ans, i| %>
@@ -90,7 +90,7 @@
 
 <% if activity.teacher == current_user %>
   <div class="hidden" id="edit-question-form-<%= question.id %>">
-    <div style="padding:20px; border:1px solid #D1EAD9; border-top:none; border-radius:0 0 10px 10px; background:#FAFAF9; margin-top:-1px;">
+    <div style="padding:20px; border:1px solid var(--brand-tint-2); border-top:none; border-radius:0 0 10px 10px; background:var(--surface-2); margin-top:-1px;">
       <div data-controller="question-selector">
         <%= form_with model: [question.activity, question], html: { id: "edit-form-#{question.id}" } do |form| %>
           <div class="mb-4">
@@ -135,7 +135,7 @@
           <div class="mb-4 open-ended-fields" data-question-selector-target="openEnded"
                style="display:<%= question.open_ended? ? 'block' : 'none' %>;">
             <div>
-              <div style="background:#FFF7ED; border:1px solid #FED7AA; border-radius:8px; padding:12px 14px; font-size:0.85rem; color:#7C2D12; font-family:'Plus Jakarta Sans',sans-serif; margin-bottom:12px;">
+              <div style="background:var(--warning-tint); border:1px solid var(--warning-border); border-radius:8px; padding:12px 14px; font-size:0.85rem; color:var(--warning-ink); font-family:'Plus Jakarta Sans',sans-serif; margin-bottom:12px;">
                 <strong>✨ <%= t('questions.form.open_ended_info_title') %></strong><br>
                 <%= t('questions.form.open_ended_info') %>
               </div>
@@ -147,8 +147,8 @@
                 <label class="form-label"><%= t('questions.form.weight_label') %></label>
                 <div style="display:flex; gap:8px; margin-top:4px; flex-wrap:wrap;">
                   <% [1, 2, 3].each do |w| %>
-                    <label style="display:flex; align-items:center; gap:6px; padding:7px 14px; border:1.5px solid <%= (question.weight || 1) == w ? '#C9952A' : '#DDD9D2' %>; border-radius:8px; background:<%= (question.weight || 1) == w ? '#FFF7ED' : '#fff' %>; cursor:pointer; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; font-weight:600; color:<%= (question.weight || 1) == w ? '#7C2D12' : '#5C5853' %>;">
-                      <%= form.radio_button :weight, w, style: "accent-color:#C9952A;" %>
+                    <label style="display:flex; align-items:center; gap:6px; padding:7px 14px; border:1.5px solid <%= (question.weight || 1) == w ? 'var(--action)' : 'var(--line)' %>; border-radius:8px; background:<%= (question.weight || 1) == w ? 'var(--warning-tint)' : 'var(--surface)' %>; cursor:pointer; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; font-weight:600; color:<%= (question.weight || 1) == w ? 'var(--warning-ink)' : 'var(--ink-soft)' %>;">
+                      <%= form.radio_button :weight, w, style: "accent-color:var(--action);" %>
                       ×<%= w %><%= w == 1 ? " (#{t('questions.form.weight_normal')})" : "" %>
                     </label>
                   <% end %>
@@ -177,7 +177,7 @@
               <% 4.times do |i| %>
                 <div class="fib-answer-field" data-blank-index="<%= i %>"
                      style="margin-bottom:8px; display:<%= i < fib_count ? 'flex' : 'none' %>; align-items:center; gap:10px;">
-                  <span style="font-family:'DM Mono',monospace; font-size:0.72rem; font-weight:700; color:#1A6B4A; background:#E8F5EE; border:1px solid #2A9B6F; border-radius:6px; padding:3px 8px; flex-shrink:0; min-width:62px; text-align:center;">
+                  <span style="font-family:'DM Mono',monospace; font-size:0.72rem; font-weight:700; color:var(--brand); background:var(--brand-tint); border:1px solid var(--brand-bright); border-radius:6px; padding:3px 8px; flex-shrink:0; min-width:62px; text-align:center;">
                     Lacuna <%= i + 1 %>
                   </span>
                   <input type="text"
@@ -190,8 +190,8 @@
               <% end %>
               <button type="button" id="fib-add-btn-<%= question.id %>"
                       style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.8rem; font-weight:600;
-                             color:#0F3826; padding:6px 12px; border:1.5px solid #BBF7D0; border-radius:20px;
-                             background:#E8F5EE; cursor:pointer; margin-top:6px;
+                             color:var(--brand-deep); padding:6px 12px; border:1.5px solid var(--success-border); border-radius:20px;
+                             background:var(--brand-tint); cursor:pointer; margin-top:6px;
                              display:<%= fib_count >= 4 ? 'none' : 'inline-flex' %>; align-items:center; gap:5px;">
                 + Adicionar lacuna
               </button>
@@ -201,12 +201,12 @@
           <div>
             <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
               <%= form.submit t('common.save'),
-                    style: "background:#1A4A8A; color:#fff; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.88rem; font-weight:700; border:none; border-radius:12px; padding:9px 24px; cursor:pointer;" %>
+                    style: "background:var(--info-deep); color:var(--surface); font-family:'Plus Jakarta Sans',sans-serif; font-size:0.88rem; font-weight:700; border:none; border-radius:12px; padding:9px 24px; cursor:pointer;" %>
               <% if question.persisted? %>
                 <%= link_to t('common.delete'),
                     activity_question_path(activity, question),
                     data: { turbo_method: :delete, turbo_confirm: t('common.confirm_delete') },
-                    style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; font-weight:600; color:#B91C1C; padding:8px 14px; border:1.5px solid #FECACA; border-radius:10px; background:#FEF2F2; cursor:pointer; text-decoration:none;" %>
+                    style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; font-weight:600; color:var(--error); padding:8px 14px; border:1.5px solid var(--error-border); border-radius:10px; background:var(--error-tint); cursor:pointer; text-decoration:none;" %>
               <% end %>
             </div>
           </div>

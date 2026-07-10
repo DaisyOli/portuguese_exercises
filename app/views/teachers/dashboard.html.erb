@@ -61,10 +61,10 @@
 
   <%# ── Saudação ── %>
   <div style="margin-bottom:2rem;">
-    <h1 style="font-family:'Raleway',sans-serif; font-size:1.75rem; font-weight:700; color:#1C1917; margin-bottom:4px;">
+    <h1 style="font-family:'Raleway',sans-serif; font-size:1.75rem; font-weight:700; color:var(--ink); margin-bottom:4px;">
       Olá, <%= current_user.display_name %> 👋
     </h1>
-    <p style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.95rem; color:#5C5853;">
+    <p style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.95rem; color:var(--ink-soft);">
       Aqui está o resumo das suas atividades.
     </p>
   </div>
@@ -72,36 +72,36 @@
   <%# ── 4 Cards de Métricas ── %>
   <div class="dash-metrics-grid" id="tour-teacher-metrics" style="margin-bottom:2rem;">
 
-    <div style="background:#fff; border:1px solid #DDD9D2; border-radius:14px; padding:20px 22px;">
-      <div style="font-family:'DM Mono',monospace; font-size:0.68rem; color:#9C9892; letter-spacing:0.08em; margin-bottom:8px; text-transform:uppercase;">Atividades</div>
-      <div style="font-family:'Raleway',sans-serif; font-size:2rem; font-weight:800; color:#0F3826; line-height:1;"><%= total_activities %></div>
-      <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.78rem; color:#5C5853; margin-top:6px;">criadas por você</div>
+    <div style="background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:20px 22px;">
+      <div style="font-family:'DM Mono',monospace; font-size:0.68rem; color:var(--ink-faint); letter-spacing:0.08em; margin-bottom:8px; text-transform:uppercase;">Atividades</div>
+      <div style="font-family:'Raleway',sans-serif; font-size:2rem; font-weight:800; color:var(--brand-deep); line-height:1;"><%= total_activities %></div>
+      <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.78rem; color:var(--ink-soft); margin-top:6px;">criadas por você</div>
     </div>
 
-    <div style="background:#fff; border:1px solid #DDD9D2; border-radius:14px; padding:20px 22px;">
-      <div style="font-family:'DM Mono',monospace; font-size:0.68rem; color:#9C9892; letter-spacing:0.08em; margin-bottom:8px; text-transform:uppercase;">Estudantes</div>
-      <div style="font-family:'Raleway',sans-serif; font-size:2rem; font-weight:800; color:#2563EB; line-height:1;"><%= unique_students %></div>
-      <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.78rem; color:#5C5853; margin-top:6px;">únicos participantes</div>
+    <div style="background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:20px 22px;">
+      <div style="font-family:'DM Mono',monospace; font-size:0.68rem; color:var(--ink-faint); letter-spacing:0.08em; margin-bottom:8px; text-transform:uppercase;">Estudantes</div>
+      <div style="font-family:'Raleway',sans-serif; font-size:2rem; font-weight:800; color:var(--info); line-height:1;"><%= unique_students %></div>
+      <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.78rem; color:var(--ink-soft); margin-top:6px;">únicos participantes</div>
     </div>
 
-    <div style="background:#fff; border:1px solid #DDD9D2; border-radius:14px; padding:20px 22px;">
-      <div style="font-family:'DM Mono',monospace; font-size:0.68rem; color:#9C9892; letter-spacing:0.08em; margin-bottom:8px; text-transform:uppercase;">Tentativas</div>
-      <div style="font-family:'Raleway',sans-serif; font-size:2rem; font-weight:800; color:#C9952A; line-height:1;"><%= total_attempts %></div>
-      <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.78rem; color:#5C5853; margin-top:6px;">respostas enviadas</div>
+    <div style="background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:20px 22px;">
+      <div style="font-family:'DM Mono',monospace; font-size:0.68rem; color:var(--ink-faint); letter-spacing:0.08em; margin-bottom:8px; text-transform:uppercase;">Tentativas</div>
+      <div style="font-family:'Raleway',sans-serif; font-size:2rem; font-weight:800; color:var(--action); line-height:1;"><%= total_attempts %></div>
+      <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.78rem; color:var(--ink-soft); margin-top:6px;">respostas enviadas</div>
     </div>
 
-    <div style="background:#fff; border:1px solid #DDD9D2; border-radius:14px; padding:20px 22px;">
-      <div style="font-family:'DM Mono',monospace; font-size:0.68rem; color:#9C9892; letter-spacing:0.08em; margin-bottom:10px; text-transform:uppercase;">Origem</div>
+    <div style="background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:20px 22px;">
+      <div style="font-family:'DM Mono',monospace; font-size:0.68rem; color:var(--ink-faint); letter-spacing:0.08em; margin-bottom:10px; text-transform:uppercase;">Origem</div>
       <div style="display:flex; flex-direction:column; gap:8px;">
         <%= link_to activities_path(origem: 'ia'),
-              style: "display:flex; align-items:center; justify-content:space-between; text-decoration:none; padding:6px 10px; background:#FFF7ED; border:1px solid #FED7AA; border-radius:8px;" do %>
-          <span style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; font-weight:600; color:#7C2D12;">✨ Geradas por IA</span>
-          <span style="font-family:'DM Mono',monospace; font-size:1rem; font-weight:800; color:#C9952A;"><%= ai_activities %></span>
+              style: "display:flex; align-items:center; justify-content:space-between; text-decoration:none; padding:6px 10px; background:var(--warning-tint); border:1px solid var(--warning-border); border-radius:8px;" do %>
+          <span style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; font-weight:600; color:var(--warning-ink);">✨ Geradas por IA</span>
+          <span style="font-family:'DM Mono',monospace; font-size:1rem; font-weight:800; color:var(--action);"><%= ai_activities %></span>
         <% end %>
         <%= link_to activities_path(origem: 'manual'),
-              style: "display:flex; align-items:center; justify-content:space-between; text-decoration:none; padding:6px 10px; background:#E8F5EE; border:1px solid #BBF7D0; border-radius:8px;" do %>
-          <span style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; font-weight:600; color:#0F3826;">✏️ Criadas manualmente</span>
-          <span style="font-family:'DM Mono',monospace; font-size:1rem; font-weight:800; color:#1A6B4A;"><%= manual_activities %></span>
+              style: "display:flex; align-items:center; justify-content:space-between; text-decoration:none; padding:6px 10px; background:var(--brand-tint); border:1px solid var(--success-border); border-radius:8px;" do %>
+          <span style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; font-weight:600; color:var(--brand-deep);">✏️ Criadas manualmente</span>
+          <span style="font-family:'DM Mono',monospace; font-size:1rem; font-weight:800; color:var(--brand);"><%= manual_activities %></span>
         <% end %>
       </div>
     </div>
@@ -130,21 +130,21 @@
     # (mínimo 1 para evitar divisão por zero quando ainda não há atividades)
     bar_max = [counts_by_level.values.flat_map { |d| d[:comps].values }.max.to_i, 1].max
   %>
-  <div style="background:#fff; border:1px solid #DDD9D2; border-radius:16px; padding:28px; margin-bottom:1.5rem;">
+  <div style="background:var(--surface); border:1px solid var(--line); border-radius:16px; padding:28px; margin-bottom:1.5rem;">
 
     <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:1.5rem;">
       <div>
-        <h2 style="font-family:'Raleway',sans-serif; font-size:1.1rem; font-weight:700; color:#1C1917; margin:0 0 4px;">Atividades por Nível</h2>
-        <p style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.78rem; color:#9C9892; margin:0;">Distribuição de competências por nível</p>
+        <h2 style="font-family:'Raleway',sans-serif; font-size:1.1rem; font-weight:700; color:var(--ink); margin:0 0 4px;">Atividades por Nível</h2>
+        <p style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.78rem; color:var(--ink-faint); margin:0;">Distribuição de competências por nível</p>
       </div>
       <%= link_to "Ver todas →", activities_path,
-            style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.8rem; color:#C9952A; font-weight:600; text-decoration:none; flex-shrink:0;" %>
+            style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.8rem; color:var(--action); font-weight:600; text-decoration:none; flex-shrink:0;" %>
     </div>
 
-    <div style="display:flex; flex-direction:column; gap:0; border:1px solid #F0EDE8; border-radius:12px; overflow:hidden;">
+    <div style="display:flex; flex-direction:column; gap:0; border:1px solid var(--line-soft); border-radius:12px; overflow:hidden;">
 
       <%# Cabeçalho %>
-      <div style="display:grid; grid-template-columns:52px 1fr 44px; gap:0; background:#F7F5F0; padding:8px 16px; border-bottom:1px solid #ECEAE5;">
+      <div style="display:grid; grid-template-columns:52px 1fr 44px; gap:0; background:var(--paper); padding:8px 16px; border-bottom:1px solid var(--paper-2);">
         <div></div>
         <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:12px;">
           <% ApplicationHelper::COMPETENCY_META.each do |key, cm| %>
@@ -153,7 +153,7 @@
             </div>
           <% end %>
         </div>
-        <div style="font-family:'DM Mono',monospace; font-size:0.65rem; color:#9C9892; letter-spacing:0.06em; text-transform:uppercase; text-align:right;">Total</div>
+        <div style="font-family:'DM Mono',monospace; font-size:0.65rem; color:var(--ink-faint); letter-spacing:0.06em; text-transform:uppercase; text-align:right;">Total</div>
       </div>
 
       <% ['A1','A2','B1','B2','C1'].each_with_index do |lvl, i| %>
@@ -162,7 +162,7 @@
         <% c     = cefr_colors(lvl) %>
         <% last  = i == 4 %>
 
-        <div style="display:grid; grid-template-columns:52px 1fr 44px; gap:0; align-items:center; padding:14px 16px; background:#fff; <%= last ? '' : 'border-bottom:1px solid #F5F3F0;' %>">
+        <div style="display:grid; grid-template-columns:52px 1fr 44px; gap:0; align-items:center; padding:14px 16px; background:var(--surface); <%= last ? '' : 'border-bottom:1px solid var(--paper);' %>">
 
           <%# Badge nível %>
           <div>
@@ -181,10 +181,10 @@
               <%= link_to activities_path(level: lvl, competencia: key),
                     style: "text-decoration:none; display:flex; flex-direction:column; gap:4px;" do %>
                 <div style="display:flex; align-items:center; gap:6px;">
-                  <div style="flex:1; background:#F0EDE8; border-radius:99px; height:7px; overflow:hidden;">
+                  <div style="flex:1; background:var(--line-soft); border-radius:99px; height:7px; overflow:hidden;">
                     <div style="width:<%= n > 0 ? [pct, 4].max : 0 %>%; height:100%; border-radius:99px; background:<%= cm[:bar] %>; transition:width 0.4s ease;"></div>
                   </div>
-                  <span style="font-family:'DM Mono',monospace; font-size:0.75rem; font-weight:700; color:<%= n > 0 ? cm[:color] : '#C4BFB8' %>; min-width:18px; text-align:right; flex-shrink:0;">
+                  <span style="font-family:'DM Mono',monospace; font-size:0.75rem; font-weight:700; color:<%= n > 0 ? cm[:color] : 'var(--ink-faint)' %>; min-width:18px; text-align:right; flex-shrink:0;">
                     <%= n %>
                   </span>
                 </div>
@@ -194,7 +194,7 @@
 
           <%# Total %>
           <div style="text-align:right;">
-            <span style="font-family:'DM Mono',monospace; font-size:0.9rem; font-weight:800; color:<%= total > 0 ? '#1C1917' : '#DDD9D2' %>;">
+            <span style="font-family:'DM Mono',monospace; font-size:0.9rem; font-weight:800; color:<%= total > 0 ? 'var(--ink)' : 'var(--line)' %>;">
               <%= total %>
             </span>
           </div>
@@ -208,37 +208,37 @@
 
 
   <%# ── Meus Alunos ── %>
-  <div id="tour-teacher-students" style="background:#fff; border:1px solid #DDD9D2; border-radius:16px; padding:28px; margin-bottom:1.5rem;">
+  <div id="tour-teacher-students" style="background:var(--surface); border:1px solid var(--line); border-radius:16px; padding:28px; margin-bottom:1.5rem;">
     <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:1.25rem;">
-      <h2 style="font-family:'Raleway',sans-serif; font-size:1.1rem; font-weight:700; color:#1C1917;">
+      <h2 style="font-family:'Raleway',sans-serif; font-size:1.1rem; font-weight:700; color:var(--ink);">
         Meus Alunos
       </h2>
       <%= link_to "Ver todos →", teacher_students_path,
-            style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.8rem; color:#1A6B4A; font-weight:600; text-decoration:none;" %>
+            style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.8rem; color:var(--brand); font-weight:600; text-decoration:none;" %>
     </div>
 
     <% if recent_students.empty? %>
-      <div style="text-align:center; padding:24px 20px; color:#9C9892;">
+      <div style="text-align:center; padding:24px 20px; color:var(--ink-faint);">
         <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.88rem;">Nenhum aluno convidado ainda.</div>
       </div>
     <% else %>
       <div style="display:flex; flex-direction:column; gap:10px;">
         <% recent_students.each do |student| %>
           <%= link_to teacher_student_profile_path(student),
-                style: "display:flex; align-items:center; gap:12px; padding:12px 14px; border:1px solid #F0EDE8; border-radius:10px; text-decoration:none; background:#FAFAF9;"  do %>
-            <div style="width:34px; height:34px; border-radius:50%; background:#1A6B4A; display:flex; align-items:center; justify-content:center;
-                        font-family:'Raleway',sans-serif; font-size:0.88rem; font-weight:800; color:#fff; flex-shrink:0;">
+                style: "display:flex; align-items:center; gap:12px; padding:12px 14px; border:1px solid var(--line-soft); border-radius:10px; text-decoration:none; background:var(--surface-2);"  do %>
+            <div style="width:34px; height:34px; border-radius:50%; background:var(--brand); display:flex; align-items:center; justify-content:center;
+                        font-family:'Raleway',sans-serif; font-size:0.88rem; font-weight:800; color:var(--surface); flex-shrink:0;">
               <%= student.display_name[0].upcase %>
             </div>
             <div style="flex:1; min-width:0;">
               <div style="display:flex; align-items:center; gap:6px; flex-wrap:wrap;">
-                <span style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.88rem; font-weight:700; color:#1C1917;
+                <span style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.88rem; font-weight:700; color:var(--ink);
                             white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
                   <%= student.display_name %>
                 </span>
                 <%= professional_badge_html(student) %>
               </div>
-              <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.75rem; color:#9C9892;">
+              <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.75rem; color:var(--ink-faint);">
                 <% if student.last_active %>
                   ativo <%= time_ago_in_words(student.last_active) %> atrás
                 <% else %>
@@ -247,7 +247,7 @@
               </div>
             </div>
             <% if student.avg_score.present? %>
-              <span style="font-family:'DM Mono',monospace; font-size:0.82rem; font-weight:800; color:#5C5853; flex-shrink:0;">
+              <span style="font-family:'DM Mono',monospace; font-size:0.82rem; font-weight:800; color:var(--ink-soft); flex-shrink:0;">
                 <%= student.avg_score.to_i %>%
               </span>
             <% end %>
@@ -266,13 +266,13 @@
       .where.not(comment: [nil, ''])
       .count
   %>
-  <div style="background:#F0F9FF; border:1px solid #BAE6FD; border-radius:16px; padding:28px; margin-bottom:1.5rem;">
+  <div style="background:var(--info-tint); border:1px solid var(--sky-border); border-radius:16px; padding:28px; margin-bottom:1.5rem;">
     <div style="display:flex; align-items:center; gap:8px; margin-bottom:1.25rem;">
-      <h2 style="font-family:'Raleway',sans-serif; font-size:1.1rem; font-weight:700; color:#075985; margin:0;">
+      <h2 style="font-family:'Raleway',sans-serif; font-size:1.1rem; font-weight:700; color:var(--sky); margin:0;">
         ⭐ Avaliações dos alunos
       </h2>
       <span style="font-family:'DM Mono',monospace; font-size:0.75rem; font-weight:700;
-                   background:#BAE6FD; color:#075985; padding:2px 8px; border-radius:20px;">
+                   background:var(--sky-border); color:var(--sky); padding:2px 8px; border-radius:20px;">
         <%= total_ratings %>
       </span>
     </div>
@@ -286,8 +286,8 @@
       <button id="load-more-ratings"
               data-offset="3"
               data-url="<%= teacher_more_ratings_path %>"
-              style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; font-weight:600; color:#0369A1;
-                     background:#E0F2FE; border:1px solid #BAE6FD; border-radius:8px; padding:8px 20px;
+              style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; font-weight:600; color:var(--sky);
+                     background:var(--sky-tint); border:1px solid var(--sky-border); border-radius:8px; padding:8px 20px;
                      cursor:pointer;">
         Ver mais avaliações
       </button>
@@ -311,8 +311,8 @@
           }
           btn.dataset.offset = String(initialCount);
           btn.textContent = 'Ver mais avaliações';
-          btn.style.color      = '#0369A1';
-          btn.style.background = '#E0F2FE';
+          btn.style.color      = 'var(--sky)';
+          btn.style.background = 'var(--sky-tint)';
           expanded = false;
           return;
         }
@@ -332,8 +332,8 @@
             btn.textContent = 'Ver mais avaliações';
           } else {
             btn.textContent = 'Ver menos';
-            btn.style.color      = '#075985';
-            btn.style.background = '#BAE6FD';
+            btn.style.color      = 'var(--sky)';
+            btn.style.background = 'var(--sky-border)';
             expanded = true;
           }
         })
@@ -347,29 +347,29 @@
 
   <%# ── Aguardando Revisão ── %>
   <% if pending_review.any? %>
-  <div style="background:#FFF8E7; border:1px solid #F5D478; border-radius:16px; padding:28px; margin-bottom:1.5rem;">
+  <div style="background:var(--action-tint); border:1px solid var(--action-soft); border-radius:16px; padding:28px; margin-bottom:1.5rem;">
     <div style="display:flex; align-items:center; gap:8px; margin-bottom:1.25rem;">
-      <h2 style="font-family:'Raleway',sans-serif; font-size:1.1rem; font-weight:700; color:#7C4A00; margin:0;">
+      <h2 style="font-family:'Raleway',sans-serif; font-size:1.1rem; font-weight:700; color:var(--action-ink); margin:0;">
         ✍️ Aguardando seu feedback
       </h2>
       <span style="font-family:'DM Mono',monospace; font-size:0.75rem; font-weight:700;
-                   background:#F5D478; color:#7C4A00; padding:2px 8px; border-radius:20px;">
+                   background:var(--action-soft); color:var(--action-ink); padding:2px 8px; border-radius:20px;">
         <%= pending_review.size %>
       </span>
     </div>
     <div style="display:flex; flex-direction:column; gap:8px;">
       <% pending_review.each do |attempt| %>
         <%= link_to teacher_student_profile_path(attempt.user_id, anchor: "attempt-#{attempt.id}"),
-              style: "display:flex; align-items:center; justify-content:space-between; padding:11px 14px; background:#fff; border:1px solid #F5D478; border-radius:10px; text-decoration:none;" do %>
+              style: "display:flex; align-items:center; justify-content:space-between; padding:11px 14px; background:var(--surface); border:1px solid var(--action-soft); border-radius:10px; text-decoration:none;" do %>
           <div>
-            <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.88rem; font-weight:700; color:#1C1917;">
+            <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.88rem; font-weight:700; color:var(--ink);">
               <%= attempt.user&.display_name || "Aluno" %>
             </div>
-            <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.75rem; color:#9C9892; margin-top:2px;">
+            <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.75rem; color:var(--ink-faint); margin-top:2px;">
               <%= attempt.activity.title %> · <%= attempt.submitted_at.strftime("%d/%m") %>
             </div>
           </div>
-          <span style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.75rem; font-weight:600; color:#C9952A;">
+          <span style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.75rem; font-weight:600; color:var(--action);">
             Ver →
           </span>
         <% end %>
@@ -383,14 +383,14 @@
   <% if pending_suggestions.any? %>
     <div style="margin-bottom:2rem;">
       <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; flex-wrap:wrap; gap:8px;">
-        <div style="font-family:'Raleway',sans-serif; font-size:1rem; font-weight:700; color:#1C1917; display:flex; align-items:center; gap:8px;">
+        <div style="font-family:'Raleway',sans-serif; font-size:1rem; font-weight:700; color:var(--ink); display:flex; align-items:center; gap:8px;">
           🎬 Sugestões de hoje
-          <span style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.75rem; font-weight:600; background:#FFF7ED; color:#7C2D12; border:1.5px solid #FED7AA; border-radius:20px; padding:2px 10px;">
+          <span style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.75rem; font-weight:600; background:var(--warning-tint); color:var(--warning-ink); border:1.5px solid var(--warning-border); border-radius:20px; padding:2px 10px;">
             <%= pending_suggestions.count %> pendente<%= pending_suggestions.count > 1 ? 's' : '' %>
           </span>
         </div>
         <%= link_to video_suggestions_path,
-              style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.8rem; font-weight:600; color:#1A6B4A; text-decoration:none;" do %>
+              style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.8rem; font-weight:600; color:var(--brand); text-decoration:none;" do %>
           Ver todas →
         <% end %>
       </div>
@@ -406,13 +406,13 @@
   <div style="display:flex; justify-content:center; gap:12px; flex-wrap:wrap; padding-bottom:2rem;">
     <%= link_to activities_path,
           style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.9rem; font-weight:700;
-                  background:#1A6B4A; color:#fff; padding:13px 32px; border-radius:12px;
+                  background:var(--brand); color:var(--surface); padding:13px 32px; border-radius:12px;
                   text-decoration:none; display:inline-flex; align-items:center; gap:8px;" do %>
       Ver Todas as Atividades →
     <% end %>
     <%= link_to generate_with_ai_activities_path,
           style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.9rem; font-weight:700;
-                  background:#0F3826; color:#fff; padding:13px 28px; border-radius:12px;
+                  background:var(--brand-deep); color:var(--surface); padding:13px 28px; border-radius:12px;
                   text-decoration:none; display:inline-flex; align-items:center; gap:8px;" do %>
       ✨ Gerar com IA
     <% end %>

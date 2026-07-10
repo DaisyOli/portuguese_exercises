@@ -5,23 +5,23 @@
 <div id="activity-show-root" data-user-id="<%= current_user.id %>" style="max-width:900px; margin:1.5rem auto 3rem; padding:0 1.5rem;">
 
   <% if @activity.ai_generated? && @activity.draft? && current_user.teacher? %>
-    <div style="background:linear-gradient(135deg,#FFF7ED 0%,#FFFBF0 100%); border:2px solid #C9952A; border-radius:16px; padding:18px 22px; margin-bottom:20px; display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap;">
+    <div style="background:linear-gradient(135deg,var(--warning-tint) 0%,var(--action-tint) 100%); border:2px solid var(--action); border-radius:16px; padding:18px 22px; margin-bottom:20px; display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap;">
       <div>
-        <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.88rem; font-weight:700; color:#7C4A00; margin-bottom:3px;">
+        <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.88rem; font-weight:700; color:var(--action-ink); margin-bottom:3px;">
           ✨ Rascunho gerado por IA — não visível para os alunos ainda
         </div>
-        <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.8rem; color:#A06000;">
+        <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.8rem; color:var(--action-ink);">
           Adicione ou ajuste os exercícios abaixo, depois publique.
         </div>
       </div>
       <div style="display:flex; gap:10px; flex-shrink:0;">
         <%= link_to review_draft_activity_path(@activity),
-              style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; font-weight:600; color:#5C5853; padding:8px 16px; border:1.5px solid #DDD9D2; border-radius:10px; text-decoration:none; background:#fff; white-space:nowrap;" do %>
+              style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; font-weight:600; color:var(--ink-soft); padding:8px 16px; border:1.5px solid var(--line); border-radius:10px; text-decoration:none; background:var(--surface); white-space:nowrap;" do %>
           Pré-visualizar
         <% end %>
         <%= button_to "✓ Publicar atividade", publish_draft_activity_path(@activity),
               method: :post,
-              style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.88rem; font-weight:700; color:#fff; background:#1A6B4A; padding:8px 20px; border-radius:10px; border:none; cursor:pointer; white-space:nowrap;" %>
+              style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:0.88rem; font-weight:700; color:var(--surface); background:var(--brand); padding:8px 20px; border-radius:10px; border:none; cursor:pointer; white-space:nowrap;" %>
       </div>
     </div>
   <% end %>
@@ -70,9 +70,9 @@
     <%= render 'column_matchings_list', activity: @activity %>
     <% oe_questions = @activity.questions.where(question_type: 'open_ended').order(:created_at) %>
     <% if oe_questions.any? %>
-      <div style="background:#FFFBF0; border:1px solid #F5E0A0; border-left:4px solid #C9952A; border-radius:14px; margin-bottom:14px; overflow:hidden;">
-        <div style="display:flex; align-items:center; padding:12px 18px; border-bottom:1px solid #F5E0A0; background:rgba(201,149,42,0.06);">
-          <span style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; color:#7C5500; display:flex; align-items:center; gap:6px;">
+      <div style="background:var(--action-tint); border:1px solid var(--action-soft); border-left:4px solid var(--action); border-radius:14px; margin-bottom:14px; overflow:hidden;">
+        <div style="display:flex; align-items:center; padding:12px 18px; border-bottom:1px solid var(--action-soft); background:rgba(201,149,42,0.06);">
+          <span style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; color:var(--action-ink); display:flex; align-items:center; gap:6px;">
             ✨ Expressão escrita (<%= oe_questions.count %>)
           </span>
         </div>
@@ -91,41 +91,41 @@
   <% if current_user.teacher? && @activity.teacher == current_user %>
     <% ratings = @activity.activity_ratings.includes(:user).order(created_at: :desc) %>
     <% if ratings.any? %>
-      <div style="background:#fff; border:1px solid #DDD9D2; border-radius:16px; padding:24px 28px; margin-top:2rem;">
+      <div style="background:var(--surface); border:1px solid var(--line); border-radius:16px; padding:24px 28px; margin-top:2rem;">
         <div style="display:flex; align-items:center; gap:12px; margin-bottom:1.25rem;">
-          <h2 style="font-family:'Raleway',sans-serif; font-size:1rem; font-weight:700; color:#1C1917; margin:0;">
+          <h2 style="font-family:'Raleway',sans-serif; font-size:1rem; font-weight:700; color:var(--ink); margin:0;">
             Avaliações dos alunos
           </h2>
-          <span style="font-family:'DM Mono',monospace; font-size:0.88rem; font-weight:800; color:#C9952A;">
+          <span style="font-family:'DM Mono',monospace; font-size:0.88rem; font-weight:800; color:var(--action);">
             ⭐ <%= @activity.average_rating %>
           </span>
-          <span style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.78rem; color:#9C9892;">
+          <span style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.78rem; color:var(--ink-faint);">
             <%= pluralize(ratings.size, 'avaliação', 'avaliações') %>
           </span>
         </div>
 
         <div style="display:flex; flex-direction:column; gap:10px;">
           <% ratings.each do |rating| %>
-            <div style="border:1px solid #F0EDE8; border-radius:10px; padding:14px 16px;">
+            <div style="border:1px solid var(--line-soft); border-radius:10px; padding:14px 16px;">
               <div style="display:flex; align-items:center; gap:10px; margin-bottom:<%= rating.comment.present? ? '8px' : '0' %>; flex-wrap:wrap;">
-                <div style="width:28px; height:28px; border-radius:50%; background:#1A6B4A; display:flex; align-items:center; justify-content:center;
-                            font-family:'Raleway',sans-serif; font-size:0.72rem; font-weight:800; color:#fff; flex-shrink:0;">
+                <div style="width:28px; height:28px; border-radius:50%; background:var(--brand); display:flex; align-items:center; justify-content:center;
+                            font-family:'Raleway',sans-serif; font-size:0.72rem; font-weight:800; color:var(--surface); flex-shrink:0;">
                   <%= rating.user.display_name[0].upcase %>
                 </div>
-                <span style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.85rem; font-weight:600; color:#1C1917;">
+                <span style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.85rem; font-weight:600; color:var(--ink);">
                   <%= rating.user.display_name %>
                 </span>
                 <span style="font-size:0.9rem; letter-spacing:1px;">
                   <% 5.times do |i| %>
-                    <i class="bi bi-star<%= i < rating.stars ? '-fill' : '' %>" style="color:#C9952A; font-size:0.85rem;"></i>
+                    <i class="bi bi-star<%= i < rating.stars ? '-fill' : '' %>" style="color:var(--action); font-size:0.85rem;"></i>
                   <% end %>
                 </span>
-                <span style="font-family:'DM Mono',monospace; font-size:0.72rem; color:#9C9892; margin-left:auto;">
+                <span style="font-family:'DM Mono',monospace; font-size:0.72rem; color:var(--ink-faint); margin-left:auto;">
                   <%= rating.created_at.strftime("%d/%m/%Y") %>
                 </span>
               </div>
               <% if rating.comment.present? %>
-                <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.85rem; color:#5C5853; line-height:1.55; padding-left:38px;">
+                <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.85rem; color:var(--ink-soft); line-height:1.55; padding-left:38px;">
                   "<%= rating.comment %>"
                 </div>
               <% end %>
@@ -139,7 +139,7 @@
   <div style="text-align:center; margin-top:2.5rem; padding-bottom:1rem;">
     <%= link_to solve_activity_path(@activity),
           id: "tour-resolve-quiz",
-          style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:1rem; font-weight:700; color:#fff; background:#1A6B4A; padding:14px 40px; border-radius:14px; text-decoration:none; display:inline-block;" do %>
+          style: "font-family:'Plus Jakarta Sans',sans-serif; font-size:1rem; font-weight:700; color:var(--surface); background:var(--brand); padding:14px 40px; border-radius:14px; text-decoration:none; display:inline-block;" do %>
       <%= t('activities.solve_quiz') %> →
     <% end %>
   </div>
