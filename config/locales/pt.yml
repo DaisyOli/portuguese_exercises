@@ -5,10 +5,29 @@ pt:
 
   ai_generation:
     wait_title: "A IA está montando sua atividade..."
-    wait_hint_video: "Vídeos com transcrição longa podem levar um ou dois minutos. Pode ficar nesta página — vamos te levar para a revisão assim que terminar."
-    wait_hint_prompt: "Isso costuma levar menos de um minuto. Pode ficar nesta página — vamos te levar para a revisão assim que terminar."
+    wait_hint_video: "Vídeos com transcrição longa podem levar um ou dois minutos — te levamos para a revisão assim que terminar 🎬"
+    wait_hint_prompt: "Isso costuma levar menos de um minuto — te levamos para a revisão assim que terminar ✨"
     failed_title: "A geração não deu certo"
     try_again: "Tentar de novo"
+    fun_phrases_prompt:
+      - "A IA está estudando português... 📚"
+      - "Consultando os melhores professores do Brasil... 🇧🇷"
+      - "Criando lacunas nos lugares certos... ✍️"
+      - "Colocando acento no lugar certo (isso é sério)... 🎯"
+      - "Seu exercício está sendo artesanalmente gerado... 🎨"
+      - "Quase lá! Revisando a gramática com carinho... 💚"
+      - "Escolhendo as palavras certas para seus alunos... 🌿"
+      - "A IA pediu um cafezinho e já volta... ☕"
+      - "Organizando as questões na ordem perfeita... 📋"
+      - "Verificando se 'mas' e 'más' estão no lugar certo... 🧐"
+    fun_phrases_video:
+      - "Lendo a transcrição do vídeo... 🎬"
+      - "Identificando vocabulário e estruturas... 🔍"
+      - "Criando questões baseadas no conteúdo real... ✍️"
+      - "Calibrando o nível CEFR... 🎯"
+      - "Organizando os exercícios com cuidado... 📋"
+      - "Quase lá! A IA está revisando as respostas... 💚"
+      - "Montando a atividade final... ⚡"
 
   ai:
     errors:

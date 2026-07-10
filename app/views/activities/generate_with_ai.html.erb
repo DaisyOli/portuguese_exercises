@@ -75,18 +75,7 @@
 
 <script>
 (function() {
-  var messages = [
-    "A IA está estudando português... 📚",
-    "Consultando os melhores professores do Brasil... 🇧🇷",
-    "Criando lacunas nos lugares certos... ✍️",
-    "Colocando acento no lugar certo (isso é sério)... 🎯",
-    "Seu exercício está sendo artesanalmente gerado... 🎨",
-    "Quase lá! Revisando a gramática com carinho... 💚",
-    "Escolhendo as palavras certas para seus alunos... 🌿",
-    "A IA pediu um cafezinho e já volta... ☕",
-    "Organizando as questões na ordem perfeita... 📋",
-    "Verificando se 'mas' e 'más' estão no lugar certo... 🧐"
-  ];
+  var messages = <%= raw t('ai_generation.fun_phrases_prompt').to_json %>;
 
   var overlay = document.getElementById('ai-loading-overlay');
   var msgEl   = document.getElementById('ai-loading-msg');
@@ -98,6 +87,8 @@
 
     var idx = Math.floor(Math.random() * messages.length);
     msgEl.textContent = messages[idx];
+    // a tela de espera continua desta frase, sem piscar
+    sessionStorage.setItem('ai-fun-phrase-idx', String(idx));
 
     var interval = setInterval(function() {
       msgEl.style.opacity = '0';
@@ -105,6 +96,7 @@
         idx = (idx + 1) % messages.length;
         msgEl.textContent = messages[idx];
         msgEl.style.opacity = '1';
+        sessionStorage.setItem('ai-fun-phrase-idx', String(idx));
       }, 350);
     }, 3800);
 

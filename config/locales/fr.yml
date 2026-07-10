@@ -5,10 +5,29 @@ fr:
 
   ai_generation:
     wait_title: "L'IA prépare votre activité..."
-    wait_hint_video: "Les vidéos avec une longue transcription peuvent prendre une à deux minutes. Restez sur cette page — nous vous amènerons à la révision dès que c'est prêt."
-    wait_hint_prompt: "Cela prend généralement moins d'une minute. Restez sur cette page — nous vous amènerons à la révision dès que c'est prêt."
+    wait_hint_video: "Les vidéos avec une longue transcription peuvent prendre une à deux minutes — nous vous amènerons à la révision dès que c'est prêt 🎬"
+    wait_hint_prompt: "Cela prend généralement moins d'une minute — nous vous amènerons à la révision dès que c'est prêt ✨"
     failed_title: "La génération a échoué"
     try_again: "Réessayer"
+    fun_phrases_prompt:
+      - "L'IA révise son portugais... 📚"
+      - "Consultation des meilleurs professeurs du Brésil... 🇧🇷"
+      - "Placement des lacunes aux bons endroits... ✍️"
+      - "Les accents à leur place (c'est du sérieux)... 🎯"
+      - "Votre exercice est fabriqué à la main... 🎨"
+      - "Presque fini ! Relecture attentive de la grammaire... 💚"
+      - "Choix des mots justes pour vos élèves... 🌿"
+      - "L'IA est partie prendre un petit café, elle revient... ☕"
+      - "Mise en ordre parfaite des questions... 📋"
+      - "Vérification de 'mas' et 'más'... 🧐"
+    fun_phrases_video:
+      - "Lecture de la transcription de la vidéo... 🎬"
+      - "Repérage du vocabulaire et des structures... 🔍"
+      - "Création de questions à partir du contenu réel... ✍️"
+      - "Calibrage du niveau CECR... 🎯"
+      - "Organisation soignée des exercices... 📋"
+      - "Presque fini ! L'IA relit les réponses... 💚"
+      - "Assemblage de l'activité finale... ⚡"
 
   ai:
     errors:

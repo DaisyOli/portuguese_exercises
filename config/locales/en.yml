@@ -34,10 +34,29 @@ en:
 
   ai_generation:
     wait_title: "The AI is building your activity..."
-    wait_hint_video: "Videos with long transcripts can take a minute or two. Stay on this page — we'll take you to the review as soon as it's ready."
-    wait_hint_prompt: "This usually takes less than a minute. Stay on this page — we'll take you to the review as soon as it's ready."
+    wait_hint_video: "Videos with long transcripts can take a minute or two — we'll take you to the review as soon as it's ready 🎬"
+    wait_hint_prompt: "This usually takes less than a minute — we'll take you to the review as soon as it's ready ✨"
     failed_title: "Generation failed"
     try_again: "Try again"
+    fun_phrases_prompt:
+      - "The AI is brushing up on its Portuguese... 📚"
+      - "Consulting the best teachers in Brazil... 🇧🇷"
+      - "Placing the gaps in just the right spots... ✍️"
+      - "Putting the accents where they belong (seriously)... 🎯"
+      - "Your exercise is being handcrafted... 🎨"
+      - "Almost there! Reviewing the grammar with care... 💚"
+      - "Choosing the right words for your students... 🌿"
+      - "The AI stepped out for a cafezinho, back in a sec... ☕"
+      - "Arranging the questions in the perfect order... 📋"
+      - "Double-checking 'mas' vs 'más'... 🧐"
+    fun_phrases_video:
+      - "Reading the video transcript... 🎬"
+      - "Spotting vocabulary and structures... 🔍"
+      - "Writing questions from the real content... ✍️"
+      - "Calibrating the CEFR level... 🎯"
+      - "Organizing the exercises with care... 📋"
+      - "Almost there! The AI is reviewing the answers... 💚"
+      - "Assembling the final activity... ⚡"
 
   ai:
     errors:

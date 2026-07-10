@@ -51,15 +51,7 @@
 
 <script>
 (function() {
-  var messages = [
-    "Lendo a transcrição do vídeo... 🎬",
-    "Identificando vocabulário e estruturas... 🔍",
-    "Criando questões baseadas no conteúdo real... ✍️",
-    "Calibrando o nível CEFR... 🎯",
-    "Organizando os exercícios com cuidado... 📋",
-    "Quase lá! A IA está revisando as respostas... 💚",
-    "Montando a atividade final... ⚡"
-  ];
+  var messages = <%= raw t('ai_generation.fun_phrases_video').to_json %>;
   var overlay = document.getElementById('ai-loading-overlay');
   var msgEl   = document.getElementById('ai-loading-msg');
   var form    = document.querySelector('form[action*="generate_from_video"]');
@@ -68,12 +60,15 @@
     overlay.style.display = 'flex';
     var idx = Math.floor(Math.random() * messages.length);
     msgEl.textContent = messages[idx];
+    // a tela de espera continua desta frase, sem piscar
+    sessionStorage.setItem('ai-fun-phrase-idx', String(idx));
     var interval = setInterval(function() {
       msgEl.style.opacity = '0';
       setTimeout(function() {
         idx = (idx + 1) % messages.length;
         msgEl.textContent = messages[idx];
         msgEl.style.opacity = '1';
+        sessionStorage.setItem('ai-fun-phrase-idx', String(idx));
       }, 350);
     }, 3800);
     document.addEventListener('turbo:before-render', function() { clearInterval(interval); }, { once: true });
