@@ -4,13 +4,38 @@
 require "anthropic"
 
 class AiGradingService
-  AI_CORRECTION_SYSTEM = <<~PROMPT
-    Você é um avaliador de respostas de estudantes de português como segunda língua.
-    Avalie a resposta do aluno de forma construtiva e encorajadora.
-    Responda SOMENTE com JSON neste formato exato (sem markdown, sem texto extra):
-    {"score": <inteiro de 0 a 100>, "feedback": "<feedback curto em português>"}
-    Score 100 = resposta perfeita; 0 = em branco ou completamente errada.
-  PROMPT
+  # A exigência acompanha o nível QECR da atividade: no A1 celebra-se a
+  # comunicação; a régua sobe progressivamente até o C1.
+  LEVEL_EXPECTATIONS = {
+    "A1" => <<~TXT,
+      Nível do aluno: A1 (iniciante). SEJA GENEROSO.
+      - Se a resposta comunica a ideia e responde à pergunta, o score fica entre 80 e 100 — MESMO com erros de conjugação, concordância, acento ou ortografia ("eu gosta de café" responde perfeitamente "do que você gosta?").
+      - Só desça de 70 se a resposta não responder à pergunta ou for incompreensível.
+      - Feedback: comece celebrando o acerto; depois, no máximo UMA correção gentil, a mais importante. Use português muito simples, frases curtas, que um A1 entenda.
+    TXT
+    "A2" => <<~TXT,
+      Nível do aluno: A2 (básico). Seja generoso, com um degrau a mais de atenção.
+      - Comunicação clara e vocabulário adequado valem mais que perfeição: resposta compreensível que responde à pergunta fica entre 75 e 100.
+      - Erros básicos recorrentes (ser/estar, concordância simples, presente dos verbos comuns) podem descontar um pouco, mas nunca reprovam sozinhos uma resposta que comunica.
+      - Feedback: elogie o que funcionou e aponte no máximo DUAS correções, em português simples.
+    TXT
+    "B1" => <<~TXT,
+      Nível do aluno: B1 (intermediário). Exigência moderada.
+      - Espera-se controle das estruturas básicas: erros de presente, ser/estar e concordância simples já descontam de verdade.
+      - Erros em estruturas novas do nível (subjuntivo, tempos do passado em contraste) descontam pouco — estão em aquisição.
+      - Resposta que comunica bem com poucos erros básicos: 70-90. Feedback: reconheça o mérito e corrija até TRÊS pontos, explicando brevemente o porquê.
+    TXT
+    "B2" => <<~TXT,
+      Nível do aluno: B2 (avançado). Exigência alta.
+      - Espera-se precisão gramatical, vocabulário variado, conectivos e registro adequado. Erros básicos descontam bastante; imprecisões de nuance e naturalidade também contam.
+      - Reserve 90+ para respostas precisas E naturais. Feedback: rigoroso e específico, ainda construtivo — aponte os erros, sugira a forma natural que um falante usaria.
+    TXT
+    "C1" => <<~TXT
+      Nível do aluno: C1 (proficiente). Exigência de quase-nativo.
+      - Espera-se domínio: precisão, idiomaticidade, sutileza de registro. Qualquer erro estrutural desconta; o que diferencia o score é a naturalidade e a riqueza da resposta.
+      - Feedback: trate como um par avançado — refinamentos de estilo e expressões mais idiomáticas.
+    TXT
+  }.freeze
 
   PASSING_SCORE = 70
 
@@ -52,6 +77,24 @@ class AiGradingService
 
   private
 
+  def correction_system_prompt
+    level = @attempt.activity.level.to_s
+    expectations = LEVEL_EXPECTATIONS[level] || LEVEL_EXPECTATIONS["B1"]
+
+    <<~PROMPT
+      Você é um avaliador de respostas de estudantes de português como segunda língua, alinhado ao QECR: a exigência acompanha o nível do aluno.
+
+      #{expectations}
+      Regras gerais:
+      - Nunca desconte por resposta curta se a pergunta permite resposta curta.
+      - Avalie o conteúdo da resposta, não a opinião do aluno.
+      - O feedback fala COM o aluno (use "você"), em tom caloroso.
+
+      Responda SOMENTE com JSON neste formato exato (sem markdown, sem texto extra):
+      {"score": <inteiro de 0 a 100>, "feedback": "<feedback curto em português>"}
+    PROMPT
+  end
+
   def pending_ids
     results_hash.select { |_k, r| r.is_a?(Hash) && r["ai_pending"] }.keys
   end
@@ -71,7 +114,7 @@ class AiGradingService
     message = client.messages.create(
       model: :"claude-haiku-4-5",
       max_tokens: 256,
-      system: AI_CORRECTION_SYSTEM,
+      system: correction_system_prompt,
       messages: [{
         role: "user",
         content: "Questão: #{ActionView::Base.full_sanitizer.sanitize(question.content.to_s)}\n#{rubric_line}Resposta do aluno: #{given_answer.to_s.strip}"
