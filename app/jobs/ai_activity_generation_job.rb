@@ -50,9 +50,17 @@ class AiActivityGenerationJob < ApplicationJob
   def generate_for_agent(generation, params)
     require Rails.root.join("lib/activity_prompt_templates")
 
-    level          = params["level"]
-    existing_count = Activity.where(teacher: generation.teacher, ai_generated: true, level: level).count
-    prompt         = ActivityPromptTemplates.pick(level, existing_count: existing_count)
+    level    = params["level"]
+    existing = Activity.where(teacher: generation.teacher, ai_generated: true, level: level)
+    prompt   = ActivityPromptTemplates.pick(level, existing_count: existing.count)
+
+    # Anti-repetição: o agente conhece o catálogo e evita "mais do mesmo"
+    existing_titles = existing.order(created_at: :desc).limit(20).pluck(:title)
+    if existing_titles.any?
+      prompt += "\n\nATENÇÃO — o nível #{level} já tem estas atividades; crie algo claramente " \
+                "DIFERENTE de todas, em tema, cenário e personagens:\n" +
+                existing_titles.map { |t| "- #{t}" }.join("\n")
+    end
 
     result = ActivityGenerationService.new(prompt: prompt, teacher: generation.teacher).call
 

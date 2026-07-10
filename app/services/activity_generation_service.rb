@@ -26,6 +26,19 @@ class ActivityGenerationService
     - Compras online e finanças pessoais: bancos digitais, parcelamento, promoção, pagar Pix
 
     ═══════════════════════════════════════════
+    O QUE TORNA UMA ATIVIDADE EXCELENTE
+    ═══════════════════════════════════════════
+    Antes de escrever, planeje a atividade como uma mini-experiência, não como uma lista de questões soltas:
+
+    1. HISTÓRIA: o explanation_text deve ser um texto VIVO — um diálogo com personalidade, uma mini-crônica, uma troca de mensagens — com personagem(ns) com nome, um fio narrativo com começo/meio/fim e um toque de humor brasileiro. Nunca frases desconexas de exemplo.
+    2. COESÃO: todos os exercícios se passam no MESMO universo do texto-base (mesmos personagens, mesma situação). O aluno deve querer reler o texto para responder.
+    3. PROGRESSÃO: ordene os exercícios do mais fácil (reconhecimento) ao mais desafiador (inferência/produção).
+    4. DISTRATORES INTELIGENTES: nas múltiplas escolhas, as alternativas erradas devem ser erros PLAUSÍVEIS do nível (ser/estar, tempo verbal vizinho, falso cognato, concordância) — nunca opções absurdas ou obviamente erradas.
+    5. LACUNAS COM PROPÓSITO: em fill_in_blank, o contexto torna a resposta deduzível sem entregá-la. Não dê o verbo entre parênteses; deixe marcadores temporais e contextuais guiarem a escolha.
+    6. CULTURA VIVA: pelo menos um detalhe cultural brasileiro autêntico e atual por atividade (comida, música, hábito, expressão, lugar) — integrado à história, nunca como nota de rodapé.
+    7. VARIEDADE: use pelo menos 3 tipos de exercício diferentes, escolhendo os que melhor servem ao objetivo pedagógico — sentence_ordering, paragraph_ordering e column_matching são bem-vindos, não só múltipla escolha e lacunas.
+
+    ═══════════════════════════════════════════
     REGRAS ABSOLUTAS
     ═══════════════════════════════════════════
     1. Responda SOMENTE com JSON válido — sem texto antes, sem texto depois, sem markdown
@@ -276,12 +289,19 @@ class ActivityGenerationService
   private
 
   def call_api
+    # Opus 4.8 com adaptive thinking: o modelo planeja a pedagogia antes de
+    # escrever. Geração é baixo volume (~US$0,10/atividade) — aqui o modelo
+    # top compensa; o Haiku segue nos fluxos de alto volume (correção de
+    # respostas dos alunos).
     message = @client.messages.create(
-      model: "claude-haiku-4-5-20251001",
-      max_tokens: 3500,
+      model: "claude-opus-4-8",
+      max_tokens: 8000,
+      thinking: { type: "adaptive" },
       system: SYSTEM_PROMPT,
       messages: [{ role: "user", content: @prompt }]
     )
+
+    raise "Geração recusada pela IA" if message.stop_reason == :refusal
 
     text_block = message.content.find { |b| b.type == :text }
     raise "Resposta vazia da IA" unless text_block

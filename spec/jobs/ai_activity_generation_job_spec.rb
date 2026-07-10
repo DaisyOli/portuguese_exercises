@@ -40,7 +40,7 @@ RSpec.describe AiActivityGenerationJob, type: :job do
       .with("A1", existing_count: kind_of(Integer))
       .and_return("prompt do template A1")
     allow(ActivityGenerationService).to receive(:new)
-      .with(prompt: "prompt do template A1", teacher: teacher)
+      .with(prompt: a_string_including("prompt do template A1"), teacher: teacher)
       .and_return(instance_double(ActivityGenerationService, call: { success: true, activity: activity }))
 
     described_class.perform_now(generation.id)
@@ -48,6 +48,25 @@ RSpec.describe AiActivityGenerationJob, type: :job do
     generation.reload
     expect(generation.status).to eq("done")
     expect(generation.activity).to eq(activity)
+  end
+
+  it "kind agent lista as atividades existentes do nível no prompt (anti-repetição)" do
+    create(:activity, teacher: teacher, level: "A1", ai_generated: true, title: "Cafezinho no Balcão")
+    generation = AiGeneration.create!(teacher: teacher, kind: "agent", request_params: { "level" => "A1" })
+    activity = create(:activity, teacher: teacher)
+    allow(ActivityPromptTemplates).to receive(:pick).and_return("prompt base")
+
+    captured_prompt = nil
+    allow(ActivityGenerationService).to receive(:new) do |prompt:, teacher:|
+      captured_prompt = prompt
+      instance_double(ActivityGenerationService, call: { success: true, activity: activity })
+    end
+
+    described_class.perform_now(generation.id)
+
+    expect(captured_prompt).to include("prompt base")
+    expect(captured_prompt).to include("DIFERENTE")
+    expect(captured_prompt).to include("Cafezinho no Balcão")
   end
 
   it "erro inesperado vira failed com mensagem genérica" do
