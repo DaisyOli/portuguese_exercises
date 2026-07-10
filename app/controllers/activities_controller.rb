@@ -4,7 +4,7 @@ class ActivitiesController < ApplicationController
   before_action :authenticate_user!
   before_action :set_activity, only: [:show, :edit, :update, :destroy, :resolve_quiz, :submit_quiz, :quiz_results, :grading_status, :transcribe_audio, :clear_content, :clear_attempt_history, :review_draft, :publish_draft]
   before_action :preload_exercise_associations, only: [:show]
-  before_action :authorize_teacher, only: [:new, :create, :edit, :update, :destroy, :generate_with_ai, :generate_from_video, :review_draft, :publish_draft]
+  before_action :authorize_teacher, only: [:new, :create, :edit, :update, :destroy, :generate_with_ai, :generate_from_video, :generation_wait, :generation_status, :review_draft, :publish_draft]
   before_action :check_trial_level_restriction!, only: [:show, :resolve_quiz, :submit_quiz]
 
   def index
@@ -121,16 +121,26 @@ class ActivitiesController < ApplicationController
       return render :generate_with_ai, status: :unprocessable_entity
     end
 
-    result = ActivityGenerationService.new(prompt: prompt, teacher: current_user).call
+    # A chamada à IA roda em background (AiActivityGenerationJob): dentro da
+    # requisição ela estourava o limite de 30s do Heroku (H12)
+    generation = AiGeneration.create!(teacher: current_user, kind: "prompt",
+                                      request_params: { prompt: prompt })
+    AiActivityGenerationJob.perform_later(generation.id)
+    redirect_to generation_wait_activities_path(id: generation.id)
+  end
 
-    if result[:success]
-      redirect_to review_draft_activity_path(result[:activity]),
-                  notice: "Atividade gerada! Revise e publique quando estiver pronto."
-    else
-      flash.now[:alert] = result[:error]
-      @activity = Activity.new
-      render :generate_with_ai, status: :unprocessable_entity
-    end
+  def generation_wait
+    @generation = AiGeneration.find_by(id: params[:id], teacher: current_user)
+    redirect_to activities_path, alert: t('messages.permission_denied') unless @generation
+  end
+
+  def generation_status
+    generation = AiGeneration.find_by(id: params[:id], teacher: current_user)
+    return render json: { status: "failed" } unless generation
+
+    payload = { status: generation.status }
+    payload[:redirect_url] = review_draft_activity_path(generation.activity) if generation.done? && generation.activity
+    render json: payload
   end
 
   def generate_from_video
@@ -144,20 +154,18 @@ class ActivitiesController < ApplicationController
       return render :generate_from_video, status: :unprocessable_entity
     end
 
-    result = ActivityFromVideoService.new(
+    if params[:transcript].to_s.strip.blank?
+      flash.now[:alert] = "A transcrição está vazia. Cole o texto da transcrição do vídeo."
+      return render :generate_from_video, status: :unprocessable_entity
+    end
+
+    generation = AiGeneration.create!(teacher: current_user, kind: "video", request_params: {
       youtube_url: url,
       transcript:  params[:transcript].to_s,
-      teacher:     current_user,
       level_hint:  params[:level_hint].presence
-    ).call
-
-    if result[:success]
-      redirect_to review_draft_activity_path(result[:activity]),
-                  notice: "Atividade gerada a partir do vídeo! Revise e publique quando estiver pronto."
-    else
-      flash.now[:alert] = result[:error]
-      render :generate_from_video, status: :unprocessable_entity
-    end
+    })
+    AiActivityGenerationJob.perform_later(generation.id)
+    redirect_to generation_wait_activities_path(id: generation.id)
   end
 
   def review_draft

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2026_07_09_130848) do
+ActiveRecord::Schema[7.1].define(version: 2026_07_09_134951) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -76,6 +76,19 @@ ActiveRecord::Schema[7.1].define(version: 2026_07_09_130848) do
     t.index ["user_id", "activity_id"], name: "index_activity_ratings_on_user_id_and_activity_id", unique: true
     t.index ["user_id"], name: "index_activity_ratings_on_user_id"
     t.check_constraint "stars >= 1 AND stars <= 5", name: "stars_range_check"
+  end
+
+  create_table "ai_generations", force: :cascade do |t|
+    t.bigint "teacher_id", null: false
+    t.bigint "activity_id"
+    t.string "kind", null: false
+    t.string "status", default: "queued", null: false
+    t.jsonb "request_params", default: {}, null: false
+    t.text "error_message"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["activity_id"], name: "index_ai_generations_on_activity_id"
+    t.index ["teacher_id"], name: "index_ai_generations_on_teacher_id"
   end
 
   create_table "column_matchings", force: :cascade do |t|
@@ -349,6 +362,8 @@ ActiveRecord::Schema[7.1].define(version: 2026_07_09_130848) do
   add_foreign_key "activities", "users", column: "teacher_id"
   add_foreign_key "activity_ratings", "activities"
   add_foreign_key "activity_ratings", "users"
+  add_foreign_key "ai_generations", "activities"
+  add_foreign_key "ai_generations", "users", column: "teacher_id"
   add_foreign_key "column_matchings", "activities"
   add_foreign_key "matching_pairs", "column_matchings"
   add_foreign_key "paragraph_orderings", "activities"

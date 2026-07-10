@@ -3,6 +3,13 @@ pt:
   app_name: "Practice-BR"
   welcome: "Bem-vindo ao Practice-BR"
 
+  ai_generation:
+    wait_title: "A IA está montando sua atividade..."
+    wait_hint_video: "Vídeos com transcrição longa podem levar um ou dois minutos. Pode ficar nesta página — vamos te levar para a revisão assim que terminar."
+    wait_hint_prompt: "Isso costuma levar menos de um minuto. Pode ficar nesta página — vamos te levar para a revisão assim que terminar."
+    failed_title: "A geração não deu certo"
+    try_again: "Tentar de novo"
+
   ai:
     errors:
       rate_limit: "Limite de requisições da IA atingido. Aguarde alguns minutos e tente novamente."

@@ -2,6 +2,18 @@ fr:
   hello: "Bonjour"
   app_name: "Practice-BR"
   welcome: "Bienvenue sur Practice-BR"
+
+  ai_generation:
+    wait_title: "L'IA prépare votre activité..."
+    wait_hint_video: "Les vidéos avec une longue transcription peuvent prendre une à deux minutes. Restez sur cette page — nous vous amènerons à la révision dès que c'est prêt."
+    wait_hint_prompt: "Cela prend généralement moins d'une minute. Restez sur cette page — nous vous amènerons à la révision dès que c'est prêt."
+    failed_title: "La génération a échoué"
+    try_again: "Réessayer"
+
+  ai:
+    errors:
+      generic: "Impossible d'évaluer automatiquement pour le moment. Réessayez plus tard."
+      timeout: "L'IA a mis trop de temps à répondre. Réessayez dans un instant."
   
   # Home page
   home:

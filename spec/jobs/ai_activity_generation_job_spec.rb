@@ -1,0 +1,45 @@
+require 'rails_helper'
+
+RSpec.describe AiActivityGenerationJob, type: :job do
+  let(:teacher) { create(:user, :teacher) }
+
+  it "marca done e liga a activity quando o service tem sucesso" do
+    generation = AiGeneration.create!(teacher: teacher, kind: "prompt", request_params: { "prompt" => "verbos" })
+    activity = create(:activity, teacher: teacher)
+    allow(ActivityGenerationService).to receive(:new)
+      .with(prompt: "verbos", teacher: teacher)
+      .and_return(instance_double(ActivityGenerationService, call: { success: true, activity: activity }))
+
+    described_class.perform_now(generation.id)
+
+    generation.reload
+    expect(generation.status).to eq("done")
+    expect(generation.activity).to eq(activity)
+  end
+
+  it "usa o service de vídeo para kind video" do
+    generation = AiGeneration.create!(teacher: teacher, kind: "video", request_params: {
+      "youtube_url" => "https://youtu.be/abc", "transcript" => "texto longo", "level_hint" => "B1"
+    })
+    service = instance_double(ActivityFromVideoService, call: { success: false, error: "transcrição ilegível" })
+    allow(ActivityFromVideoService).to receive(:new)
+      .with(youtube_url: "https://youtu.be/abc", transcript: "texto longo", teacher: teacher, level_hint: "B1")
+      .and_return(service)
+
+    described_class.perform_now(generation.id)
+
+    generation.reload
+    expect(generation.status).to eq("failed")
+    expect(generation.error_message).to eq("transcrição ilegível")
+  end
+
+  it "erro inesperado vira failed com mensagem genérica" do
+    generation = AiGeneration.create!(teacher: teacher, kind: "prompt", request_params: { "prompt" => "x" })
+    allow(ActivityGenerationService).to receive(:new).and_raise(StandardError, "boom")
+
+    described_class.perform_now(generation.id)
+
+    expect(generation.reload.status).to eq("failed")
+    expect(generation.error_message).to eq(I18n.t('ai.errors.generic'))
+  end
+end

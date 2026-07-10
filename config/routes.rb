@@ -37,6 +37,8 @@ Rails.application.routes.draw do
       post :generate_with_ai
       get  :generate_from_video
       post :generate_from_video
+      get "generations/:id",        action: :generation_wait,   as: :generation_wait
+      get "generations/:id/status", action: :generation_status, as: :generation_status
     end
 
     member do

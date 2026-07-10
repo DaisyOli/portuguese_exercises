@@ -32,6 +32,13 @@ en:
   app_name: "Practice-BR"
   welcome: "Welcome to Practice-BR"
 
+  ai_generation:
+    wait_title: "The AI is building your activity..."
+    wait_hint_video: "Videos with long transcripts can take a minute or two. Stay on this page — we'll take you to the review as soon as it's ready."
+    wait_hint_prompt: "This usually takes less than a minute. Stay on this page — we'll take you to the review as soon as it's ready."
+    failed_title: "Generation failed"
+    try_again: "Try again"
+
   ai:
     errors:
       rate_limit: "AI rate limit reached. Please wait a few minutes and try again."
