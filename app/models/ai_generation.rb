@@ -3,7 +3,7 @@
 # ou failed (-> mostrar o erro e oferecer tentar de novo).
 class AiGeneration < ApplicationRecord
   STATUSES = %w[queued running done failed].freeze
-  KINDS    = %w[prompt video].freeze
+  KINDS    = %w[prompt video agent].freeze # agent = gerado pelo agente de conteúdo do admin
 
   belongs_to :teacher, class_name: "User"
   belongs_to :activity, optional: true

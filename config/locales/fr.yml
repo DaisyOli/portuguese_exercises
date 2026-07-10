@@ -28,6 +28,15 @@ fr:
       - "Organisation soignée des exercices... 📋"
       - "Presque fini ! L'IA relit les réponses... 💚"
       - "Assemblage de l'activité finale... ⚡"
+    wait_hint_agent: "L'agent vous préviendra quand le brouillon sera prêt pour votre révision 🤖"
+    fun_phrases_agent:
+      - "L'agent a mis son badge et s'est mis au travail... 🤖"
+      - "Consultation de l'objectif d'activités du niveau... 📊"
+      - "Choix d'un thème que vos élèves vont adorer... 🎨"
+      - "Rédaction soignée des questions... ✍️"
+      - "Recherche d'une vidéo assortie à l'activité... 🎬"
+      - "Double vérification de la grammaire... 🧐"
+      - "Presque fini ! Emballage du brouillon pour votre révision... 📦"
 
   ai:
     errors:

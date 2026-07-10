@@ -12,8 +12,6 @@ class Admin::DraftsController < Admin::BaseController
   end
 
   def generate
-    require Rails.root.join("lib/activity_prompt_templates")
-
     teacher = User.find_by(email: TEACHER_EMAIL)
     return redirect_to admin_drafts_path, alert: "Professora não encontrada." unless teacher
 
@@ -31,20 +29,16 @@ class Admin::DraftsController < Admin::BaseController
 
     return redirect_to admin_drafts_path, notice: "Meta atingida em todos os níveis! 🎉" if level.nil?
 
-    existing_count = Activity.where(teacher: teacher, ai_generated: true, level: level).count
-    prompt = ActivityPromptTemplates.pick(level, existing_count: existing_count)
-    result = ActivityGenerationService.new(prompt: prompt, teacher: teacher).call
+    # A geração roda em background (sem limite de 30s do Heroku e sem
+    # gerações simultâneas disputando slug); o admin espera no modal do agente.
+    generation = AiGeneration.create!(
+      teacher:        teacher,
+      kind:           "agent",
+      request_params: { level: level }
+    )
+    AiActivityGenerationJob.perform_later(generation.id)
 
-    if result[:success]
-      activity = result[:activity]
-      if (query = result[:search_query])
-        video_url = YoutubeSearchService.new(query: query).call
-        activity.update_column(:video_url, video_url) if video_url
-      end
-      redirect_to admin_drafts_path, notice: "✅ '#{activity.title}' (#{level}) gerada e aguardando revisão."
-    else
-      redirect_to admin_drafts_path, alert: "❌ Falha ao gerar (#{result[:error]}). Tente novamente."
-    end
+    redirect_to generation_wait_activities_path(id: generation.id)
   end
 
   def destroy

@@ -28,6 +28,15 @@ pt:
       - "Organizando os exercícios com cuidado... 📋"
       - "Quase lá! A IA está revisando as respostas... 💚"
       - "Montando a atividade final... ⚡"
+    wait_hint_agent: "O agente avisa quando o rascunho estiver pronto para a sua revisão 🤖"
+    fun_phrases_agent:
+      - "O agente vestiu o crachá e foi trabalhar... 🤖"
+      - "Consultando a meta de atividades do nível... 📊"
+      - "Escolhendo um tema que seus alunos vão gostar... 🎨"
+      - "Redigindo questões com capricho... ✍️"
+      - "Procurando um vídeo que combine com a atividade... 🎬"
+      - "Conferindo a gramática duas vezes... 🧐"
+      - "Quase lá! Empacotando o rascunho para você revisar... 📦"
 
   ai:
     errors:

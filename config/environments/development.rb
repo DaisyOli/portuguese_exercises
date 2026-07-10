@@ -95,7 +95,7 @@ Rails.application.configure do
 
   config.after_initialize do
     Bullet.enable       = true
-    Bullet.alert        = true
+    Bullet.alert        = false # popup atrapalhava o uso; avisos seguem no rodapé e no log
     Bullet.rails_logger = true
     Bullet.add_footer   = true
 
@@ -113,5 +113,11 @@ Rails.application.configure do
     # Bullet não consegue prever que o badge condicional vai usar a associação
     Bullet.add_safelist(type: :counter_cache,        class_name: "Activity", association: :activity_ratings)
     Bullet.add_safelist(type: :unused_eager_loading, class_name: "Activity", association: :activity_ratings)
+    # admin/drafts usa .size nas 4 associações para contar exercícios;
+    # com rascunhos sem exercícios o Bullet acusa eager loading "não usado"
+    Bullet.add_safelist(type: :unused_eager_loading, class_name: "Activity", association: :questions)
+    Bullet.add_safelist(type: :unused_eager_loading, class_name: "Activity", association: :sentence_orderings)
+    Bullet.add_safelist(type: :unused_eager_loading, class_name: "Activity", association: :paragraph_orderings)
+    Bullet.add_safelist(type: :unused_eager_loading, class_name: "Activity", association: :column_matchings)
   end
 end

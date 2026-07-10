@@ -21,12 +21,10 @@ import "quiz_results"
 import "student_dashboard"
 import "teacher_dashboard"
 
-// Registra service worker para PWA
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', function() {
-    navigator.serviceWorker.register('/service-worker.js');
-  });
-}
+// O service worker (PWA + push) é o /sw.js, registrado no layout.
+// Havia um segundo registro aqui (/service-worker.js, sem handler de push):
+// os dois disputavam o mesmo escopo e se substituíam a cada page load,
+// derrubando push e engolindo redirects de formulário em produção.
 
 // Desabilita o Turbo para formulários específicos
 document.addEventListener("turbo:load", () => {

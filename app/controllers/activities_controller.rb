@@ -130,12 +130,12 @@ class ActivitiesController < ApplicationController
   end
 
   def generation_wait
-    @generation = AiGeneration.find_by(id: params[:id], teacher: current_user)
+    @generation = find_generation
     redirect_to activities_path, alert: t('messages.permission_denied') unless @generation
   end
 
   def generation_status
-    generation = AiGeneration.find_by(id: params[:id], teacher: current_user)
+    generation = find_generation
     return render json: { status: "failed" } unless generation
 
     payload = { status: generation.status }
@@ -187,7 +187,8 @@ class ActivitiesController < ApplicationController
       notify_students_of_new_activity(@activity)
       redirect_to activity_path(@activity), notice: "Atividade publicada com sucesso!"
     else
-      redirect_to review_draft_activity_path(@activity), alert: "Erro ao publicar atividade."
+      redirect_to review_draft_activity_path(@activity),
+                  alert: "Erro ao publicar: #{@activity.errors.full_messages.join(', ')}"
     end
   end
 
@@ -295,6 +296,16 @@ class ActivitiesController < ApplicationController
   end
 
   private
+
+  # A geração pertence à professora; o admin também pode acompanhar
+  # (o agente de conteúdo cria gerações em nome da professora titular).
+  def find_generation
+    if current_user&.admin?
+      AiGeneration.find_by(id: params[:id])
+    else
+      AiGeneration.find_by(id: params[:id], teacher: current_user)
+    end
+  end
 
   def notify_students_of_new_activity(activity)
     notifiable_levels = StudentMailer.notifiable_levels_for_activity(activity.level)

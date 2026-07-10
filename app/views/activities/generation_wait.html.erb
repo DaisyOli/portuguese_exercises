@@ -21,15 +21,23 @@
       <p style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.9rem; color:var(--ink-soft); margin:0 0 20px;">
         <%= @generation.error_message.presence || t('ai.errors.generic') %>
       </p>
-      <%= link_to t('ai_generation.try_again'),
-            (@generation.kind == "video" ? generate_from_video_activities_path : generate_with_ai_activities_path),
+      <% try_again_path = case @generation.kind
+                          when "video" then generate_from_video_activities_path
+                          when "agent" then admin_drafts_path
+                          else              generate_with_ai_activities_path
+                          end %>
+      <%= link_to t('ai_generation.try_again'), try_again_path,
             style: "display:inline-block; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.88rem; font-weight:700; color:var(--surface); background:var(--brand); padding:10px 24px; border-radius:12px; text-decoration:none;" %>
     </div>
   </div>
 
 <% else %>
   <%# Mesma cara do modal do formulário: a professora nem percebe a troca de página. %>
-  <% fun_phrases = t(@generation.kind == "video" ? 'ai_generation.fun_phrases_video' : 'ai_generation.fun_phrases_prompt') %>
+  <% fun_phrases = case @generation.kind
+                   when "video" then t('ai_generation.fun_phrases_video')
+                   when "agent" then t('ai_generation.fun_phrases_agent')
+                   else              t('ai_generation.fun_phrases_prompt')
+                   end %>
   <div data-controller="generation-status"
        data-generation-status-url-value="<%= generation_status_activities_path(id: @generation.id) %>"
        data-generation-status-phrases-value="<%= fun_phrases.to_json %>"
@@ -74,7 +82,11 @@
                 transition:opacity 0.35s ease;"></p>
 
       <p style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.8rem; color:var(--ink-faint); margin:0;">
-        <%= @generation.kind == "video" ? t('ai_generation.wait_hint_video') : t('ai_generation.wait_hint_prompt') %>
+        <%= case @generation.kind
+            when "video" then t('ai_generation.wait_hint_video')
+            when "agent" then t('ai_generation.wait_hint_agent')
+            else              t('ai_generation.wait_hint_prompt')
+            end %>
       </p>
     </div>
   </div>

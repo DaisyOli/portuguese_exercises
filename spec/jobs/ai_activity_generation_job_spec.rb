@@ -33,6 +33,23 @@ RSpec.describe AiActivityGenerationJob, type: :job do
     expect(generation.error_message).to eq("transcrição ilegível")
   end
 
+  it "kind agent escolhe o prompt do template e marca done" do
+    generation = AiGeneration.create!(teacher: teacher, kind: "agent", request_params: { "level" => "A1" })
+    activity = create(:activity, teacher: teacher)
+    allow(ActivityPromptTemplates).to receive(:pick)
+      .with("A1", existing_count: kind_of(Integer))
+      .and_return("prompt do template A1")
+    allow(ActivityGenerationService).to receive(:new)
+      .with(prompt: "prompt do template A1", teacher: teacher)
+      .and_return(instance_double(ActivityGenerationService, call: { success: true, activity: activity }))
+
+    described_class.perform_now(generation.id)
+
+    generation.reload
+    expect(generation.status).to eq("done")
+    expect(generation.activity).to eq(activity)
+  end
+
   it "erro inesperado vira failed com mensagem genérica" do
     generation = AiGeneration.create!(teacher: teacher, kind: "prompt", request_params: { "prompt" => "x" })
     allow(ActivityGenerationService).to receive(:new).and_raise(StandardError, "boom")

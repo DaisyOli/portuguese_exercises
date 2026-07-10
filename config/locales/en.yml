@@ -57,6 +57,15 @@ en:
       - "Organizing the exercises with care... 📋"
       - "Almost there! The AI is reviewing the answers... 💚"
       - "Assembling the final activity... ⚡"
+    wait_hint_agent: "The agent will let you know when the draft is ready for your review 🤖"
+    fun_phrases_agent:
+      - "The agent clocked in and got to work... 🤖"
+      - "Checking the level's activity goal... 📊"
+      - "Picking a topic your students will love... 🎨"
+      - "Writing questions with care... ✍️"
+      - "Looking for a video that fits the activity... 🎬"
+      - "Double-checking the grammar... 🧐"
+      - "Almost there! Wrapping up the draft for your review... 📦"
 
   ai:
     errors:
