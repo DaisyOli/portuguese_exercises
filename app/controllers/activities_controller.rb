@@ -169,7 +169,7 @@ class ActivitiesController < ApplicationController
   end
 
   def review_draft
-    unless @activity.teacher == current_user
+    unless owns_activity?
       redirect_to activities_path, alert: t('messages.permission_denied') and return
     end
     @questions           = @activity.questions.open_ended_last.to_a
@@ -179,7 +179,7 @@ class ActivitiesController < ApplicationController
   end
 
   def publish_draft
-    unless @activity.teacher == current_user
+    unless owns_activity?
       redirect_to activities_path, alert: t('messages.permission_denied') and return
     end
 
@@ -208,13 +208,13 @@ class ActivitiesController < ApplicationController
   end
 
   def edit
-    unless @activity.teacher == current_user
+    unless owns_activity?
       redirect_to activities_path, alert: t('messages.permission_denied') and return
     end
   end
 
   def update
-    if @activity.teacher != current_user
+    unless owns_activity?
       redirect_to activities_path, alert: t('messages.permission_denied')
       return
     end
@@ -264,7 +264,7 @@ class ActivitiesController < ApplicationController
   }.freeze
 
   def clear_content
-    if @activity.teacher != current_user
+    unless owns_activity?
       redirect_to activities_path, alert: t('messages.permission_denied') and return
     end
 
@@ -296,6 +296,12 @@ class ActivitiesController < ApplicationController
   end
 
   private
+
+  # Dona da atividade ou admin (o painel do agente de conteúdo lista
+  # rascunhos de IA de qualquer professora para revisão).
+  def owns_activity?
+    @activity.teacher == current_user || current_user&.admin?
+  end
 
   # A geração pertence à professora; o admin também pode acompanhar
   # (o agente de conteúdo cria gerações em nome da professora titular).

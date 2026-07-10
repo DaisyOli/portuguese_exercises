@@ -27,7 +27,10 @@ class ActivitiesIndexService
       return Activity.none.page(@params[:page]).per(9) unless @current_user.level_assigned?
       activities = Activity.published.where(level: @current_user.accessible_levels)
     else
-      activities = Activity.all
+      # Professora vê as publicadas de todo mundo + os próprios rascunhos.
+      # Rascunho é privado: o de outra professora não aparece (e os botões
+      # de Revisar/Editar da lista só valem para atividades próprias).
+      activities = Activity.published.or(Activity.where(draft: true, teacher: @current_user))
     end
 
     activities = activities.includes(:activity_ratings)
