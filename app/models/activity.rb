@@ -7,6 +7,11 @@ class Activity < ApplicationRecord
   has_many :paragraph_orderings, dependent: :destroy
   has_many :column_matchings, dependent: :destroy
   has_many :activity_ratings, dependent: :destroy
+  # Registro da geração por IA que criou esta atividade. Ao apagar a atividade,
+  # zeramos o vínculo (activity_id -> NULL) em vez de barrar: o AiGeneration já
+  # é `belongs_to :activity, optional: true` e serve de histórico. Sem isto, o
+  # destroy batia na FK fk_rails_7941c1ead7 e estourava 500.
+  has_many :ai_generations, dependent: :nullify
 
   has_one_attached :audio_file
   has_one_attached :image_file

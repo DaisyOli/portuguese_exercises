@@ -16,8 +16,9 @@ class ActivityFromVideoService
     svc = YoutubeTranscriptService.new(@youtube_url)
     has_video = svc.valid?
 
-    ActiveRecord::Base.connection_pool.release_connection
-
+    # Sem release_connection aqui: rodamos dentro do AiActivityGenerationJob,
+    # cujo advisory lock de sessão vive nesta conexão. Liberá-la fazia o job
+    # ser reexecutado e a atividade sair em duplicata (ver ActivityGenerationService#call).
     result = ActivityGenerationService.new(
       prompt:  build_prompt,
       teacher: @teacher

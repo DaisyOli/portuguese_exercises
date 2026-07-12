@@ -266,9 +266,12 @@ class ActivityGenerationService
   end
 
   def call
-    # Release DB connection before the Claude API call to prevent idle
-    # connection timeouts on Heroku/RDS during long AI responses.
-    ActiveRecord::Base.connection_pool.release_connection
+    # NÃO liberar a conexão aqui. Este serviço roda dentro do
+    # AiActivityGenerationJob, e o GoodJob segura um advisory lock DE SESSÃO
+    # (pg_try_advisory_lock) nessa conexão para garantir que o job rode uma
+    # única vez. Liberar a conexão devolve-a ao pool no meio do job; se ela
+    # cair durante a chamada longa à IA, o lock de sessão cai junto e outro
+    # worker reexecuta o mesmo job — gerando a atividade EM DUPLICATA.
     response_text = call_api
     parsed = parse_json(strip_markdown(response_text))
     build_activity(parsed)
