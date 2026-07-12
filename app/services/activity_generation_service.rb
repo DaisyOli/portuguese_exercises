@@ -380,12 +380,18 @@ class ActivityGenerationService
 
   def build_question(activity, ex)
     answers = ex["correct_answers"]
+    options = ex["options"] || []
+    # Embaralha as alternativas da múltipla escolha. A IA tende a colocar a
+    # resposta certa sempre na mesma posição (ex.: B, B, B em questões seguidas),
+    # o que cria automatismo no aluno. Como a resposta é casada pelo TEXTO (não
+    # pela posição), embaralhar é seguro e quebra o padrão.
+    options = options.shuffle if ex["type"] == "multiple_choice"
     question = activity.questions.build(
       question_type:   ex["type"],
       content:         ex["content"],
       correct_answer:  answers&.first || ex["correct_answer"],
       correct_answers: answers || [],
-      options:         ex["options"] || []
+      options:         options
     )
     question.save
   end
