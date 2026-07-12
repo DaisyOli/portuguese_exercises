@@ -300,7 +300,7 @@
                 if (select) select.addEventListener('change', updateEditFields);
                 const collapse = document.getElementById('edit-question-form-' + qid);
                 if (collapse) {
-                  collapse.addEventListener('shown.bs.collapse', function() {
+                  collapse.addEventListener('collapse:shown', function() {
                     updateEditFields();
                     initQuillEdit();
                   });

@@ -118,7 +118,7 @@
         function init() {
           var collapseEl = document.getElementById('edit-<%= section_id %>-form');
           if (collapseEl) {
-            collapseEl.addEventListener('shown.bs.collapse', initQuill);
+            collapseEl.addEventListener('collapse:shown', initQuill);
           }
         }
 
