@@ -50,7 +50,8 @@ class ActivityFromVideoService
       - Crie entre 5 e 8 exercícios variados usando os tipos disponíveis, baseados no conteúdo real da transcrição
       - Use vocabulário e expressões que aparecem na transcrição nas questões
       - A "description" deve mencionar o tema do vídeo e o que o aluno vai praticar
-      - NÃO faça referência a "assista ao vídeo" nos exercícios — o player já fica integrado à atividade
+      - O campo "statement" (enunciado, exibido antes dos exercícios) deve instruir o aluno a ASSISTIR AO VÍDEO — por exemplo: "Assista ao vídeo e responda às questões." NUNCA escreva "leia a transcrição" no enunciado: o vídeo é o material principal e a transcrição fica só como apoio recolhido
+      - Nos enunciados das QUESTÕES individuais (o "content" de cada exercício), não repita "assista ao vídeo" — o player já fica integrado à atividade; foque no conteúdo
     PROMPT
   end
 end
