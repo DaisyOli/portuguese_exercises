@@ -1,6 +1,8 @@
 # Practice BR
 
-[![CI](https://github.com/DaisyOli/portuguese_exercises/actions/workflows/ci.yml/badge.svg)](https://github.com/DaisyOli/portuguese_exercises/actions/workflows/ci.yml)
+[![English](https://img.shields.io/badge/English-0969DA)](README.md) [![Français](https://img.shields.io/badge/Fran%C3%A7ais-8B949E)](README.fr.md)
+
+[![CI](https://github.com/DaisyOli/practice-br/actions/workflows/ci.yml/badge.svg)](https://github.com/DaisyOli/practice-br/actions/workflows/ci.yml)
 
 An AI-powered platform where Portuguese language teachers create interactive exercises and students practice with instant, personalized feedback.
 
@@ -12,17 +14,17 @@ Live in private beta at [app.practicebr.com](https://app.practicebr.com), with r
 
 **For teachers:**
 - Create activities in minutes — or let AI do the heavy lifting:
-  - **Generate a full activity from a text prompt** (statement, explanation and questions), powered by Claude
+  - **Generate a full activity from a text prompt** (statement, explanation and questions), powered by Claude — runs as a background job with a friendly animated wait screen, so the teacher is never stuck on a blocked request
   - **Generate an activity from a YouTube video**: the transcript is fetched and turned into comprehension questions
 - Six exercise types: multiple choice, fill-in-the-blank, open-ended, sentence ordering, paragraph ordering and column matching
-- Review AI-generated drafts before publishing
+- Review AI-generated drafts before publishing — the AI proposes, the teacher decides
 - Invite students by email — each student is scoped to their teacher
 - Dashboard with per-level (CEFR A1–C1) and per-competency breakdowns, pending corrections and student activity
 
 **For students:**
 - Practice activities filtered by level and competency — listening (CO), reading (CE) and writing (EE)
-- Instant scoring with per-question feedback
-- **Open-ended answers graded by AI**, with constructive feedback written in Portuguese
+- Instant scoring with per-question feedback; multiple-choice alternatives are shuffled on every attempt to avoid position bias
+- **Open-ended answers graded by AI**, with constructive feedback written in Portuguese — grading rigor scales with CEFR level, from lenient at A1 to demanding at C1
 - **Answer by voice**: audio recordings are transcribed with Whisper
 - Progress dashboard with competency tracking, search and activity ratings
 - Installable as a PWA, with web push notifications for new activities
@@ -41,7 +43,7 @@ Live in private beta at [app.practicebr.com](https://app.practicebr.com), with r
 | Backend | Ruby 3.3.5, Rails 7.1 |
 | Database | PostgreSQL |
 | Frontend | Hotwire (Turbo + Stimulus), Tailwind CSS + DaisyUI |
-| AI | Anthropic Claude (activity generation, grading), OpenAI Whisper (speech-to-text) |
+| AI | Anthropic Claude — Opus for activity generation, Haiku for grading; OpenAI Whisper (speech-to-text) |
 | Background jobs | GoodJob (Postgres-backed, async mode) |
 | Auth | Devise + Devise Invitable |
 | Payments | Stripe subscriptions + webhooks |
@@ -54,7 +56,8 @@ Live in private beta at [app.practicebr.com](https://app.practicebr.com), with r
 ## Architecture notes
 
 - **Service objects** keep controllers thin: quiz submission and AI grading, activity generation (prompt- and video-based), transcription, push notifications and analytics each live in their own service under `app/services`.
-- **AI grading runs in background jobs** (GoodJob, backed by Postgres — no Redis): students get instant results while open answers are graded asynchronously, with retry + graceful degradation when the AI is unavailable, and the results page updates itself via a polling Stimulus controller.
+- **Both AI pipelines run in background jobs** (GoodJob, backed by Postgres — no Redis): activity generation and answer grading are queued instead of blocking the request, with retry + graceful degradation when the AI is unavailable, and the UI updates itself via a polling Stimulus controller instead of a page refresh.
+- **Cost-aware model selection**: Claude Opus generates activities — low volume, quality-critical, guided by a grading rubric baked into the system prompt — while Claude Haiku grades student answers, which run at much higher volume. Same pipeline, different model for the economics of each job.
 - **Server-rendered UI with Hotwire** — no SPA, no API layer to maintain; Turbo handles interactivity.
 - **Role-based access** (admin / teacher / student / trial) enforced at controller level, with students scoped to the teacher who invited them.
 - **Graceful degradation**: AI, YouTube and Unsplash integrations are optional — the platform works without their API keys.
@@ -64,9 +67,11 @@ Live in private beta at [app.practicebr.com](https://app.practicebr.com), with r
 Things I know need work, in priority order:
 
 - [x] Move AI grading calls out of the request cycle into background jobs (GoodJob + async UI updates)
-- [ ] Finish migrating the remaining Bootstrap views to Tailwind/DaisyUI and remove inline styles
+- [x] Move AI activity generation out of the request cycle too (background job + async UI updates)
+- [x] Finish migrating the remaining Bootstrap views to Tailwind/DaisyUI
+- [x] Consolidate the repetitive `clear_*` controller actions into a single parameterized action
 - [ ] Raise request-spec coverage on the billing and quiz-submission flows
-- [ ] Consolidate the repetitive `clear_*` controller actions into a single parameterized action
+- [ ] Extract multiple-choice and fill-in-the-blank into their own models — right now they're fields on `Question`, unlike the other four exercise types, which each have their own model. Deliberately deferred: the quiz flow is the app's most critical path, so this waits for a dedicated, carefully planned sprint
 
 ---
 
@@ -75,8 +80,8 @@ Things I know need work, in priority order:
 **Prerequisites:** Ruby 3.3.5, PostgreSQL, Bundler, Yarn
 
 ```bash
-git clone https://github.com/DaisyOli/portuguese_exercises.git
-cd portuguese_exercises
+git clone https://github.com/DaisyOli/practice-br.git
+cd practice-br
 
 bundle install
 yarn install
