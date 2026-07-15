@@ -4,21 +4,21 @@
 
 [![CI](https://github.com/DaisyOli/practice-br/actions/workflows/ci.yml/badge.svg)](https://github.com/DaisyOli/practice-br/actions/workflows/ci.yml)
 
-Une plateforme propulsée par l'IA où des professeures de portugais créent des exercices interactifs, et où les élèves s'entraînent avec un retour instantané et personnalisé.
+Une plateforme propulsée par l'IA où des professeurs de portugais créent des exercices interactifs, et où les élèves s'entraînent avec un retour instantané et personnalisé. Pensée aussi pour la formation professionnelle : les élèves financés via OPCO / CPF bénéficient d'heures de pratique mesurées et d'attestations de formation imprimables.
 
-En bêta privée sur [app.practicebr.com](https://app.practicebr.com), testée par de vraies professeures et élèves. Conçue et déployée en solo — du premier commit à la mise en production sur Heroku — comme premier projet Rails après le bootcamp Le Wagon, et qui a largement dépassé ce point de départ depuis.
+En bêta privée sur [app.practicebr.com](https://app.practicebr.com), testée par de vrais professeurs et élèves. Conçue et déployée en solo — du premier commit à la mise en production sur Heroku — comme premier projet Rails après le bootcamp Le Wagon, et qui a largement dépassé ce point de départ depuis.
 
 ---
 
 ## Fonctionnalités
 
-**Pour les professeures :**
+**Pour les professeurs :**
 - Créez des activités en quelques minutes — ou laissez l'IA faire le gros du travail :
-  - **Générez une activité complète à partir d'un prompt** (énoncé, explication et questions), propulsé par Claude — exécuté en tâche de fond avec un écran d'attente animé, pour que la professeure ne reste jamais bloquée sur une requête en cours
+  - **Générez une activité complète à partir d'un prompt** (énoncé, explication et questions), propulsé par Claude — exécuté en tâche de fond avec un écran d'attente animé, pour que le professeur ne reste jamais bloqué sur une requête en cours
   - **Générez une activité à partir d'une vidéo YouTube** : la transcription est récupérée et transformée en questions de compréhension
 - Six types d'exercices : choix multiple, texte à trous, question ouverte, remise en ordre de phrases, remise en ordre de paragraphes et appariement de colonnes
-- Relisez les brouillons générés par l'IA avant publication — l'IA propose, la professeure dispose
-- Invitez des élèves par email — chaque élève est rattaché à sa professeure
+- Relisez les brouillons générés par l'IA avant publication — l'IA propose, le professeur dispose
+- Invitez des élèves par email — chaque élève est rattaché à son professeur
 - Tableau de bord avec répartition par niveau (CECR A1–C1) et par compétence, corrections en attente et activité des élèves
 
 **Pour les élèves :**
@@ -29,9 +29,14 @@ En bêta privée sur [app.practicebr.com](https://app.practicebr.com), testée p
 - Tableau de bord de progression avec suivi par compétence, recherche et notation des activités
 - Installable comme PWA, avec notifications push pour les nouvelles activités
 
+**Pour les élèves en parcours professionnel (OPCO / eCPF) :**
+- En France, la formation en langues est souvent financée par la formation professionnelle — l'OPCO de l'employeur ou le compte personnel de formation (CPF). Les financeurs exigent une preuve que la formation a réellement eu lieu, et c'est cette preuve qui permet à un professeur d'accueillir des élèves financés
+- Le professeur marque l'élève comme OPCO ou eCPF dès l'invitation par email ; un badge dédié suit ensuite l'élève sur le tableau de bord du professeur comme sur son propre profil
+- Un clic génère une **attestation de formation imprimable** par élève, avec des heures calculées à partir du temps de pratique réellement mesuré — de l'ouverture d'une activité à sa soumission — plutôt que déclarées à la main
+
 **Sous le capot :**
 - Parcours essai-vers-abonnement avec Stripe (checkout + webhooks)
-- Emails de rappel hebdomadaires (Resend + Heroku Scheduler) et suggestions quotidiennes de vidéos YouTube par professeure
+- Emails de rappel hebdomadaires (Resend + Heroku Scheduler) et suggestions quotidiennes de vidéos YouTube par professeur
 - Interface disponible en portugais, anglais et français
 
 ---
@@ -59,7 +64,7 @@ En bêta privée sur [app.practicebr.com](https://app.practicebr.com), testée p
 - **Les deux pipelines d'IA tournent en tâche de fond** (GoodJob, adossé à Postgres — pas de Redis) : la génération d'activités et la correction des réponses sont mises en file plutôt que de bloquer la requête, avec retry + dégradation gracieuse quand l'IA est indisponible, et l'interface se met à jour toute seule via un contrôleur Stimulus qui interroge le serveur, sans recharger la page.
 - **Choix de modèle piloté par le coût** : Claude Opus génère les activités — faible volume, exigeant en qualité, guidé par une grille de qualité intégrée au prompt système — tandis que Claude Haiku corrige les réponses des élèves, un flux à bien plus haut volume. Même pipeline, modèle différent selon l'économie de chaque tâche.
 - **Interface rendue côté serveur avec Hotwire** — pas de SPA, pas de couche API à maintenir ; Turbo gère l'interactivité.
-- **Accès par rôle** (admin / professeure / élève / essai) appliqué au niveau des contrôleurs, chaque élève étant rattaché à la professeure qui l'a invité.
+- **Accès par rôle** (admin / professeur / élève / essai) appliqué au niveau des contrôleurs, chaque élève étant rattaché au professeur qui l'a invité.
 - **Dégradation gracieuse** : les intégrations IA, YouTube et Unsplash sont optionnelles — la plateforme fonctionne sans leurs clés d'API.
 
 ## Feuille de route technique

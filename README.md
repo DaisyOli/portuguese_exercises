@@ -6,7 +6,7 @@
 
 [![CI](https://github.com/DaisyOli/practice-br/actions/workflows/ci.yml/badge.svg)](https://github.com/DaisyOli/practice-br/actions/workflows/ci.yml)
 
-An AI-powered platform where Portuguese language teachers create interactive exercises and students practice with instant, personalized feedback.
+An AI-powered platform where Portuguese language teachers create interactive exercises and students practice with instant, personalized feedback. Built for the professional-training market too: learners funded through France's OPCO / CPF schemes get tracked practice hours and printable training attestations.
 
 Live in private beta at [app.practicebr.com](https://app.practicebr.com), with real teachers and students testing it. Built and shipped solo — from first commit to production on Heroku — as my first Rails project after the Le Wagon bootcamp, and evolved well beyond it since.
 
@@ -30,6 +30,11 @@ Live in private beta at [app.practicebr.com](https://app.practicebr.com), with r
 - **Answer by voice**: audio recordings are transcribed with Whisper
 - Progress dashboard with competency tracking, search and activity ratings
 - Installable as a PWA, with web push notifications for new activities
+
+**For professionally-funded learners (OPCO / eCPF):**
+- In France, language training is often paid for by professional-training funds — the employer's OPCO or the learner's personal training account (CPF). Funders require proof that the training actually happened, and being able to produce it is what lets a teacher take on funded students at all
+- Teachers tag a student as OPCO or eCPF right on the invitation email; a dedicated badge then follows the student across the teacher's dashboard and the student's own profile
+- One click generates a **printable training attestation** per student, with hours computed from tracked practice time — from opening an activity to submitting it — rather than self-reported
 
 **Under the hood:**
 - Trial-to-subscription onboarding with Stripe (checkout + webhooks)
