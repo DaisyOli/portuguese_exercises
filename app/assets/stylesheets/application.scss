@@ -24,6 +24,12 @@
   border: 1px solid var(--line) !important;
   box-shadow: 0 8px 32px rgba(0,0,0,0.12) !important;
 }
+// O CSS padrão do Shepherd usa 400px fixos, que transborda em telas de celular
+@media (max-width: 480px) {
+  .shepherd-element {
+    max-width: calc(100vw - 24px) !important;
+  }
+}
 .shepherd-header {
   background: var(--brand-deep) !important;
   border-radius: 14px 14px 0 0 !important;

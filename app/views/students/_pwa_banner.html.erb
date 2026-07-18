@@ -33,7 +33,7 @@
   <div id="pwa-ios-instructions" style="display:none; margin-top:14px; max-width:560px; margin-left:auto; margin-right:auto;
        background:var(--brand); border-radius:12px; padding:14px 16px;">
     <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; color:var(--surface); line-height:1.6;" id="pwa-ios-steps">
-      1. Toque em <strong>📤</strong> (botão de compartilhar no Safari)<br>
+      1. Toque em <strong><svg xmlns="http://www.w3.org/2000/svg" width="1.1em" height="1.1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.2em"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" x2="12" y1="2" y2="15"/></svg></strong> (botão de compartilhar no Safari)<br>
       2. Role para baixo e toque em <strong>"Adicionar à Tela de Início"</strong><br>
       3. Confirme tocando em <strong>"Adicionar"</strong>
     </div>
@@ -66,6 +66,9 @@
 
 <script>
 (function() {
+  // Ícone igual ao botão real de compartilhar do Safari (SVG inline)
+  var shareIcon = '<svg xmlns="http://www.w3.org/2000/svg" width="1.1em" height="1.1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.2em"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" x2="12" y1="2" y2="15"/></svg>';
+
   // Textos por idioma
   var lang = navigator.language || 'pt';
   var t = lang.startsWith('fr') ? {
@@ -73,7 +76,7 @@
     installDesc:  "Soyez averti(e) dès que votre professeur publie un nouvel exercice",
     installBtn:   "Installer",
     iosBtn:       "Comment installer",
-    iosSteps:     "1. Appuyez sur <strong>📤</strong> (partager dans Safari)<br>2. Faites défiler et appuyez sur <strong>« Sur l'écran d'accueil »</strong><br>3. Confirmez en appuyant sur <strong>« Ajouter »</strong>",
+    iosSteps:     "1. Appuyez sur <strong>" + shareIcon + "</strong> (partager dans Safari)<br>2. Faites défiler et appuyez sur <strong>« Sur l'écran d'accueil »</strong><br>3. Confirmez en appuyant sur <strong>« Ajouter »</strong>",
     pushTitle:    "Activer les notifications ?",
     pushDesc:     "Recevez une alerte quand votre professeur publie quelque chose de nouveau",
     pushBtn:      "Activer"
@@ -82,7 +85,7 @@
     installDesc:  "Get notified instantly when your teacher publishes a new exercise",
     installBtn:   "Install",
     iosBtn:       "How to install",
-    iosSteps:     "1. Tap <strong>📤</strong> (share button in Safari)<br>2. Scroll down and tap <strong>\"Add to Home Screen\"</strong><br>3. Confirm by tapping <strong>\"Add\"</strong>",
+    iosSteps:     "1. Tap <strong>" + shareIcon + "</strong> (share button in Safari)<br>2. Scroll down and tap <strong>\"Add to Home Screen\"</strong><br>3. Confirm by tapping <strong>\"Add\"</strong>",
     pushTitle:    "Enable notifications?",
     pushDesc:     "Get alerts when your teacher publishes something new",
     pushBtn:      "Enable"
@@ -91,7 +94,7 @@
     installDesc:  "Saiba na hora quando seu professor publicar um exercício novo",
     installBtn:   "Instalar",
     iosBtn:       "Como instalar",
-    iosSteps:     "1. Toque em <strong>📤</strong> (botão de compartilhar no Safari)<br>2. Role para baixo e toque em <strong>\"Adicionar à Tela de Início\"</strong><br>3. Confirme tocando em <strong>\"Adicionar\"</strong>",
+    iosSteps:     "1. Toque em <strong>" + shareIcon + "</strong> (botão de compartilhar no Safari)<br>2. Role para baixo e toque em <strong>\"Adicionar à Tela de Início\"</strong><br>3. Confirme tocando em <strong>\"Adicionar\"</strong>",
     pushTitle:    "Ativar notificações?",
     pushDesc:     "Receba alertas quando seu professor publicar algo novo",
     pushBtn:      "Ativar"

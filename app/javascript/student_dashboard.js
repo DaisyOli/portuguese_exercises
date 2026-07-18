@@ -1,5 +1,9 @@
 // 🎯 DASHBOARD DO ESTUDANTE - JavaScript dedicado
 
+// Ícones desenhados igual aos botões reais do navegador (SVG inline, sem biblioteca)
+const ICON_IOS_SHARE = '<svg xmlns="http://www.w3.org/2000/svg" width="1.1em" height="1.1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.2em"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" x2="12" y1="2" y2="15"/></svg>'
+const ICON_ANDROID_MENU = '<svg xmlns="http://www.w3.org/2000/svg" width="1.1em" height="1.1em" viewBox="0 0 24 24" fill="currentColor" style="display:inline-block;vertical-align:-0.2em"><circle cx="12" cy="5" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="12" cy="19" r="1.8"/></svg>'
+
 const TOUR_TEXTS = {
   fr: {
     skip:            'Passer',
@@ -11,8 +15,8 @@ const TOUR_TEXTS = {
     continue:        'Votre prochaine activité suggérée apparaît ici. Cliquez pour commencer quand vous êtes prêt(e) !',
     levels:          'Explorez les activités organisées par niveau — du A1 au C1. Cliquez sur un niveau pour voir ce qui est disponible.',
     avatar:          'Votre menu se trouve ici — pour vous déconnecter ou voir vos informations.',
-    install_android: '📲 <strong>Installez l\'application !</strong><br><br>Appuyez sur le menu <strong>⋮</strong> de Chrome puis choisissez <strong>« Ajouter à l\'écran d\'accueil »</strong> pour un accès rapide.',
-    install_ios:     '📲 <strong>Installez l\'application !</strong><br><br>Appuyez sur <strong>□↑</strong> dans Safari puis choisissez <strong>« Sur l\'écran d\'accueil »</strong> pour un accès rapide.'
+    install_android: `📲 <strong>Installez l'application !</strong><br><br>Appuyez sur le menu <strong>${ICON_ANDROID_MENU}</strong> de Chrome puis choisissez <strong>« Ajouter à l'écran d'accueil »</strong> pour un accès rapide.`,
+    install_ios:     `📲 <strong>Installez l'application !</strong><br><br>Appuyez sur <strong>${ICON_IOS_SHARE}</strong> dans Safari puis choisissez <strong>« Sur l'écran d'accueil »</strong> pour un accès rapide.`
   },
   en: {
     skip:            'Skip',
@@ -24,8 +28,8 @@ const TOUR_TEXTS = {
     continue:        'Your next suggested activity appears here. Click to start when you\'re ready!',
     levels:          'Explore activities organised by level — from A1 to C1. Click any level to see what\'s available.',
     avatar:          'Your menu is up here — to sign out or view your account.',
-    install_android: '📲 <strong>Install the app!</strong><br><br>Tap the <strong>⋮</strong> menu in Chrome and choose <strong>"Add to Home Screen"</strong> for quick access.',
-    install_ios:     '📲 <strong>Install the app!</strong><br><br>Tap <strong>□↑</strong> in Safari and choose <strong>"Add to Home Screen"</strong> for quick access.'
+    install_android: `📲 <strong>Install the app!</strong><br><br>Tap the <strong>${ICON_ANDROID_MENU}</strong> menu in Chrome and choose <strong>"Add to Home Screen"</strong> for quick access.`,
+    install_ios:     `📲 <strong>Install the app!</strong><br><br>Tap <strong>${ICON_IOS_SHARE}</strong> in Safari and choose <strong>"Add to Home Screen"</strong> for quick access.`
   },
   pt: {
     skip:            'Pular',
@@ -37,8 +41,8 @@ const TOUR_TEXTS = {
     continue:        'Sua próxima atividade sugerida aparece aqui. Clique para começar quando estiver pronto(a)!',
     levels:          'Explore atividades organizadas por nível — do A1 ao C1. Clique em qualquer nível para ver o que está disponível.',
     avatar:          'Seu menu fica aqui em cima — para sair da conta ou ver suas informações.',
-    install_android: '📲 <strong>Instale o app!</strong><br><br>Toque no menu <strong>⋮</strong> do Chrome e escolha <strong>"Adicionar à tela inicial"</strong> para acesso rápido.',
-    install_ios:     '📲 <strong>Instale o app!</strong><br><br>Toque em <strong>□↑</strong> no Safari e escolha <strong>"Adicionar à tela de início"</strong> para acesso rápido.'
+    install_android: `📲 <strong>Instale o app!</strong><br><br>Toque no menu <strong>${ICON_ANDROID_MENU}</strong> do Chrome e escolha <strong>"Adicionar à tela inicial"</strong> para acesso rápido.`,
+    install_ios:     `📲 <strong>Instale o app!</strong><br><br>Toque em <strong>${ICON_IOS_SHARE}</strong> no Safari e escolha <strong>"Adicionar à tela de início"</strong> para acesso rápido.`
   }
 }
 
@@ -70,11 +74,15 @@ function initOnboardingTour() {
 
   const t = TOUR_TEXTS[detectLang()]
 
+  // No navegador do celular a rolagem suave desalinha o recorte iluminado do tour:
+  // a barra de endereço encolhe durante a rolagem e muda a altura da tela.
+  // Rolagem instantânea garante que o holofote seja calculado com a tela já parada.
+  const mobileBrowser = detectMobileOS() !== null
   const tour = new Shepherd.Tour({
     useModalOverlay: true,
     defaultStepOptions: {
       cancelIcon: { enabled: true },
-      scrollTo: { behavior: 'smooth', block: 'center' }
+      scrollTo: { behavior: mobileBrowser ? 'auto' : 'smooth', block: 'center' }
     }
   })
 
