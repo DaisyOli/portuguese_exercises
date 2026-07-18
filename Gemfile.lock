@@ -282,6 +282,8 @@ GEM
     raabro (1.4.0)
     racc (1.8.1)
     rack (3.1.8)
+    rack-attack (6.8.0)
+      rack (>= 1.0, < 4)
     rack-cache (1.17.0)
       rack (>= 0.4)
     rack-cors (3.0.0)
@@ -484,6 +486,7 @@ DEPENDENCIES
   ostruct
   pg
   puma (>= 5.0)
+  rack-attack
   rack-cache
   rack-cors
   rails (~> 7.1.5)

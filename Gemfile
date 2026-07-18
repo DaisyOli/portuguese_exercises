@@ -22,6 +22,8 @@ gem "pg"
 
 # CORS para o endpoint público de trial (aceita requisições da landing page)
 gem "rack-cors"
+# Rate limiting do endpoint público de trial
+gem "rack-attack"
 gem "stripe", "~> 13.0"
 gem "web-push"
 

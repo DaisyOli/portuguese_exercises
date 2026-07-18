@@ -17,6 +17,7 @@ module Api
           level: level,
           role: "trial",
           password: SecureRandom.hex(12),
+          trial_activities_used: 0,
           trial_expires_at: 7.days.from_now,
           invited_by_id: admin&.id
         )

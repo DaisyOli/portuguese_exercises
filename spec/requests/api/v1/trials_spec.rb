@@ -70,5 +70,57 @@ RSpec.describe "Api::V1::Trials", type: :request do
         expect(response).to have_http_status(:unprocessable_entity)
       end
     end
+
+    context "com TRIAL_API_KEY configurada" do
+      before do
+        allow(ENV).to receive(:[]).and_call_original
+        allow(ENV).to receive(:[]).with("TRIAL_API_KEY").and_return("chave-secreta")
+      end
+
+      it "retorna 401 sem o header X-Trial-Api-Key" do
+        expect {
+          post "/api/v1/trials", params: valid_params, as: :json
+        }.not_to change(User, :count)
+
+        expect(response).to have_http_status(:unauthorized)
+      end
+
+      it "retorna 401 com chave errada" do
+        post "/api/v1/trials", params: valid_params, as: :json, headers: { "X-Trial-Api-Key" => "chave-errada" }
+        expect(response).to have_http_status(:unauthorized)
+      end
+
+      it "cria o usuário com a chave correta" do
+        expect {
+          post "/api/v1/trials", params: valid_params, as: :json, headers: { "X-Trial-Api-Key" => "chave-secreta" }
+        }.to change(User, :count).by(1)
+
+        expect(response).to have_http_status(:created)
+      end
+    end
+
+    context "rate limiting por email" do
+      before do
+        Rack::Attack.cache.store = ActiveSupport::Cache::MemoryStore.new
+      end
+
+      after do
+        Rack::Attack.cache.store = Rails.cache
+      end
+
+      it "retorna 429 depois de 3 tentativas com o mesmo email" do
+        3.times { post "/api/v1/trials", params: valid_params, as: :json }
+
+        post "/api/v1/trials", params: valid_params, as: :json
+        expect(response).to have_http_status(:too_many_requests)
+      end
+
+      it "não bloqueia emails diferentes vindos do mesmo IP" do
+        3.times { post "/api/v1/trials", params: valid_params, as: :json }
+
+        post "/api/v1/trials", params: { email: "outro@email.com", level: "A2" }, as: :json
+        expect(response).to have_http_status(:created)
+      end
+    end
   end
 end
