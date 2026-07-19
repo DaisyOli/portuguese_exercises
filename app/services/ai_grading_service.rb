@@ -113,7 +113,7 @@ class AiGradingService
 
     message = client.messages.create(
       model: :"claude-haiku-4-5",
-      max_tokens: 256,
+      max_tokens: 1024, # folga p/ feedback longo: 256 cortava o JSON no meio (só pagamos o que for gerado)
       system: correction_system_prompt,
       messages: [{
         role: "user",
@@ -122,7 +122,9 @@ class AiGradingService
     )
 
     text_block = message.content.find { |b| b.type == :text }
-    parsed = JSON.parse(text_block.text.strip.gsub(/\A```(?:json)?\s*/i, '').gsub(/\s*```\z/, ''))
+    raw = text_block ? text_block.text : ""
+    # A IA às vezes envolve o JSON em prosa ou cercas ```json; extrai do primeiro { ao último }
+    parsed = JSON.parse(raw[/\{.*\}/m] || raw)
     { score: parsed["score"].to_i.clamp(0, 100), feedback: parsed["feedback"].to_s }
 
   rescue Anthropic::Errors::RateLimitError, Anthropic::Errors::APITimeoutError, Anthropic::Errors::APIConnectionError
@@ -131,7 +133,7 @@ class AiGradingService
     Rails.logger.error "AI grading API error: #{e.message}"
     { score: nil, feedback: I18n.t('ai.errors.api', message: e.message) }
   rescue JSON::ParserError => e
-    Rails.logger.error "AI grading JSON parse error: #{e.message}"
+    Rails.logger.error "AI grading JSON parse error: #{e.message}; stop_reason=#{message&.stop_reason}; raw=#{raw.inspect}"
     { score: nil, feedback: I18n.t('ai.errors.invalid_format') }
   end
 
