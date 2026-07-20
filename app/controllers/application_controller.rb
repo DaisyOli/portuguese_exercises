@@ -1,4 +1,11 @@
 class ApplicationController < ActionController::Base
+  # Token CSRF desatualizado (aba aberta há muito tempo, botão "voltar", etc.)
+  # manda pro login de novo em vez de mostrar a página de erro padrão do Rails.
+  rescue_from ActionController::InvalidAuthenticityToken do
+    reset_session
+    redirect_to new_user_session_path, alert: t("devise.failure.timeout")
+  end
+
   # Autenticação padrão
   before_action :authenticate_user!
   before_action :suppress_redundant_flash
