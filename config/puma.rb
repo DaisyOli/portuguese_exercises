@@ -47,19 +47,7 @@ if rails_env == "production"
   end
 
   on_worker_boot do
-    if defined?(GoodJob)
-      # Workaround para GoodJob 4.19 + Rails 7.1 + preload_app!: o proxy
-      # memoizado em adapter_class (advisory_lockable.rb) captura o pool de
-      # conexões do processo master; nos workers esse pool foi descartado no
-      # fork e o Notifier entra em crash-loop (NoMethodError em with_connection).
-      # Limpar o memo força recapturar o pool do próprio worker.
-      # Reproduzido e validado em 2026-07-09; remover quando o Rails for >= 7.2
-      # (aí o shim do GoodJob nem é instalado).
-      [GoodJob::Job, GoodJob::Process, GoodJob::BatchRecord].each do |klass|
-        klass.remove_instance_variable(:@_adapter_class) if klass.instance_variable_defined?(:@_adapter_class)
-      end
-      GoodJob.restart
-    end
+    GoodJob.restart if defined?(GoodJob)
   end
 
   on_worker_shutdown do
