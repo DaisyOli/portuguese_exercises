@@ -149,6 +149,12 @@
   border-bottom-color: var(--error-border);
 }
 
+.question-header.partial {
+  background: var(--warning-tint);
+  color: var(--action);
+  border-bottom-color: var(--warning-border);
+}
+
 .question-body {
   padding: 14px 16px;
 }

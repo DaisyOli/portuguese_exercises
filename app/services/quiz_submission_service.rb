@@ -45,6 +45,7 @@ class QuizSubmissionService
       correct_answer = question.correct_answer
       is_correct    = false
       skip_score    = false
+      credit_fraction = 0.0
 
       begin
         if question.open_ended?
@@ -92,20 +93,24 @@ class QuizSubmissionService
             { "given" => given.presence || I18n.t('quiz.not_answered'), "correct" => correct, "ok" => ok }
           end
 
-          is_correct = blank_results.all? { |r| r["ok"] }
+          is_correct      = blank_results.all? { |r| r["ok"] }
+          credit_fraction = blank_results.count { |r| r["ok"] } / blank_results.size.to_f
 
           results[question.id] = {
             "is_correct"     => is_correct,
             "question_text"  => question.content,
             "question_type"  => question.question_type,
             "blank_results"  => blank_results,
+            "correct_count"  => blank_results.count { |r| r["ok"] },
+            "total_blanks"   => blank_results.size,
             "given_answer"   => given_array.first.presence || I18n.t('quiz.not_answered'),
             "correct_answer" => all_answers.first,
             "raw_answer"     => given_array.first.to_s
           }
 
         else
-          is_correct = given_answer.present? && given_answer.to_s.strip == correct_answer.to_s.strip
+          is_correct      = given_answer.present? && given_answer.to_s.strip == correct_answer.to_s.strip
+          credit_fraction = is_correct ? 1.0 : 0.0
 
           results[question.id] = {
             "is_correct"    => is_correct,
@@ -134,10 +139,8 @@ class QuizSubmissionService
       weight = (question.weight || 1).to_f
       total_weighted_possible += weight
       total_exercise_count    += 1
-      if is_correct
-        total_weighted_correct += weight
-        total_correct_count    += 1
-      end
+      total_weighted_correct  += weight * credit_fraction
+      total_correct_count    += 1 if is_correct
     end
 
     # Processar exercícios de ordenar palavras
@@ -189,22 +192,23 @@ class QuizSubmissionService
     column_matching_answers = @params[:column_matching_answers] || {}
     @column_matchings.each do |matching|
       answer_string = column_matching_answers[matching.id.to_s].to_s
-      is_correct    = matching.check_answer(answer_string)
+      pair_results  = matching.pair_results(answer_string)
+      total_pairs   = pair_results.size
+      correct_count = pair_results.count { |r| r["correct"] }
+      is_correct    = total_pairs.positive? && correct_count == total_pairs
 
       total_weighted_possible += 1
       total_exercise_count    += 1
-      if is_correct
-        total_weighted_correct += 1
-        total_correct_count    += 1
-      end
-
-      correct_pairs = matching.matching_pairs.order(:position).map { |p| [p.left_item, p.right_item] }
+      total_weighted_correct  += (correct_count / total_pairs.to_f) if total_pairs.positive?
+      total_correct_count    += 1 if is_correct
 
       results["column_matching_#{matching.id}"] = {
         "is_correct"    => is_correct,
         "exercise_type" => "column_matching",
         "title"         => matching.title.presence || I18n.t('column_matchings.title'),
-        "correct_pairs" => correct_pairs
+        "pair_results"  => pair_results,
+        "correct_count" => correct_count,
+        "total_pairs"   => total_pairs
       }
     end
 

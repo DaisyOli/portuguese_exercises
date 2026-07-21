@@ -230,6 +230,7 @@ en:
     confirm_destroy: "Remove this exercise and all its pairs?"
     result_label: "Matching exercise"
     correct: "All matches correct!"
+    partially_correct: "%{correct} of %{total} correct"
     incorrect: "Incorrect matches."
     reset: "Reset"
 
@@ -375,6 +376,9 @@ en:
     correct_answers: "You got %{correct} out of %{total} questions (%{score}%)"
     your_answer: "Your answer"
     correct_answer: "Correct answer"
+    fill_in_blank_all_correct: "All blanks correct!"
+    fill_in_blank_partial: "%{correct} of %{total} blanks correct"
+    fill_in_blank_incorrect: "Incorrect blanks."
     try_again: "Try Again"
     not_answered: "Not answered"
     xp_earned: "Experience earned"

@@ -322,6 +322,9 @@ pt:
     correct_answers: "Você acertou %{correct} de %{total} questões (%{score}%)"
     your_answer: "Sua resposta"
     correct_answer: "Resposta correta"
+    fill_in_blank_all_correct: "Todas as lacunas corretas!"
+    fill_in_blank_partial: "%{correct} de %{total} lacunas corretas"
+    fill_in_blank_incorrect: "Lacunas incorretas."
     try_again: "Tentar Novamente"
     not_answered: "Não respondida"
     submitting: "Enviando..."
@@ -490,6 +493,7 @@ pt:
     confirm_destroy: "Remover este exercício e todos os pares?"
     result_label: "Exercício de associação"
     correct: "Todas as associações corretas!"
+    partially_correct: "%{correct} de %{total} corretas"
     incorrect: "Associações incorretas."
     reset: "Recomeçar"
 

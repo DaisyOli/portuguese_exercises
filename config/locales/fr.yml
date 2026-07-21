@@ -188,6 +188,7 @@ fr:
     confirm_destroy: "Supprimer cet exercice et toutes ses paires ?"
     result_label: "Exercice d'association"
     correct: "Toutes les associations sont correctes !"
+    partially_correct: "%{correct} sur %{total} correctes"
     incorrect: "Associations incorrectes."
     reset: "Recommencer"
 
@@ -346,6 +347,9 @@ fr:
     correct_answers: "Vous avez obtenu %{correct} sur %{total} questions (%{score}%)"
     your_answer: "Votre réponse"
     correct_answer: "Réponse correcte"
+    fill_in_blank_all_correct: "Tous les blancs sont corrects !"
+    fill_in_blank_partial: "%{correct} sur %{total} blancs corrects"
+    fill_in_blank_incorrect: "Blancs incorrects."
     try_again: "Réessayer"
     not_answered: "Sans réponse"
     xp_earned: "Expérience acquise"

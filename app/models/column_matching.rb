@@ -8,18 +8,22 @@ class ColumnMatching < ApplicationRecord
     matching_pairs.order(:position).to_a.shuffle
   end
 
-  def check_answer(answer_string)
-    pairs = matching_pairs.to_a
-    return false if answer_string.blank? || pairs.empty?
+  def pair_results(answer_string)
+    pairs = matching_pairs.order(:position).to_a
+    return [] if pairs.empty?
 
-    given = answer_string.split(',').each_with_object({}) do |entry, hash|
+    given = answer_string.to_s.split(',').each_with_object({}) do |entry, hash|
       left_id, right_id = entry.split(':')
       hash[left_id] = right_id
     end
 
-    return false if given.size != pairs.size
-
-    pairs.all? { |pair| given[pair.id.to_s] == pair.id.to_s }
+    pairs.map do |pair|
+      {
+        "left"    => pair.left_item,
+        "right"   => pair.right_item,
+        "correct" => given[pair.id.to_s] == pair.id.to_s
+      }
+    end
   end
 
   def add_pair(left_item, right_item)

@@ -193,6 +193,93 @@ RSpec.describe QuizSubmissionService, type: :service do
       end
     end
 
+    context 'com questão fill_in_blank de múltiplas lacunas parcialmente correta' do
+      let(:question_multi_blank) do
+        create(:question,
+          activity: activity,
+          question_type: 'fill_in_blank',
+          content: "O _____ correu pelo _____ e comeu uma _____ perto do _____.",
+          correct_answer: "gato",
+          correct_answers: ["gato", "parque", "maçã", "lago"])
+      end
+
+      let(:params) do
+        {
+          answers: {
+            question_multi_blank.id.to_s => {
+              "0" => "gato",   # certo
+              "1" => "parque", # certo
+              "2" => "pera",   # errado
+              "3" => "lago"    # certo
+            }
+          }
+        }
+      end
+
+      it 'dá crédito parcial na nota em vez de zerar a questão' do
+        result = service.call
+        attempt = result[:quiz_attempt]
+
+        # 3 de 4 lacunas certas = 75% de crédito, única questão no quiz
+        expect(attempt.score).to eq(75.0)
+      end
+
+      it 'mantém is_correct false mas guarda o detalhe por lacuna' do
+        result = service.call
+        attempt = result[:quiz_attempt]
+
+        q_result = attempt.results["results"][question_multi_blank.id.to_s]
+        expect(q_result["is_correct"]).to be false
+        expect(q_result["correct_count"]).to eq(3)
+        expect(q_result["total_blanks"]).to eq(4)
+        expect(q_result["blank_results"].count { |r| r["ok"] }).to eq(3)
+      end
+    end
+
+    context 'com exercício de associar colunas parcialmente correto' do
+      let(:column_matching) { activity.column_matchings.create!(title: "Capitais") }
+      let!(:cm_pair1) { column_matching.add_pair("Brasil", "Brasília") }
+      let!(:cm_pair2) { column_matching.add_pair("França", "Paris") }
+      let!(:cm_pair3) { column_matching.add_pair("Japão", "Tóquio") }
+      let!(:cm_pair4) { column_matching.add_pair("Egito", "Cairo") }
+
+      let(:params) do
+        {
+          answers: {
+            question_fill.id.to_s => "está",
+            question_mc.id.to_s => "Brasília"
+          },
+          column_matching_answers: {
+            column_matching.id.to_s => [
+              "#{cm_pair1.id}:#{cm_pair1.id}",
+              "#{cm_pair2.id}:#{cm_pair2.id}",
+              "#{cm_pair3.id}:#{cm_pair3.id}",
+              "#{cm_pair4.id}:#{cm_pair1.id}" # errou este par
+            ].join(',')
+          }
+        }
+      end
+
+      it 'dá crédito parcial na nota final em vez de zerar o exercício' do
+        result = service.call
+        attempt = result[:quiz_attempt]
+
+        # 2 questões (100%) + column matching (3/4 = 75%) sobre 3 exercícios no total
+        expect(attempt.score).to eq(((2 + 0.75) / 3 * 100).round(2))
+      end
+
+      it 'guarda o detalhe por par no resultado, sem zerar os pares certos' do
+        result = service.call
+        attempt = result[:quiz_attempt]
+
+        cm_result = attempt.results["results"]["column_matching_#{column_matching.id}"]
+        expect(cm_result["is_correct"]).to be false
+        expect(cm_result["correct_count"]).to eq(3)
+        expect(cm_result["total_pairs"]).to eq(4)
+        expect(cm_result["pair_results"].count { |r| r["correct"] }).to eq(3)
+      end
+    end
+
     context 'atualização de tentativa existente' do
       let!(:existing_attempt) { create(:quiz_attempt, user: user, activity: activity, score: 50.0) }
 

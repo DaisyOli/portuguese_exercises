@@ -55,6 +55,18 @@
             <i class="bi bi-hourglass-split"></i>
             <span><%= t('questions.title') %> <%= index + 1 %></span>
           </div>
+        <% elsif result["exercise_type"] == "column_matching" && result["total_pairs"].present? %>
+          <% cm_partial = !result["is_correct"] && result["correct_count"].to_i.positive? %>
+          <div class="question-header <%= result["is_correct"] ? 'correct' : (cm_partial ? 'partial' : 'incorrect') %>">
+            <i class="bi bi-<%= result["is_correct"] ? 'check-circle' : (cm_partial ? 'dash-circle' : 'x-circle') %>"></i>
+            <span><%= t('questions.title') %> <%= index + 1 %></span>
+          </div>
+        <% elsif result["question_type"] == "fill_in_blank" && result["total_blanks"].present? %>
+          <% fib_partial = !result["is_correct"] && result["correct_count"].to_i.positive? %>
+          <div class="question-header <%= result["is_correct"] ? 'correct' : (fib_partial ? 'partial' : 'incorrect') %>">
+            <i class="bi bi-<%= result["is_correct"] ? 'check-circle' : (fib_partial ? 'dash-circle' : 'x-circle') %>"></i>
+            <span><%= t('questions.title') %> <%= index + 1 %></span>
+          </div>
         <% else %>
           <div class="question-header <%= result["is_correct"] ? 'correct' : 'incorrect' %>">
             <i class="bi bi-<%= result["is_correct"] ? 'check-circle' : 'x-circle' %>"></i>
@@ -71,26 +83,31 @@
             <% if result["title"].present? %>
               <span class="question-type-badge"><%= result["title"] %></span>
             <% end %>
-            <div class="answer-section">
-              <div class="answer-item your-answer <%= result["is_correct"] ? 'correct' : '' %>">
-                <div class="answer-label">
-                  <i class="bi bi-<%= result["is_correct"] ? 'check' : 'x' %>"></i>
-                  <%= result["is_correct"] ? t('column_matchings.correct') : t('column_matchings.incorrect') %>
+            <% cm_partial = !result["is_correct"] && result["correct_count"].to_i.positive? %>
+            <div class="answer-section" style="margin-top:8px;">
+              <div class="answer-item your-answer <%= result["is_correct"] ? 'correct' : '' %>" <% if cm_partial %>style="background:var(--warning-tint);"<% end %>>
+                <div class="answer-label" <% if cm_partial %>style="color:var(--action);"<% end %>>
+                  <i class="bi bi-<%= result["is_correct"] ? 'check' : (cm_partial ? 'dash' : 'x') %>"></i>
+                  <% if result["is_correct"] %>
+                    <%= t('column_matchings.correct') %>
+                  <% elsif cm_partial %>
+                    <%= t('column_matchings.partially_correct', correct: result["correct_count"], total: result["total_pairs"]) %>
+                  <% else %>
+                    <%= t('column_matchings.incorrect') %>
+                  <% end %>
                 </div>
               </div>
-              <% if !result["is_correct"] && result["correct_pairs"].present? %>
-                <div class="answer-item correct-answer">
-                  <div class="answer-label">
-                    <i class="bi bi-check"></i> <%= t('quiz.correct_answer') %>:
+
+              <% if result["pair_results"].present? %>
+                <% result["pair_results"].each do |pr| %>
+                  <% ok = pr["correct"] %>
+                  <div style="border:1px solid <%= ok ? 'var(--brand-bright)' : 'var(--error-border)' %>; border-radius:8px; padding:10px 14px; margin-top:8px; background:<%= ok ? 'var(--brand-mist)' : 'var(--error-tint)' %>;">
+                    <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.88rem; color:var(--ink); display:flex; align-items:center; gap:6px;">
+                      <i class="bi bi-<%= ok ? 'check-circle' : 'x-circle' %>" style="color:<%= ok ? 'var(--brand)' : 'var(--error)' %>;"></i>
+                      <strong><%= pr["left"] %></strong> ↔ <%= pr["right"] %>
+                    </div>
                   </div>
-                  <div style="margin-top:6px;">
-                    <% result["correct_pairs"].each do |pair| %>
-                      <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.88rem; margin-bottom:3px;">
-                        <strong><%= pair[0] %></strong> ↔ <%= pair[1] %>
-                      </div>
-                    <% end %>
-                  </div>
-                </div>
+                <% end %>
               <% end %>
             </div>
 
@@ -179,6 +196,19 @@
               <%= sanitize((result["question_text"].presence || "N/A").to_s, tags: %w[p br strong em u], attributes: []) %>
             </div>
             <span class="question-type-badge"><%= t("questions.types.fill_in_blank") %></span>
+            <% fib_partial = !result["is_correct"] && result["correct_count"].to_i.positive? %>
+            <div class="answer-item your-answer <%= result["is_correct"] ? 'correct' : '' %>" style="margin-top:8px; <% if fib_partial %>background:var(--warning-tint);<% end %>">
+              <div class="answer-label" <% if fib_partial %>style="color:var(--action);"<% end %>>
+                <i class="bi bi-<%= result["is_correct"] ? 'check' : (fib_partial ? 'dash' : 'x') %>"></i>
+                <% if result["is_correct"] %>
+                  <%= t('quiz.fill_in_blank_all_correct') %>
+                <% elsif fib_partial %>
+                  <%= t('quiz.fill_in_blank_partial', correct: result["correct_count"], total: result["total_blanks"]) %>
+                <% else %>
+                  <%= t('quiz.fill_in_blank_incorrect') %>
+                <% end %>
+              </div>
+            </div>
             <div class="answer-section" style="margin-top:8px;">
               <% result["blank_results"].each_with_index do |br, i| %>
                 <% ok = br["ok"] %>
