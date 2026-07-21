@@ -56,7 +56,7 @@ class User < ApplicationRecord
     trial? && trial_activities_used.to_i >= 3
   end
 
-  DAILY_STUDENT_LIMIT = 3
+  DAILY_STUDENT_LIMIT = 5
 
   def trial_access_active?
     trial? && !trial_expired? && !trial_exhausted?
