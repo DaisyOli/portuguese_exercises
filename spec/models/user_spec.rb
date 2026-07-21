@@ -162,14 +162,33 @@ RSpec.describe User, type: :model do
     end
 
     describe '#accessible_levels' do
-      it 'returns only the assigned level for trial user' do
+      it 'returns the assigned level and everything below it for a trial user' do
         b1_trial = create(:user, :trial, level: 'B1')
-        expect(b1_trial.accessible_levels).to eq(['B1'])
+        expect(b1_trial.accessible_levels).to eq(['A1', 'A2', 'B1'])
       end
 
       it 'returns all levels up to C1 for a C1 student' do
         c1_student = create(:user, :student, level: 'C1')
         expect(c1_student.accessible_levels).to include('A1', 'A2', 'B1', 'B2', 'C1')
+      end
+    end
+
+    describe '#weighted_priority_levels' do
+      it 'includes every accessible level exactly once' do
+        student = create(:user, :student, level: 'B2')
+        result = student.weighted_priority_levels
+        expect(result.sort).to eq(student.accessible_levels.sort)
+      end
+
+      it 'returns the single accessible level unchanged for an A1 user' do
+        a1_trial = create(:user, :trial, level: 'A1')
+        expect(a1_trial.weighted_priority_levels).to eq(['A1'])
+      end
+
+      it 'favors the assigned level as the first pick across repeated draws' do
+        student = create(:user, :student, level: 'B2')
+        picks = Array.new(200) { student.weighted_priority_levels.first }
+        expect(picks.tally['B2']).to be > picks.tally.values_at('A1', 'A2', 'B1').compact.max
       end
     end
 

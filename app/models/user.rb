@@ -99,13 +99,34 @@ class User < ApplicationRecord
 
   def accessible_levels
     return [] if level.blank?
-    return [level] if trial?
     idx = CEFR_LEVELS.index(level)
     idx ? CEFR_LEVELS[0..idx] : []
   end
 
   def level_assigned?
     level.present?
+  end
+
+  # Peso decrescente por distância do nível declarado: favorece o nível do
+  # aluno mas dá espaço real pros de baixo, já que o nível autodeclarado
+  # (sobretudo no trial) costuma vir inflado.
+  NEXT_ACTIVITY_LEVEL_WEIGHTS = [0.5, 0.3, 0.2].freeze
+
+  def weighted_priority_levels
+    levels = accessible_levels.reverse # próprio nível primeiro, depois descendente
+    return levels if levels.size <= 1
+
+    pool = levels.each_with_index.map { |lvl, i| [lvl, NEXT_ACTIVITY_LEVEL_WEIGHTS[i] || NEXT_ACTIVITY_LEVEL_WEIGHTS.last] }
+
+    ordered = []
+    while pool.any?
+      total = pool.sum { |_, weight| weight }
+      draw  = rand * total
+      cumulative = 0
+      chosen_index = pool.index { |_, weight| (cumulative += weight) >= draw }
+      ordered << pool.delete_at(chosen_index || pool.size - 1).first
+    end
+    ordered
   end
 
   private
