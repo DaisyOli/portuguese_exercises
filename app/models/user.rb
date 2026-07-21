@@ -112,11 +112,16 @@ class User < ApplicationRecord
   # (sobretudo no trial) costuma vir inflado.
   NEXT_ACTIVITY_LEVEL_WEIGHTS = [0.5, 0.3, 0.2].freeze
 
+  # Só ajusta pelo desempenho real depois de tentativas suficientes no
+  # próprio nível — com menos que isso a média não é um sinal confiável.
+  MIN_ATTEMPTS_FOR_ADAPTIVE_WEIGHTS = 3
+
   def weighted_priority_levels
     levels = accessible_levels.reverse # próprio nível primeiro, depois descendente
     return levels if levels.size <= 1
 
     pool = levels.each_with_index.map { |lvl, i| [lvl, NEXT_ACTIVITY_LEVEL_WEIGHTS[i] || NEXT_ACTIVITY_LEVEL_WEIGHTS.last] }
+    shift_weight_toward_lower_levels!(pool)
 
     ordered = []
     while pool.any?
@@ -130,6 +135,25 @@ class User < ApplicationRecord
   end
 
   private
+
+  # Se o aluno já tem tentativas suficientes no próprio nível declarado e
+  # está reprovando nelas, puxa peso desse nível pros mais fáceis logo
+  # abaixo — sinal de que o nível autodeclarado está inflado.
+  def shift_weight_toward_lower_levels!(pool)
+    lower_levels = pool[1..]
+    return if lower_levels.blank?
+
+    own_level_attempts = quiz_attempts.joins(:activity).where(activities: { level: level })
+    return if own_level_attempts.count < MIN_ATTEMPTS_FOR_ADAPTIVE_WEIGHTS
+
+    avg_score = own_level_attempts.average(:score).to_f
+    return if avg_score >= QuizAttempt::PASSING_SCORE
+
+    shrink_factor = (1 - avg_score / QuizAttempt::PASSING_SCORE).clamp(0.0, 1.0)
+    shrink = pool[0][1] * shrink_factor
+    pool[0][1] -= shrink
+    lower_levels.each { |entry| entry[1] += shrink / lower_levels.size }
+  end
 
   def set_default_language
     self.language ||= DEFAULT_LANGUAGE

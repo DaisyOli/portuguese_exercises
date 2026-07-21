@@ -15,6 +15,8 @@ class QuizAttempt < ApplicationRecord
   scope :completed, -> { where.not(submitted_at: nil) }
   scope :for_user, ->(user) { where(user: user) }
 
+  PASSING_SCORE = 60
+
   before_create :set_submitted_at
   after_create  :increment_trial_counter
   after_create  :increment_daily_counter
@@ -33,7 +35,7 @@ class QuizAttempt < ApplicationRecord
   end
 
   def passed?
-    score.to_i >= 60
+    score.to_i >= PASSING_SCORE
   end
   
   def question_results

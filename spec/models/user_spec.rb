@@ -190,6 +190,33 @@ RSpec.describe User, type: :model do
         picks = Array.new(200) { student.weighted_priority_levels.first }
         expect(picks.tally['B2']).to be > picks.tally.values_at('A1', 'A2', 'B1').compact.max
       end
+
+      it 'shifts weight away from the assigned level when the student is failing it' do
+        student = create(:user, :student, level: 'B2')
+        b2_activity = create(:activity, :B2)
+        3.times { create(:quiz_attempt, :failing_score, user: student, activity: b2_activity) }
+
+        picks = Array.new(200) { student.weighted_priority_levels.first }
+        expect(picks.tally['B2'].to_i).to be < 100 # menos da metade, contra os ~50% do peso base
+      end
+
+      it 'keeps the base weighting when the student is passing their assigned level' do
+        student = create(:user, :student, level: 'B2')
+        b2_activity = create(:activity, :B2)
+        3.times { create(:quiz_attempt, :perfect_score, user: student, activity: b2_activity) }
+
+        picks = Array.new(200) { student.weighted_priority_levels.first }
+        expect(picks.tally['B2']).to be > picks.tally.values_at('A1', 'A2', 'B1').compact.max
+      end
+
+      it 'ignores performance when there are not enough attempts yet at the assigned level' do
+        student = create(:user, :student, level: 'B2')
+        b2_activity = create(:activity, :B2)
+        2.times { create(:quiz_attempt, :failing_score, user: student, activity: b2_activity) }
+
+        picks = Array.new(200) { student.weighted_priority_levels.first }
+        expect(picks.tally['B2']).to be > picks.tally.values_at('A1', 'A2', 'B1').compact.max
+      end
     end
 
     describe '#language_name' do
