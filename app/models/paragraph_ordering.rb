@@ -9,12 +9,28 @@ class ParagraphOrdering < ApplicationRecord
   end
 
   def check_order(sentence_ids_in_order)
-    sentences = paragraph_sentences.to_a
-    return false if sentence_ids_in_order.length != sentences.length
+    results = sentence_results(sentence_ids_in_order)
+    results.present? && results.all? { |r| r["ok"] }
+  end
 
-    sentence_ids_in_order.each_with_index.all? do |sentence_id, index|
-      sentence = sentences.find { |s| s.id == sentence_id.to_i }
-      sentence&.correct_position == index + 1
+  # Detalhe por posição (dado vs. correto), pra dar crédito parcial em vez
+  # de zerar o exercício inteiro por causa de uma frase fora do lugar.
+  # Sempre retorna um item por frase do parágrafo, mesmo se a resposta do
+  # aluno vier curta ou incompleta.
+  def sentence_results(sentence_ids_in_order)
+    sentences = paragraph_sentences.to_a
+    return [] if sentences.empty?
+
+    correct_order = sentences.sort_by(&:correct_position)
+
+    correct_order.each_with_index.map do |correct_sentence, index|
+      given_id       = sentence_ids_in_order[index]
+      given_sentence = given_id && sentences.find { |s| s.id == given_id.to_i }
+      {
+        "given"   => given_sentence&.sentence,
+        "correct" => correct_sentence.sentence,
+        "ok"      => given_sentence&.id == correct_sentence.id
+      }
     end
   end
 

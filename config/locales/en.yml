@@ -187,6 +187,7 @@ en:
     instruction_default: "Put the words in the correct order to form the sentence."
     result_label: "Word ordering exercise"
     correct: "Correct order!"
+    partially_correct: "%{correct} of %{total} correct"
     incorrect: "Incorrect order."
     language: "Language"
 
@@ -198,6 +199,7 @@ en:
     instruction_default: "Put the sentences in the correct order to form the text."
     result_label: "Sentence ordering exercise"
     correct: "Correct order!"
+    partially_correct: "%{correct} of %{total} correct"
     incorrect: "Incorrect order."
     add_sentence: "Add sentence"
     sentence_label: "Sentence"

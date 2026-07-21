@@ -53,12 +53,13 @@ class QuizSubmissionService
             # Sem resposta: nota 0 direto, não precisa de IA
             is_correct = false
             results[question.id] = {
-              "is_correct"    => false,
-              "question_text" => question.content,
-              "question_type" => question.question_type,
-              "given_answer"  => I18n.t('quiz.not_answered'),
-              "ai_score"      => 0,
-              "ai_feedback"   => I18n.t('quiz.not_answered')
+              "is_correct"      => false,
+              "question_text"   => question.content,
+              "question_type"   => question.question_type,
+              "given_answer"    => I18n.t('quiz.not_answered'),
+              "ai_score"        => 0,
+              "ai_feedback"     => I18n.t('quiz.not_answered'),
+              "credit_fraction" => 0.0
             }
           else
             # A correção por IA roda em background (AiGradingJob) para não
@@ -97,15 +98,16 @@ class QuizSubmissionService
           credit_fraction = blank_results.count { |r| r["ok"] } / blank_results.size.to_f
 
           results[question.id] = {
-            "is_correct"     => is_correct,
-            "question_text"  => question.content,
-            "question_type"  => question.question_type,
-            "blank_results"  => blank_results,
-            "correct_count"  => blank_results.count { |r| r["ok"] },
-            "total_blanks"   => blank_results.size,
-            "given_answer"   => given_array.first.presence || I18n.t('quiz.not_answered'),
-            "correct_answer" => all_answers.first,
-            "raw_answer"     => given_array.first.to_s
+            "is_correct"      => is_correct,
+            "question_text"   => question.content,
+            "question_type"   => question.question_type,
+            "blank_results"   => blank_results,
+            "correct_count"   => blank_results.count { |r| r["ok"] },
+            "total_blanks"    => blank_results.size,
+            "given_answer"    => given_array.first.presence || I18n.t('quiz.not_answered'),
+            "correct_answer"  => all_answers.first,
+            "raw_answer"      => given_array.first.to_s,
+            "credit_fraction" => credit_fraction
           }
 
         else
@@ -113,12 +115,13 @@ class QuizSubmissionService
           credit_fraction = is_correct ? 1.0 : 0.0
 
           results[question.id] = {
-            "is_correct"    => is_correct,
-            "question_text" => question.content,
-            "question_type" => question.question_type,
-            "given_answer"  => given_answer.present? ? given_answer.to_s.strip : I18n.t('quiz.not_answered'),
-            "correct_answer" => correct_answer,
-            "raw_answer"    => given_answer.to_s.strip
+            "is_correct"      => is_correct,
+            "question_text"   => question.content,
+            "question_type"   => question.question_type,
+            "given_answer"    => given_answer.present? ? given_answer.to_s.strip : I18n.t('quiz.not_answered'),
+            "correct_answer"  => correct_answer,
+            "raw_answer"      => given_answer.to_s.strip,
+            "credit_fraction" => credit_fraction
           }
         end
 
@@ -146,69 +149,78 @@ class QuizSubmissionService
     # Processar exercícios de ordenar palavras
     sentence_ordering_answers = @params[:sentence_ordering_answers] || {}
     @sentence_orderings.each do |ordering|
-      given_ids  = sentence_ordering_answers[ordering.id.to_s].to_s.split(",")
-      is_correct = ordering.check_order(given_ids)
+      given_ids       = sentence_ordering_answers[ordering.id.to_s].to_s.split(",")
+      item_results    = ordering.word_results(given_ids)
+      total_items     = item_results.size
+      correct_items   = item_results.count { |r| r["ok"] }
+      is_correct      = total_items.positive? && correct_items == total_items
+      credit_fraction = total_items.positive? ? correct_items / total_items.to_f : 0.0
 
       total_weighted_possible += 1
       total_exercise_count    += 1
-      if is_correct
-        total_weighted_correct += 1
-        total_correct_count    += 1
-      end
+      total_weighted_correct  += credit_fraction
+      total_correct_count    += 1 if is_correct
 
       results["sentence_ordering_#{ordering.id}"] = {
-        "is_correct"    => is_correct,
-        "exercise_type" => "sentence_ordering",
-        "sentence"      => ordering.sentence
+        "is_correct"      => is_correct,
+        "exercise_type"   => "sentence_ordering",
+        "sentence"        => ordering.sentence,
+        "item_results"    => item_results,
+        "correct_count"   => correct_items,
+        "total_items"     => total_items,
+        "credit_fraction" => credit_fraction
       }
     end
 
     # Processar exercícios de ordenar frases
     paragraph_ordering_answers = @params[:paragraph_ordering_answers] || {}
     @paragraph_orderings.each do |ordering|
-      given_ids  = paragraph_ordering_answers[ordering.id.to_s].to_s.split(",")
-      is_correct = ordering.check_order(given_ids)
+      given_ids       = paragraph_ordering_answers[ordering.id.to_s].to_s.split(",")
+      item_results    = ordering.sentence_results(given_ids)
+      total_items     = item_results.size
+      correct_items   = item_results.count { |r| r["ok"] }
+      is_correct      = total_items.positive? && correct_items == total_items
+      credit_fraction = total_items.positive? ? correct_items / total_items.to_f : 0.0
 
       total_weighted_possible += 1
       total_exercise_count    += 1
-      if is_correct
-        total_weighted_correct += 1
-        total_correct_count    += 1
-      end
-
-      correct_order = ordering.paragraph_sentences.to_a
-                             .sort_by(&:correct_position)
-                             .map(&:sentence)
+      total_weighted_correct  += credit_fraction
+      total_correct_count    += 1 if is_correct
 
       results["paragraph_ordering_#{ordering.id}"] = {
-        "is_correct"    => is_correct,
-        "exercise_type" => "paragraph_ordering",
-        "title"         => ordering.title.presence || I18n.t('paragraph_orderings.title'),
-        "correct_order" => correct_order
+        "is_correct"      => is_correct,
+        "exercise_type"   => "paragraph_ordering",
+        "title"           => ordering.title.presence || I18n.t('paragraph_orderings.title'),
+        "item_results"    => item_results,
+        "correct_count"   => correct_items,
+        "total_items"     => total_items,
+        "credit_fraction" => credit_fraction
       }
     end
 
     # Processar exercícios de associar colunas
     column_matching_answers = @params[:column_matching_answers] || {}
     @column_matchings.each do |matching|
-      answer_string = column_matching_answers[matching.id.to_s].to_s
-      pair_results  = matching.pair_results(answer_string)
-      total_pairs   = pair_results.size
-      correct_count = pair_results.count { |r| r["correct"] }
-      is_correct    = total_pairs.positive? && correct_count == total_pairs
+      answer_string   = column_matching_answers[matching.id.to_s].to_s
+      pair_results    = matching.pair_results(answer_string)
+      total_pairs     = pair_results.size
+      correct_count   = pair_results.count { |r| r["correct"] }
+      is_correct      = total_pairs.positive? && correct_count == total_pairs
+      credit_fraction = total_pairs.positive? ? correct_count / total_pairs.to_f : 0.0
 
       total_weighted_possible += 1
       total_exercise_count    += 1
-      total_weighted_correct  += (correct_count / total_pairs.to_f) if total_pairs.positive?
+      total_weighted_correct  += credit_fraction
       total_correct_count    += 1 if is_correct
 
       results["column_matching_#{matching.id}"] = {
-        "is_correct"    => is_correct,
-        "exercise_type" => "column_matching",
-        "title"         => matching.title.presence || I18n.t('column_matchings.title'),
-        "pair_results"  => pair_results,
-        "correct_count" => correct_count,
-        "total_pairs"   => total_pairs
+        "is_correct"      => is_correct,
+        "exercise_type"   => "column_matching",
+        "title"           => matching.title.presence || I18n.t('column_matchings.title'),
+        "pair_results"    => pair_results,
+        "correct_count"   => correct_count,
+        "total_pairs"     => total_pairs,
+        "credit_fraction" => credit_fraction
       }
     end
 

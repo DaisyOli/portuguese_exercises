@@ -280,6 +280,84 @@ RSpec.describe QuizSubmissionService, type: :service do
       end
     end
 
+    context 'com exercício de ordenar palavras parcialmente correto' do
+      let(:sentence_ordering) { activity.sentence_orderings.create!(sentence: "Eu gosto de café") }
+      let(:words) { sentence_ordering.sentence_words.order(:correct_position).to_a }
+
+      let(:params) do
+        {
+          answers: {
+            question_fill.id.to_s => "está",
+            question_mc.id.to_s => "Brasília"
+          },
+          sentence_ordering_answers: {
+            sentence_ordering.id.to_s => [words[0].id, words[1].id, words[3].id, words[2].id].join(",") # trocou as 2 últimas
+          }
+        }
+      end
+
+      it 'dá crédito parcial na nota final em vez de zerar o exercício' do
+        result = service.call
+        attempt = result[:quiz_attempt]
+
+        # 2 questões (100%) + ordenação (2/4 = 50%) sobre 3 exercícios no total
+        expect(attempt.score).to eq(((2 + 0.5) / 3 * 100).round(2))
+      end
+
+      it 'guarda o detalhe por posição, sem zerar as palavras certas' do
+        result = service.call
+        attempt = result[:quiz_attempt]
+
+        ord_result = attempt.results["results"]["sentence_ordering_#{sentence_ordering.id}"]
+        expect(ord_result["is_correct"]).to be false
+        expect(ord_result["correct_count"]).to eq(2)
+        expect(ord_result["total_items"]).to eq(4)
+        expect(ord_result["item_results"].count { |r| r["ok"] }).to eq(2)
+      end
+    end
+
+    context 'com exercício de ordenar frases parcialmente correto' do
+      let(:paragraph_ordering) { activity.paragraph_orderings.create! }
+
+      before do
+        paragraph_ordering.add_sentence("Primeiro parágrafo.")
+        paragraph_ordering.add_sentence("Segundo parágrafo.")
+        paragraph_ordering.add_sentence("Terceiro parágrafo.")
+      end
+
+      let(:sentences) { paragraph_ordering.paragraph_sentences.order(:correct_position).to_a }
+
+      let(:params) do
+        {
+          answers: {
+            question_fill.id.to_s => "está",
+            question_mc.id.to_s => "Brasília"
+          },
+          paragraph_ordering_answers: {
+            paragraph_ordering.id.to_s => [sentences[1].id, sentences[0].id, sentences[2].id].join(",") # trocou as 2 primeiras
+          }
+        }
+      end
+
+      it 'dá crédito parcial na nota final em vez de zerar o exercício' do
+        result = service.call
+        attempt = result[:quiz_attempt]
+
+        # 2 questões (100%) + ordenação (1/3 correta) sobre 3 exercícios no total
+        expect(attempt.score).to eq(((2 + 1.0 / 3) / 3 * 100).round(2))
+      end
+
+      it 'guarda o detalhe por posição, sem zerar as frases certas' do
+        result = service.call
+        attempt = result[:quiz_attempt]
+
+        ord_result = attempt.results["results"]["paragraph_ordering_#{paragraph_ordering.id}"]
+        expect(ord_result["is_correct"]).to be false
+        expect(ord_result["correct_count"]).to eq(1)
+        expect(ord_result["total_items"]).to eq(3)
+      end
+    end
+
     context 'atualização de tentativa existente' do
       let!(:existing_attempt) { create(:quiz_attempt, user: user, activity: activity, score: 50.0) }
 

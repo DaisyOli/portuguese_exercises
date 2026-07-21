@@ -148,9 +148,10 @@ class AiGradingService
       entry["ai_feedback"]    = graded[:feedback]
       entry["ai_unavailable"] = true
     else
-      entry["is_correct"]  = graded[:score] >= PASSING_SCORE
-      entry["ai_score"]    = graded[:score]
-      entry["ai_feedback"] = graded[:feedback]
+      entry["is_correct"]     = graded[:score] >= PASSING_SCORE
+      entry["ai_score"]       = graded[:score]
+      entry["ai_feedback"]    = graded[:feedback]
+      entry["credit_fraction"] = graded[:score] / 100.0
     end
 
     @attempt.save!
@@ -158,6 +159,12 @@ class AiGradingService
 
   # Reaplica a mesma regra de pontuação do QuizSubmissionService: média
   # ponderada dos exercícios avaliados; pendentes e indisponíveis ficam fora.
+  #
+  # Usa o "credit_fraction" já calculado por cada exercício (lacunas,
+  # colunas, ordenação, e agora também o ai_score/100 do open_ended) em vez
+  # de só is_correct — senão o crédito parcial dado na submissão original
+  # era substituído por tudo-ou-nada só porque o quiz tinha uma questão
+  # aberta pendente de correção por IA.
   def recompute_totals!
     weights = @attempt.activity.questions.pluck(:id, :weight).to_h
 
@@ -169,13 +176,13 @@ class AiGradingService
     results_hash.each do |key, entry|
       next if entry["ai_pending"] || entry["ai_unavailable"]
 
-      weight = key.to_s.match?(/\A\d+\z/) ? (weights[key.to_i] || 1).to_f : 1.0
+      weight   = key.to_s.match?(/\A\d+\z/) ? (weights[key.to_i] || 1).to_f : 1.0
+      fraction = entry.key?("credit_fraction") ? entry["credit_fraction"].to_f : (entry["is_correct"] ? 1.0 : 0.0)
+
       weighted_possible += weight
       exercise_count    += 1
-      if entry["is_correct"]
-        weighted_correct += weight
-        correct_count    += 1
-      end
+      weighted_correct  += weight * fraction
+      correct_count     += 1 if entry["is_correct"]
     end
 
     score = weighted_possible > 0 ? ((weighted_correct / weighted_possible) * 100).round(2) : 0

@@ -145,6 +145,7 @@ fr:
     instruction_default: "Mettez les mots dans le bon ordre pour former la phrase."
     result_label: "Exercice d'ordonnancement"
     correct: "Ordre correct !"
+    partially_correct: "%{correct} sur %{total} correctes"
     incorrect: "Ordre incorrect."
     language: "Langue"
 
@@ -156,6 +157,7 @@ fr:
     instruction_default: "Mettez les phrases dans le bon ordre pour former le texte."
     result_label: "Exercice d'ordonnancement de phrases"
     correct: "Ordre correct !"
+    partially_correct: "%{correct} sur %{total} correctes"
     incorrect: "Ordre incorrect."
     add_sentence: "Ajouter une phrase"
     sentence_label: "Phrase"

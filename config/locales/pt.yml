@@ -449,6 +449,7 @@ pt:
     instruction_default: "Coloque as palavras na ordem correta para formar a frase."
     result_label: "Exercício de ordenação"
     correct: "Ordem correta!"
+    partially_correct: "%{correct} de %{total} corretas"
     incorrect: "Ordem incorreta."
 
   # Paragraph Orderings
@@ -460,6 +461,7 @@ pt:
     instruction_default: "Coloque as frases na ordem correta para formar o texto."
     result_label: "Exercício de ordenação de frases"
     correct: "Ordem correta!"
+    partially_correct: "%{correct} de %{total} corretas"
     incorrect: "Ordem incorreta."
     add_sentence: "Adicionar frase"
     sentence_label: "Frase"

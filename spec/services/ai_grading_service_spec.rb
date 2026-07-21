@@ -48,7 +48,7 @@ RSpec.describe AiGradingService do
     context 'quando a IA aprova a resposta' do
       before { stub_ai_response('{"score": 85, "feedback": "Muito bem, resposta clara!"}') }
 
-      it 'preenche o feedback e recalcula o score com a questão incluída' do
+      it 'preenche o feedback e usa o ai_score como fração de crédito no score final' do
         described_class.new(attempt).call
         attempt.reload
 
@@ -57,8 +57,10 @@ RSpec.describe AiGradingService do
         expect(entry["ai_score"]).to eq(85)
         expect(entry["ai_feedback"]).to eq("Muito bem, resposta clara!")
         expect(entry["is_correct"]).to be true
+        expect(entry["credit_fraction"]).to eq(0.85)
 
-        expect(attempt.score).to eq(100.0)
+        # multiple_choice (100%) + open_ended (85%) sobre 2 questões = 92.5
+        expect(attempt.score).to eq(92.5)
         expect(attempt.results["total_questions"]).to eq(2)
         expect(attempt.results["total_correct"]).to eq(2)
         expect(attempt.ai_grading_pending?).to be false
@@ -68,14 +70,73 @@ RSpec.describe AiGradingService do
     context 'quando a IA reprova a resposta' do
       before { stub_ai_response('{"score": 40, "feedback": "Faltaram detalhes."}') }
 
-      it 'marca como incorreta e o score cai para a média ponderada' do
+      it 'marca como incorreta mas ainda dá crédito parcial proporcional ao ai_score' do
         described_class.new(attempt).call
         attempt.reload
 
         entry = attempt.results["results"][question_open.id.to_s]
         expect(entry["is_correct"]).to be false
-        expect(attempt.score).to eq(50.0)
+        expect(entry["credit_fraction"]).to eq(0.4)
+
+        # multiple_choice (100%) + open_ended (40%) sobre 2 questões = 70.0 — não zera a questão
+        expect(attempt.score).to eq(70.0)
         expect(attempt.results["total_correct"]).to eq(1)
+      end
+    end
+
+    context 'quando a IA dá uma nota abaixo da aprovação mas ainda alta' do
+      before { stub_ai_response('{"score": 65, "feedback": "Quase lá, só um detalhe."}') }
+
+      it 'não zera a questão só porque ficou abaixo do corte de aprovação' do
+        described_class.new(attempt).call
+        attempt.reload
+
+        entry = attempt.results["results"][question_open.id.to_s]
+        expect(entry["is_correct"]).to be false # abaixo de 70, não passou
+
+        # multiple_choice (100%) + open_ended (65%) sobre 2 questões = 82.5,
+        # bem diferente do 50.0 que o corte binário antigo teria dado
+        expect(attempt.score).to eq(82.5)
+      end
+    end
+
+    context 'quando o quiz também tem exercícios com crédito parcial já calculado' do
+      let(:attempt) do
+        create(:quiz_attempt, user: student, activity: activity, score: 87.5, results: {
+          "activity_id" => activity.id,
+          "results" => {
+            "888888" => {
+              "is_correct"      => false,
+              "question_type"   => "fill_in_blank",
+              "correct_count"   => 3,
+              "total_blanks"    => 4,
+              "credit_fraction" => 0.75
+            },
+            question_open.id.to_s => {
+              "is_correct"    => nil,
+              "question_type" => "open_ended",
+              "given_answer"  => "Eu acordo às sete horas e tomo café.",
+              "ai_pending"    => true
+            }
+          },
+          "score" => 87.5,
+          "total_correct" => 0,
+          "total_questions" => 1
+        })
+      end
+
+      before { stub_ai_response('{"score": 100, "feedback": "Perfeito!"}') }
+
+      it 'preserva o crédito parcial do outro exercício em vez de zerá-lo no recálculo' do
+        described_class.new(attempt).call
+        attempt.reload
+
+        fib_entry = attempt.results["results"]["888888"]
+        expect(fib_entry["credit_fraction"]).to eq(0.75) # não foi sobrescrito
+
+        # fill_in_blank (75%) + open_ended (100%) sobre 2 exercícios = 87.5
+        expect(attempt.score).to eq(87.5)
+        expect(attempt.results["total_correct"]).to eq(1) # só o open_ended é is_correct
       end
     end
 
