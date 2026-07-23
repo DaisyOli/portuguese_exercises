@@ -72,6 +72,7 @@ Rails.application.routes.draw do
     root to: "dashboard#index"
     resources :drafts, only: [:index, :destroy]
     post "drafts/generate", to: "drafts#generate", as: :generate_draft
+    post "trials/:id/send_reminder", to: "trials#send_reminder", as: :send_trial_reminder
   end
 
   # API pública para trial

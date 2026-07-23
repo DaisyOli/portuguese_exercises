@@ -36,7 +36,7 @@ En bêta privée sur [app.practicebr.com](https://app.practicebr.com), testée p
 
 **Sous le capot :**
 - Parcours essai-vers-abonnement avec Stripe (checkout + webhooks)
-- Emails de rappel hebdomadaires (Resend + Heroku Scheduler) et suggestions quotidiennes de vidéos YouTube par professeur
+- Emails de rappel hebdomadaires (Resend + cron GoodJob) et suggestions quotidiennes de vidéos YouTube par professeur
 - Interface disponible en portugais, anglais et français
 
 ---

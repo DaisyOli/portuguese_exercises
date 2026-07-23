@@ -16,4 +16,14 @@ class TrialMailer < ApplicationMailer
 
     mail(to: INTERNAL_EMAIL, subject: "Novo trial cadastrado: #{user.email} (#{user.level})")
   end
+
+  def reminder_email(user)
+    @user          = user
+    @expires_at    = user.trial_expires_at
+    @days_since    = ((Time.current - user.created_at) / 1.day).round
+    @days_left     = [((@expires_at - Time.current) / 1.day).ceil, 0].max
+    @login_url     = new_user_session_url(host: default_url_options[:host], protocol: default_url_options[:protocol] || "https")
+
+    mail(to: user.email, subject: "Faltam #{@days_left} #{@days_left == 1 ? 'dia' : 'dias'} para o fim do seu teste na Practice-BR")
+  end
 end

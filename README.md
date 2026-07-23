@@ -36,7 +36,7 @@ Live in private beta at [app.practicebr.com](https://app.practicebr.com), with r
 
 **Under the hood:**
 - Trial-to-subscription onboarding with Stripe (checkout + webhooks)
-- Weekly reminder emails (Resend + Heroku Scheduler) and daily YouTube video suggestions per teacher
+- Weekly reminder emails (Resend + GoodJob cron) and daily YouTube video suggestions per teacher
 - Interface localized in Portuguese, English and French
 
 ---

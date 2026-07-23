@@ -244,9 +244,9 @@
     <% else %>
       <div style="display:flex; flex-direction:column; gap:1px; background:var(--line-soft); border-radius:10px; overflow:hidden; border:1px solid var(--paper-2);">
 
-        <div style="display:grid; grid-template-columns:2fr 0.5fr 1fr 1fr 0.8fr; gap:0;
+        <div style="display:grid; grid-template-columns:2fr 0.5fr 1fr 1fr 0.8fr 1fr; gap:0;
                     background:var(--paper); padding:10px 16px;">
-          <% ["Email", "Nível", "Atividades", "Expira em", "Status"].each_with_index do |h, i| %>
+          <% ["Email", "Nível", "Atividades", "Expira em", "Status", "Lembrete"].each_with_index do |h, i| %>
             <div style="font-family:'DM Mono',monospace; font-size:0.65rem; color:var(--ink-faint);
                         letter-spacing:0.08em; text-transform:uppercase;
                         text-align:<%= i == 0 ? 'left' : 'center' %>;">
@@ -265,7 +265,7 @@
                exhausted: { bg: "var(--warning-tint)", color: "var(--amber-ink)", border: "var(--warning-border)", label: "Esgotado" },
                expired:   { bg: "var(--error-tint)", color: "var(--error-deep)", border: "var(--error-border)", label: "Expirado" }
              }[status] %>
-          <div style="display:grid; grid-template-columns:2fr 0.5fr 1fr 1fr 0.8fr; gap:0;
+          <div style="display:grid; grid-template-columns:2fr 0.5fr 1fr 1fr 0.8fr 1fr; gap:0;
                       background:var(--surface); padding:13px 16px; align-items:center;">
 
             <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.85rem; color:var(--ink);">
@@ -306,6 +306,19 @@
                            padding:3px 10px; border-radius:20px; text-transform:uppercase; letter-spacing:0.05em;">
                 <%= status_styles[:label] %>
               </span>
+            </div>
+
+            <div style="text-align:center;">
+              <% if trial.trial_reminder_sent_at %>
+                <span style="font-family:'DM Mono',monospace; font-size:0.68rem; color:var(--ink-faint);" title="<%= l(trial.trial_reminder_sent_at, format: :long) %>">
+                  Enviado <%= l(trial.trial_reminder_sent_at, format: :short) %>
+                </span>
+              <% end %>
+              <%= button_to "Enviar", admin_send_trial_reminder_path(trial),
+                    method: :post,
+                    style: "font-family:'DM Mono',monospace; font-size:0.68rem; font-weight:700;
+                            background:var(--brand-tint); color:var(--brand); border:1px solid var(--brand-soft);
+                            padding:4px 10px; border-radius:20px; cursor:pointer; margin-top:2px;" %>
             </div>
 
           </div>

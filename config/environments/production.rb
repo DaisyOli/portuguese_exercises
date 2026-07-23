@@ -102,7 +102,22 @@ Rails.application.configure do
     # LISTEN/NOTIFY desligado: no essential-0 a conexão dedicada do Notifier
     # cai e ele entra em loop de reconexão (visto em 2026-07-09). O poller
     # de 10s acima é quem pega os jobs — comprovado nos logs de produção.
-    enable_listen_notify: false
+    enable_listen_notify: false,
+    # Cron nativo do GoodJob: roda dentro do próprio dyno, sem Heroku Scheduler
+    # (que exigiria um dyno one-off extra). 07:00 horário da França (a maioria
+    # dos alunos e a Daisy estão lá) — fugit resolve o fuso e o horário de
+    # verão automaticamente a partir do sufixo "Europe/Paris".
+    enable_cron: true,
+    cron: {
+      trial_reminder: {
+        cron: "0 7 * * * Europe/Paris",
+        class: "TrialReminderJob"
+      },
+      weekly_reminder: {
+        cron: "0 7 * * 1 Europe/Paris",
+        class: "WeeklyReminderJob"
+      }
+    }
   }
   config.active_job.queue_name_prefix = "practicebr_production"
 
