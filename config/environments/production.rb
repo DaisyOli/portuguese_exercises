@@ -116,6 +116,13 @@ Rails.application.configure do
       weekly_reminder: {
         cron: "0 7 * * 1 Europe/Paris",
         class: "WeeklyReminderJob"
+      },
+      # A cada 6h (não 1x/dia): o gatilho é "48h desde a última atividade",
+      # então precisa rodar várias vezes ao dia pra não deixar passar de
+      # 48h + quase 1 dia inteiro por causa do agendamento.
+      inactivity_nudge: {
+        cron: "0 */6 * * *",
+        class: "InactivityNudgeJob"
       }
     }
   }
