@@ -1,0 +1,87 @@
+<% content_for :head do %>
+  <title>Atividades por avaliação · Admin · Practice-BR</title>
+<% end %>
+
+<div class="dash-outer" style="max-width:1100px; margin:0 auto;">
+
+  <%# ── Voltar ── %>
+  <%= link_to admin_root_path,
+        style: "display:inline-flex; align-items:center; gap:6px; font-family:'Plus Jakarta Sans',sans-serif;
+                font-size:0.82rem; font-weight:600; color:var(--ink-soft); text-decoration:none; margin-bottom:1.25rem;" do %>
+    ← Voltar para o painel administrativo
+  <% end %>
+
+  <%# ── Cabeçalho ── %>
+  <div style="margin-bottom:2rem;">
+    <h1 style="font-family:'Raleway',sans-serif; font-size:1.75rem; font-weight:700; color:var(--ink); margin:0 0 4px;">
+      Atividades por avaliação
+    </h1>
+    <p style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.95rem; color:var(--ink-soft);">
+      Só entram no ranking atividades com pelo menos <%= Admin::ActivitiesController::MIN_RATINGS %> avaliações — pra decidir o que manter ou apagar, veja a lista "menos apreciadas".
+      A exclusão continua sendo feita na tela normal da atividade.
+    </p>
+  </div>
+
+  <% [
+    { title: "⭐ Mais bem avaliadas", list: @best,  empty: "Nenhuma atividade com avaliações suficientes ainda." },
+    { title: "🥀 Menos apreciadas",   list: @worst, empty: "Nenhuma atividade com avaliações suficientes ainda." }
+  ].each do |section| %>
+
+    <div style="background:var(--surface); border:1px solid var(--line); border-radius:16px; padding:28px; margin-bottom:1.5rem;">
+      <h2 style="font-family:'Raleway',sans-serif; font-size:1.1rem; font-weight:700; color:var(--ink); margin:0 0 1.5rem;">
+        <%= section[:title] %>
+      </h2>
+
+      <% if section[:list].empty? %>
+        <div style="text-align:center; padding:24px; color:var(--ink-faint); font-family:'Plus Jakarta Sans',sans-serif; font-size:0.88rem;">
+          <%= section[:empty] %>
+        </div>
+      <% else %>
+        <div style="display:flex; flex-direction:column; gap:1px; background:var(--line-soft); border-radius:10px; overflow:hidden; border:1px solid var(--paper-2);">
+
+          <div style="display:grid; grid-template-columns:2fr 1fr 1fr 1fr 0.8fr; gap:0;
+                      background:var(--paper); padding:10px 16px;">
+            <% ["Atividade", "Professor(a)", "Nível", "Nota média", "Avaliações"].each_with_index do |h, i| %>
+              <div style="font-family:'DM Mono',monospace; font-size:0.65rem; color:var(--ink-faint);
+                          letter-spacing:0.08em; text-transform:uppercase;
+                          text-align:<%= i == 0 ? 'left' : 'center' %>;">
+                <%= h %>
+              </div>
+            <% end %>
+          </div>
+
+          <% section[:list].each do |activity| %>
+            <div style="display:grid; grid-template-columns:2fr 1fr 1fr 1fr 0.8fr; gap:0;
+                        background:var(--surface); padding:13px 16px; align-items:center;">
+
+              <div style="font-family:'Plus Jakarta Sans',sans-serif; font-size:0.85rem; color:var(--ink);">
+                <%= link_to activity.title, activity_path(activity), style: "color:var(--brand-deep); text-decoration:none; font-weight:600;" %>
+              </div>
+
+              <div style="text-align:center; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; color:var(--ink-soft);">
+                <%= activity.teacher&.name %>
+              </div>
+
+              <div style="text-align:center;">
+                <span style="font-family:'DM Mono',monospace; font-size:0.75rem; font-weight:700;
+                             background:var(--line-soft); color:var(--ink-soft); padding:2px 8px; border-radius:20px;">
+                  <%= activity.level %>
+                </span>
+              </div>
+
+              <div style="text-align:center; font-family:'DM Mono',monospace; font-size:0.85rem; font-weight:700; color:var(--brand-deep);">
+                ⭐ <%= activity.stars_avg.to_f.round(1) %>
+              </div>
+
+              <div style="text-align:center; font-family:'DM Mono',monospace; font-size:0.78rem; color:var(--ink-faint);">
+                <%= activity.stars_count %>
+              </div>
+
+            </div>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+
+</div>
